@@ -5,11 +5,15 @@
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "dev": "npm run dev --workspace=@commerce/api",
+    "dev:storefront": "npm run dev --workspace=@commerce/storefront",
     "build": "npm run build --workspace=@commerce/api",
+    "build:storefront": "npm run build --workspace=@commerce/storefront",
     "typecheck": "npm run typecheck --workspace=@commerce/api",
+    "typecheck:storefront": "npm run typecheck --workspace=@commerce/storefront",
     "db:generate": "npm run db:generate --workspace=@commerce/api",
     "db:migrate": "npm run db:migrate --workspace=@commerce/api",
     "db:seed": "npm run db:seed --workspace=@commerce/api",
-    "test": "npm run test --workspace=@commerce/api"
+    "test": "npm run test --workspace=@commerce/api",
+    "test:e2e": "tsx scripts/test-e2e-flow.ts"
   }
 }
