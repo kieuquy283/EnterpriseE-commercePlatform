@@ -1,0 +1,15 @@
+{
+  "name": "medusa-inspired-commerce",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "npm run dev --workspace=@commerce/api",
+    "build": "npm run build --workspace=@commerce/api",
+    "typecheck": "npm run typecheck --workspace=@commerce/api",
+    "db:generate": "npm run db:generate --workspace=@commerce/api",
+    "db:migrate": "npm run db:migrate --workspace=@commerce/api",
+    "db:seed": "npm run db:seed --workspace=@commerce/api",
+    "test": "npm run test --workspace=@commerce/api"
+  }
+}
