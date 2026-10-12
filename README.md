@@ -1,42 +1,190 @@
-# Medusa-inspired Commerce MVP
+# Enterprise E-commerce Platform
 
-MVP thương mại điện tử theo kế hoạch `ke-hoach-clone-medusa.md`: modular monolith, Store API/Admin API, PostgreSQL transaction boundary, Redis/Search hạ tầng sẵn sàng, checkout idempotency, inventory locking và transactional outbox.
+Medusa-inspired commerce MVP theo kiến trúc modular monolith và event-driven worker.
 
-## Chạy local
+## Công nghệ
+
+- Node.js 20+ và TypeScript
+- Fastify 5, Prisma ORM
+- PostgreSQL 16, Redis 7, Meilisearch
+- Docker Compose, JWT, Argon2
+
+## Yêu cầu
+
+Cài đặt Git, Node.js 20+, npm và Docker Desktop.
 
 ```powershell
-Copy-Item .env.example .env
+node --version
+npm --version
+docker --version
+```
+
+## Clone project
+
+```powershell
+git clone https://github.com/kieuquy283/EnterpriseE-commercePlatform.git
+cd EnterpriseE-commercePlatform
+git checkout master
+```
+
+## Cài đặt
+
+```powershell
 npm install
+Copy-Item .env.example .env
+Copy-Item apps/api/.env.example apps/api/.env
+```
+
+File `.env` local mặc định:
+
+```env
+DATABASE_URL=postgresql://commerce:commerce@localhost:5432/commerce?schema=public
+REDIS_URL=redis://localhost:6379
+PORT=4000
+JWT_SECRET=change-me-in-development
+COOKIE_SECRET=change-me-too
+```
+
+Không commit `.env` hoặc secret thật lên repository.
+
+## Khởi động Docker
+
+```powershell
 docker compose up -d
-npm run db:generate
-npm run db:migrate -- --name init
-npm run db:seed
+docker ps
+```
+
+Nếu Windows báo lỗi quyền với `dockerDesktopLinuxEngine`, dùng:
+
+```powershell
+$env:DOCKER_HOST="npipe:////./pipe/docker_engine"
+docker compose up -d
+```
+
+Services:
+
+- PostgreSQL: `localhost:5432`
+- Redis: `localhost:6379`
+- Meilisearch: `http://localhost:7700`
+
+## Khởi tạo database
+
+```powershell
+npm run db:generate --workspace=@commerce/api
+npm run db:migrate --workspace=@commerce/api -- --name init
+npm run db:seed --workspace=@commerce/api
+```
+
+Seed tạo 3 sản phẩm mẫu: áo thun, túi canvas và bình giữ nhiệt.
+
+## Chạy app
+
+```powershell
 npm run dev
 ```
 
-API chạy tại `http://localhost:4000`. Health check: `GET /health`.
+API chạy tại `http://localhost:4000`.
 
-## Vertical slice API
+```powershell
+Invoke-RestMethod http://localhost:4000/health
+Invoke-RestMethod http://localhost:4000/store/products
+```
 
-1. `POST /store/auth/register` hoặc `/store/auth/login` nhận JWT.
-2. `GET /store/products` lấy catalog; chọn `variants[0].id`.
-3. `POST /store/carts` tạo cart.
-4. `POST /store/carts/:id/items` thêm `{ variantId, quantity }`.
-5. `POST /store/carts/:id/checkout` với `{ idempotencyKey: UUID }`.
-6. `GET /store/orders` xem order; admin cập nhật bằng `/admin/orders/:id/status`.
+Build production:
 
-Header cho protected endpoint: `Authorization: Bearer <token>`.
+```powershell
+npm run build
+node apps/api/dist/main.js
+```
 
-## Quyết định vòng đầu
+## API chính
 
-- PostgreSQL là source of truth; giá/tên được snapshot vào order item.
-- Checkout dùng transaction + `SELECT ... FOR UPDATE` cho inventory.
-- Payment mock có unique `(provider, idempotencyKey)` để retry không tạo duplicate.
-- `OutboxEvent` được ghi cùng transaction order; worker hiện là dispatcher tối giản và là điểm nối để thêm BullMQ/email provider.
-- Search/Redis được đưa vào Compose để tích hợp ở vòng catalog tiếp theo; browse hiện fallback PostgreSQL.
+Public:
 
-## Roadmap tiếp theo
+```text
+POST /store/auth/register
+POST /store/auth/login
+GET  /store/products
+GET  /store/products/:id
+```
 
-- apps/storefront và apps/admin bằng Next.js.
-- Redis cache-aside, Meilisearch index worker, BullMQ/DLQ.
-- OpenAPI, metrics/traces, Docker image, CI/CD, Terraform và k6.
+Customer API yêu cầu header `Authorization: Bearer <JWT_TOKEN>`:
+
+```text
+POST /store/carts
+GET  /store/carts/:id
+POST /store/carts/:id/items
+POST /store/carts/:id/checkout
+GET  /store/orders
+GET  /store/orders/:id
+```
+
+Admin API:
+
+```text
+GET   /admin/orders
+PATCH /admin/orders/:id/status
+```
+
+## Test nhanh vertical slice
+
+1. Đăng ký hoặc đăng nhập để lấy JWT.
+2. Gọi `GET /store/products`, lấy `variants[0].id`.
+3. Gọi `POST /store/carts` để tạo cart.
+4. Gọi `POST /store/carts/:id/items` với:
+
+```json
+{"variantId":"<VARIANT_ID>","quantity":1}
+```
+
+5. Gọi `POST /store/carts/:id/checkout` với:
+
+```json
+{"idempotencyKey":"<UUID>"}
+```
+
+Retry cùng idempotency key sẽ không tạo duplicate payment/order.
+
+## Scripts
+
+```powershell
+npm run dev          # Development server
+npm run build        # Build TypeScript
+npm run typecheck    # Type checking
+npm run db:generate  # Generate Prisma Client
+npm run db:migrate   # Run migration
+npm run db:seed      # Seed sample data
+```
+
+## Troubleshooting
+
+Kiểm tra PostgreSQL:
+
+```powershell
+docker compose ps
+docker compose logs postgres
+```
+
+Nếu port `4000` bị chiếm, đổi `PORT` trong `.env`.
+
+Reset database local, dữ liệu volume sẽ bị xóa:
+
+```powershell
+docker compose down -v
+docker compose up -d
+npm run db:migrate --workspace=@commerce/api -- --name init
+npm run db:seed --workspace=@commerce/api
+```
+
+## Cấu trúc
+
+```text
+apps/api/
+├─ prisma/schema.prisma
+├─ prisma/seed.ts
+└─ src/main.ts
+docker-compose.yml
+ke-hoach-clone-medusa.md
+```
+
+Đã triển khai authentication, catalog, cart, checkout transaction, mock payment, idempotency, inventory reservation, order status history, outbox dispatcher và Docker services. Storefront UI/Admin UI, cache, search worker, CI/CD, Terraform và load test là các bước tiếp theo.
