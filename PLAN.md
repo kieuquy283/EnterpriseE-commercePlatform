@@ -214,14 +214,27 @@ The requested MVP now uses Medusa's supported features without custom extensions
 
 **Deferred until separately requested:** simulated payment outcomes and custom idempotency middleware; email/other customer notification subscribers; reporting dashboard/API; Meilisearch and indexing; custom metrics, readiness, tracing, alerts; staff-specific permissions; cloud NFR validation. These should not be implied as implemented in demos. The default Medusa payment provider is a manual recording mechanism, not an online processor.
 
-**Verification gate:** lint, typecheck, production builds, and Compose syntax are local checks. Before claiming the MVP runs stably, start PostgreSQL/Redis, run migration and seed on a clean DB, complete one customer COD order, check stock/order status in Admin, then repeat after process restart. Test a failed checkout due to insufficient stock and ensure there is no completed order. Docker daemon access is currently unavailable on this host, so runtime acceptance remains open.
+**Verification gate:** lint, typecheck, production builds, and Compose syntax are local checks. Runtime results are recorded in section 12. Browser checkout, container image startup, backup/restore, and staging load tests remain open.
 
 ### Implementation checklist for the reduced scope
 
 - [x] Remove custom Medusa extensions, simulator UI, external search adapter, and stale dependencies.
 - [x] Use Store API keyword search and Medusa manual payment checkout.
 - [x] Update Compose, deployment runbook, CI, and README for the reduced scope.
-- [ ] Run migration and seed against a live clean PostgreSQL database.
-- [ ] Verify registration, search, cart, COD checkout, order history, and inventory reservation end to end.
-- [ ] Verify restart/retry and insufficient-stock behavior with PostgreSQL/Redis.
+- [x] Run migration and seed against a live clean PostgreSQL database (15/10/2026).
+- [x] Verify registration, search, cart, COD checkout, order history, and inventory reservation through Store API with PostgreSQL/Redis.
+- [x] Verify backend restart, same-cart completion retry, and insufficient-stock add-to-cart rejection locally.
+- [ ] Walk through the checkout form in a browser and verify the resulting order in Admin.
 - [ ] Rehearse backup/restore and run k6 on a staging deployment before stating NFR attainment.
+
+## 12. Local runtime evidence (15/10/2026)
+
+Docker Desktop was started and PostgreSQL/Redis Compose services ran with fresh volumes. `medusa db:migrate` and `npm run seed` exited successfully after explicitly passing a local `DATABASE_URL` to the backend process. The existing `apps/backend/.env` lacked that variable, and the root `.env` is not loaded by commands from the backend directory. The current documentation now calls out that configuration requirement.
+
+Medusa `/health` returned 200, Store API exposed the Vietnam region and found the seeded product via `q=Essential`. `scripts/smoke-checkout.ps1` created a cart with one seeded variant, set Vietnam addresses, selected standard shipping and Medusa's `pp_system_default` manual payment provider, completed the cart, and received a real order ID. PostgreSQL showed `TEE-ESSENTIAL-BLK` with `stocked_quantity=25` and `reserved_quantity=1` after that checkout. Next.js returned 200 and rendered the product on the search page, product detail page, and order confirmation page.
+
+The first storefront request to `127.0.0.1:8000` hit an unrelated Python server already bound to IPv4. Next.js was listening on IPv6 port 8000; `http://[::1]:8000/vn/store?q=Essential` reached it and returned 200. Local Compose's pinned MinIO/mc images could not be pulled, so optional MinIO services and their deployment proxy were removed from the reduced MVP. Medusa's native S3 file provider remains available through external S3 environment variables when image uploads are needed.
+
+**Still open:** browser checkout and Admin review, backup/restore, staging load results, Docker application image test, and cloud deployment. The successful API order proves the Medusa commerce path works locally; it does not prove those remaining scenarios or the proposed NFR targets.
+
+**Further evidence:** `scripts/smoke-checkout.ps1 -RegisterCustomer` registered and logged in a customer, created a COD order, and found that exact order in `/store/orders`. Calling cart completion again for the same cart returned the same order ID. Adding quantity 999 for the seeded variant returned HTTP 400. After restarting Medusa with `npm run start`, `/health`, `/app`, and the old order confirmation page all returned 200; the full registered-customer checkout smoke test also passed against this production backend. The production start script was corrected to run from `.medusa/server`, where Medusa places the Admin build. The inactive locale selector was removed after its optional `/store/locales` call returned 404; storefront search and product pages still rendered successfully, and the final Next.js production build passed.

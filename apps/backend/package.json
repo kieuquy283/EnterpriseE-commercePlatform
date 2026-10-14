@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "build": "cross-env NODE_PATH=./node_modules medusa build",
-    "start": "medusa start",
+    "start": "cd .medusa/server && cross-env NODE_ENV=production node ../../../../node_modules/@medusajs/cli/cli.js start",
     "dev": "medusa develop",
     "lint": "medusa lint",
     "typecheck": "tsc --noEmit -p tsconfig.json",

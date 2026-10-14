@@ -14,7 +14,6 @@ import {
   setCartId,
 } from "./cookies"
 import { getRegion } from "./regions"
-import { getLocale } from "./locale-actions"
 
 /**
  * Retrieves a cart by its ID. If no ID is provided, it will use the cart ID from the cookies.
@@ -66,9 +65,8 @@ export async function getOrSetCart(countryCode: string) {
   }
 
   if (!cart) {
-    const locale = await getLocale()
     const cartResp = await sdk.store.cart.create(
-      { region_id: region.id, locale: locale || undefined },
+      { region_id: region.id },
       {},
       headers
     )
