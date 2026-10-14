@@ -1,190 +1,47 @@
-# Enterprise E-commerce Platform
+# Commerce MVP with Medusa v2
 
-Medusa-inspired commerce MVP theo kiến trúc modular monolith và event-driven worker.
+This repository uses Medusa v2.21.2 as the commerce backend, the Medusa Admin at `/app`, and a Next.js storefront built with the Medusa JS SDK. PostgreSQL stores commerce data. Redis supports Medusa's event bus, workflows, locks, and cache. MinIO supplies local S3-compatible media storage through Medusa's file provider. There are no custom Medusa modules, API routes, workflows, payment providers, or subscribers in the current MVP.
 
-## Công nghệ
+## Current scope
 
-- Node.js 20+ và TypeScript
-- Fastify 5, Prisma ORM
-- PostgreSQL 16, Redis 7, Meilisearch
-- Docker Compose, JWT, Argon2
+- Customer registration and login, catalog, product detail, basic keyword search, cart, address and shipping selection, checkout, order history and order detail use the Medusa Store APIs.
+- Checkout offers the built-in `pp_system_default` manual payment provider as **cash on delivery**. The storefront initializes its payment session and calls Medusa's cart completion API. Medusa owns order creation and inventory reservation. This records an order; it does not collect money or simulate payment success/failure.
+- Medusa Admin handles products, inventory, orders, fulfillment, users, and built-in operational views. The seed script sets up one Vietnam/VND region, one sales channel, one warehouse, a manual shipping option, and three sample products.
 
-## Yêu cầu
+Advanced search, a custom payment simulator and idempotency layer, automated customer notifications, custom reporting, staff-specific RBAC, custom metrics/tracing, and cloud load results are deferred. See the latest scope update at the end of [PLAN.md](PLAN.md). None of those features is required to run the current Medusa MVP.
 
-Cài đặt Git, Node.js 20+, npm và Docker Desktop.
+## Local setup
 
-```powershell
-node --version
-npm --version
-docker --version
-```
+Requires Node.js >=22.22, npm 11, and Docker Desktop/Engine. Use local example credentials only on your computer. Set long random `JWT_SECRET` and `COOKIE_SECRET` for any shared environment.
 
-## Clone project
+On Windows, run `. .\scripts\use-d-drive.ps1` in your PowerShell session before npm commands. This keeps npm cache and temporary files on `D:`.
 
-```powershell
-git clone https://github.com/kieuquy283/EnterpriseE-commercePlatform.git
-cd EnterpriseE-commercePlatform
-git checkout master
-```
+1. Run `npm ci` at the repository root.
+2. Copy `apps/backend/.env.template` to `apps/backend/.env`. Set the database password and secrets.
+3. Run `docker compose up -d postgres redis minio minio-init`.
+4. In `apps/backend`, run `npx medusa db:migrate` and `npm run seed` against the fresh database.
+5. In `apps/backend`, create an Admin user with `npx medusa user -e <email> -p <password>`.
+6. Copy the publishable API key from Admin to `apps/storefront/.env.local` as `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=<key>`. Also set `NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000` and `MEDUSA_BACKEND_URL=http://localhost:9000` there.
+7. Run `npm run dev` at the root. Open `http://localhost:8000/vn` for the storefront, `http://localhost:9000/app` for Admin, or `http://localhost:9000/health` for Medusa's built-in health endpoint.
 
-## Cài đặt
+For the containerized application, set the same values in a private root `.env`, migrate and seed with the backend image, then run `docker compose --profile app up --build`. The publishable key is included in the Next.js build, so rebuild the storefront when it changes. The API container runs `WORKER_MODE=server`; the worker container runs `WORKER_MODE=worker`.
 
-```powershell
-npm install
-Copy-Item .env.example .env
-Copy-Item apps/api/.env.example apps/api/.env
-```
-
-File `.env` local mặc định:
-
-```env
-DATABASE_URL=postgresql://commerce:commerce@localhost:5432/commerce?schema=public
-REDIS_URL=redis://localhost:6379
-PORT=4000
-JWT_SECRET=change-me-in-development
-COOKIE_SECRET=change-me-too
-```
-
-Không commit `.env` hoặc secret thật lên repository.
-
-## Khởi động Docker
+## Verification
 
 ```powershell
-docker compose up -d
-docker ps
+npm run lint --workspace=@dtc/backend
+npm run lint --workspace=@dtc/storefront
+npm run typecheck --workspace=@dtc/backend
+npm run typecheck --workspace=@dtc/storefront
+npm run build --workspace=@dtc/backend
+$env:NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY="pk_ci_build_placeholder"
+$env:NEXT_PUBLIC_MEDUSA_BACKEND_URL="http://localhost:9000"
+npm run build --workspace=@dtc/storefront
+docker compose config --quiet
 ```
 
-Nếu Windows báo lỗi quyền với `dockerDesktopLinuxEngine`, dùng:
+After a live database is available, test one customer journey: register, find a seeded product, add it to cart, enter a Vietnam address, select standard delivery and cash on delivery, complete the cart, then view the order in customer history and Admin. Confirm the inventory reservation in Admin. The k6 scripts in `load/` are for staging; their targets are proposals, not measured results.
 
-```powershell
-$env:DOCKER_HOST="npipe:////./pipe/docker_engine"
-docker compose up -d
-```
+## Deployment and limitations
 
-Services:
-
-- PostgreSQL: `localhost:5432`
-- Redis: `localhost:6379`
-- Meilisearch: `http://localhost:7700`
-
-## Khởi tạo database
-
-```powershell
-npm run db:generate --workspace=@commerce/api
-npm run db:migrate --workspace=@commerce/api -- --name init
-npm run db:seed --workspace=@commerce/api
-```
-
-Seed tạo 3 sản phẩm mẫu: áo thun, túi canvas và bình giữ nhiệt.
-
-## Chạy app
-
-```powershell
-npm run dev
-```
-
-API chạy tại `http://localhost:4000`.
-
-```powershell
-Invoke-RestMethod http://localhost:4000/health
-Invoke-RestMethod http://localhost:4000/store/products
-```
-
-Build production:
-
-```powershell
-npm run build
-node apps/api/dist/main.js
-```
-
-## API chính
-
-Public:
-
-```text
-POST /store/auth/register
-POST /store/auth/login
-GET  /store/products
-GET  /store/products/:id
-```
-
-Customer API yêu cầu header `Authorization: Bearer <JWT_TOKEN>`:
-
-```text
-POST /store/carts
-GET  /store/carts/:id
-POST /store/carts/:id/items
-POST /store/carts/:id/checkout
-GET  /store/orders
-GET  /store/orders/:id
-```
-
-Admin API:
-
-```text
-GET   /admin/orders
-PATCH /admin/orders/:id/status
-```
-
-## Test nhanh vertical slice
-
-1. Đăng ký hoặc đăng nhập để lấy JWT.
-2. Gọi `GET /store/products`, lấy `variants[0].id`.
-3. Gọi `POST /store/carts` để tạo cart.
-4. Gọi `POST /store/carts/:id/items` với:
-
-```json
-{"variantId":"<VARIANT_ID>","quantity":1}
-```
-
-5. Gọi `POST /store/carts/:id/checkout` với:
-
-```json
-{"idempotencyKey":"<UUID>"}
-```
-
-Retry cùng idempotency key sẽ không tạo duplicate payment/order.
-
-## Scripts
-
-```powershell
-npm run dev          # Development server
-npm run build        # Build TypeScript
-npm run typecheck    # Type checking
-npm run db:generate  # Generate Prisma Client
-npm run db:migrate   # Run migration
-npm run db:seed      # Seed sample data
-```
-
-## Troubleshooting
-
-Kiểm tra PostgreSQL:
-
-```powershell
-docker compose ps
-docker compose logs postgres
-```
-
-Nếu port `4000` bị chiếm, đổi `PORT` trong `.env`.
-
-Reset database local, dữ liệu volume sẽ bị xóa:
-
-```powershell
-docker compose down -v
-docker compose up -d
-npm run db:migrate --workspace=@commerce/api -- --name init
-npm run db:seed --workspace=@commerce/api
-```
-
-## Cấu trúc
-
-```text
-apps/api/
-├─ prisma/schema.prisma
-├─ prisma/seed.ts
-└─ src/main.ts
-docker-compose.yml
-ke-hoach-clone-medusa.md
-```
-
-Đã triển khai authentication, catalog, cart, checkout transaction, mock payment, idempotency, inventory reservation, order status history, outbox dispatcher và Docker services. Storefront UI/Admin UI, cache, search worker, CI/CD, Terraform và load test là các bước tiếp theo.
+`deploy/` contains a single-VM Compose/Caddy example and a runbook. Use TLS, private DB/Redis ports, secure secrets, PostgreSQL backups, and a staging checkout smoke test before exposing it publicly. Medusa's `/health` endpoint is a process health probe; it is not a full dependency-readiness check. Docker, migration, seed, checkout, load testing, and cloud deployment have not been exercised on this host because its Docker daemon is unavailable. The current MVP is therefore build-verified but not yet runtime-verified.

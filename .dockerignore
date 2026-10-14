@@ -1,0 +1,12 @@
+node_modules
+**/node_modules
+**/.medusa
+**/.next
+.git
+.legacy
+medusa-scaffold
+.npm-cache
+.tmp
+.env
+**/.env
+*.log

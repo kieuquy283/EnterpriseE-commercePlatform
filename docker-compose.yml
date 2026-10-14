@@ -3,22 +3,120 @@ services:
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: commerce
-      POSTGRES_PASSWORD: commerce
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-commerce-local-only}
       POSTGRES_DB: commerce
-    ports: ["5432:5432"]
-    volumes: ["commerce-postgres:/var/lib/postgresql/data"]
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U commerce -d commerce"]
       interval: 5s
-      timeout: 5s
-      retries: 10
+      timeout: 3s
+      retries: 20
+
   redis:
     image: redis:7-alpine
-    ports: ["6379:6379"]
-  meilisearch:
-    image: getmeili/meilisearch:v1.12
+    ports: ["127.0.0.1:6379:6379"]
+    volumes: ["redis-data:/data"]
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  minio:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    command: ["server", "/data", "--console-address", ":9001"]
     environment:
-      MEILI_NO_ANALYTICS: "true"
-    ports: ["7700:7700"]
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minio-local}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minio-local-password}
+    ports: ["127.0.0.1:9100:9000", "127.0.0.1:9101:9001"]
+    volumes: ["minio-data:/data"]
+
+  minio-init:
+    image: minio/mc:RELEASE.2025-08-13T08-35-41Z
+    entrypoint: ["/bin/sh", "-c"]
+    command: >-
+      mc alias set local http://minio:9000 "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}" &&
+      mc mb --ignore-existing local/commerce-media &&
+      mc anonymous set download local/commerce-media
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minio-local}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minio-local-password}
+    depends_on: [minio]
+
+  backend:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://commerce:${POSTGRES_PASSWORD:-commerce-local-only}@postgres:5432/commerce
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-local-change-this-jwt-secret}
+      COOKIE_SECRET: ${COOKIE_SECRET:-local-change-this-cookie-secret}
+      STORE_CORS: http://localhost:8000
+      ADMIN_CORS: http://localhost:9000
+      AUTH_CORS: http://localhost:8000,http://localhost:9000
+      WORKER_MODE: server
+      S3_BUCKET: commerce-media
+      S3_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-minio-local}
+      S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-minio-local-password}
+      S3_ENDPOINT: http://minio:9000
+      S3_FILE_URL: http://localhost:9100/commerce-media
+    ports: ["127.0.0.1:9000:9000"]
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:9000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 10
+
+  worker:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://commerce:${POSTGRES_PASSWORD:-commerce-local-only}@postgres:5432/commerce
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-local-change-this-jwt-secret}
+      COOKIE_SECRET: ${COOKIE_SECRET:-local-change-this-cookie-secret}
+      WORKER_MODE: worker
+      ADMIN_DISABLED: "true"
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+  storefront:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: apps/storefront/Dockerfile
+      args:
+        NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY:-pk_set_after_seed}
+        NEXT_PUBLIC_MEDUSA_BACKEND_URL: http://localhost:9000
+    environment:
+      MEDUSA_BACKEND_URL: http://backend:9000
+      NEXT_PUBLIC_MEDUSA_BACKEND_URL: http://localhost:9000
+      NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY:-pk_set_after_seed}
+      NEXT_PUBLIC_BASE_URL: http://localhost:8000
+    ports: ["127.0.0.1:8000:8000"]
+    depends_on:
+      backend: { condition: service_healthy }
+
+  k6:
+    profiles: ["load"]
+    image: grafana/k6:0.56.0
+    entrypoint: ["k6"]
+    environment:
+      BASE_URL: http://backend:9000
+    volumes: ["./load:/scripts:ro"]
+
 volumes:
-  commerce-postgres:
+  postgres-data:
+  redis-data:
+  minio-data:

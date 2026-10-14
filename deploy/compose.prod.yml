@@ -1,0 +1,33 @@
+services:
+  caddy:
+    profiles: ["app"]
+    image: caddy:2-alpine
+    environment:
+      STORE_DOMAIN: ${STORE_DOMAIN:?Set STORE_DOMAIN}
+      API_DOMAIN: ${API_DOMAIN:?Set API_DOMAIN}
+      MEDIA_DOMAIN: ${MEDIA_DOMAIN:?Set MEDIA_DOMAIN}
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on: [backend, storefront, minio]
+
+  backend:
+    environment:
+      STORE_CORS: https://${STORE_DOMAIN:?Set STORE_DOMAIN}
+      ADMIN_CORS: https://${API_DOMAIN:?Set API_DOMAIN}
+      AUTH_CORS: https://${STORE_DOMAIN:?Set STORE_DOMAIN},https://${API_DOMAIN:?Set API_DOMAIN}
+      S3_FILE_URL: https://${MEDIA_DOMAIN:?Set MEDIA_DOMAIN}/commerce-media
+
+  storefront:
+    build:
+      args:
+        NEXT_PUBLIC_MEDUSA_BACKEND_URL: https://${API_DOMAIN:?Set API_DOMAIN}
+    environment:
+      NEXT_PUBLIC_MEDUSA_BACKEND_URL: https://${API_DOMAIN:?Set API_DOMAIN}
+      NEXT_PUBLIC_BASE_URL: https://${STORE_DOMAIN:?Set STORE_DOMAIN}
+
+volumes:
+  caddy-data:
+  caddy-config:

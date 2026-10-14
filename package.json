@@ -1,19 +1,48 @@
 {
-  "name": "medusa-inspired-commerce",
+  "name": "enterprise-commerce-platform",
   "private": true,
-  "version": "0.1.0",
-  "workspaces": ["apps/*", "packages/*"],
+  "packageManager": "npm@11.12.1",
+  "engines": {
+    "node": ">=22.22.0"
+  },
   "scripts": {
-    "dev": "npm run dev --workspace=@commerce/api",
-    "dev:storefront": "npm run dev --workspace=@commerce/storefront",
-    "build": "npm run build --workspace=@commerce/api",
-    "build:storefront": "npm run build --workspace=@commerce/storefront",
-    "typecheck": "npm run typecheck --workspace=@commerce/api",
-    "typecheck:storefront": "npm run typecheck --workspace=@commerce/storefront",
-    "db:generate": "npm run db:generate --workspace=@commerce/api",
-    "db:migrate": "npm run db:migrate --workspace=@commerce/api",
-    "db:seed": "npm run db:seed --workspace=@commerce/api",
-    "test": "npm run test --workspace=@commerce/api",
-    "test:e2e": "tsx scripts/test-e2e-flow.ts"
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "start": "turbo start",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "backend:seed": "turbo seed --filter=@dtc/backend",
+    "backend:dev": "turbo dev --filter=@dtc/backend",
+    "storefront:dev": "turbo dev --filter=@dtc/storefront"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.0.5",
+      "@types/react-dom": "19.0.5",
+      "tsconfig-paths": "^4.2.0"
+    }
+  },
+  "devDependencies": {
+    "@medusajs/eslint-plugin": "2.21.2",
+    "ajv": "^8.13.0",
+    "eslint": "^9.39.4",
+    "jiti": "^2.7.0",
+    "prettier": "^3.2.5",
+    "react": "^19.0.5",
+    "react-dom": "^19.0.5",
+    "turbo": "^2.0.14"
+  },
+  "workspaces": [
+    "apps/**",
+    "!apps/backend/.medusa/**"
+  ],
+  "overrides": {
+    "eslint": {
+      "ajv": "^6.12.4"
+    },
+    "@eslint/eslintrc": {
+      "ajv": "^6.12.4"
+    }
   }
 }

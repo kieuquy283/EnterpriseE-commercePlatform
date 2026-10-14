@@ -1,0 +1,37 @@
+name: Deploy single-VM demo
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: GitHub environment with SSH secrets and approval rules
+        required: true
+        type: choice
+        options: [staging, production]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target }}
+    timeout-minutes: 45
+    steps:
+      - name: Configure SSH
+        env:
+          SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d "$RUNNER_TEMP/commerce-ssh"
+          printf '%s\n' "$SSH_KEY" > "$RUNNER_TEMP/commerce-ssh/key"
+          printf '%s\n' "$KNOWN_HOSTS" > "$RUNNER_TEMP/commerce-ssh/known_hosts"
+          chmod 600 "$RUNNER_TEMP/commerce-ssh/key" "$RUNNER_TEMP/commerce-ssh/known_hosts"
+      - name: Build, migrate and switch containers
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          REVISION: ${{ github.sha }}
+        run: |
+          ssh -i "$RUNNER_TEMP/commerce-ssh/key" -o UserKnownHostsFile="$RUNNER_TEMP/commerce-ssh/known_hosts" -o StrictHostKeyChecking=yes "$DEPLOY_USER@$DEPLOY_HOST" \
+            "cd /srv/commerce && git diff --quiet && git diff --cached --quiet && git fetch origin $REVISION && git checkout --detach $REVISION && docker compose -f docker-compose.yml -f deploy/compose.prod.yml build backend storefront && docker compose -f docker-compose.yml -f deploy/compose.prod.yml run --rm -w /app/apps/backend backend npx medusa db:migrate && docker compose -f docker-compose.yml -f deploy/compose.prod.yml --profile app up -d && docker compose -f docker-compose.yml -f deploy/compose.prod.yml ps"
+      - name: Readiness gate
+        env:
+          API_DOMAIN: ${{ secrets.API_DOMAIN }}
+        run: curl --fail --silent --show-error --retry 12 --retry-delay 5 "https://$API_DOMAIN/health"
