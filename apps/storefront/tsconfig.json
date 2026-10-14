@@ -18,7 +18,8 @@
       "@lib/*": ["./src/lib/*"],
       "@modules/*": ["./src/modules/*"],
       "@pages/*": ["./src/pages/*"],
-      "types/*": ["./src/types/*"]
+      "types/*": ["./src/types/*"],
+      "styles/*": ["./src/styles/*"]
     },
     "plugins": [
       {
