@@ -10,3 +10,9 @@ medusa-scaffold
 .env
 **/.env
 *.log
+
+**/.env.*
+!**/.env.template
+!**/.env.example
+**/coverage
+**/.turbo
