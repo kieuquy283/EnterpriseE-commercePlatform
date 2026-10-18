@@ -12,7 +12,7 @@ docker compose -f docker-compose.yml -f deploy/compose.prod.yml run --rm -w /app
 docker compose -f docker-compose.yml -f deploy/compose.prod.yml --profile app up -d --build
 ```
 
-Create the admin user with `npx medusa user` in the backend container, record the publishable key in the private `.env`, and rebuild storefront. Check Medusa's `https://<API_DOMAIN>/health` endpoint, the storefront, and a test checkout using cash on delivery. The container configuration and workflow have not yet passed a live deployment; rehearse in staging before production.
+Create the admin user with `npx medusa user` in the backend container, record the publishable key in the private `.env`, and rebuild storefront. Check Medusa's `https://<API_DOMAIN>/health` endpoint, the storefront, and a test checkout using cash on delivery. The backend container and local PostgreSQL/Redis startup are checked locally; rehearse the public proxy and deployment workflow in staging before production.
 
 Before each release, back up PostgreSQL to encrypted offsite storage and test restoring into staging. Target hourly recovery points and a two-hour restore. Retain image digests and prior configuration so the app can roll back without rolling back a compatible database migration. Monitor HTTP 5xx, checkout errors, Redis/DB readiness, worker processing, and backup results. Do not expose PostgreSQL or Redis publicly; the base Compose file binds their host ports to loopback only.
 

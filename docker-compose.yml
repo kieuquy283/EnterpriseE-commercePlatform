@@ -1,5 +1,14 @@
+x-service-defaults: &service-defaults
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
 services:
   postgres:
+    <<: *service-defaults
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: commerce
@@ -14,6 +23,7 @@ services:
       retries: 20
 
   redis:
+    <<: *service-defaults
     image: redis:7-alpine
     ports: ["127.0.0.1:6379:6379"]
     volumes: ["redis-data:/data"]
@@ -24,24 +34,47 @@ services:
       timeout: 3s
       retries: 20
 
-  backend:
+  migrate:
     profiles: ["app"]
+    image: commerce-backend:local
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    working_dir: /app/apps/backend/.medusa/server
+    command: ["node", "../../../../node_modules/@medusajs/cli/cli.js", "db:migrate"]
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://commerce:${POSTGRES_PASSWORD:-commerce-local-only}@postgres:5432/commerce?sslmode=disable
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-local-change-this-jwt-secret}
+      COOKIE_SECRET: ${COOKIE_SECRET:-local-change-this-cookie-secret}
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+  backend:
+    <<: *service-defaults
+    profiles: ["app"]
+    image: commerce-backend:local
     build:
       context: .
       dockerfile: apps/backend/Dockerfile
     environment:
-      DATABASE_URL: postgresql://commerce:${POSTGRES_PASSWORD:-commerce-local-only}@postgres:5432/commerce
+      DATABASE_URL: postgresql://commerce:${POSTGRES_PASSWORD:-commerce-local-only}@postgres:5432/commerce?sslmode=disable
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-local-change-this-jwt-secret}
       COOKIE_SECRET: ${COOKIE_SECRET:-local-change-this-cookie-secret}
-      STORE_CORS: http://localhost:8000
-      ADMIN_CORS: http://localhost:9000
-      AUTH_CORS: http://localhost:8000,http://localhost:9000
+      STORE_CORS: ${STORE_CORS:-http://localhost:8000}
+      ADMIN_CORS: ${ADMIN_CORS:-http://localhost:9000}
+      AUTH_CORS: ${AUTH_CORS:-http://localhost:8000,http://localhost:9000}
+      NODE_ENV: production
+      LOG_LEVEL: ${LOG_LEVEL:-info}
       WORKER_MODE: server
     ports: ["127.0.0.1:9000:9000"]
     depends_on:
       postgres: { condition: service_healthy }
       redis: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:9000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
       interval: 10s
@@ -50,22 +83,28 @@ services:
       retries: 10
 
   worker:
+    <<: *service-defaults
     profiles: ["app"]
+    image: commerce-backend:local
     build:
       context: .
       dockerfile: apps/backend/Dockerfile
     environment:
-      DATABASE_URL: postgresql://commerce:${POSTGRES_PASSWORD:-commerce-local-only}@postgres:5432/commerce
+      DATABASE_URL: postgresql://commerce:${POSTGRES_PASSWORD:-commerce-local-only}@postgres:5432/commerce?sslmode=disable
       REDIS_URL: redis://redis:6379
       JWT_SECRET: ${JWT_SECRET:-local-change-this-jwt-secret}
       COOKIE_SECRET: ${COOKIE_SECRET:-local-change-this-cookie-secret}
+      NODE_ENV: production
+      LOG_LEVEL: ${LOG_LEVEL:-info}
       WORKER_MODE: worker
       ADMIN_DISABLED: "true"
     depends_on:
       postgres: { condition: service_healthy }
       redis: { condition: service_healthy }
+      migrate: { condition: service_completed_successfully }
 
   storefront:
+    <<: *service-defaults
     profiles: ["app"]
     build:
       context: .
