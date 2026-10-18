@@ -1,5 +1,38 @@
 # Custom API Routes
 
+## Commerce API
+
+The backend uses Medusa's built-in Store API for authentication, product
+details, and cart operations. These endpoints already apply Medusa's pricing,
+inventory, customer ownership, and validation rules:
+
+| Capability | Endpoint |
+| --- | --- |
+| Register | `POST /auth/customer/emailpass/register` |
+| Login | `POST /auth/customer/emailpass` |
+| Product catalog | `GET /store/products` |
+| Search products by name | `GET /store/products?q=<name>` |
+| Product details | `GET /store/products/:id` or `?handle=<handle>` |
+| Create/view cart | `POST /store/carts`, `GET /store/carts/:id` |
+| Add to cart | `POST /store/carts/:id/line-items` |
+| Remove from cart | `DELETE /store/carts/:id/line-items/:line_id` |
+
+For a smaller catalog response, the custom `GET /store/catalog` route supports
+`q`, `limit`, and `offset` and searches product titles and descriptions.
+
+Custom aliases are also available for the requested use cases:
+
+| Capability | Custom endpoint |
+| --- | --- |
+| Register | `POST /store/auth/register` |
+| Login | `POST /store/auth/login` |
+| Product details | `GET /store/catalog/:productId` |
+| Create/view cart | `POST /store/cart`, `GET /store/cart?cart_id=<id>` |
+| Add to cart | `POST /store/cart/:cartId/items` |
+| Remove from cart | `DELETE /store/cart/:cartId/items/:lineItemId` |
+
+---
+
 An API Route is a REST API endpoint.
 
 An API Route is created in a TypeScript or JavaScript file under the `/src/api` directory of your Medusa application. The file’s name must be `route.ts` or `route.js`.
