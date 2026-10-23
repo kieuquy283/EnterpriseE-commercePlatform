@@ -59,6 +59,14 @@ Set-Location ../..
 
 Đổi email và mật khẩu Admin trước khi chạy. Seed tạo publishable API key tên **Storefront** và liên kết nó với sales channel. Seed bỏ qua nếu vùng `Vietnam` đã tồn tại; bước này dành cho database mới.
 
+Để bổ sung riêng hồ sơ Customer và giỏ hàng mẫu phục vụ ERD sau khi đã có dữ liệu nền, chạy từ gốc repository:
+
+```powershell
+npm run backend:seed:sample
+```
+
+Lệnh tạo bộ mẫu áo thun × 2, túi canvas × 1 và lưu ID vào `docs/erd/evidence/seed-sample/manifest.json`. Xem [hướng dẫn seed sample](docs/erd/seed-sample-guide.md) để biết điều kiện và cách chạy lại.
+
 ### 4. Chạy Medusa và lấy publishable API key
 
 Trong **PowerShell thứ nhất**, tại gốc repo:
