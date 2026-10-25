@@ -14,3 +14,4 @@ medusa-scaffold/
 !.env.template
 coverage/
 .DS_Store
+.agents/

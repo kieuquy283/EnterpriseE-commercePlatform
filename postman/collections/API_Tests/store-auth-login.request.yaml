@@ -1,0 +1,5 @@
+$kind: http-request
+name: store/auth/login
+url: http://localhost:9000/store/auth/login
+method: GET
+order: 8000

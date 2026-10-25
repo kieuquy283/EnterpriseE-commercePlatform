@@ -1,0 +1,14 @@
+$kind: http-request
+name: store/carts
+url: http://localhost:9000/store/carts
+method: POST
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+body:
+  type: json
+  content: "{\r
+
+    \  \"region_id\": \"{{region_id}}\"\r
+
+    }"
+order: 4000

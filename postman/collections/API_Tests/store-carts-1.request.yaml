@@ -1,0 +1,7 @@
+$kind: http-request
+name: store/carts
+url: http://localhost:9000/store/carts/{{cart_id}}
+method: GET
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+order: 6000

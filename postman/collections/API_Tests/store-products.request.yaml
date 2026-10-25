@@ -1,0 +1,23 @@
+$kind: http-request
+name: store/products
+url: http://localhost:9000/store/products?region_id={{region_id}}
+method: GET
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+queryParams:
+  region_id: "{{region_id}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      const products = pm.response.json().products || []
+      const variantId = products.flatMap((product) => product.variants || [])[0]?.id
+
+      pm.test("Response có variant_id", () => {
+        pm.expect(variantId).to.be.a("string")
+      })
+
+      if (variantId) {
+        pm.environment.set("variant_id", variantId)
+      }
+    language: text/javascript
+order: 3000

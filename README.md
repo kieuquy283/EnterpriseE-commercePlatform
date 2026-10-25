@@ -116,6 +116,7 @@ Script kiểm tra đăng ký, đăng nhập, giỏ hàng, vận chuyển, COD, t
 Các lệnh kiểm tra mã nguồn:
 
 ```powershell
+npm run test:integration:http --workspace=@dtc/backend -- integration-tests/http/checkout-order.spec.ts
 npm run lint --workspace=@dtc/backend
 npm run lint --workspace=@dtc/storefront
 npm run typecheck --workspace=@dtc/backend
@@ -124,6 +125,8 @@ npm run build --workspace=@dtc/backend
 npm run build --workspace=@dtc/storefront
 docker compose config --quiet
 ```
+
+HTTP integration test checkout/order khởi tạo database riêng cho test, chạy dữ liệu seed trong database đó rồi xóa database khi hoàn tất. Tài khoản PostgreSQL trong `apps/backend/.env` cần quyền tạo database; test không dùng database commerce hiện tại. Redis được tắt riêng trong runner này, không thay đổi cấu hình môi trường của backend.
 
 Khi build storefront, `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` phải được đặt thành key hợp lệ; Next.js nhúng biến `NEXT_PUBLIC_*` lúc build. Nếu đổi key sau đó, build lại storefront.
 

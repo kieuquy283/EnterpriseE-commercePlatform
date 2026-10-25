@@ -1,0 +1,14 @@
+$kind: http-request
+url: http://localhost:9000/health
+method: GET
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"Status là 200\", function () {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });"
+    language: text/javascript
+order: 1000
