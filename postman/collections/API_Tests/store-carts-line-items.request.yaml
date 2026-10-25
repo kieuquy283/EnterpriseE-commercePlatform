@@ -1,0 +1,16 @@
+$kind: http-request
+name: store/carts/line-items
+url: http://localhost:9000/store/carts/{{cart_id}}/line-items
+method: POST
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+body:
+  type: json
+  content: "{\r
+
+    \  \"variant_id\": \"{{variant_id}}\",\r
+
+    \  \"quantity\": 1\r
+
+    }"
+order: 5000

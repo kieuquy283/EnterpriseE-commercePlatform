@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "skills": {
+    "building-admin-dashboard-customizations": {
+      "source": "medusajs/medusa-agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/medusa-dev/skills/building-admin-dashboard-customizations/SKILL.md",
+      "computedHash": "1d28d196d3a3c88e90fd6aac2957c24a130b43cff631d622278496987851166d"
+    },
+    "building-with-medusa": {
+      "source": "medusajs/medusa-agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/medusa-dev/skills/building-with-medusa/SKILL.md",
+      "computedHash": "a0ca76a69835fdad35aab235b5835ac3ecea8b02677cacc3af546e59e817cf02"
+    },
+    "db-generate": {
+      "source": "medusajs/medusa-agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/medusa-dev/skills/db-generate/SKILL.md",
+      "computedHash": "ada2c0bdf020055310086c2697ca492a5d189c8e17d2793d8cb1134a609baaf4"
+    },
+    "db-migrate": {
+      "source": "medusajs/medusa-agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/medusa-dev/skills/db-migrate/SKILL.md",
+      "computedHash": "0a6bf470a5313ead6b31440349404ee6a96086427602bd499a6fef846f49ae6c"
+    },
+    "new-user": {
+      "source": "medusajs/medusa-agent-skills",
+      "sourceType": "github",
+      "skillPath": "plugins/medusa-dev/skills/new-user/SKILL.md",
+      "computedHash": "9df255145bc978dd21390c725ee372d82126fc08416c67fb1d278457a93253a1"
+    }
+  }
+}

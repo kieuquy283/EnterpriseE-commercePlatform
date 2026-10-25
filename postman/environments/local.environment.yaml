@@ -1,0 +1,12 @@
+name: local
+values:
+  - key: base_url
+    value: ''
+  - key: publishable_key
+    value: ''
+  - key: region_id
+    value: ''
+  - key: variant_id
+    value: ''
+  - key: cart_id
+    value: ''

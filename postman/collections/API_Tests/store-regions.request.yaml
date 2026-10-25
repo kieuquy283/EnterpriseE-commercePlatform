@@ -1,0 +1,29 @@
+$kind: http-request
+name: store/regions
+url: http://localhost:9000/store/regions
+method: GET
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      const jsonData = pm.response.json();
+      const region = jsonData.regions.find((item) => item.name === "Vietnam");
+
+      pm.test("Tìm thấy vùng Vietnam", () => {
+        pm.expect(region, "Vietnam region not found in the response").to.exist;
+      });
+
+      if (region) {
+        pm.environment.set("region_id", region.id);
+      }
+
+      pm.test("Status code is 200", () => {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Response has correct structure", () => {
+          pm.expect(jsonData).to.have.property("regions");
+          pm.expect(jsonData).to.have.property("count");
+      });
+order: 2000

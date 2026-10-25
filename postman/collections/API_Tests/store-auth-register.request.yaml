@@ -1,0 +1,14 @@
+$kind: http-request
+name: store/auth/register
+url: http://localhost:9000/store/auth/register
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"postman-test@example.com\",\r
+
+    \  \"password\": \"TestPassword123!\"\r
+
+    }"
+order: 7000
