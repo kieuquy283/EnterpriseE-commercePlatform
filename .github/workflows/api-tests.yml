@@ -1,0 +1,39 @@
+name: API tests
+
+on:
+  pull_request:
+  push:
+    branches: [main, Medusa]
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: commerce
+          POSTGRES_PASSWORD: commerce
+          POSTGRES_DB: commerce
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U commerce -d commerce"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+    env:
+      DATABASE_URL: postgresql://commerce:commerce@localhost:5432/commerce
+      JWT_SECRET: ci-jwt-secret
+      COOKIE_SECRET: ci-cookie-secret
+      REDIS_URL: ""
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.22.0"
+          cache: npm
+      - run: npm ci --no-fund
+      - name: Run HTTP API integration tests
+        run: npm run test:integration:http --workspace=@dtc/backend -- integration-tests/http/checkout-order.spec.ts
