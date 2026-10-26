@@ -1,0 +1,232 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1760" height="2160" viewBox="0 0 1760 2160" role="img">
+<title>ERD v2 · Liên kết và xử lý thanh toán</title>
+<rect width="100%" height="100%" fill="white"/>
+<text x="60" y="72" font-family="Arial, sans-serif" font-size="34" fill="#172033" text-anchor="start" font-weight="700">ERD v2 · Liên kết và xử lý thanh toán</text>
+<text x="60" y="112" font-family="Arial, sans-serif" font-size="17" fill="#475569" text-anchor="start">9 bảng · 9 quan hệ · trạng thái nằm ở PaymentCollection và PaymentSession</text>
+<polyline points="60,157 125,157" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+<text x="138" y="163" font-family="Arial, sans-serif" font-size="16" fill="#2563eb" text-anchor="start">FK vật lý · PostgreSQL kiểm tra</text>
+<polyline points="600,157 665,157" fill="none" stroke="#15803d" stroke-width="3" stroke-linejoin="round" stroke-dasharray="3 6"/>
+<text x="678" y="163" font-family="Arial, sans-serif" font-size="16" fill="#15803d" text-anchor="start">LINK · bảng nối module, không FK</text>
+<polyline points="1140,157 1205,157" fill="none" stroke="#b45309" stroke-width="3" stroke-linejoin="round" stroke-dasharray="11 7"/>
+<text x="1218" y="163" font-family="Arial, sans-serif" font-size="16" fill="#b45309" text-anchor="start">REF · ID / read-only, không FK</text>
+<text x="60" y="204" font-family="Arial, sans-serif" font-size="15" fill="#475569" text-anchor="start">Trang này: 9 bảng · 9 cạnh (4 FK / 4 LINK / 1 REF)</text>
+<text x="60" y="229" font-family="Arial, sans-serif" font-size="15" fill="#475569" text-anchor="start">? = NULL được phép · PK1/PK2 = PK ghép · UQ* = unique khi deleted_at IS NULL · idx = index thường</text>
+<polyline points="420,420 700,420" fill="none" stroke="#15803d" stroke-width="3" stroke-linejoin="round" stroke-dasharray="3 6"/>
+<polyline points="1340,1000 1300,1000 1300,420 1060,420" fill="none" stroke="#15803d" stroke-width="3" stroke-linejoin="round" stroke-dasharray="3 6"/>
+<polyline points="420,1000 700,1000" fill="none" stroke="#15803d" stroke-width="3" stroke-linejoin="round" stroke-dasharray="3 6"/>
+<polyline points="1340,960 1100,960 1100,1000 1060,1000" fill="none" stroke="#15803d" stroke-width="3" stroke-linejoin="round" stroke-dasharray="3 6"/>
+<polyline points="1520,860 1520,560" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1340,1040 1100,1040 1100,1580 1060,1580" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1480,560 1480,600 1120,600 1120,1400 880,1400 880,1440" fill="none" stroke="#b45309" stroke-width="3" stroke-linejoin="round" stroke-dasharray="11 7"/>
+<polyline points="700,1580 420,1580" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1060,1540 1300,1540 1300,1580 1340,1580" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+<rect x="63" y="284" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="60" y="280" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="61" y="281" width="358" height="64" rx="4" fill="#eff6ff"/>
+<rect x="60" y="280" width="5" height="280" rx="2" fill="#1d4ed8"/>
+<text x="78" y="308" font-family="Arial, sans-serif" font-size="21" fill="#1d4ed8" text-anchor="start" font-weight="700">Cart</text>
+<text x="78" y="331" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">cart</text>
+<text x="78" y="374" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="403" y="374" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="78" y="396" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">customer_id?</text>
+<text x="403" y="396" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">REF · text</text>
+<text x="78" y="418" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">currency_code</text>
+<text x="403" y="418" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">text</text>
+<text x="78" y="440" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">completed_at?</text>
+<text x="403" y="440" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">timestamp</text>
+<text x="78" y="526" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">completed_at: hoàn tất giỏ</text>
+<text x="78" y="544" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Không có cột cart.status</text>
+<rect x="703" y="284" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="700" y="280" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="701" y="281" width="358" height="64" rx="4" fill="#ecfdf5"/>
+<rect x="700" y="280" width="5" height="280" rx="2" fill="#047857"/>
+<text x="718" y="308" font-family="Arial, sans-serif" font-size="21" fill="#047857" text-anchor="start" font-weight="700">Cart × Payment</text>
+<text x="718" y="331" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">cart_payment_collection</text>
+<text x="718" y="374" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">cart_id</text>
+<text x="1043" y="374" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK1 · varchar</text>
+<text x="718" y="396" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">payment_collection_id</text>
+<text x="1043" y="396" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK2 · varchar</text>
+<text x="718" y="418" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="1043" y="418" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">idx · varchar</text>
+<text x="718" y="526" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">LINK; không FK hai phía</text>
+<text x="718" y="544" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">PK cặp không cưỡng chế 1:1</text>
+<rect x="1343" y="284" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="1340" y="280" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="1341" y="281" width="358" height="64" rx="4" fill="#ecfdf5"/>
+<rect x="1340" y="280" width="5" height="280" rx="2" fill="#047857"/>
+<text x="1358" y="308" font-family="Arial, sans-serif" font-size="21" fill="#047857" text-anchor="start" font-weight="700">PaymentSession</text>
+<text x="1358" y="331" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">payment_session</text>
+<text x="1358" y="374" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="1683" y="374" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="1358" y="396" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">payment_collection_id</text>
+<text x="1683" y="396" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">FK · text</text>
+<text x="1358" y="418" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">provider_id</text>
+<text x="1683" y="418" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">REF ngoài · text</text>
+<text x="1358" y="440" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">amount</text>
+<text x="1683" y="440" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="1358" y="462" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">status</text>
+<text x="1683" y="462" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">text</text>
+<text x="1358" y="526" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Trạng thái phiên với provider</text>
+<text x="1358" y="544" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">R25: tối đa 1 payment chưa xóa</text>
+<rect x="63" y="864" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="60" y="860" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="61" y="861" width="358" height="64" rx="4" fill="#f5f3ff"/>
+<rect x="60" y="860" width="5" height="280" rx="2" fill="#7c3aed"/>
+<text x="78" y="888" font-family="Arial, sans-serif" font-size="21" fill="#7c3aed" text-anchor="start" font-weight="700">Order</text>
+<text x="78" y="911" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">order</text>
+<text x="78" y="954" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="403" y="954" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="78" y="976" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">customer_id?</text>
+<text x="403" y="976" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">REF · text</text>
+<text x="78" y="998" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">currency_code</text>
+<text x="403" y="998" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">text</text>
+<text x="78" y="1020" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">status</text>
+<text x="403" y="1020" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">enum</text>
+<text x="78" y="1042" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">version</text>
+<text x="403" y="1042" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">integer</text>
+<text x="78" y="1106" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Lượng hàng phải đọc đúng version</text>
+<text x="78" y="1124" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">cart_id nằm ở bảng nối order_cart</text>
+<rect x="703" y="864" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="700" y="860" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="701" y="861" width="358" height="64" rx="4" fill="#ecfdf5"/>
+<rect x="700" y="860" width="5" height="280" rx="2" fill="#047857"/>
+<text x="718" y="888" font-family="Arial, sans-serif" font-size="21" fill="#047857" text-anchor="start" font-weight="700">Order × Payment</text>
+<text x="718" y="911" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">order_payment_collection</text>
+<text x="718" y="954" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">order_id</text>
+<text x="1043" y="954" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK1 · varchar</text>
+<text x="718" y="976" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">payment_collection_id</text>
+<text x="1043" y="976" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK2 · varchar</text>
+<text x="718" y="998" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="1043" y="998" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">idx · varchar</text>
+<text x="718" y="1106" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">API order.payment_collections: list</text>
+<text x="718" y="1124" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">LINK; không UNIQUE riêng từng ID</text>
+<rect x="1343" y="864" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="1340" y="860" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="1341" y="861" width="358" height="64" rx="4" fill="#ecfdf5"/>
+<rect x="1340" y="860" width="5" height="280" rx="2" fill="#047857"/>
+<text x="1358" y="888" font-family="Arial, sans-serif" font-size="21" fill="#047857" text-anchor="start" font-weight="700">PaymentCollection</text>
+<text x="1358" y="911" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">payment_collection</text>
+<text x="1358" y="954" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="1683" y="954" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="1358" y="976" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">currency_code</text>
+<text x="1683" y="976" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">text</text>
+<text x="1358" y="998" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">amount</text>
+<text x="1683" y="998" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="1358" y="1020" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">status</text>
+<text x="1683" y="1020" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">text</text>
+<text x="1358" y="1042" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">captured_amount?</text>
+<text x="1683" y="1042" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="1358" y="1064" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">refunded_amount?</text>
+<text x="1683" y="1064" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="1358" y="1106" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Trạng thái tổng hợp thanh toán</text>
+<text x="1358" y="1124" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Còn authorized_amount / raw_* trong DB</text>
+<rect x="63" y="1444" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="60" y="1440" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="61" y="1441" width="358" height="64" rx="4" fill="#ecfdf5"/>
+<rect x="60" y="1440" width="5" height="280" rx="2" fill="#047857"/>
+<text x="78" y="1468" font-family="Arial, sans-serif" font-size="21" fill="#047857" text-anchor="start" font-weight="700">Capture</text>
+<text x="78" y="1491" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">capture</text>
+<text x="78" y="1534" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="403" y="1534" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="78" y="1556" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">payment_id</text>
+<text x="403" y="1556" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">FK · text</text>
+<text x="78" y="1578" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">amount</text>
+<text x="403" y="1578" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="78" y="1686" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Các lần capture của payment</text>
+<text x="78" y="1704" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">amount đi kèm raw_amount trong DB</text>
+<rect x="703" y="1444" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="700" y="1440" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="701" y="1441" width="358" height="64" rx="4" fill="#ecfdf5"/>
+<rect x="700" y="1440" width="5" height="280" rx="2" fill="#047857"/>
+<text x="718" y="1468" font-family="Arial, sans-serif" font-size="21" fill="#047857" text-anchor="start" font-weight="700">Payment</text>
+<text x="718" y="1491" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">payment</text>
+<text x="718" y="1534" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="1043" y="1534" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="718" y="1556" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">payment_collection_id</text>
+<text x="1043" y="1556" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">FK · text</text>
+<text x="718" y="1578" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">payment_session_id</text>
+<text x="1043" y="1578" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">UQ* REF · text</text>
+<text x="718" y="1600" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">amount</text>
+<text x="1043" y="1600" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="718" y="1622" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">captured_at?</text>
+<text x="1043" y="1622" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">timestamp</text>
+<text x="718" y="1644" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">canceled_at?</text>
+<text x="1043" y="1644" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">timestamp</text>
+<text x="718" y="1686" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Không có cột payment.status</text>
+<text x="718" y="1704" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Session: UNIQUE active nhưng không FK</text>
+<rect x="1343" y="1444" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="1340" y="1440" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="1341" y="1441" width="358" height="64" rx="4" fill="#ecfdf5"/>
+<rect x="1340" y="1440" width="5" height="280" rx="2" fill="#047857"/>
+<text x="1358" y="1468" font-family="Arial, sans-serif" font-size="21" fill="#047857" text-anchor="start" font-weight="700">Refund</text>
+<text x="1358" y="1491" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">refund</text>
+<text x="1358" y="1534" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="1683" y="1534" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="1358" y="1556" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">payment_id</text>
+<text x="1683" y="1556" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">FK · text</text>
+<text x="1358" y="1578" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">amount</text>
+<text x="1683" y="1578" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="1358" y="1600" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">refund_reason_id?</text>
+<text x="1683" y="1600" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">REF ngoài · text</text>
+<text x="1358" y="1686" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Các lần hoàn tiền</text>
+<text x="1358" y="1704" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">RefundReason nằm ngoài phạm vi hình</text>
+<rect x="539.0" y="407.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="560.0" y="425.0" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">R19</text>
+<rect x="433" y="380" width="18.0" height="22" rx="2" fill="white"/>
+<text x="442.0" y="396" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">1</text>
+<rect x="651.0" y="435" width="36.0" height="22" rx="2" fill="white"/>
+<text x="669.0" y="451" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1279.0" y="697.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="1300.0" y="715.0" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">R20</text>
+<rect x="1309.0" y="960" width="18.0" height="22" rx="2" fill="white"/>
+<text x="1318.0" y="976" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">1</text>
+<rect x="1073" y="435" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1091.0" y="451" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="539.0" y="987.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="560.0" y="1005.0" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">R21</text>
+<rect x="433" y="960" width="18.0" height="22" rx="2" fill="white"/>
+<text x="442.0" y="976" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">1</text>
+<rect x="651.0" y="1015" width="36.0" height="22" rx="2" fill="white"/>
+<text x="669.0" y="1031" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1199.0" y="947.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="1220.0" y="965.0" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">R22</text>
+<rect x="1309.0" y="920" width="18.0" height="22" rx="2" fill="white"/>
+<text x="1318.0" y="936" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">1</text>
+<rect x="1073" y="1015" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1091.0" y="1031" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1499.0" y="697.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="1520.0" y="715.0" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">R23</text>
+<rect x="1532" y="832" width="18.0" height="22" rx="2" fill="white"/>
+<text x="1541.0" y="848" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">1</text>
+<rect x="1472.0" y="569" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1490.0" y="585" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1079.0" y="1297.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="1100.0" y="1315.0" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">R24</text>
+<rect x="1309.0" y="1000" width="18.0" height="22" rx="2" fill="white"/>
+<text x="1318.0" y="1016" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">1</text>
+<rect x="1073" y="1595" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1091.0" y="1611" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1099.0" y="987.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="1120.0" y="1005.0" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">R25</text>
+<rect x="1512" y="569" width="18.0" height="22" rx="2" fill="white"/>
+<text x="1521.0" y="585" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">1</text>
+<rect x="829.0" y="1412" width="39.0" height="22" rx="2" fill="white"/>
+<text x="848.5" y="1428" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..1*</text>
+<rect x="539.0" y="1567.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="560.0" y="1585.0" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">R26</text>
+<rect x="669.0" y="1540" width="18.0" height="22" rx="2" fill="white"/>
+<text x="678.0" y="1556" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">1</text>
+<rect x="433" y="1595" width="36.0" height="22" rx="2" fill="white"/>
+<text x="451.0" y="1611" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1159.0" y="1527.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="1180.0" y="1545.0" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">R27</text>
+<rect x="1073" y="1500" width="18.0" height="22" rx="2" fill="white"/>
+<text x="1082.0" y="1516" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">1</text>
+<rect x="1291.0" y="1595" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1309.0" y="1611" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">0..N</text>
+<text x="60" y="1977" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="start">Số đầu cạnh: 1 / 0..1 / 0..N. Với LINK hoặc REF, ID NOT NULL không bảo đảm bản ghi đích tồn tại.</text>
+<text x="60" y="2006" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="start">Với LINK, 0..N ở phía bảng nối là số bản ghi link DB có thể lưu; cardinality của API được ghi riêng.</text>
+<text x="60" y="2035" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="start">PK ghép chỉ ngăn trùng cặp. API Cart–Order / Cart–Payment singular không có nghĩa DB cưỡng chế 1:1. R25: 0..1* chỉ tính payment chưa xóa.</text>
+<text x="60" y="2064" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="start">Nguồn: catalog 24/10/2026 cho 20 bảng; Customer/Product từ snapshot v1 17/10/2026. Medusa 2.21.2. Bản vẽ: 25/10/2026.</text>
+<text x="60" y="2093" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="start">Cột được chọn để đọc nghiệp vụ; địa chỉ, thuế, shipping, provider và các module hỗ trợ không được vẽ đầy đủ. Chưa chạy checkout trong công việc ERD.</text>
+</svg>

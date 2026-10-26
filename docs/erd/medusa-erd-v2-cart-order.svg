@@ -1,0 +1,287 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2320" height="1660" viewBox="0 0 2320 1660" role="img">
+<title>ERD v2 · Cart, Order và snapshot dòng hàng</title>
+<rect width="100%" height="100%" fill="white"/>
+<text x="60" y="72" font-family="Arial, sans-serif" font-size="34" fill="#172033" text-anchor="start" font-weight="700">ERD v2 · Cart, Order và snapshot dòng hàng</text>
+<text x="60" y="112" font-family="Arial, sans-serif" font-size="17" fill="#475569" text-anchor="start">10 bảng · 14 quan hệ · giữ CartLineItem, OrderItem và OrderLineItem thành ba thực thể riêng</text>
+<polyline points="60,157 125,157" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+<text x="138" y="163" font-family="Arial, sans-serif" font-size="16" fill="#2563eb" text-anchor="start">FK vật lý · PostgreSQL kiểm tra</text>
+<polyline points="600,157 665,157" fill="none" stroke="#15803d" stroke-width="3" stroke-linejoin="round" stroke-dasharray="3 6"/>
+<text x="678" y="163" font-family="Arial, sans-serif" font-size="16" fill="#15803d" text-anchor="start">LINK · bảng nối module, không FK</text>
+<polyline points="1140,157 1205,157" fill="none" stroke="#b45309" stroke-width="3" stroke-linejoin="round" stroke-dasharray="11 7"/>
+<text x="1218" y="163" font-family="Arial, sans-serif" font-size="16" fill="#b45309" text-anchor="start">REF · ID / read-only, không FK</text>
+<text x="60" y="204" font-family="Arial, sans-serif" font-size="15" fill="#475569" text-anchor="start">Trang này: 10 bảng · 14 cạnh (6 FK / 2 LINK / 6 REF)</text>
+<text x="60" y="229" font-family="Arial, sans-serif" font-size="15" fill="#475569" text-anchor="start">? = NULL được phép · PK1/PK2 = PK ghép · UQ* = unique khi deleted_at IS NULL · idx = index thường</text>
+<polyline points="420,420 520,420" fill="none" stroke="#b45309" stroke-width="3" stroke-linejoin="round" stroke-dasharray="11 7"/>
+<polyline points="880,420 980,420" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1800,420 1900,420" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1900,380 1860,380 1860,240 1380,240 1380,420 1340,420" fill="none" stroke="#b45309" stroke-width="3" stroke-linejoin="round" stroke-dasharray="11 7"/>
+<polyline points="1440,420 1400,420 1400,380 1340,380" fill="none" stroke="#b45309" stroke-width="3" stroke-linejoin="round" stroke-dasharray="11 7"/>
+<polyline points="240,560 240,900 700,900 700,940" fill="none" stroke="#b45309" stroke-width="3" stroke-linejoin="round" stroke-dasharray="11 7"/>
+<polyline points="880,1080 920,1080 920,900 1400,900 1400,1080 1440,1080" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1900,1080 1800,1080" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="1800,1040 1900,1040" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="2080,560 2080,940" fill="none" stroke="#b45309" stroke-width="3" stroke-linejoin="round" stroke-dasharray="11 7"/>
+<polyline points="1620,560 1620,900 2040,900 2040,940" fill="none" stroke="#b45309" stroke-width="3" stroke-linejoin="round" stroke-dasharray="11 7"/>
+<polyline points="520,1080 420,1080" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="880,1040 940,1040 940,1080 980,1080" fill="none" stroke="#15803d" stroke-width="3" stroke-linejoin="round" stroke-dasharray="3 6"/>
+<polyline points="700,560 700,600 1160,600 1160,940" fill="none" stroke="#15803d" stroke-width="3" stroke-linejoin="round" stroke-dasharray="3 6"/>
+<rect x="63" y="284" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="60" y="280" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="61" y="281" width="358" height="64" rx="4" fill="#f1f5f9"/>
+<rect x="60" y="280" width="5" height="280" rx="2" fill="#475569"/>
+<text x="78" y="308" font-family="Arial, sans-serif" font-size="21" fill="#475569" text-anchor="start" font-weight="700">Customer</text>
+<text x="78" y="331" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">customer</text>
+<text x="78" y="374" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="403" y="374" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="78" y="396" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">email?</text>
+<text x="403" y="396" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">text</text>
+<text x="78" y="418" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">has_account</text>
+<text x="403" y="418" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">boolean</text>
+<text x="78" y="526" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">UQ*: (email, has_account)</text>
+<text x="78" y="544" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Nguồn: snapshot v1 ngày 17/10</text>
+<rect x="523" y="284" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="520" y="280" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="521" y="281" width="358" height="64" rx="4" fill="#eff6ff"/>
+<rect x="520" y="280" width="5" height="280" rx="2" fill="#1d4ed8"/>
+<text x="538" y="308" font-family="Arial, sans-serif" font-size="21" fill="#1d4ed8" text-anchor="start" font-weight="700">Cart</text>
+<text x="538" y="331" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">cart</text>
+<text x="538" y="374" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="863" y="374" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="538" y="396" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">customer_id?</text>
+<text x="863" y="396" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">REF · text</text>
+<text x="538" y="418" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">currency_code</text>
+<text x="863" y="418" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">text</text>
+<text x="538" y="440" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">completed_at?</text>
+<text x="863" y="440" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">timestamp</text>
+<text x="538" y="526" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">completed_at: hoàn tất giỏ</text>
+<text x="538" y="544" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Không có cột cart.status</text>
+<rect x="983" y="284" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="980" y="280" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="981" y="281" width="358" height="64" rx="4" fill="#eff6ff"/>
+<rect x="980" y="280" width="5" height="280" rx="2" fill="#1d4ed8"/>
+<text x="998" y="308" font-family="Arial, sans-serif" font-size="21" fill="#1d4ed8" text-anchor="start" font-weight="700">CartLineItem</text>
+<text x="998" y="331" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">cart_line_item</text>
+<text x="998" y="374" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="1323" y="374" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="998" y="396" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">cart_id</text>
+<text x="1323" y="396" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">FK · text</text>
+<text x="998" y="418" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">product_id?</text>
+<text x="1323" y="418" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">REF · text</text>
+<text x="998" y="440" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">variant_id?</text>
+<text x="1323" y="440" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">REF · text</text>
+<text x="998" y="462" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">quantity</text>
+<text x="1323" y="462" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">integer</text>
+<text x="998" y="484" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">unit_price</text>
+<text x="1323" y="484" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="998" y="526" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">quantity: integer</text>
+<text x="998" y="544" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Snapshot dòng giỏ hàng</text>
+<rect x="1443" y="284" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="1440" y="280" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="1441" y="281" width="358" height="64" rx="4" fill="#ecfeff"/>
+<rect x="1440" y="280" width="5" height="280" rx="2" fill="#0e7490"/>
+<text x="1458" y="308" font-family="Arial, sans-serif" font-size="21" fill="#0e7490" text-anchor="start" font-weight="700">Product</text>
+<text x="1458" y="331" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">product</text>
+<text x="1458" y="374" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="1783" y="374" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="1458" y="396" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">title</text>
+<text x="1783" y="396" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">text</text>
+<text x="1458" y="418" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">handle</text>
+<text x="1783" y="418" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">UQ* · text</text>
+<text x="1458" y="440" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">status</text>
+<text x="1783" y="440" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">text</text>
+<text x="1458" y="526" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Catalog; giá thuộc Pricing</text>
+<text x="1458" y="544" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Nguồn: snapshot v1 ngày 17/10</text>
+<rect x="1903" y="284" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="1900" y="280" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="1901" y="281" width="358" height="64" rx="4" fill="#ecfeff"/>
+<rect x="1900" y="280" width="5" height="280" rx="2" fill="#0e7490"/>
+<text x="1918" y="308" font-family="Arial, sans-serif" font-size="21" fill="#0e7490" text-anchor="start" font-weight="700">ProductVariant</text>
+<text x="1918" y="331" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">product_variant</text>
+<text x="1918" y="374" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="2243" y="374" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="1918" y="396" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">product_id?</text>
+<text x="2243" y="396" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">FK · text</text>
+<text x="1918" y="418" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">sku?</text>
+<text x="2243" y="418" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">UQ* · text</text>
+<text x="1918" y="440" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">manage_inventory</text>
+<text x="2243" y="440" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">boolean</text>
+<text x="1918" y="462" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">allow_backorder</text>
+<text x="2243" y="462" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">boolean</text>
+<text x="1918" y="526" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Cấu hình bán của sản phẩm</text>
+<text x="1918" y="544" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Không lưu số tồn trên variant</text>
+<rect x="63" y="944" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="60" y="940" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="61" y="941" width="358" height="64" rx="4" fill="#f5f3ff"/>
+<rect x="60" y="940" width="5" height="280" rx="2" fill="#7c3aed"/>
+<text x="78" y="968" font-family="Arial, sans-serif" font-size="21" fill="#7c3aed" text-anchor="start" font-weight="700">OrderSummary</text>
+<text x="78" y="991" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">order_summary</text>
+<text x="78" y="1034" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="403" y="1034" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="78" y="1056" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">order_id</text>
+<text x="403" y="1056" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">FK · text</text>
+<text x="78" y="1078" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">version</text>
+<text x="403" y="1078" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">integer</text>
+<text x="78" y="1100" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">totals?</text>
+<text x="403" y="1100" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">jsonb</text>
+<text x="78" y="1186" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Tổng hợp theo phiên bản</text>
+<text x="78" y="1204" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Không suy ra quan hệ 1:1</text>
+<rect x="523" y="944" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="520" y="940" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="521" y="941" width="358" height="64" rx="4" fill="#f5f3ff"/>
+<rect x="520" y="940" width="5" height="280" rx="2" fill="#7c3aed"/>
+<text x="538" y="968" font-family="Arial, sans-serif" font-size="21" fill="#7c3aed" text-anchor="start" font-weight="700">Order</text>
+<text x="538" y="991" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">order</text>
+<text x="538" y="1034" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="863" y="1034" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="538" y="1056" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">customer_id?</text>
+<text x="863" y="1056" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">REF · text</text>
+<text x="538" y="1078" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">currency_code</text>
+<text x="863" y="1078" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">text</text>
+<text x="538" y="1100" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">status</text>
+<text x="863" y="1100" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">enum</text>
+<text x="538" y="1122" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">version</text>
+<text x="863" y="1122" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">integer</text>
+<text x="538" y="1186" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Lượng hàng phải đọc đúng version</text>
+<text x="538" y="1204" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">cart_id nằm ở bảng nối order_cart</text>
+<rect x="983" y="944" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="980" y="940" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="981" y="941" width="358" height="64" rx="4" fill="#f5f3ff"/>
+<rect x="980" y="940" width="5" height="280" rx="2" fill="#7c3aed"/>
+<text x="998" y="968" font-family="Arial, sans-serif" font-size="21" fill="#7c3aed" text-anchor="start" font-weight="700">Order × Cart</text>
+<text x="998" y="991" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">order_cart</text>
+<text x="998" y="1034" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">order_id</text>
+<text x="1323" y="1034" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK1 · varchar</text>
+<text x="998" y="1056" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">cart_id</text>
+<text x="1323" y="1056" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK2 · varchar</text>
+<text x="998" y="1078" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="1323" y="1078" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">idx · varchar</text>
+<text x="998" y="1186" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">LINK; không FK hai phía</text>
+<text x="998" y="1204" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">PK cặp không cưỡng chế 1:1</text>
+<rect x="1443" y="944" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="1440" y="940" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="1441" y="941" width="358" height="64" rx="4" fill="#f5f3ff"/>
+<rect x="1440" y="940" width="5" height="280" rx="2" fill="#7c3aed"/>
+<text x="1458" y="968" font-family="Arial, sans-serif" font-size="21" fill="#7c3aed" text-anchor="start" font-weight="700">OrderItem</text>
+<text x="1458" y="991" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">order_item</text>
+<text x="1458" y="1034" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="1783" y="1034" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="1458" y="1056" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">order_id</text>
+<text x="1783" y="1056" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">FK · text</text>
+<text x="1458" y="1078" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">item_id</text>
+<text x="1783" y="1078" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">FK · text</text>
+<text x="1458" y="1100" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">version</text>
+<text x="1783" y="1100" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">integer</text>
+<text x="1458" y="1122" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">quantity</text>
+<text x="1783" y="1122" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="1458" y="1186" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Lượng đặt / xử lý theo version</text>
+<text x="1458" y="1204" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">item_id không UNIQUE</text>
+<rect x="1903" y="944" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="1900" y="940" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="1901" y="941" width="358" height="64" rx="4" fill="#f5f3ff"/>
+<rect x="1900" y="940" width="5" height="280" rx="2" fill="#7c3aed"/>
+<text x="1918" y="968" font-family="Arial, sans-serif" font-size="21" fill="#7c3aed" text-anchor="start" font-weight="700">OrderLineItem</text>
+<text x="1918" y="991" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">order_line_item</text>
+<text x="1918" y="1034" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="2243" y="1034" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="1918" y="1056" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">totals_id?</text>
+<text x="2243" y="1056" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">FK cũ · text</text>
+<text x="1918" y="1078" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">product_id?</text>
+<text x="2243" y="1078" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">REF · text</text>
+<text x="1918" y="1100" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">variant_id?</text>
+<text x="2243" y="1100" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">REF · text</text>
+<text x="1918" y="1122" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">variant_sku?</text>
+<text x="2243" y="1122" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">text</text>
+<text x="1918" y="1144" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">unit_price</text>
+<text x="2243" y="1144" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="1918" y="1186" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Snapshot; không order_id / quantity</text>
+<text x="1918" y="1204" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">totals_id: FK lịch sử còn trong DB</text>
+<rect x="453.0" y="407.0" width="34.0" height="24" rx="3" fill="white"/>
+<text x="470.0" y="425.0" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">R1</text>
+<rect x="433" y="380" width="34.0" height="22" rx="2" fill="white"/>
+<text x="450.0" y="396" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..1</text>
+<rect x="471.0" y="435" width="36.0" height="22" rx="2" fill="white"/>
+<text x="489.0" y="451" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="913.0" y="407.0" width="34.0" height="24" rx="3" fill="white"/>
+<text x="930.0" y="425.0" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">R2</text>
+<rect x="893" y="380" width="18.0" height="22" rx="2" fill="white"/>
+<text x="902.0" y="396" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">1</text>
+<rect x="931.0" y="435" width="36.0" height="22" rx="2" fill="white"/>
+<text x="949.0" y="451" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1833.0" y="407.0" width="34.0" height="24" rx="3" fill="white"/>
+<text x="1850.0" y="425.0" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">R3</text>
+<rect x="1813" y="380" width="34.0" height="22" rx="2" fill="white"/>
+<text x="1830.0" y="396" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">0..1</text>
+<rect x="1851.0" y="435" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1869.0" y="451" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1603.0" y="227.0" width="34.0" height="24" rx="3" fill="white"/>
+<text x="1620.0" y="245.0" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">R4</text>
+<rect x="1853.0" y="340" width="34.0" height="22" rx="2" fill="white"/>
+<text x="1870.0" y="356" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..1</text>
+<rect x="1353" y="435" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1371.0" y="451" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1353.0" y="367.0" width="34.0" height="24" rx="3" fill="white"/>
+<text x="1370.0" y="385.0" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">R5</text>
+<rect x="1393.0" y="380" width="34.0" height="22" rx="2" fill="white"/>
+<text x="1410.0" y="396" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..1</text>
+<rect x="1353" y="395" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1371.0" y="411" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="449.0" y="887.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="470.0" y="905.0" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">R10</text>
+<rect x="252" y="569" width="34.0" height="22" rx="2" fill="white"/>
+<text x="269.0" y="585" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..1</text>
+<rect x="652.0" y="912" width="36.0" height="22" rx="2" fill="white"/>
+<text x="670.0" y="928" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1139.0" y="887.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="1160.0" y="905.0" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">R11</text>
+<rect x="893" y="1060" width="18.0" height="22" rx="2" fill="white"/>
+<text x="902.0" y="1076" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">1</text>
+<rect x="1391.0" y="1095" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1409.0" y="1111" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1829.0" y="1067.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="1850.0" y="1085.0" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">R12</text>
+<rect x="1869.0" y="1095" width="18.0" height="22" rx="2" fill="white"/>
+<text x="1878.0" y="1111" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">1</text>
+<rect x="1813" y="1095" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1831.0" y="1111" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1829.0" y="1027.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="1850.0" y="1045.0" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">R13</text>
+<rect x="1813" y="1000" width="34.0" height="22" rx="2" fill="white"/>
+<text x="1830.0" y="1016" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">0..1</text>
+<rect x="1851.0" y="1000" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1869.0" y="1016" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="2059.0" y="737.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="2080.0" y="755.0" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">R14</text>
+<rect x="2092" y="569" width="34.0" height="22" rx="2" fill="white"/>
+<text x="2109.0" y="585" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..1</text>
+<rect x="2032.0" y="912" width="36.0" height="22" rx="2" fill="white"/>
+<text x="2050.0" y="928" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1809.0" y="887.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="1830.0" y="905.0" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">R15</text>
+<rect x="1632" y="569" width="34.0" height="22" rx="2" fill="white"/>
+<text x="1649.0" y="585" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..1</text>
+<rect x="1992.0" y="912" width="36.0" height="22" rx="2" fill="white"/>
+<text x="2010.0" y="928" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="449.0" y="1067.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="470.0" y="1085.0" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">R16</text>
+<rect x="489.0" y="1040" width="18.0" height="22" rx="2" fill="white"/>
+<text x="498.0" y="1056" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">1</text>
+<rect x="433" y="1095" width="36.0" height="22" rx="2" fill="white"/>
+<text x="451.0" y="1111" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="889.0" y="1027.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="910.0" y="1045.0" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">R17</text>
+<rect x="893" y="1000" width="18.0" height="22" rx="2" fill="white"/>
+<text x="902.0" y="1016" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">1</text>
+<rect x="931.0" y="1095" width="36.0" height="22" rx="2" fill="white"/>
+<text x="949.0" y="1111" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="909.0" y="587.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="930.0" y="605.0" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">R18</text>
+<rect x="712" y="569" width="18.0" height="22" rx="2" fill="white"/>
+<text x="721.0" y="585" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">1</text>
+<rect x="1092.0" y="912" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1110.0" y="928" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">0..N</text>
+<text x="60" y="1477" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="start">Số đầu cạnh: 1 / 0..1 / 0..N. Với LINK hoặc REF, ID NOT NULL không bảo đảm bản ghi đích tồn tại.</text>
+<text x="60" y="1506" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="start">Với LINK, 0..N ở phía bảng nối là số bản ghi link DB có thể lưu; cardinality của API được ghi riêng.</text>
+<text x="60" y="1535" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="start">PK ghép chỉ ngăn trùng cặp. API Cart–Order / Cart–Payment singular không có nghĩa DB cưỡng chế 1:1. R25: 0..1* chỉ tính payment chưa xóa.</text>
+<text x="60" y="1564" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="start">Nguồn: catalog 24/10/2026 cho 20 bảng; Customer/Product từ snapshot v1 17/10/2026. Medusa 2.21.2. Bản vẽ: 25/10/2026.</text>
+<text x="60" y="1593" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="start">Cột được chọn để đọc nghiệp vụ; địa chỉ, thuế, shipping, provider và các module hỗ trợ không được vẽ đầy đủ. Chưa chạy checkout trong công việc ERD.</text>
+</svg>

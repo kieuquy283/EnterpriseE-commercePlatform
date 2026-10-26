@@ -1,0 +1,47 @@
+{
+  "generated_on": "2026-10-25",
+  "source_catalog": "evidence\\schema-survey-2026-10-24\\catalog.json",
+  "table_count": 22,
+  "relationship_count": 30,
+  "edge_kinds": {
+    "ref": 10,
+    "fk": 12,
+    "link": 8
+  },
+  "pages": [
+    {
+      "slug": "business",
+      "tables": 22,
+      "edges": 22
+    },
+    {
+      "slug": "cart-order",
+      "tables": 10,
+      "edges": 14
+    },
+    {
+      "slug": "payment",
+      "tables": 9,
+      "edges": 9
+    },
+    {
+      "slug": "inventory",
+      "tables": 7,
+      "edges": 7
+    }
+  ],
+  "checks": {
+    "selected_fields_exist": true,
+    "source_cardinality_matches_column_nullability": true,
+    "all_physical_fk_edges_match_live_catalog": true,
+    "no_link_or_reference_edge_mislabeled_as_fk": true,
+    "three_detail_pages_cover_all_30_relationships": true,
+    "orthogonal_routes_do_not_cross_table_interiors": true,
+    "labels_do_not_overlap_each_other_or_tables": true,
+    "drawio_native_pages_parse_without_dangling_edges": true,
+    "svg_xml_and_png_dimensions_valid": true,
+    "documentation_links_resolve": true,
+    "guide_lists_all_30_relationships_once": true
+  },
+  "visual_review": "Passed: all four PNG pages inspected; endpoint cardinalities and relationship labels are legible, no cropped card text; XML checked separately."
+}

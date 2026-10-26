@@ -1,0 +1,3753 @@
+{
+  "scope": "Catalog metadata only; no application rows",
+  "tables": [
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "amount",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_amount",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "payment_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 7
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "created_by",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 8
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 9
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_capture_deleted_at\" ON public.capture USING btree (deleted_at)",
+          "index_name": "IDX_capture_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_capture_payment_id\" ON public.capture USING btree (payment_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_capture_payment_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX capture_pkey ON public.capture USING btree (id)",
+          "index_name": "capture_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "capture",
+      "constraints": [
+        {
+          "definition": "FOREIGN KEY (payment_id) REFERENCES payment(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "constraint_name": "capture_payment_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "capture_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "region_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "customer_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "sales_channel_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "email",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "currency_code",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "shipping_address_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 7
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "billing_address_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 8
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 9
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 10
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 11
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 12
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "completed_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 13
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "locale",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 14
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_cart_billing_address_id\" ON public.cart USING btree (billing_address_id) WHERE ((deleted_at IS NULL) AND (billing_address_id IS NOT NULL))",
+          "index_name": "IDX_cart_billing_address_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_cart_currency_code\" ON public.cart USING btree (currency_code)",
+          "index_name": "IDX_cart_currency_code",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_cart_customer_id\" ON public.cart USING btree (customer_id) WHERE ((deleted_at IS NULL) AND (customer_id IS NOT NULL))",
+          "index_name": "IDX_cart_customer_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_cart_deleted_at\" ON public.cart USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
+          "index_name": "IDX_cart_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_cart_region_id\" ON public.cart USING btree (region_id) WHERE ((deleted_at IS NULL) AND (region_id IS NOT NULL))",
+          "index_name": "IDX_cart_region_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_cart_sales_channel_id\" ON public.cart USING btree (sales_channel_id) WHERE ((deleted_at IS NULL) AND (sales_channel_id IS NOT NULL))",
+          "index_name": "IDX_cart_sales_channel_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_cart_shipping_address_id\" ON public.cart USING btree (shipping_address_id) WHERE ((deleted_at IS NULL) AND (shipping_address_id IS NOT NULL))",
+          "index_name": "IDX_cart_shipping_address_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX cart_pkey ON public.cart USING btree (id)",
+          "index_name": "cart_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "cart",
+      "constraints": [
+        {
+          "definition": "FOREIGN KEY (billing_address_id) REFERENCES cart_address(id) ON UPDATE CASCADE ON DELETE SET NULL",
+          "constraint_name": "cart_billing_address_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "FOREIGN KEY (shipping_address_id) REFERENCES cart_address(id) ON UPDATE CASCADE ON DELETE SET NULL",
+          "constraint_name": "cart_shipping_address_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "cart_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "cart_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "title",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "subtitle",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "thumbnail",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "int4",
+          "data_type": "integer",
+          "column_name": "quantity",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "variant_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 7
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 8
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_title",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 9
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_description",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 10
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_subtitle",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 11
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_type",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 12
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_collection",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 13
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_handle",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 14
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "variant_sku",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 15
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "variant_barcode",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 16
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "variant_title",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 17
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "variant_option_values",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 18
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "requires_shipping",
+          "is_nullable": "NO",
+          "column_default": "true",
+          "ordinal_position": 19
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "is_discountable",
+          "is_nullable": "NO",
+          "column_default": "true",
+          "ordinal_position": 20
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "is_tax_inclusive",
+          "is_nullable": "NO",
+          "column_default": "false",
+          "ordinal_position": 21
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "compare_at_unit_price",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 22
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_compare_at_unit_price",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 23
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "unit_price",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 24
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_unit_price",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 25
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 26
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 27
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 28
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 29
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_type_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 30
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "is_custom_price",
+          "is_nullable": "NO",
+          "column_default": "false",
+          "ordinal_position": 31
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "is_giftcard",
+          "is_nullable": "NO",
+          "column_default": "false",
+          "ordinal_position": 32
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_cart_line_item_cart_id\" ON public.cart_line_item USING btree (cart_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_cart_line_item_cart_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_cart_line_item_deleted_at\" ON public.cart_line_item USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
+          "index_name": "IDX_cart_line_item_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_line_item_product_id\" ON public.cart_line_item USING btree (product_id) WHERE ((deleted_at IS NULL) AND (product_id IS NOT NULL))",
+          "index_name": "IDX_line_item_product_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_line_item_variant_id\" ON public.cart_line_item USING btree (variant_id) WHERE ((deleted_at IS NULL) AND (variant_id IS NOT NULL))",
+          "index_name": "IDX_line_item_variant_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX cart_line_item_pkey ON public.cart_line_item USING btree (id)",
+          "index_name": "cart_line_item_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "cart_line_item",
+      "constraints": [
+        {
+          "definition": "CHECK (unit_price >= 0::numeric)",
+          "constraint_name": "cart_line_item_unit_price_check",
+          "constraint_type": "c"
+        },
+        {
+          "definition": "FOREIGN KEY (cart_id) REFERENCES cart(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "constraint_name": "cart_line_item_cart_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "cart_line_item_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "varchar",
+          "data_type": "character varying",
+          "column_name": "cart_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "varchar",
+          "data_type": "character varying",
+          "column_name": "payment_collection_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "varchar",
+          "data_type": "character varying",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "CURRENT_TIMESTAMP",
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "CURRENT_TIMESTAMP",
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 6
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_cart_id_-4a39f6c9\" ON public.cart_payment_collection USING btree (cart_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_cart_id_-4a39f6c9",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_deleted_at_-4a39f6c9\" ON public.cart_payment_collection USING btree (deleted_at)",
+          "index_name": "IDX_deleted_at_-4a39f6c9",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_id_-4a39f6c9\" ON public.cart_payment_collection USING btree (id)",
+          "index_name": "IDX_id_-4a39f6c9",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_payment_collection_id_-4a39f6c9\" ON public.cart_payment_collection USING btree (payment_collection_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_payment_collection_id_-4a39f6c9",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX cart_payment_collection_pkey ON public.cart_payment_collection USING btree (cart_id, payment_collection_id)",
+          "index_name": "cart_payment_collection_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "cart_payment_collection",
+      "constraints": [
+        {
+          "definition": "PRIMARY KEY (cart_id, payment_collection_id)",
+          "constraint_name": "cart_payment_collection_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "sku",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "origin_country",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "hs_code",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 7
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "mid_code",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 8
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "material",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 9
+        },
+        {
+          "udt_name": "int4",
+          "data_type": "integer",
+          "column_name": "weight",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 10
+        },
+        {
+          "udt_name": "int4",
+          "data_type": "integer",
+          "column_name": "length",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 11
+        },
+        {
+          "udt_name": "int4",
+          "data_type": "integer",
+          "column_name": "height",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 12
+        },
+        {
+          "udt_name": "int4",
+          "data_type": "integer",
+          "column_name": "width",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 13
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "requires_shipping",
+          "is_nullable": "NO",
+          "column_default": "true",
+          "ordinal_position": 14
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "description",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 15
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "title",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 16
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "thumbnail",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 17
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 18
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "unit_of_measure",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 19
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_inventory_item_deleted_at\" ON public.inventory_item USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
+          "index_name": "IDX_inventory_item_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX \"IDX_inventory_item_sku\" ON public.inventory_item USING btree (sku) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_inventory_item_sku",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX inventory_item_pkey ON public.inventory_item USING btree (id)",
+          "index_name": "inventory_item_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "inventory_item",
+      "constraints": [
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "inventory_item_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "inventory_item_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "location_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "stocked_quantity",
+          "is_nullable": "NO",
+          "column_default": "0",
+          "ordinal_position": 7
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "reserved_quantity",
+          "is_nullable": "NO",
+          "column_default": "0",
+          "ordinal_position": 8
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "incoming_quantity",
+          "is_nullable": "NO",
+          "column_default": "0",
+          "ordinal_position": 9
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 10
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_stocked_quantity",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 11
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_reserved_quantity",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 12
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_incoming_quantity",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 13
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_inventory_level_deleted_at\" ON public.inventory_level USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
+          "index_name": "IDX_inventory_level_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_inventory_level_inventory_item_id\" ON public.inventory_level USING btree (inventory_item_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_inventory_level_inventory_item_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_inventory_level_location_id\" ON public.inventory_level USING btree (location_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_inventory_level_location_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX \"IDX_inventory_level_location_id_inventory_item_id\" ON public.inventory_level USING btree (inventory_item_id, location_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_inventory_level_location_id_inventory_item_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX inventory_level_pkey ON public.inventory_level USING btree (id)",
+          "index_name": "inventory_level_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "inventory_level",
+      "constraints": [
+        {
+          "definition": "FOREIGN KEY (inventory_item_id) REFERENCES inventory_item(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "constraint_name": "inventory_level_inventory_item_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "inventory_level_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "region_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "int4",
+          "data_type": "integer",
+          "column_name": "display_id",
+          "is_nullable": "YES",
+          "column_default": "nextval('order_display_id_seq'::regclass)",
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "customer_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "int4",
+          "data_type": "integer",
+          "column_name": "version",
+          "is_nullable": "NO",
+          "column_default": "1",
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "sales_channel_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "order_status_enum",
+          "data_type": "USER-DEFINED",
+          "column_name": "status",
+          "is_nullable": "NO",
+          "column_default": "'pending'::order_status_enum",
+          "ordinal_position": 7
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "is_draft_order",
+          "is_nullable": "NO",
+          "column_default": "false",
+          "ordinal_position": 8
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "email",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 9
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "currency_code",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 10
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "shipping_address_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 11
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "billing_address_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 12
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "no_notification",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 13
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 14
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 15
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 16
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 17
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "canceled_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 18
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "custom_display_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 19
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "locale",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 20
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_billing_address_id\" ON public.\"order\" USING btree (billing_address_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_billing_address_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_currency_code\" ON public.\"order\" USING btree (currency_code) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_currency_code",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX \"IDX_order_custom_display_id\" ON public.\"order\" USING btree (custom_display_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_custom_display_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_customer_id\" ON public.\"order\" USING btree (customer_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_customer_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_deleted_at\" ON public.\"order\" USING btree (deleted_at)",
+          "index_name": "IDX_order_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_display_id\" ON public.\"order\" USING btree (display_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_display_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_is_draft_order\" ON public.\"order\" USING btree (is_draft_order) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_is_draft_order",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_region_id\" ON public.\"order\" USING btree (region_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_region_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_sales_channel_id\" ON public.\"order\" USING btree (sales_channel_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_sales_channel_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_shipping_address_id\" ON public.\"order\" USING btree (shipping_address_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_shipping_address_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX order_pkey ON public.\"order\" USING btree (id)",
+          "index_name": "order_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "order",
+      "constraints": [
+        {
+          "definition": "FOREIGN KEY (billing_address_id) REFERENCES order_address(id) ON UPDATE CASCADE ON DELETE SET NULL",
+          "constraint_name": "order_billing_address_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "FOREIGN KEY (shipping_address_id) REFERENCES order_address(id) ON UPDATE CASCADE ON DELETE SET NULL",
+          "constraint_name": "order_shipping_address_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "order_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "varchar",
+          "data_type": "character varying",
+          "column_name": "order_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "varchar",
+          "data_type": "character varying",
+          "column_name": "cart_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "varchar",
+          "data_type": "character varying",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "CURRENT_TIMESTAMP",
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "CURRENT_TIMESTAMP",
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 6
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_cart_id_-71069c16\" ON public.order_cart USING btree (cart_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_cart_id_-71069c16",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_deleted_at_-71069c16\" ON public.order_cart USING btree (deleted_at)",
+          "index_name": "IDX_deleted_at_-71069c16",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_id_-71069c16\" ON public.order_cart USING btree (id)",
+          "index_name": "IDX_id_-71069c16",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_id_-71069c16\" ON public.order_cart USING btree (order_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_id_-71069c16",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX order_cart_pkey ON public.order_cart USING btree (order_id, cart_id)",
+          "index_name": "order_cart_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "order_cart",
+      "constraints": [
+        {
+          "definition": "PRIMARY KEY (order_id, cart_id)",
+          "constraint_name": "order_cart_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "order_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "int4",
+          "data_type": "integer",
+          "column_name": "version",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "item_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "quantity",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_quantity",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "fulfilled_quantity",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 7
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_fulfilled_quantity",
+          "is_nullable": "NO",
+          "column_default": "'{\"value\": \"0\", \"precision\": 20}'::jsonb",
+          "ordinal_position": 8
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "shipped_quantity",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 9
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_shipped_quantity",
+          "is_nullable": "NO",
+          "column_default": "'{\"value\": \"0\", \"precision\": 20}'::jsonb",
+          "ordinal_position": 10
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "return_requested_quantity",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 11
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_return_requested_quantity",
+          "is_nullable": "NO",
+          "column_default": "'{\"value\": \"0\", \"precision\": 20}'::jsonb",
+          "ordinal_position": 12
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "return_received_quantity",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 13
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_return_received_quantity",
+          "is_nullable": "NO",
+          "column_default": "'{\"value\": \"0\", \"precision\": 20}'::jsonb",
+          "ordinal_position": 14
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "return_dismissed_quantity",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 15
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_return_dismissed_quantity",
+          "is_nullable": "NO",
+          "column_default": "'{\"value\": \"0\", \"precision\": 20}'::jsonb",
+          "ordinal_position": 16
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "written_off_quantity",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 17
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_written_off_quantity",
+          "is_nullable": "NO",
+          "column_default": "'{\"value\": \"0\", \"precision\": 20}'::jsonb",
+          "ordinal_position": 18
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 19
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 20
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 21
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 22
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "delivered_quantity",
+          "is_nullable": "NO",
+          "column_default": "0",
+          "ordinal_position": 23
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_delivered_quantity",
+          "is_nullable": "NO",
+          "column_default": "'{\"value\": \"0\", \"precision\": 20}'::jsonb",
+          "ordinal_position": 24
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "unit_price",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 25
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_unit_price",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 26
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "compare_at_unit_price",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 27
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_compare_at_unit_price",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 28
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_item_deleted_at\" ON public.order_item USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
+          "index_name": "IDX_order_item_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_item_item_id\" ON public.order_item USING btree (item_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_item_item_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_item_order_id\" ON public.order_item USING btree (order_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_item_order_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_item_order_id_version\" ON public.order_item USING btree (order_id, version) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_item_order_id_version",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX order_item_pkey ON public.order_item USING btree (id)",
+          "index_name": "order_item_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "order_item",
+      "constraints": [
+        {
+          "definition": "FOREIGN KEY (item_id) REFERENCES order_line_item(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "constraint_name": "order_item_item_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "FOREIGN KEY (order_id) REFERENCES \"order\"(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "constraint_name": "order_item_order_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "order_item_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "totals_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "title",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "subtitle",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "thumbnail",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "variant_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 7
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_title",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 8
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_description",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 9
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_subtitle",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 10
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_type",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 11
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_collection",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 12
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_handle",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 13
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "variant_sku",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 14
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "variant_barcode",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 15
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "variant_title",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 16
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "variant_option_values",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 17
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "requires_shipping",
+          "is_nullable": "NO",
+          "column_default": "true",
+          "ordinal_position": 18
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "is_discountable",
+          "is_nullable": "NO",
+          "column_default": "true",
+          "ordinal_position": 19
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "is_tax_inclusive",
+          "is_nullable": "NO",
+          "column_default": "false",
+          "ordinal_position": 20
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "compare_at_unit_price",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 21
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_compare_at_unit_price",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 22
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "unit_price",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 23
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_unit_price",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 24
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 25
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 26
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 27
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 28
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "is_custom_price",
+          "is_nullable": "NO",
+          "column_default": "false",
+          "ordinal_position": 29
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_type_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 30
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "is_giftcard",
+          "is_nullable": "NO",
+          "column_default": "false",
+          "ordinal_position": 31
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_line_item_product_type_id\" ON public.order_line_item USING btree (product_type_id) WHERE ((deleted_at IS NULL) AND (product_type_id IS NOT NULL))",
+          "index_name": "IDX_line_item_product_type_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_line_item_product_id\" ON public.order_line_item USING btree (product_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_line_item_product_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_line_item_variant_id\" ON public.order_line_item USING btree (variant_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_line_item_variant_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX order_line_item_pkey ON public.order_line_item USING btree (id)",
+          "index_name": "order_line_item_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "order_line_item",
+      "constraints": [
+        {
+          "definition": "FOREIGN KEY (totals_id) REFERENCES order_item(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "constraint_name": "order_line_item_totals_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "order_line_item_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "varchar",
+          "data_type": "character varying",
+          "column_name": "order_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "varchar",
+          "data_type": "character varying",
+          "column_name": "payment_collection_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "varchar",
+          "data_type": "character varying",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "CURRENT_TIMESTAMP",
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "CURRENT_TIMESTAMP",
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 6
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_deleted_at_f42b9949\" ON public.order_payment_collection USING btree (deleted_at)",
+          "index_name": "IDX_deleted_at_f42b9949",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_id_f42b9949\" ON public.order_payment_collection USING btree (id)",
+          "index_name": "IDX_id_f42b9949",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_id_f42b9949\" ON public.order_payment_collection USING btree (order_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_id_f42b9949",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_payment_collection_id_f42b9949\" ON public.order_payment_collection USING btree (payment_collection_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_payment_collection_id_f42b9949",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX order_payment_collection_pkey ON public.order_payment_collection USING btree (order_id, payment_collection_id)",
+          "index_name": "order_payment_collection_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "order_payment_collection",
+      "constraints": [
+        {
+          "definition": "PRIMARY KEY (order_id, payment_collection_id)",
+          "constraint_name": "order_payment_collection_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "order_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "int4",
+          "data_type": "integer",
+          "column_name": "version",
+          "is_nullable": "NO",
+          "column_default": "1",
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "totals",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 7
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_summary_deleted_at\" ON public.order_summary USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
+          "index_name": "IDX_order_summary_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_order_summary_order_id_version\" ON public.order_summary USING btree (order_id, version) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_order_summary_order_id_version",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX order_summary_pkey ON public.order_summary USING btree (id)",
+          "index_name": "order_summary_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "order_summary",
+      "constraints": [
+        {
+          "definition": "FOREIGN KEY (order_id) REFERENCES \"order\"(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "constraint_name": "order_summary_order_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "order_summary_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "amount",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_amount",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "currency_code",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "provider_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "data",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 9
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 10
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 11
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 12
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "captured_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 13
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "canceled_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 14
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "payment_collection_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 15
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "payment_session_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 16
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 17
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_payment_deleted_at\" ON public.payment USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
+          "index_name": "IDX_payment_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_payment_payment_collection_id\" ON public.payment USING btree (payment_collection_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_payment_payment_collection_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_payment_payment_session_id\" ON public.payment USING btree (payment_session_id)",
+          "index_name": "IDX_payment_payment_session_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX \"IDX_payment_payment_session_id_unique\" ON public.payment USING btree (payment_session_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_payment_payment_session_id_unique",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_payment_provider_id\" ON public.payment USING btree (provider_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_payment_provider_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX payment_pkey ON public.payment USING btree (id)",
+          "index_name": "payment_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "payment",
+      "constraints": [
+        {
+          "definition": "FOREIGN KEY (payment_collection_id) REFERENCES payment_collection(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "constraint_name": "payment_payment_collection_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "payment_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "currency_code",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "amount",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_amount",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "authorized_amount",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_authorized_amount",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "captured_amount",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 7
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_captured_amount",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 8
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "refunded_amount",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 9
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_refunded_amount",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 10
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 12
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 13
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 14
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "completed_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 15
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "status",
+          "is_nullable": "NO",
+          "column_default": "'not_paid'::text",
+          "ordinal_position": 16
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 17
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_payment_collection_deleted_at\" ON public.payment_collection USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
+          "index_name": "IDX_payment_collection_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX payment_collection_pkey ON public.payment_collection USING btree (id)",
+          "index_name": "payment_collection_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "payment_collection",
+      "constraints": [
+        {
+          "definition": "CHECK (status = ANY (ARRAY['not_paid'::text, 'awaiting'::text, 'authorized'::text, 'partially_authorized'::text, 'canceled'::text, 'failed'::text, 'partially_captured'::text, 'completed'::text]))",
+          "constraint_name": "payment_collection_status_check",
+          "constraint_type": "c"
+        },
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "payment_collection_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "payment_collection_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "payment_provider_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX payment_collection_payment_providers_pkey ON public.payment_collection_payment_providers USING btree (payment_collection_id, payment_provider_id)",
+          "index_name": "payment_collection_payment_providers_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "payment_collection_payment_providers",
+      "constraints": [
+        {
+          "definition": "FOREIGN KEY (payment_collection_id) REFERENCES payment_collection(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "constraint_name": "payment_collection_payment_providers_payment_col_aa276_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "FOREIGN KEY (payment_provider_id) REFERENCES payment_provider(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "constraint_name": "payment_collection_payment_providers_payment_pro_2d555_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "PRIMARY KEY (payment_collection_id, payment_provider_id)",
+          "constraint_name": "payment_collection_payment_providers_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "is_enabled",
+          "is_nullable": "NO",
+          "column_default": "true",
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 5
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_payment_provider_deleted_at\" ON public.payment_provider USING btree (deleted_at) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_payment_provider_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX payment_provider_pkey ON public.payment_provider USING btree (id)",
+          "index_name": "payment_provider_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "payment_provider",
+      "constraints": [
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "payment_provider_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "currency_code",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "amount",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_amount",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "provider_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "data",
+          "is_nullable": "NO",
+          "column_default": "'{}'::jsonb",
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "context",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 7
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "status",
+          "is_nullable": "NO",
+          "column_default": "'pending'::text",
+          "ordinal_position": 8
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "authorized_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 9
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "payment_collection_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 10
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 11
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 12
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 13
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 14
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_payment_session_deleted_at\" ON public.payment_session USING btree (deleted_at)",
+          "index_name": "IDX_payment_session_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_payment_session_payment_collection_id\" ON public.payment_session USING btree (payment_collection_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_payment_session_payment_collection_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX payment_session_pkey ON public.payment_session USING btree (id)",
+          "index_name": "payment_session_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "payment_session",
+      "constraints": [
+        {
+          "definition": "CHECK (status = ANY (ARRAY['authorized'::text, 'captured'::text, 'pending'::text, 'requires_more'::text, 'error'::text, 'canceled'::text, 'pending_authorization'::text]))",
+          "constraint_name": "payment_session_status_check",
+          "constraint_type": "c"
+        },
+        {
+          "definition": "FOREIGN KEY (payment_collection_id) REFERENCES payment_collection(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "constraint_name": "payment_session_payment_collection_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "payment_session_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "title",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "sku",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "barcode",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "ean",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "upc",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "allow_backorder",
+          "is_nullable": "NO",
+          "column_default": "false",
+          "ordinal_position": 7
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "manage_inventory",
+          "is_nullable": "NO",
+          "column_default": "true",
+          "ordinal_position": 8
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "hs_code",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 9
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "origin_country",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 10
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "mid_code",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 11
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "material",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 12
+        },
+        {
+          "udt_name": "float4",
+          "data_type": "real",
+          "column_name": "weight",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 13
+        },
+        {
+          "udt_name": "float4",
+          "data_type": "real",
+          "column_name": "length",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 14
+        },
+        {
+          "udt_name": "float4",
+          "data_type": "real",
+          "column_name": "height",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 15
+        },
+        {
+          "udt_name": "float4",
+          "data_type": "real",
+          "column_name": "width",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 16
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 17
+        },
+        {
+          "udt_name": "int4",
+          "data_type": "integer",
+          "column_name": "variant_rank",
+          "is_nullable": "YES",
+          "column_default": "0",
+          "ordinal_position": 18
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "product_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 19
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 20
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 21
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 22
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "thumbnail",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 23
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX \"IDX_product_variant_barcode_unique\" ON public.product_variant USING btree (barcode) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_product_variant_barcode_unique",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_product_variant_deleted_at\" ON public.product_variant USING btree (deleted_at)",
+          "index_name": "IDX_product_variant_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX \"IDX_product_variant_ean_unique\" ON public.product_variant USING btree (ean) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_product_variant_ean_unique",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_product_variant_id_product_id\" ON public.product_variant USING btree (id, product_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_product_variant_id_product_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_product_variant_product_id\" ON public.product_variant USING btree (product_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_product_variant_product_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX \"IDX_product_variant_sku_unique\" ON public.product_variant USING btree (sku) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_product_variant_sku_unique",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX \"IDX_product_variant_upc_unique\" ON public.product_variant USING btree (upc) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_product_variant_upc_unique",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX product_variant_pkey ON public.product_variant USING btree (id)",
+          "index_name": "product_variant_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "product_variant",
+      "constraints": [
+        {
+          "definition": "FOREIGN KEY (product_id) REFERENCES product(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "constraint_name": "product_variant_product_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "product_variant_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "varchar",
+          "data_type": "character varying",
+          "column_name": "variant_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "varchar",
+          "data_type": "character varying",
+          "column_name": "inventory_item_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "varchar",
+          "data_type": "character varying",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "required_quantity",
+          "is_nullable": "NO",
+          "column_default": "1",
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "CURRENT_TIMESTAMP",
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "CURRENT_TIMESTAMP",
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 7
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_deleted_at_17b4c4e35\" ON public.product_variant_inventory_item USING btree (deleted_at)",
+          "index_name": "IDX_deleted_at_17b4c4e35",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_id_17b4c4e35\" ON public.product_variant_inventory_item USING btree (id)",
+          "index_name": "IDX_id_17b4c4e35",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_inventory_item_id_17b4c4e35\" ON public.product_variant_inventory_item USING btree (inventory_item_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_inventory_item_id_17b4c4e35",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_variant_id_17b4c4e35\" ON public.product_variant_inventory_item USING btree (variant_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_variant_id_17b4c4e35",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX product_variant_inventory_item_pkey ON public.product_variant_inventory_item USING btree (variant_id, inventory_item_id)",
+          "index_name": "product_variant_inventory_item_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "product_variant_inventory_item",
+      "constraints": [
+        {
+          "definition": "PRIMARY KEY (variant_id, inventory_item_id)",
+          "constraint_name": "product_variant_inventory_item_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "amount",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_amount",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "payment_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 7
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "created_by",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 8
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 9
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "refund_reason_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 10
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "note",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 11
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_refund_deleted_at\" ON public.refund USING btree (deleted_at)",
+          "index_name": "IDX_refund_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_refund_payment_id\" ON public.refund USING btree (payment_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_refund_payment_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_refund_refund_reason_id\" ON public.refund USING btree (refund_reason_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_refund_refund_reason_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX refund_pkey ON public.refund USING btree (id)",
+          "index_name": "refund_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "refund",
+      "constraints": [
+        {
+          "definition": "FOREIGN KEY (payment_id) REFERENCES payment(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "constraint_name": "refund_payment_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "refund_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "label",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "description",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 7
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "code",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 8
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_refund_reason_deleted_at\" ON public.refund_reason USING btree (deleted_at) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_refund_reason_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX refund_reason_pkey ON public.refund_reason USING btree (id)",
+          "index_name": "refund_reason_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "refund_reason",
+      "constraints": [
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "refund_reason_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "varchar",
+          "data_type": "character varying",
+          "column_name": "region_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "varchar",
+          "data_type": "character varying",
+          "column_name": "payment_provider_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "varchar",
+          "data_type": "character varying",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "CURRENT_TIMESTAMP",
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "CURRENT_TIMESTAMP",
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 6
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_deleted_at_1c934dab0\" ON public.region_payment_provider USING btree (deleted_at)",
+          "index_name": "IDX_deleted_at_1c934dab0",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_id_1c934dab0\" ON public.region_payment_provider USING btree (id)",
+          "index_name": "IDX_id_1c934dab0",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_payment_provider_id_1c934dab0\" ON public.region_payment_provider USING btree (payment_provider_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_payment_provider_id_1c934dab0",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_region_id_1c934dab0\" ON public.region_payment_provider USING btree (region_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_region_id_1c934dab0",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX region_payment_provider_pkey ON public.region_payment_provider USING btree (region_id, payment_provider_id)",
+          "index_name": "region_payment_provider_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "region_payment_provider",
+      "constraints": [
+        {
+          "definition": "PRIMARY KEY (region_id, payment_provider_id)",
+          "constraint_name": "region_payment_provider_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "line_item_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "location_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "numeric",
+          "data_type": "numeric",
+          "column_name": "quantity",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 7
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "external_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 8
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "description",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 9
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "created_by",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 10
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 11
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "inventory_item_id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 12
+        },
+        {
+          "udt_name": "bool",
+          "data_type": "boolean",
+          "column_name": "allow_backorder",
+          "is_nullable": "YES",
+          "column_default": "false",
+          "ordinal_position": 13
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "raw_quantity",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 14
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_reservation_item_deleted_at\" ON public.reservation_item USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
+          "index_name": "IDX_reservation_item_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_reservation_item_inventory_item_id\" ON public.reservation_item USING btree (inventory_item_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_reservation_item_inventory_item_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_reservation_item_line_item_id\" ON public.reservation_item USING btree (line_item_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_reservation_item_line_item_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_reservation_item_location_id\" ON public.reservation_item USING btree (location_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_reservation_item_location_id",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX reservation_item_pkey ON public.reservation_item USING btree (id)",
+          "index_name": "reservation_item_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "reservation_item",
+      "constraints": [
+        {
+          "definition": "FOREIGN KEY (inventory_item_id) REFERENCES inventory_item(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "constraint_name": "reservation_item_inventory_item_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "reservation_item_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    },
+    {
+      "columns": [
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "id",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 1
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "created_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 2
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "updated_at",
+          "is_nullable": "NO",
+          "column_default": "now()",
+          "ordinal_position": 3
+        },
+        {
+          "udt_name": "timestamptz",
+          "data_type": "timestamp with time zone",
+          "column_name": "deleted_at",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 4
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "name",
+          "is_nullable": "NO",
+          "column_default": null,
+          "ordinal_position": 5
+        },
+        {
+          "udt_name": "text",
+          "data_type": "text",
+          "column_name": "address_id",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 6
+        },
+        {
+          "udt_name": "jsonb",
+          "data_type": "jsonb",
+          "column_name": "metadata",
+          "is_nullable": "YES",
+          "column_default": null,
+          "ordinal_position": 7
+        }
+      ],
+      "indexes": [
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX \"IDX_stock_location_address_id_unique\" ON public.stock_location USING btree (address_id) WHERE (deleted_at IS NULL)",
+          "index_name": "IDX_stock_location_address_id_unique",
+          "is_primary": false
+        },
+        {
+          "is_unique": false,
+          "definition": "CREATE INDEX \"IDX_stock_location_deleted_at\" ON public.stock_location USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)",
+          "index_name": "IDX_stock_location_deleted_at",
+          "is_primary": false
+        },
+        {
+          "is_unique": true,
+          "definition": "CREATE UNIQUE INDEX stock_location_pkey ON public.stock_location USING btree (id)",
+          "index_name": "stock_location_pkey",
+          "is_primary": true
+        }
+      ],
+      "present": true,
+      "table_name": "stock_location",
+      "constraints": [
+        {
+          "definition": "FOREIGN KEY (address_id) REFERENCES stock_location_address(id) ON UPDATE CASCADE ON DELETE CASCADE",
+          "constraint_name": "stock_location_address_id_foreign",
+          "constraint_type": "f"
+        },
+        {
+          "definition": "PRIMARY KEY (id)",
+          "constraint_name": "stock_location_pkey",
+          "constraint_type": "p"
+        }
+      ]
+    }
+  ],
+  "captured_at": "2026-10-24T10:01:13.994317+00:00",
+  "enum_values": [
+    {
+      "value": "pending",
+      "type_name": "order_status_enum",
+      "sort_order": 1
+    },
+    {
+      "value": "completed",
+      "type_name": "order_status_enum",
+      "sort_order": 2
+    },
+    {
+      "value": "draft",
+      "type_name": "order_status_enum",
+      "sort_order": 3
+    },
+    {
+      "value": "archived",
+      "type_name": "order_status_enum",
+      "sort_order": 4
+    },
+    {
+      "value": "canceled",
+      "type_name": "order_status_enum",
+      "sort_order": 5
+    },
+    {
+      "value": "requires_action",
+      "type_name": "order_status_enum",
+      "sort_order": 6
+    }
+  ],
+  "schema_name": "public",
+  "database_name": "commerce",
+  "server_version": "16.15",
+  "related_table_names": [
+    "capture",
+    "cart_address",
+    "cart_line_item",
+    "cart_line_item_adjustment",
+    "cart_line_item_tax_line",
+    "cart_payment_collection",
+    "cart_promotion",
+    "cart_shipping_method",
+    "cart_shipping_method_adjustment",
+    "cart_shipping_method_tax_line",
+    "credit_line",
+    "inventory_item",
+    "inventory_level",
+    "order",
+    "order_address",
+    "order_cart",
+    "order_change",
+    "order_change_action",
+    "order_claim",
+    "order_claim_item",
+    "order_claim_item_image",
+    "order_credit_line",
+    "order_exchange",
+    "order_exchange_item",
+    "order_fulfillment",
+    "order_item",
+    "order_line_item",
+    "order_line_item_adjustment",
+    "order_line_item_tax_line",
+    "order_payment_collection",
+    "order_promotion",
+    "order_shipping",
+    "order_shipping_method",
+    "order_shipping_method_adjustment",
+    "order_shipping_method_tax_line",
+    "order_summary",
+    "order_transaction",
+    "payment",
+    "payment_collection",
+    "payment_collection_payment_providers",
+    "payment_provider",
+    "payment_session",
+    "refund",
+    "refund_reason",
+    "reservation_item",
+    "stock_location",
+    "stock_location_address"
+  ],
+  "transaction_read_only": "on"
+}

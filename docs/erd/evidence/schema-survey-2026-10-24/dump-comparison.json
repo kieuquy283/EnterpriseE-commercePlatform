@@ -1,0 +1,36 @@
+{
+  "snapshot_path": "C:\\Users\\hn845\\Downloads\\medusa-schema-actual.sql",
+  "snapshot_sha256": "f23c71b28b6313752626f9a160066eb6d73d8d47479c26ff1c9585fc66bea69e",
+  "current_catalog": "catalog.json",
+  "captured_at": "2026-10-24T10:01:13.994317+00:00",
+  "scope": "24 selected tables; column names, PostgreSQL types and nullability; normalized PK/FK/CHECK/UNIQUE definitions and non-primary indexes. Column defaults and application rows not compared.",
+  "tables_compared": 24,
+  "columns_compared": 318,
+  "constraints_compared": 46,
+  "non_primary_indexes_compared": 84,
+  "column_differences": [],
+  "index_differences": [],
+  "constraint_text_differences": [
+    {
+      "table": "cart_line_item",
+      "constraint": "cart_line_item_unit_price_check",
+      "snapshot": "CHECK ((unit_price >= (0)::numeric))",
+      "current": "CHECK (unit_price >= 0::numeric)"
+    },
+    {
+      "table": "payment_collection",
+      "constraint": "payment_collection_status_check",
+      "snapshot": "CHECK ((status = ANY (ARRAY['not_paid'::text, 'awaiting'::text, 'authorized'::text, 'partially_authorized'::text, 'canceled'::text, 'failed'::text, 'partially_captured'::text, 'completed'::text])))",
+      "current": "CHECK (status = ANY (ARRAY['not_paid'::text, 'awaiting'::text, 'authorized'::text, 'partially_authorized'::text, 'canceled'::text, 'failed'::text, 'partially_captured'::text, 'completed'::text]))"
+    },
+    {
+      "table": "payment_session",
+      "constraint": "payment_session_status_check",
+      "snapshot": "CHECK ((status = ANY (ARRAY['authorized'::text, 'captured'::text, 'pending'::text, 'requires_more'::text, 'error'::text, 'canceled'::text, 'pending_authorization'::text])))",
+      "current": "CHECK (status = ANY (ARRAY['authorized'::text, 'captured'::text, 'pending'::text, 'requires_more'::text, 'error'::text, 'canceled'::text, 'pending_authorization'::text]))"
+    }
+  ],
+  "constraint_differences": [],
+  "check_comparison_note": "The three textual CHECK differences are redundant outer parentheses and parentheses around numeric literal 0. After removing only those redundant wrappers, their definitions match. Status value lists are identical.",
+  "semantic_differences_found_in_compared_scope": false
+}

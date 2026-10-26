@@ -1,0 +1,199 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1760" height="2220" viewBox="0 0 1760 2220" role="img">
+<title>ERD v2 · Inventory, kho và reservation</title>
+<rect width="100%" height="100%" fill="white"/>
+<text x="60" y="72" font-family="Arial, sans-serif" font-size="34" fill="#172033" text-anchor="start" font-weight="700">ERD v2 · Inventory, kho và reservation</text>
+<text x="60" y="112" font-family="Arial, sans-serif" font-size="17" fill="#475569" text-anchor="start">7 bảng · 7 quan hệ · các cạnh LINK cho thấy Variant–Inventory N:N</text>
+<polyline points="60,157 125,157" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+<text x="138" y="163" font-family="Arial, sans-serif" font-size="16" fill="#2563eb" text-anchor="start">FK vật lý · PostgreSQL kiểm tra</text>
+<polyline points="600,157 665,157" fill="none" stroke="#15803d" stroke-width="3" stroke-linejoin="round" stroke-dasharray="3 6"/>
+<text x="678" y="163" font-family="Arial, sans-serif" font-size="16" fill="#15803d" text-anchor="start">LINK · bảng nối module, không FK</text>
+<polyline points="1140,157 1205,157" fill="none" stroke="#b45309" stroke-width="3" stroke-linejoin="round" stroke-dasharray="11 7"/>
+<text x="1218" y="163" font-family="Arial, sans-serif" font-size="16" fill="#b45309" text-anchor="start">REF · ID / read-only, không FK</text>
+<text x="60" y="204" font-family="Arial, sans-serif" font-size="15" fill="#475569" text-anchor="start">Trang này: 7 bảng · 7 cạnh (2 FK / 2 LINK / 3 REF)</text>
+<text x="60" y="229" font-family="Arial, sans-serif" font-size="15" fill="#475569" text-anchor="start">? = NULL được phép · PK1/PK2 = PK ghép · UQ* = unique khi deleted_at IS NULL · idx = index thường</text>
+<polyline points="420,420 700,420" fill="none" stroke="#15803d" stroke-width="3" stroke-linejoin="round" stroke-dasharray="3 6"/>
+<polyline points="1340,420 1060,420" fill="none" stroke="#15803d" stroke-width="3" stroke-linejoin="round" stroke-dasharray="3 6"/>
+<polyline points="1340,380 1100,380 1100,1040 1060,1040" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="420,1040 700,1040" fill="none" stroke="#b45309" stroke-width="3" stroke-linejoin="round" stroke-dasharray="11 7"/>
+<polyline points="1520,560 1520,900" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round"/>
+<polyline points="420,1000 460,1000 460,860 1300,860 1300,1040 1340,1040" fill="none" stroke="#b45309" stroke-width="3" stroke-linejoin="round" stroke-dasharray="11 7"/>
+<polyline points="1520,1520 1520,1180" fill="none" stroke="#b45309" stroke-width="3" stroke-linejoin="round" stroke-dasharray="11 7"/>
+<rect x="63" y="284" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="60" y="280" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="61" y="281" width="358" height="64" rx="4" fill="#ecfeff"/>
+<rect x="60" y="280" width="5" height="280" rx="2" fill="#0e7490"/>
+<text x="78" y="308" font-family="Arial, sans-serif" font-size="21" fill="#0e7490" text-anchor="start" font-weight="700">ProductVariant</text>
+<text x="78" y="331" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">product_variant</text>
+<text x="78" y="374" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="403" y="374" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="78" y="396" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">product_id?</text>
+<text x="403" y="396" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">FK · text</text>
+<text x="78" y="418" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">sku?</text>
+<text x="403" y="418" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">UQ* · text</text>
+<text x="78" y="440" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">manage_inventory</text>
+<text x="403" y="440" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">boolean</text>
+<text x="78" y="462" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">allow_backorder</text>
+<text x="403" y="462" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">boolean</text>
+<text x="78" y="526" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Cấu hình bán của sản phẩm</text>
+<text x="78" y="544" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Không lưu số tồn trên variant</text>
+<rect x="703" y="284" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="700" y="280" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="701" y="281" width="358" height="64" rx="4" fill="#fff7ed"/>
+<rect x="700" y="280" width="5" height="280" rx="2" fill="#c2410c"/>
+<text x="718" y="308" font-family="Arial, sans-serif" font-size="21" fill="#c2410c" text-anchor="start" font-weight="700">Variant × Inventory</text>
+<text x="718" y="331" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">product_variant_inventory_item</text>
+<text x="718" y="374" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">variant_id</text>
+<text x="1043" y="374" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK1 · varchar</text>
+<text x="718" y="396" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">inventory_item_id</text>
+<text x="1043" y="396" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK2 · varchar</text>
+<text x="718" y="418" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">required_quantity</text>
+<text x="1043" y="418" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="718" y="440" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="1043" y="440" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">idx · varchar</text>
+<text x="718" y="526" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">N:N; PK ghép hai ID</text>
+<text x="718" y="544" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">required_quantity: định mức / variant</text>
+<rect x="1343" y="284" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="1340" y="280" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="1341" y="281" width="358" height="64" rx="4" fill="#fff7ed"/>
+<rect x="1340" y="280" width="5" height="280" rx="2" fill="#c2410c"/>
+<text x="1358" y="308" font-family="Arial, sans-serif" font-size="21" fill="#c2410c" text-anchor="start" font-weight="700">InventoryItem</text>
+<text x="1358" y="331" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">inventory_item</text>
+<text x="1358" y="374" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="1683" y="374" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="1358" y="396" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">sku?</text>
+<text x="1683" y="396" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">UQ* · text</text>
+<text x="1358" y="418" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">title?</text>
+<text x="1683" y="418" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">text</text>
+<text x="1358" y="440" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">unit_of_measure?</text>
+<text x="1683" y="440" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">text</text>
+<text x="1358" y="526" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Đơn vị hàng được quản lý tồn</text>
+<text x="1358" y="544" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Số tồn chi tiết nằm ở InventoryLevel</text>
+<rect x="63" y="904" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="60" y="900" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="61" y="901" width="358" height="64" rx="4" fill="#fff7ed"/>
+<rect x="60" y="900" width="5" height="280" rx="2" fill="#c2410c"/>
+<text x="78" y="928" font-family="Arial, sans-serif" font-size="21" fill="#c2410c" text-anchor="start" font-weight="700">StockLocation</text>
+<text x="78" y="951" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">stock_location</text>
+<text x="78" y="994" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="403" y="994" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="78" y="1016" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">name</text>
+<text x="403" y="1016" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">text</text>
+<text x="78" y="1038" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">address_id?</text>
+<text x="403" y="1038" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">FK ngoài · text</text>
+<text x="78" y="1146" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Kho / địa điểm lưu hàng</text>
+<text x="78" y="1164" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Địa chỉ nằm ngoài phạm vi hình</text>
+<rect x="703" y="904" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="700" y="900" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="701" y="901" width="358" height="64" rx="4" fill="#fff7ed"/>
+<rect x="700" y="900" width="5" height="280" rx="2" fill="#c2410c"/>
+<text x="718" y="928" font-family="Arial, sans-serif" font-size="21" fill="#c2410c" text-anchor="start" font-weight="700">InventoryLevel</text>
+<text x="718" y="951" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">inventory_level</text>
+<text x="718" y="994" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="1043" y="994" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="718" y="1016" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">inventory_item_id</text>
+<text x="1043" y="1016" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">FK · text</text>
+<text x="718" y="1038" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">location_id</text>
+<text x="1043" y="1038" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">REF · text</text>
+<text x="718" y="1060" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">stocked_quantity</text>
+<text x="1043" y="1060" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="718" y="1082" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">reserved_quantity</text>
+<text x="1043" y="1082" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="718" y="1104" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">incoming_quantity</text>
+<text x="1043" y="1104" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="718" y="1146" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">UQ*: (inventory_item_id, location_id)</text>
+<text x="718" y="1164" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">available = stocked − reserved (tính)</text>
+<rect x="1343" y="904" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="1340" y="900" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="1341" y="901" width="358" height="64" rx="4" fill="#fff7ed"/>
+<rect x="1340" y="900" width="5" height="280" rx="2" fill="#c2410c"/>
+<text x="1358" y="928" font-family="Arial, sans-serif" font-size="21" fill="#c2410c" text-anchor="start" font-weight="700">ReservationItem</text>
+<text x="1358" y="951" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">reservation_item</text>
+<text x="1358" y="994" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="1683" y="994" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="1358" y="1016" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">inventory_item_id</text>
+<text x="1683" y="1016" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">FK · text</text>
+<text x="1358" y="1038" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">location_id</text>
+<text x="1683" y="1038" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">REF · text</text>
+<text x="1358" y="1060" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">line_item_id?</text>
+<text x="1683" y="1060" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">REF · text</text>
+<text x="1358" y="1082" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">quantity</text>
+<text x="1683" y="1082" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="1358" y="1104" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">allow_backorder?</text>
+<text x="1683" y="1104" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">boolean</text>
+<text x="1358" y="1146" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">line_item_id: dòng đơn trong checkout</text>
+<text x="1358" y="1164" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Không có inventory_level_id</text>
+<rect x="1343" y="1524" width="360" height="280" rx="5" fill="#e2e8f0"/>
+<rect x="1340" y="1520" width="360" height="280" rx="5" fill="white" stroke="#94a3b8"/>
+<rect x="1341" y="1521" width="358" height="64" rx="4" fill="#f5f3ff"/>
+<rect x="1340" y="1520" width="5" height="280" rx="2" fill="#7c3aed"/>
+<text x="1358" y="1548" font-family="Arial, sans-serif" font-size="21" fill="#7c3aed" text-anchor="start" font-weight="700">OrderLineItem</text>
+<text x="1358" y="1571" font-family="Consolas, monospace" font-size="13" fill="#475569" text-anchor="start">order_line_item</text>
+<text x="1358" y="1614" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">id</text>
+<text x="1683" y="1614" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">PK · text</text>
+<text x="1358" y="1636" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">totals_id?</text>
+<text x="1683" y="1636" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">FK cũ · text</text>
+<text x="1358" y="1658" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">product_id?</text>
+<text x="1683" y="1658" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">REF · text</text>
+<text x="1358" y="1680" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">variant_id?</text>
+<text x="1683" y="1680" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">REF · text</text>
+<text x="1358" y="1702" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">variant_sku?</text>
+<text x="1683" y="1702" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">text</text>
+<text x="1358" y="1724" font-family="Consolas, monospace" font-size="14" fill="#172033" text-anchor="start">unit_price</text>
+<text x="1683" y="1724" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="end">numeric</text>
+<text x="1358" y="1766" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">Snapshot; không order_id / quantity</text>
+<text x="1358" y="1784" font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="start">totals_id: FK lịch sử còn trong DB</text>
+<rect x="60" y="1520" width="1000" height="280" rx="5" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="82" y="1557" font-family="Arial, sans-serif" font-size="21" fill="#172033" text-anchor="start" font-weight="700">Tồn có thể bán và lượng giữ hàng</text>
+<text x="82" y="1595" font-family="Arial, sans-serif" font-size="15" fill="#475569" text-anchor="start">Một item tại một kho: available = stocked − reserved.</text>
+<text x="82" y="1629" font-family="Arial, sans-serif" font-size="15" fill="#475569" text-anchor="start">Lượng giữ = số lượng đặt × required_quantity.</text>
+<text x="82" y="1663" font-family="Arial, sans-serif" font-size="15" fill="#475569" text-anchor="start">incoming_quantity không cộng vào lượng có thể bán.</text>
+<text x="82" y="1697" font-family="Arial, sans-serif" font-size="15" fill="#475569" text-anchor="start">Reservation dùng cặp (inventory_item_id, location_id) để tìm level.</text>
+<text x="82" y="1731" font-family="Arial, sans-serif" font-size="15" fill="#475569" text-anchor="start">Không có FK Reservation → InventoryLevel hay Reservation → CartLineItem.</text>
+<rect x="543.0" y="407.0" width="34.0" height="24" rx="3" fill="white"/>
+<text x="560.0" y="425.0" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">R6</text>
+<rect x="433" y="380" width="18.0" height="22" rx="2" fill="white"/>
+<text x="442.0" y="396" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">1</text>
+<rect x="651.0" y="435" width="36.0" height="22" rx="2" fill="white"/>
+<text x="669.0" y="451" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1183.0" y="407.0" width="34.0" height="24" rx="3" fill="white"/>
+<text x="1200.0" y="425.0" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">R7</text>
+<rect x="1309.0" y="380" width="18.0" height="22" rx="2" fill="white"/>
+<text x="1318.0" y="396" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">1</text>
+<rect x="1073" y="435" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1091.0" y="451" font-family="Arial, sans-serif" font-size="14" fill="#15803d" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1083.0" y="697.0" width="34.0" height="24" rx="3" fill="white"/>
+<text x="1100.0" y="715.0" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">R8</text>
+<rect x="1309.0" y="340" width="18.0" height="22" rx="2" fill="white"/>
+<text x="1318.0" y="356" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">1</text>
+<rect x="1073" y="1055" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1091.0" y="1071" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="543.0" y="1027.0" width="34.0" height="24" rx="3" fill="white"/>
+<text x="560.0" y="1045.0" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">R9</text>
+<rect x="433" y="1000" width="18.0" height="22" rx="2" fill="white"/>
+<text x="442.0" y="1016" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">1</text>
+<rect x="651.0" y="1055" width="36.0" height="22" rx="2" fill="white"/>
+<text x="669.0" y="1071" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1499.0" y="717.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="1520.0" y="735.0" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">R28</text>
+<rect x="1532" y="569" width="18.0" height="22" rx="2" fill="white"/>
+<text x="1541.0" y="585" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">1</text>
+<rect x="1472.0" y="872" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1490.0" y="888" font-family="Arial, sans-serif" font-size="14" fill="#2563eb" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="859.0" y="847.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="880.0" y="865.0" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">R29</text>
+<rect x="433" y="960" width="18.0" height="22" rx="2" fill="white"/>
+<text x="442.0" y="976" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">1</text>
+<rect x="1291.0" y="1055" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1309.0" y="1071" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..N</text>
+<rect x="1499.0" y="1337.0" width="42.0" height="24" rx="3" fill="white"/>
+<text x="1520.0" y="1355.0" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">R30</text>
+<rect x="1532" y="1492" width="34.0" height="22" rx="2" fill="white"/>
+<text x="1549.0" y="1508" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..1</text>
+<rect x="1472.0" y="1189" width="36.0" height="22" rx="2" fill="white"/>
+<text x="1490.0" y="1205" font-family="Arial, sans-serif" font-size="14" fill="#b45309" text-anchor="middle" font-weight="700">0..N</text>
+<text x="60" y="2037" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="start">Số đầu cạnh: 1 / 0..1 / 0..N. Với LINK hoặc REF, ID NOT NULL không bảo đảm bản ghi đích tồn tại.</text>
+<text x="60" y="2066" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="start">Với LINK, 0..N ở phía bảng nối là số bản ghi link DB có thể lưu; cardinality của API được ghi riêng.</text>
+<text x="60" y="2095" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="start">PK ghép chỉ ngăn trùng cặp. API Cart–Order / Cart–Payment singular không có nghĩa DB cưỡng chế 1:1. R25: 0..1* chỉ tính payment chưa xóa.</text>
+<text x="60" y="2124" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="start">Nguồn: catalog 24/10/2026 cho 20 bảng; Customer/Product từ snapshot v1 17/10/2026. Medusa 2.21.2. Bản vẽ: 25/10/2026.</text>
+<text x="60" y="2153" font-family="Arial, sans-serif" font-size="14" fill="#475569" text-anchor="start">Cột được chọn để đọc nghiệp vụ; địa chỉ, thuế, shipping, provider và các module hỗ trợ không được vẽ đầy đủ. Chưa chạy checkout trong công việc ERD.</text>
+</svg>
