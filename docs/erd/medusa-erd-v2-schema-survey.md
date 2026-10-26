@@ -21,7 +21,7 @@
 
 ### Đối chiếu với dump ngày 17/10/2026
 
-Đã so sánh 24 bảng với snapshot `C:/Users/hn845/Downloads/medusa-schema-actual.sql`:
+Đã so sánh 24 bảng với snapshot `docs/erd/medusa-schema-actual.sql`:
 
 - 318 tên cột, kiểu PostgreSQL cơ sở (`udt_name`) và nullability khớp.
 - 46 định nghĩa constraint gồm 24 PK, 19 FK và 3 CHECK tương đương. Ba CHECK khác cách in dấu ngoặc giữa dump và `pg_get_constraintdef(..., true)`, nhưng cùng điều kiện và danh sách giá trị.
