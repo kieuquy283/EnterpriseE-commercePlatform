@@ -1,0 +1,196 @@
+{
+  "stage": "T2",
+  "run_id": "ts-20261026-order-01",
+  "captured_at": "2026-10-26T09:04:00.865Z",
+  "capture_finished_at": "2026-10-26T09:04:01.064Z",
+  "clock_source": "Node.js host UTC",
+  "read_source": "Medusa module services and query.graph",
+  "consistency": "Sequential reads across services; not an atomic database snapshot",
+  "fixture": {
+    "run_id": "ts-20261026-order-01",
+    "product_id": "prod_01M5555A9JAW58WJYFPXC2JFM4",
+    "handle": "ao-thun-essential",
+    "variant_id": "variant_01M5555ACK1K0YCMWJ7XXSVYSA",
+    "sku": "TEE-ESSENTIAL-BLK",
+    "manage_inventory": true,
+    "allow_backorder": false,
+    "required_quantity": 1,
+    "inventory_item_id": "iitem_01M5555AD6JTJMAN2JGAMFBJD6",
+    "inventory_level_id": "ilev_01M5555AFDZ3H78XH3Q132NXJ5",
+    "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+    "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+    "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+    "currency_code": "vnd",
+    "quantity": 2,
+    "calculated_unit_price": 249000,
+    "payment_provider_id": "pp_system_default"
+  },
+  "levels": [
+    {
+      "id": "ilev_01M5555AFD0AX3CYRJSSPGVP74",
+      "inventory_item_id": "iitem_01M5555AD6X257NT35KT26HJ1D",
+      "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+      "stocked_quantity": 18,
+      "reserved_quantity": 0,
+      "incoming_quantity": 0,
+      "available_quantity": 18,
+      "updated_at": "2026-10-17T14:44:53.870Z"
+    },
+    {
+      "id": "ilev_01M5555AFDFJK3ACDSBDRA9MMZ",
+      "inventory_item_id": "iitem_01M5555AD6X68YXHJM1HK26TPT",
+      "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+      "stocked_quantity": 12,
+      "reserved_quantity": 0,
+      "incoming_quantity": 0,
+      "available_quantity": 12,
+      "updated_at": "2026-10-17T14:44:53.870Z"
+    },
+    {
+      "id": "ilev_01M5555AFDZ3H78XH3Q132NXJ5",
+      "inventory_item_id": "iitem_01M5555AD6JTJMAN2JGAMFBJD6",
+      "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+      "stocked_quantity": 25,
+      "reserved_quantity": 6,
+      "incoming_quantity": 0,
+      "available_quantity": 19,
+      "updated_at": "2026-10-26T09:04:00.663Z"
+    }
+  ],
+  "reservations": [
+    {
+      "id": "resitem_01M5SQSC2P4ZG98WHBTQTW0G83",
+      "inventory_item_id": "iitem_01M5555AD6JTJMAN2JGAMFBJD6",
+      "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+      "line_item_id": "ordli_01M5SQSBXB1CJNB55SZCYEVCTF",
+      "quantity": 2,
+      "allow_backorder": false,
+      "created_at": "2026-10-25T14:35:13.891Z",
+      "updated_at": "2026-10-25T14:35:13.891Z"
+    },
+    {
+      "id": "resitem_01M5T8GVGJ99A5XPZJVWY6E8AX",
+      "inventory_item_id": "iitem_01M5555AD6JTJMAN2JGAMFBJD6",
+      "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+      "line_item_id": "ordli_01M5T8GTZ4EEGVH8RKZ0DAVCW8",
+      "quantity": 2,
+      "allow_backorder": false,
+      "created_at": "2026-10-25T19:27:40.585Z",
+      "updated_at": "2026-10-25T19:27:40.585Z"
+    },
+    {
+      "id": "resitem_01M5VQ7KMDW25KAQRVJ64B8JD9",
+      "inventory_item_id": "iitem_01M5555AD6JTJMAN2JGAMFBJD6",
+      "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+      "line_item_id": "ordli_01M5VQ7KG16VN1187M4X1X2HJ1",
+      "quantity": 2,
+      "allow_backorder": false,
+      "created_at": "2026-10-26T09:04:00.662Z",
+      "updated_at": "2026-10-26T09:04:00.662Z"
+    }
+  ],
+  "active_counts": {
+    "carts": 6,
+    "cart_line_items": 8,
+    "orders": 3,
+    "payments": 3
+  },
+  "cart": {
+    "id": "cart_01M5VQ7G8JR2H68GAQRP96JR41",
+    "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+    "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+    "currency_code": "vnd",
+    "completed_at": "2026-10-26T09:04:00.627Z",
+    "sample_run": "ts-20261026-order-01"
+  },
+  "cart_items": [
+    {
+      "id": "cali_01M5VQ7GT38712DSJDAX3K307P",
+      "cart_id": "cart_01M5VQ7G8JR2H68GAQRP96JR41",
+      "variant_id": "variant_01M5555ACK1K0YCMWJ7XXSVYSA",
+      "product_id": "prod_01M5555A9JAW58WJYFPXC2JFM4",
+      "quantity": 2,
+      "unit_price": 249000
+    }
+  ],
+  "order": {
+    "id": "order_01M5VQ7KFZJNCP690YV4PV8VQF",
+    "status": "pending",
+    "version": 1,
+    "currency_code": "vnd",
+    "created_at": "2026-10-26T09:04:00.515Z",
+    "sample_run": "ts-20261026-order-01"
+  },
+  "order_items": [
+    {
+      "order_item_id": "orditem_01M5VQ7KG2MTWFPKRNQYF4YVQ2",
+      "order_id": "order_01M5VQ7KFZJNCP690YV4PV8VQF",
+      "version": 1,
+      "order_line_item_id": "ordli_01M5VQ7KG16VN1187M4X1X2HJ1",
+      "quantity": 2,
+      "fulfilled_quantity": 0,
+      "shipped_quantity": 0,
+      "delivered_quantity": 0,
+      "product_id": "prod_01M5555A9JAW58WJYFPXC2JFM4",
+      "variant_id": "variant_01M5555ACK1K0YCMWJ7XXSVYSA",
+      "variant_sku": "TEE-ESSENTIAL-BLK",
+      "unit_price": 249000
+    }
+  ],
+  "order_cart_links": [
+    {
+      "order_id": "order_01M5VQ7KFZJNCP690YV4PV8VQF",
+      "cart_id": "cart_01M5VQ7G8JR2H68GAQRP96JR41"
+    }
+  ],
+  "cart_payment_links": [
+    {
+      "cart_id": "cart_01M5VQ7G8JR2H68GAQRP96JR41",
+      "payment_collection_id": "pay_col_01M5VQ7JZ1JFM830BJBJ463YY3"
+    }
+  ],
+  "order_payment_links": [
+    {
+      "order_id": "order_01M5VQ7KFZJNCP690YV4PV8VQF",
+      "payment_collection_id": "pay_col_01M5VQ7JZ1JFM830BJBJ463YY3"
+    }
+  ],
+  "fulfillment_links": [],
+  "payment_collections": [
+    {
+      "id": "pay_col_01M5VQ7JZ1JFM830BJBJ463YY3",
+      "currency_code": "vnd",
+      "amount": 528000,
+      "status": "authorized",
+      "authorized_amount": 528000,
+      "captured_amount": 0,
+      "refunded_amount": 0,
+      "completed_at": null
+    }
+  ],
+  "payment_sessions": [
+    {
+      "id": "payses_01M5VQ7K3EQMJRFXZZSTGNCACE",
+      "payment_collection_id": "pay_col_01M5VQ7JZ1JFM830BJBJ463YY3",
+      "provider_id": "pp_system_default",
+      "currency_code": "vnd",
+      "amount": 528000,
+      "status": "authorized",
+      "authorized_at": "2026-10-26T09:04:00.706Z"
+    }
+  ],
+  "payments": [
+    {
+      "id": "pay_01M5VQ7KP6CF4YM0TNTJH75Y3B",
+      "payment_collection_id": "pay_col_01M5VQ7JZ1JFM830BJBJ463YY3",
+      "payment_session_id": "payses_01M5VQ7K3EQMJRFXZZSTGNCACE",
+      "provider_id": "pp_system_default",
+      "currency_code": "vnd",
+      "amount": 528000,
+      "captured_at": null,
+      "canceled_at": null
+    }
+  ],
+  "captures": [],
+  "refunds": []
+}

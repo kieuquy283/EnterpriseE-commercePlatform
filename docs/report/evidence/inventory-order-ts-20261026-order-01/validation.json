@@ -1,0 +1,386 @@
+{
+  "run_id": "ts-20261026-order-01",
+  "all_passed": true,
+  "passed": 24,
+  "total": 24,
+  "expected_reserved_delta": 2,
+  "snapshots": [
+    {
+      "id": "ilev_01M5555AFDZ3H78XH3Q132NXJ5",
+      "inventory_item_id": "iitem_01M5555AD6JTJMAN2JGAMFBJD6",
+      "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+      "stocked_quantity": 25,
+      "reserved_quantity": 4,
+      "incoming_quantity": 0,
+      "available_quantity": 21,
+      "updated_at": "2026-10-25T19:27:40.586Z"
+    },
+    {
+      "id": "ilev_01M5555AFDZ3H78XH3Q132NXJ5",
+      "inventory_item_id": "iitem_01M5555AD6JTJMAN2JGAMFBJD6",
+      "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+      "stocked_quantity": 25,
+      "reserved_quantity": 4,
+      "incoming_quantity": 0,
+      "available_quantity": 21,
+      "updated_at": "2026-10-25T19:27:40.586Z"
+    },
+    {
+      "id": "ilev_01M5555AFDZ3H78XH3Q132NXJ5",
+      "inventory_item_id": "iitem_01M5555AD6JTJMAN2JGAMFBJD6",
+      "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+      "stocked_quantity": 25,
+      "reserved_quantity": 6,
+      "incoming_quantity": 0,
+      "available_quantity": 19,
+      "updated_at": "2026-10-26T09:04:00.663Z"
+    }
+  ],
+  "new_reservation_ids": [
+    "resitem_01M5VQ7KMDW25KAQRVJ64B8JD9"
+  ],
+  "baseline_reserved_minus_reservation_sum": 0,
+  "checks": [
+    {
+      "id": "same_run_and_fixture",
+      "expected": "T0/T1/T2 share the run, item and location",
+      "actual": [
+        {
+          "run_id": "ts-20261026-order-01",
+          "fixture": {
+            "run_id": "ts-20261026-order-01",
+            "product_id": "prod_01M5555A9JAW58WJYFPXC2JFM4",
+            "handle": "ao-thun-essential",
+            "variant_id": "variant_01M5555ACK1K0YCMWJ7XXSVYSA",
+            "sku": "TEE-ESSENTIAL-BLK",
+            "manage_inventory": true,
+            "allow_backorder": false,
+            "required_quantity": 1,
+            "inventory_item_id": "iitem_01M5555AD6JTJMAN2JGAMFBJD6",
+            "inventory_level_id": "ilev_01M5555AFDZ3H78XH3Q132NXJ5",
+            "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+            "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+            "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+            "currency_code": "vnd",
+            "quantity": 2,
+            "calculated_unit_price": 249000,
+            "payment_provider_id": "pp_system_default"
+          }
+        },
+        {
+          "run_id": "ts-20261026-order-01",
+          "fixture": {
+            "run_id": "ts-20261026-order-01",
+            "product_id": "prod_01M5555A9JAW58WJYFPXC2JFM4",
+            "handle": "ao-thun-essential",
+            "variant_id": "variant_01M5555ACK1K0YCMWJ7XXSVYSA",
+            "sku": "TEE-ESSENTIAL-BLK",
+            "manage_inventory": true,
+            "allow_backorder": false,
+            "required_quantity": 1,
+            "inventory_item_id": "iitem_01M5555AD6JTJMAN2JGAMFBJD6",
+            "inventory_level_id": "ilev_01M5555AFDZ3H78XH3Q132NXJ5",
+            "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+            "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+            "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+            "currency_code": "vnd",
+            "quantity": 2,
+            "calculated_unit_price": 249000,
+            "payment_provider_id": "pp_system_default"
+          }
+        },
+        {
+          "run_id": "ts-20261026-order-01",
+          "fixture": {
+            "run_id": "ts-20261026-order-01",
+            "product_id": "prod_01M5555A9JAW58WJYFPXC2JFM4",
+            "handle": "ao-thun-essential",
+            "variant_id": "variant_01M5555ACK1K0YCMWJ7XXSVYSA",
+            "sku": "TEE-ESSENTIAL-BLK",
+            "manage_inventory": true,
+            "allow_backorder": false,
+            "required_quantity": 1,
+            "inventory_item_id": "iitem_01M5555AD6JTJMAN2JGAMFBJD6",
+            "inventory_level_id": "ilev_01M5555AFDZ3H78XH3Q132NXJ5",
+            "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+            "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+            "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+            "currency_code": "vnd",
+            "quantity": 2,
+            "calculated_unit_price": 249000,
+            "payment_provider_id": "pp_system_default"
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "T0_before_cart",
+      "expected": "No cart or order at T0",
+      "actual": {
+        "cart": null,
+        "order": null
+      },
+      "passed": true
+    },
+    {
+      "id": "T0_T1_inventory_unchanged",
+      "expected": "All active levels unchanged",
+      "actual": {
+        "before": 3,
+        "after": 3
+      },
+      "passed": true
+    },
+    {
+      "id": "T0_T1_reservations_unchanged",
+      "expected": "All existing reservations unchanged",
+      "actual": {
+        "before": 2,
+        "after": 2
+      },
+      "passed": true
+    },
+    {
+      "id": "T0_T1_no_order_created",
+      "expected": 0,
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "id": "T1_checkout_ready",
+      "expected": "One uncompleted cart item, selected variant, quantity 2",
+      "actual": {
+        "cart": {
+          "id": "cart_01M5VQ7G8JR2H68GAQRP96JR41",
+          "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+          "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+          "currency_code": "vnd",
+          "completed_at": null,
+          "sample_run": "ts-20261026-order-01"
+        },
+        "items": [
+          {
+            "id": "cali_01M5VQ7GT38712DSJDAX3K307P",
+            "cart_id": "cart_01M5VQ7G8JR2H68GAQRP96JR41",
+            "variant_id": "variant_01M5555ACK1K0YCMWJ7XXSVYSA",
+            "product_id": "prod_01M5555A9JAW58WJYFPXC2JFM4",
+            "quantity": 2,
+            "unit_price": 249000
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "id": "T1_T2_stocked_unchanged",
+      "expected": 0,
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "id": "T1_T2_reserved_delta",
+      "expected": 2,
+      "actual": 2,
+      "passed": true
+    },
+    {
+      "id": "T1_T2_available_delta",
+      "expected": -2,
+      "actual": -2,
+      "passed": true
+    },
+    {
+      "id": "T1_T2_incoming_unchanged",
+      "expected": 0,
+      "actual": 0,
+      "passed": true
+    },
+    {
+      "id": "T1_T2_other_levels_unchanged",
+      "expected": "All other levels identical",
+      "actual": 2,
+      "passed": true
+    },
+    {
+      "id": "baseline_reservations_preserved",
+      "expected": "All pre-existing reservation rows identical",
+      "actual": 2,
+      "passed": true
+    },
+    {
+      "id": "order_current_version_and_quantity",
+      "expected": "One current-version item, selected variant, quantity 2",
+      "actual": [
+        {
+          "order_item_id": "orditem_01M5VQ7KG2MTWFPKRNQYF4YVQ2",
+          "order_id": "order_01M5VQ7KFZJNCP690YV4PV8VQF",
+          "version": 1,
+          "order_line_item_id": "ordli_01M5VQ7KG16VN1187M4X1X2HJ1",
+          "quantity": 2,
+          "fulfilled_quantity": 0,
+          "shipped_quantity": 0,
+          "delivered_quantity": 0,
+          "product_id": "prod_01M5555A9JAW58WJYFPXC2JFM4",
+          "variant_id": "variant_01M5555ACK1K0YCMWJ7XXSVYSA",
+          "variant_sku": "TEE-ESSENTIAL-BLK",
+          "unit_price": 249000
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "reservation_matches_order_line",
+      "expected": "One new reservation for this OrderLineItem/item/location and required quantity",
+      "actual": [
+        {
+          "id": "resitem_01M5VQ7KMDW25KAQRVJ64B8JD9",
+          "inventory_item_id": "iitem_01M5555AD6JTJMAN2JGAMFBJD6",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "line_item_id": "ordli_01M5VQ7KG16VN1187M4X1X2HJ1",
+          "quantity": 2,
+          "allow_backorder": false,
+          "created_at": "2026-10-26T09:04:00.662Z",
+          "updated_at": "2026-10-26T09:04:00.662Z"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "order_cart_link",
+      "expected": "One link from this cart to this order",
+      "actual": [
+        {
+          "order_id": "order_01M5VQ7KFZJNCP690YV4PV8VQF",
+          "cart_id": "cart_01M5VQ7G8JR2H68GAQRP96JR41"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "new_order_count",
+      "expected": 1,
+      "actual": 1,
+      "passed": true
+    },
+    {
+      "id": "cart_completed",
+      "expected": "completed_at set",
+      "actual": "2026-10-26T09:04:00.627Z",
+      "passed": true
+    },
+    {
+      "id": "no_fulfillment",
+      "expected": "No fulfillment, zero fulfilled/shipped/delivered",
+      "actual": [],
+      "passed": true
+    },
+    {
+      "id": "order_read_back_via_store_api",
+      "expected": "Same Order/current version/line/variant/quantity/currency",
+      "actual": {
+        "id": "order_01M5VQ7KFZJNCP690YV4PV8VQF",
+        "status": "pending",
+        "version": 1,
+        "currency_code": "vnd",
+        "items": [
+          {
+            "id": "ordli_01M5VQ7KG16VN1187M4X1X2HJ1",
+            "variant_id": "variant_01M5555ACK1K0YCMWJ7XXSVYSA",
+            "quantity": 2,
+            "unit_price": 249000
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "id": "payment_collection_link",
+      "expected": "Cart and order share the selected collection",
+      "actual": {
+        "cart": [
+          {
+            "cart_id": "cart_01M5VQ7G8JR2H68GAQRP96JR41",
+            "payment_collection_id": "pay_col_01M5VQ7JZ1JFM830BJBJ463YY3"
+          }
+        ],
+        "order": [
+          {
+            "order_id": "order_01M5VQ7KFZJNCP690YV4PV8VQF",
+            "payment_collection_id": "pay_col_01M5VQ7JZ1JFM830BJBJ463YY3"
+          }
+        ]
+      },
+      "passed": true
+    },
+    {
+      "id": "payment_session_and_payment_link",
+      "expected": "One authorized system payment linked to collection/session",
+      "actual": [
+        {
+          "id": "pay_01M5VQ7KP6CF4YM0TNTJH75Y3B",
+          "payment_collection_id": "pay_col_01M5VQ7JZ1JFM830BJBJ463YY3",
+          "payment_session_id": "payses_01M5VQ7K3EQMJRFXZZSTGNCACE",
+          "provider_id": "pp_system_default",
+          "currency_code": "vnd",
+          "amount": 528000,
+          "captured_at": null,
+          "canceled_at": null
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "payment_amounts_and_currency",
+      "expected": "Collection, session and payment amounts/currency agree",
+      "actual": {
+        "collection": {
+          "id": "pay_col_01M5VQ7JZ1JFM830BJBJ463YY3",
+          "currency_code": "vnd",
+          "amount": 528000,
+          "status": "authorized",
+          "authorized_amount": 528000,
+          "captured_amount": 0,
+          "refunded_amount": 0,
+          "completed_at": null
+        },
+        "session": {
+          "id": "payses_01M5VQ7K3EQMJRFXZZSTGNCACE",
+          "payment_collection_id": "pay_col_01M5VQ7JZ1JFM830BJBJ463YY3",
+          "provider_id": "pp_system_default",
+          "currency_code": "vnd",
+          "amount": 528000,
+          "status": "authorized",
+          "authorized_at": "2026-10-26T09:04:00.706Z"
+        },
+        "payment": {
+          "id": "pay_01M5VQ7KP6CF4YM0TNTJH75Y3B",
+          "payment_collection_id": "pay_col_01M5VQ7JZ1JFM830BJBJ463YY3",
+          "payment_session_id": "payses_01M5VQ7K3EQMJRFXZZSTGNCACE",
+          "provider_id": "pp_system_default",
+          "currency_code": "vnd",
+          "amount": 528000,
+          "captured_at": null,
+          "canceled_at": null
+        }
+      },
+      "passed": true
+    },
+    {
+      "id": "no_capture_or_refund",
+      "expected": "Authorized only; no capture/refund",
+      "actual": {
+        "captures": [],
+        "refunds": [],
+        "captured_at": null
+      },
+      "passed": true
+    },
+    {
+      "id": "baseline_reserved_reservation_gap_preserved",
+      "expected": 0,
+      "actual": 0,
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "id": "order_01M5VQ7KFZJNCP690YV4PV8VQF",
+  "status": "pending",
+  "version": 1,
+  "currency_code": "vnd",
+  "items": [
+    {
+      "id": "ordli_01M5VQ7KG16VN1187M4X1X2HJ1",
+      "variant_id": "variant_01M5555ACK1K0YCMWJ7XXSVYSA",
+      "quantity": 2,
+      "unit_price": 249000
+    }
+  ]
+}

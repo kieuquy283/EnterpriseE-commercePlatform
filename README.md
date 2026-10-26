@@ -110,6 +110,14 @@ Các lần chạy tiếp theo chỉ cần `docker compose up -d postgres redis`,
 
 ## Kiểm tra luồng đặt hàng
 
+Kiểm tra inventory trước/sau tạo Order bằng script TypeScript của tuần 3:
+
+```powershell
+npm run backend:check:inventory-order -- my-checkout-01
+```
+
+Lệnh chạy qua `medusa exec`, tạo một Order thử nghiệm thật mua 2 đơn vị và lưu snapshot T0/T1/T2 vào `docs/report/evidence/inventory-order-<run_id>/`. Dùng run ID mới mỗi lần, backend/database local phải sẵn sàng. Xem [hướng dẫn chạy](docs/report/inventory-order-run-guide.md) và [Inventory Consistency Notes](docs/report/inventory-consistency-notes.md).
+
 Trên storefront: mở một sản phẩm → thêm vào giỏ → checkout → nhập địa chỉ Việt Nam → chọn **Standard delivery** → chọn COD → đặt hàng. Đăng nhập để xem đơn trong tài khoản. Trong Admin, kiểm tra đơn và tồn kho đã được Medusa cập nhật.
 
 Có thể chạy smoke test Store API bằng PowerShell. Lệnh này **tạo một khách hàng và một đơn hàng thử thật** trong database hiện tại:

@@ -1,0 +1,39 @@
+{
+  "run_id": "ts-20261026-order-01",
+  "verified_at": "2026-10-26T09:08:06.970Z",
+  "commands": [
+    {
+      "command": "npm run typecheck --workspace @dtc/backend",
+      "exit_code": 0
+    },
+    {
+      "command": "npm run build --workspace @dtc/backend",
+      "exit_code": 0,
+      "lint_errors": 0,
+      "lint_warnings": 0
+    },
+    {
+      "command": "npm run backend:check:inventory-order -- ts-20261026-order-01",
+      "exit_code": 0,
+      "checks_passed": 24,
+      "checks_total": 24
+    }
+  ],
+  "source_archive": [
+    {
+      "file": "check-inventory-order.ts",
+      "sha256": "268c51efb02b97eddf39d1322cfac9d7be56aa2455a7b027fe46a8e3f8082222",
+      "archive_matches": true
+    },
+    {
+      "file": "inventory-order/snapshot.ts",
+      "sha256": "a5c579832428259596c2b7974ec5bfb7adbe2a47851b92df856afdb03a413258",
+      "archive_matches": true
+    },
+    {
+      "file": "inventory-order/validation.ts",
+      "sha256": "2a3a9d994c461260e52a9f9839dcf48588699c40cb4cdd7479fd11bebc421cbb",
+      "archive_matches": true
+    }
+  ]
+}
