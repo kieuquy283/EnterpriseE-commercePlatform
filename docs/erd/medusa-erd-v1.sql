@@ -506,4 +506,3 @@ SELECT tablename, indexname, indexdef
 FROM pg_indexes
 WHERE schemaname = 'medusa_erd_v1'
 ORDER BY tablename, indexname;
-

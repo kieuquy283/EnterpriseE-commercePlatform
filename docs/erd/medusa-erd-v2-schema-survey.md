@@ -214,6 +214,3 @@ reservation quantity = order item quantity × required_quantity
 Service tạo reservation làm tăng `reserved_quantity`, không trực tiếp giảm `stocked_quantity` ở bước này; có compensation xóa reservation khi workflow rollback. Đây là kết quả đọc source, chưa phải bằng chứng một ca checkout thành công hoặc rollback thực tế trong lần khảo sát này.
 
 Khi chạy bước kiểm tra trước/sau, cần lưu cùng `inventory_item_id` và `location_id`, các cờ inventory/backorder, `required_quantity`, số lượng đặt, order/line/reservation IDs và ba số stocked/reserved/incoming. Dùng đúng `order_item.version` khi đọc lượng hàng của đơn. Không dùng số seed cũ làm baseline hiện tại và không đánh đồng order được tạo với payment đã capture.
-
-
-
