@@ -1,0 +1,74 @@
+[
+  {
+    "operation": "GET /health",
+    "started_at": "2026-10-26T09:03:56.268Z",
+    "outcome": "success",
+    "completed_at": "2026-10-26T09:03:56.314Z"
+  },
+  {
+    "operation": "GET /store/products (fixture price)",
+    "started_at": "2026-10-26T09:03:56.427Z",
+    "outcome": "success",
+    "completed_at": "2026-10-26T09:03:56.575Z"
+  },
+  {
+    "operation": "GET /store/payment-providers",
+    "started_at": "2026-10-26T09:03:56.578Z",
+    "outcome": "success",
+    "completed_at": "2026-10-26T09:03:56.614Z"
+  },
+  {
+    "operation": "POST /store/carts",
+    "started_at": "2026-10-26T09:03:56.737Z",
+    "outcome": "success",
+    "completed_at": "2026-10-26T09:03:57.519Z"
+  },
+  {
+    "operation": "POST /store/carts/:id/line-items",
+    "started_at": "2026-10-26T09:03:57.522Z",
+    "outcome": "success",
+    "completed_at": "2026-10-26T09:03:58.110Z"
+  },
+  {
+    "operation": "POST /store/carts/:id (test checkout details)",
+    "started_at": "2026-10-26T09:03:58.111Z",
+    "outcome": "success",
+    "completed_at": "2026-10-26T09:03:58.758Z"
+  },
+  {
+    "operation": "GET /store/shipping-options",
+    "started_at": "2026-10-26T09:03:58.759Z",
+    "outcome": "success",
+    "completed_at": "2026-10-26T09:03:58.972Z"
+  },
+  {
+    "operation": "POST /store/carts/:id/shipping-methods",
+    "started_at": "2026-10-26T09:03:58.973Z",
+    "outcome": "success",
+    "completed_at": "2026-10-26T09:03:59.803Z"
+  },
+  {
+    "operation": "GET /store/carts/:id",
+    "started_at": "2026-10-26T09:03:59.804Z",
+    "outcome": "success",
+    "completed_at": "2026-10-26T09:03:59.882Z"
+  },
+  {
+    "operation": "POST /store/payment-collections and payment-sessions (SDK)",
+    "started_at": "2026-10-26T09:03:59.883Z",
+    "outcome": "success",
+    "completed_at": "2026-10-26T09:04:00.142Z"
+  },
+  {
+    "operation": "POST /store/carts/:id/complete",
+    "started_at": "2026-10-26T09:04:00.269Z",
+    "outcome": "success",
+    "completed_at": "2026-10-26T09:04:00.861Z"
+  },
+  {
+    "operation": "GET /store/orders/:id (readback)",
+    "started_at": "2026-10-26T09:04:01.067Z",
+    "outcome": "success",
+    "completed_at": "2026-10-26T09:04:01.145Z"
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "checked_at_vietnam": "2026-10-23T17:51:40.5504734+07:00",
+  "same_customer_id": true,
+  "same_cart_id": true,
+  "same_items_ids_and_quantities": true,
+  "same_counts_on_rerun": true,
+  "inventory_levels_unchanged": true,
+  "reservation_count_unchanged": true,
+  "existing_customers_preserved": true,
+  "before_counts": {
+    "cart": 2,
+    "customer": 1,
+    "cart_line_item": 3
+  },
+  "after_counts": {
+    "cart": 3,
+    "customer": 2,
+    "cart_line_item": 5
+  }
+}

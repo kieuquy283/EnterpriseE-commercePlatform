@@ -1,0 +1,23 @@
+{
+  "run_id": "ts-20261026-order-01",
+  "environment": "development",
+  "versions": {
+    "medusa": "2.21.2",
+    "js-sdk": "2.21.2",
+    "inventory": "2.21.2",
+    "order": "2.21.2",
+    "payment": "2.21.2",
+    "core-flows": "2.21.2"
+  },
+  "node": "v24.21.0",
+  "runner": "medusa exec ./src/scripts/check-inventory-order.ts",
+  "base_url": "http://127.0.0.1:9000",
+  "database": {
+    "host": "localhost",
+    "port": "15432",
+    "name": "commerce"
+  },
+  "snapshot_reader": "Medusa module services and query.graph, no raw SQL",
+  "snapshot_consistency": "Sequential reads; not an atomic cross-module transaction. No concurrent inventory work during this run.",
+  "timestamp_source": "Node.js host clock; each snapshot records read start/end"
+}
