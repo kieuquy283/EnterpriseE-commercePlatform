@@ -15,3 +15,5 @@ medusa-scaffold/
 coverage/
 .DS_Store
 .agents/
+data/hm/
+__pycache__/

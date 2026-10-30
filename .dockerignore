@@ -7,6 +7,8 @@ node_modules
 medusa-scaffold
 .npm-cache
 .tmp
+data/hm
+**/__pycache__
 .env
 **/.env
 *.log
