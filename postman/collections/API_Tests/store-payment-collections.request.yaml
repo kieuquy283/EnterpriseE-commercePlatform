@@ -1,0 +1,24 @@
+$kind: http-request
+name: store/payment-collections
+url: "{{base_url}}/store/payment-collections"
+method: POST
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+body:
+  type: json
+  content: "{\r
+
+    \  \"cart_id\": \"{{cart_id}}\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "pm.environment.set(\r
+
+      \  \"payment_collection_id\",\r
+
+      \  pm.response.json().payment_collection.id\r
+
+      )"
+    language: text/javascript
+order: 10000

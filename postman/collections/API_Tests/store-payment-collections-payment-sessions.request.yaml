@@ -1,0 +1,20 @@
+$kind: http-request
+name: store/payment-collections/payment-sessions
+url: "{{base_url}}/store/payment-collections/{{payment_collection_id}}/payment-sessions"
+method: POST
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+body:
+  type: json
+  content: "{\r
+
+    \  \"provider_id\": \"pp_simulator_simulator\",\r
+
+    \  \"data\": {\r
+
+    \    \"simulated_outcome\": true\r
+
+    \  }\r
+
+    }"
+order: 11000
