@@ -13,6 +13,8 @@
     "typecheck": "turbo typecheck",
     "test": "turbo test",
     "backend:seed": "turbo seed --filter=@dtc/backend",
+    "backend:seed:sample": "npm run seed:sample --workspace @dtc/backend",
+    "backend:check:inventory-order": "npm run check:inventory-order --workspace @dtc/backend --",
     "backend:dev": "turbo dev --filter=@dtc/backend",
     "storefront:dev": "turbo dev --filter=@dtc/storefront"
   },

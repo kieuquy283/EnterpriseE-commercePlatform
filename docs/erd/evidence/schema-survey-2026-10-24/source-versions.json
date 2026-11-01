@@ -1,0 +1,16 @@
+{
+  "installed_packages": {
+    "@medusajs/medusa": "2.21.2",
+    "@medusajs/cart": "2.21.2",
+    "@medusajs/order": "2.21.2",
+    "@medusajs/payment": "2.21.2",
+    "@medusajs/inventory": "2.21.2",
+    "@medusajs/stock-location": "2.21.2",
+    "@medusajs/link-modules": "2.21.2",
+    "@medusajs/core-flows": "2.21.2",
+    "@medusajs/utils": "2.21.2",
+    "@medusajs/product": "2.21.2"
+  },
+  "source_root": "node_modules/@medusajs",
+  "notes": "Versions read from installed packages, not inferred from current online documentation."
+}

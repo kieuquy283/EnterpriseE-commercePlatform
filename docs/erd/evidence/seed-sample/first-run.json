@@ -1,0 +1,38 @@
+{
+  "fixture_id": "erd-customer-cart-v1",
+  "captured_at": "2026-10-23T10:50:58.335Z",
+  "customer": {
+    "id": "cus_01M5M658YFHQH25N7CGQJNY2WR",
+    "email": "erd-sample@example.test",
+    "has_account": false
+  },
+  "cart": {
+    "id": "cart_01M5M659ET7855A4QPZ0XCGV45",
+    "customer_id": "cus_01M5M658YFHQH25N7CGQJNY2WR",
+    "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+    "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+    "currency_code": "vnd",
+    "completed_at": null
+  },
+  "items": [
+    {
+      "id": "cali_01M5M659EYTHXPQ9CE2A0V6G9T",
+      "product_id": "prod_01M5555A9JAW58WJYFPXC2JFM4",
+      "variant_id": "variant_01M5555ACK1K0YCMWJ7XXSVYSA",
+      "sku": "TEE-ESSENTIAL-BLK",
+      "quantity": 2
+    },
+    {
+      "id": "cali_01M5M659EYWT0WVJYR3HB2Z7HP",
+      "product_id": "prod_01M5555A9JYS6P6FD05TGG38BK",
+      "variant_id": "variant_01M5555ACKMGTVK7G50CBCAYJZ",
+      "sku": "BAG-DAILY-NAT",
+      "quantity": 1
+    }
+  ],
+  "created": {
+    "customer": true,
+    "cart": true,
+    "items_added": 2
+  }
+}
