@@ -1,5 +1,20 @@
 $kind: http-request
 name: store/auth/login
 url: http://localhost:9000/store/auth/login
-method: GET
+method: POST
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"postman-test@example.com\",\r
+
+    \  \"password\": \"TestPassword123!\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: '"{{json_web_token_0jlr}}"'
 order: 8000

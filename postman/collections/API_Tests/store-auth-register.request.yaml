@@ -2,6 +2,8 @@ $kind: http-request
 name: store/auth/register
 url: http://localhost:9000/store/auth/register
 method: POST
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
 body:
   type: json
   content: "{\r

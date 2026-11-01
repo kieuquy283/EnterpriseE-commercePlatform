@@ -1,0 +1,9 @@
+$kind: http-request
+name: store/payment-providers
+url: "{{base_url}}/store/payment-providers?region_id={{region_id}}"
+method: GET
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+queryParams:
+  region_id: "{{region_id}}"
+order: 13000

@@ -16,8 +16,10 @@ import {
   createTaxRegionsWorkflow,
   linkSalesChannelsToApiKeyWorkflow,
   linkSalesChannelsToStockLocationWorkflow,
+  updateRegionsWorkflow,
   updateStoresWorkflow,
 } from "@medusajs/medusa/core-flows"
+import { SIMULATOR_PAYMENT_PROVIDER_ID } from "../modules/payment-simulator/constants"
 
 // VND has no fractional subunit here; these prices are whole dong in Medusa's major units.
 /* eslint-disable @medusajs/prices-in-major-units */
@@ -54,11 +56,36 @@ export default async function seedCommerce({ container }: ExecArgs) {
 
   const existing = await query.graph({
     entity: "region",
-    fields: ["id"],
+    fields: ["id", "payment_providers.id"],
     filters: { name: "Vietnam" },
   })
   if (existing.data.length) {
-    logger.info("Vietnam region already exists; commerce seed skipped")
+    const region = existing.data[0]
+    const paymentProviderIds = new Set<string>()
+    for (const provider of region.payment_providers ?? []) {
+      if (!provider) {
+        throw new MedusaError(
+          MedusaError.Types.INVALID_DATA,
+          "Vietnam payment providers could not be loaded"
+        )
+      }
+      paymentProviderIds.add(provider.id)
+    }
+
+    paymentProviderIds.add("pp_system_default")
+    if (process.env.NODE_ENV === "production") {
+      paymentProviderIds.delete(SIMULATOR_PAYMENT_PROVIDER_ID)
+    } else {
+      paymentProviderIds.add(SIMULATOR_PAYMENT_PROVIDER_ID)
+    }
+
+    await updateRegionsWorkflow(container).run({
+      input: {
+        selector: { id: region.id },
+        update: { payment_providers: [...paymentProviderIds] },
+      },
+    })
+    logger.info("Vietnam region already exists; payment providers synchronized")
     return
   }
 
@@ -98,7 +125,12 @@ export default async function seedCommerce({ container }: ExecArgs) {
         name: "Vietnam",
         currency_code: "vnd",
         countries: ["vn"],
-        payment_providers: ["pp_system_default"],
+        payment_providers: [
+          "pp_system_default",
+          ...(process.env.NODE_ENV === "production"
+            ? []
+            : [SIMULATOR_PAYMENT_PROVIDER_ID]),
+        ],
       }],
     },
   })

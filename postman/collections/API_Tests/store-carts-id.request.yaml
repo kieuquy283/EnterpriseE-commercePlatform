@@ -1,0 +1,50 @@
+$kind: http-request
+name: store/carts/id
+url: http://localhost:9000/store/carts/{{cart_id}}
+method: POST
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"payment-test@example.test\",\r
+
+    \  \"shipping_address\": {\r
+
+    \    \"first_name\": \"Postman\",\r
+
+    \    \"last_name\": \"Test\",\r
+
+    \    \"address_1\": \"1 Test Street\",\r
+
+    \    \"city\": \"Ho Chi Minh City\",\r
+
+    \    \"postal_code\": \"700000\",\r
+
+    \    \"country_code\": \"vn\",\r
+
+    \    \"phone\": \"+84900000000\"\r
+
+    \  },\r
+
+    \  \"billing_address\": {\r
+
+    \    \"first_name\": \"Postman\",\r
+
+    \    \"last_name\": \"Test\",\r
+
+    \    \"address_1\": \"1 Test Street\",\r
+
+    \    \"city\": \"Ho Chi Minh City\",\r
+
+    \    \"postal_code\": \"700000\",\r
+
+    \    \"country_code\": \"vn\",\r
+
+    \    \"phone\": \"+84900000000\"\r
+
+    \  }\r
+
+    }\r\n"
+order: 4748

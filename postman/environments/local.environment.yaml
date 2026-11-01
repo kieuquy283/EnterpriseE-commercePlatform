@@ -10,3 +10,7 @@ values:
     value: ''
   - key: cart_id
     value: ''
+  - key: shipping_option_id
+    value: ''
+  - key: payment_collection_id
+    value: ''
