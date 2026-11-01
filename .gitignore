@@ -17,3 +17,6 @@ coverage/
 .agents/
 data/hm/
 __pycache__/
+
+test-results/
+playwright-report/

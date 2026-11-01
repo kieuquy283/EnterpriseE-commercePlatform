@@ -65,8 +65,9 @@ services:
       JWT_SECRET: ${JWT_SECRET:-local-change-this-jwt-secret}
       COOKIE_SECRET: ${COOKIE_SECRET:-local-change-this-cookie-secret}
       STORE_CORS: ${STORE_CORS:-http://localhost:8000}
-      ADMIN_CORS: ${ADMIN_CORS:-http://localhost:9000}
-      AUTH_CORS: ${AUTH_CORS:-http://localhost:8000,http://localhost:9000}
+      ADMIN_CORS: ${ADMIN_CORS:-http://localhost:9000,http://127.0.0.1:9000}
+      AUTH_CORS: ${AUTH_CORS:-http://localhost:8000,http://localhost:9000,http://127.0.0.1:8000,http://127.0.0.1:9000}
+      ALLOW_INSECURE_LOCAL_SESSION_COOKIE: "true"
       NODE_ENV: production
       LOG_LEVEL: ${LOG_LEVEL:-info}
       WORKER_MODE: server

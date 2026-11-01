@@ -20,6 +20,9 @@ module.exports = defineConfig({
     databaseUrl: process.env.DATABASE_URL,
     redisUrl,
     workerMode,
+    ...(process.env.ALLOW_INSECURE_LOCAL_SESSION_COOKIE === "true"
+      ? { cookieOptions: { secure: false, sameSite: "lax" } }
+      : {}),
     http: {
       storeCors: process.env.STORE_CORS || "http://localhost:8000",
       adminCors: process.env.ADMIN_CORS || "http://localhost:9000",
