@@ -1,735 +1,723 @@
-# SOFTWARE REQUIREMENTS SPECIFICATION
-
-> **Functional · Business Rules · Data · Interfaces · NFR · Verification**
-
-**PHIÊN BẢN** 1.0 – Bản thảo hoàn chỉnh phục vụ review nhóm     **|     NGÀY**  02/11/2026
-
-**HỆ THỐNG:** Enterprise E-commerce Platform · Medusa v2 / Next.js / PostgreSQL / Redis
-
-**BASELINE CODE:** main d0bf45a; recommendation a98457c (đánh giá độc lập)
-
-**TÌNH TRẠNG:** Chưa có xác nhận phê duyệt stakeholder; các mục tiêu đề xuất chưa phải số đo đã đạt.
-
-> Tài liệu học thuật cho nhóm phát triển hệ thống bán lẻ giả định; không phải hợp đồng với doanh nghiệp thực tế.
+# YÊU CẦU PHẦN MỀM
 
 ## 1. Giới thiệu và phạm vi
 
 ### 1.1 Mục đích
 
-Tài liệu SRS-03 quy định các yêu cầu có thể kiểm chứng cho production-oriented MVP của Enterprise E-commerce Platform. Độc giả: nhóm phát triển, QA, DevOps, giảng viên/hội đồng review. Nội dung mô tả “hệ thống phải làm gì” và “cách xác nhận”, không tự coi mọi chức năng trong danh sách là đã hoàn thành. [SRC-01, SRC-02]
+Tài liệu SRS-03 ghi những việc hệ thống phải làm và cách kiểm tra từng việc. Tài liệu dành cho nhóm phát triển, nhóm kiểm thử, người vận hành và giảng viên. Đây là yêu cầu cho phiên bản đầu tiên của đồ án; một chức năng được nêu ở đây chưa chắc đã hoàn thành.
 
-### 1.2 Baseline và trạng thái
+### 1.2 Mã nguồn được dùng để đối chiếu và tình trạng tài liệu
 
-Baseline source kiểm tra: main d0bf45a, recommendation a98457c, ngày 02/11/2026. Medusa 2.21.2, Next.js 15, PostgreSQL 16, Redis 7 và npm workspaces. CI/API tests trên main pass ngày 01/11/2026. recommendation có Playwright/E2E và H&M ETL artifacts; code chưa đồng bộ hết với main. [SRC-03..10]
+Mã nguồn đã đối chiếu ngày 02/11/2026: `main` tại `d0bf45a` và nhánh `recommendation` tại `a98457c`. Dự án dùng Medusa 2.21.2, Next.js 15, PostgreSQL 16 và Redis 7. Bài kiểm tra tự động trên `main` đã chạy thành công ngày 01/11/2026. Nhánh `recommendation` có bài kiểm thử trình duyệt và dữ liệu H&M đã chuẩn bị, nhưng chưa chuyển hết sang `main`. [SRC-03..10]
 
-SRS v1.0 là bản thảo hoàn chỉnh để review, chưa có biên bản phê duyệt stakeholder hay báo cáo đạt mọi NFR. Việc thay đổi business rules, target workloads, availability và monthly budget phải qua change control. Requirement status và implementation status tách riêng để tránh “đã có code = đã nghiệm thu”.
+SRS v1.0 là bản thảo để góp ý, chưa được các bên liên quan ký duyệt và chưa có kết quả chứng minh đạt mọi chỉ tiêu về tốc độ, độ ổn định. Nếu đổi quy tắc bán hàng, mức tải cần thử, thời gian hoạt động mong muốn hoặc ngân sách tháng, nhóm phải ghi lại quyết định. “Đã viết mã” và “đã kiểm thử, nghiệm thu” là hai tình trạng khác nhau.
 
 ### 1.3 Quy ước yêu cầu và thuật ngữ
 
 | **Mã / thuật ngữ** | **Giải thích** |
 | --- | --- |
-| M / S / C | M = Must (bắt buộc); S = Should (ưu tiên); C = Could (optional). |
-| CODE / TEST / PARTIAL / GAP | Có triển khai / có evidence kiểm thử / một phần / chưa có đủ source/evidence. |
-| Medusa | Nền tảng backend quản lý commerce: product, pricing, cart, order, inventory, payment. |
-| Storefront | Next.js customer-facing UI, không là nguồn dữ liệu commerce. |
-| Order vs Payment | Order được tạo không đồng nghĩa tiền đã capture/thu, nhất là COD. |
-| RPS / p95 | Requests per second / phân vị thứ 95 của thời gian phản hồi. |
-| RPO / RTO | Recovery Point Objective / Recovery Time Objective. |
-| Idempotency | Lặp lại cùng hành động có cùng hiệu quả nghiệp vụ, tránh side effect trùng. |
-| Evidence | Test output, logs, dashboard, readback, commit, timestamp và môi trường được định danh. |
+| M / S / C | Bắt buộc / nên có / có thể làm thêm. |
+| CODE / TEST / PARTIAL / GAP | Đã viết mã / đã có kết quả kiểm thử / mới làm một phần / chưa đủ mã nguồn hoặc bằng chứng. |
+| Medusa | Phần mềm quản lý việc bán hàng: sản phẩm, giá, giỏ hàng, đơn hàng, tồn kho và thanh toán. |
+| Storefront | Website khách hàng nhìn thấy, được xây bằng Next.js. Dữ liệu mua hàng chính nằm ở Medusa. |
+| Đơn hàng và tiền đã thu | Có mã đơn hàng không có nghĩa cửa hàng đã nhận tiền, nhất là với thanh toán khi nhận hàng (COD). |
+| RPS / p95 | Số yêu cầu hệ thống nhận trong một giây / thời gian mà 95% yêu cầu được xử lý không lâu hơn mức đó. |
+| RPO / RTO | Số phút dữ liệu tối đa có thể mất / số phút tối đa dự kiến để khôi phục sau sự cố. |
+| Chống xử lý trùng (idempotency) | Nếu cùng một thao tác được gửi lại, hệ thống không tạo thêm đơn hoặc thanh toán ngoài ý muốn. |
+| Bằng chứng | Kết quả kiểm thử, nhật ký, ảnh màn hình hoặc bản ghi dữ liệu; cần ghi rõ phiên bản, ngày giờ và môi trường. |
 
-## 2. Product context, actors và ranh giới
+## 2. Bối cảnh, người dùng và trách nhiệm
 
-Sản phẩm phục vụ một business scenario bán lẻ Việt Nam. Actor: Customer, Store/Operations Staff, Administrator và Developer/DevOps (vận hành). Customer dùng Next.js; Admin/Staff dùng Medusa Admin. Next.js gọi Medusa Store API bằng publishable API key và auth context. Medusa quản lý business entities, PostgreSQL persistence và Redis infrastructure. Có service worker riêng trong Docker Compose; event/subscriber doanh nghiệp chưa hoàn chỉnh. [SRC-03]
+Sản phẩm mô phỏng một cửa hàng bán lẻ ở Việt Nam. Khách mua hàng dùng website Next.js; nhân viên và quản trị viên dùng giao diện Medusa Admin; nhóm kỹ thuật vận hành hệ thống. Website gửi yêu cầu đến Medusa qua API và kèm mã truy cập phù hợp. Medusa quản lý dữ liệu bán hàng trong PostgreSQL; Redis hỗ trợ tăng tốc và xử lý việc nền. Cấu hình đã có tiến trình xử lý nền riêng, nhưng chức năng thông báo của dự án chưa hoàn chỉnh. [SRC-03]
 
 | **Thành phần** | **Trách nhiệm chính** | **Không chịu trách nhiệm** |
 | --- | --- | --- |
-| Browser / Next.js | UI, navigation, input UX, cart/auth cookies, SDK calls. | Không thực thi order/payment/inventory authoritative logic. |
-| Medusa API/Admin | Authz, product, prices, cart, checkout, orders, payment, inventory. | Không giao quyền tạo Order trực tiếp cho frontend. |
-| Medusa Worker & Redis | Cache/event/workflow/locking, async handlers khi triển khai. | Không là request HTTP hop nối tiếp DB. |
-| PostgreSQL | System of record cho commerce và dữ liệu extension nếu có. | Không lưu raw ML transactions thành orders. |
-| Cloud DevOps | Container deployment, TLS, observability, backups, costs. | Không mặc định cung cấp multi-AZ HA với 1 VM. |
+| Trình duyệt / Next.js | Hiển thị trang, nhận thông tin khách nhập, giữ cookie đăng nhập/giỏ hàng và gửi yêu cầu đến Medusa. | Không tự quyết định đơn hàng, thanh toán hay tồn kho. |
+| Medusa API/Admin | Kiểm tra quyền, quản lý sản phẩm, giá, giỏ, đơn, thanh toán và tồn kho. | Không cho website tự tạo đơn trực tiếp trong cơ sở dữ liệu. |
+| Medusa Worker và Redis | Hỗ trợ lưu tạm dữ liệu, chuyển việc cần xử lý sau và khóa chống xung đột. | Không phải một bước HTTP mà khách phải chờ sau mỗi lần truy cập. |
+| PostgreSQL | Lưu dữ liệu bán hàng chính và phần mở rộng nếu có. | Không biến lịch sử mua H&M gốc thành đơn hàng của dự án. |
+| Nhóm vận hành cloud | Đưa ứng dụng lên máy chủ, dùng HTTPS, theo dõi lỗi, sao lưu và tính chi phí. | Một máy chủ không thể bảo đảm luôn hoạt động nếu chính máy đó hỏng. |
 
-## 3. Functional Requirements (FR)
+## 3. Các chức năng hệ thống cần có (FR)
 
-Tổng cộng 42 yêu cầu chức năng được định nghĩa theo actor, hành động, điều kiện, tiêu chí xác nhận và liên kết evidence. Mỗi requirement là một đơn vị có thể giao việc/test độc lập; nhóm phải cập nhật status sau khi chạy các test mới. Chú giải “TEST” chỉ ghi nhận evidence từng phần trên baseline, không tự suy ra full acceptance.
+Mỗi yêu cầu dưới đây có mã riêng để giao việc và kiểm thử. Bên dưới mã là quy tắc cần tuân theo, cách kiểm tra, tình trạng hiện nay và nguồn tham khảo. Nhóm cập nhật tình trạng sau mỗi lần kiểm thử. Nhãn “TEST” chỉ nói đã có một số kết quả kiểm tra, chưa có nghĩa mọi trường hợp đều đạt.
 
-### 3.1 Identity & Access
+### 3.1 Tài khoản và quyền truy cập
 
-#### FR-AUTH-01  [M]  Customer có thể đăng ký tài khoản bằng email/password và tạo customer profile.
+#### FR-AUTH-01  [M]  Khách có thể đăng ký bằng email, mật khẩu và tạo hồ sơ cá nhân.
 
-Business/validation rule: Email hợp lệ/không trùng; mật khẩu chỉ qua Auth provider.
+Quy tắc cần tuân theo: Email phải đúng dạng và chưa được dùng; Medusa xử lý mật khẩu.
 
-Acceptance: Tạo account mới; thử duplicate/invalid; API không rò secret.
+Cách kiểm tra: Đăng ký bằng email mới, email đã dùng và email sai dạng; phản hồi không làm lộ mật khẩu hay khóa bí mật.
 
-**Trạng thái:** CODE/TEST  |  **Tuần:** 5  |  **Nguồn/test:** Medusa auth/store routes; checkout integration
+**Trạng thái:** Đã có mã nguồn và một số kết quả kiểm thử  |  **Tuần:** 5  |  **Nguồn hoặc việc cần kiểm tra:** Medusa auth/store routes; checkout integration
 
-#### FR-AUTH-02  [M]  Customer đăng nhập/đăng xuất; token/session chỉ nhận sau xác thực thành công.
+#### FR-AUTH-02  [M]  Khách có thể đăng nhập, đăng xuất; chỉ được cấp quyền truy cập sau khi đăng nhập đúng.
 
-Business/validation rule: Bảo vệ session phía server; invalid credential từ chối.
+Quy tắc cần tuân theo: Máy chủ chỉ chấp nhận thông tin đăng nhập đúng và bảo vệ phiên đăng nhập.
 
-Acceptance: Đăng nhập đúng/sai; logout vô hiệu session ở UI; không tự xem order người khác.
+Cách kiểm tra: Thử mật khẩu đúng/sai, đăng xuất rồi truy cập lại; không xem được đơn người khác.
 
-**Trạng thái:** CODE/PARTIAL  |  **Tuần:** 5,11  |  **Nguồn/test:** Storefront auth flow; browser E2E trên recommendation
+**Trạng thái:** Đã có mã nguồn, chưa kiểm thử đầy đủ  |  **Tuần:** 5,11  |  **Nguồn hoặc việc cần kiểm tra:** Storefront auth flow; browser E2E trên recommendation
 
-#### FR-AUTH-03  [M]  Customer chỉ xem/sửa hồ sơ, order, địa chỉ của chính mình.
+#### FR-AUTH-03  [M]  Khách chỉ được xem và sửa hồ sơ, địa chỉ, đơn hàng của mình.
 
-Business/validation rule: Authorization ở Medusa, không chỉ UI.
+Quy tắc cần tuân theo: Medusa kiểm tra quyền trên máy chủ, không chỉ ẩn nút trên website.
 
-Acceptance: Thử Customer A truy cập Order B: từ chối/không lộ dữ liệu.
+Cách kiểm tra: Dùng tài khoản A mở đơn của B; hệ thống phải từ chối và không lộ dữ liệu.
 
-**Trạng thái:** PARTIAL  |  **Tuần:** 5,11  |  **Nguồn/test:** Store API and auth tests, bổ sung authz negative
+**Trạng thái:** Mới hoàn thành một phần  |  **Tuần:** 5,11  |  **Nguồn hoặc việc cần kiểm tra:** Store API and auth tests, bổ sung authz negative
 
-#### FR-AUTH-04  [M]  Admin/Operations được xác thực và thao tác theo vai trò được Medusa hỗ trợ.
+#### FR-AUTH-04  [M]  Quản trị viên và nhân viên chỉ thao tác trong phạm vi quyền được cấp.
 
-Business/validation rule: Không dùng Customer token cho Admin APIs.
+Quy tắc cần tuân theo: Mã đăng nhập của khách không được dùng để gọi chức năng quản trị.
 
-Acceptance: Admin không đăng nhập thì không vào Admin; privilege boundary được kiểm thử.
+Cách kiểm tra: Chưa đăng nhập không vào được Admin; tài khoản khách không làm được việc của quản trị viên.
 
-**Trạng thái:** CODE/PARTIAL  |  **Tuần:** 5,11  |  **Nguồn/test:** Medusa Admin, cần RBAC review
+**Trạng thái:** Đã có mã nguồn, chưa kiểm thử đầy đủ  |  **Tuần:** 5,11  |  **Nguồn hoặc việc cần kiểm tra:** Medusa Admin, cần RBAC review
 
-### 3.2 Product Catalog, Search & Pricing
+### 3.2 Sản phẩm, tìm kiếm và giá bán
 
-#### FR-CAT-01  [M]  Storefront hiển thị published products, phân trang và empty state.
+#### FR-CAT-01  [M]  Website hiển thị sản phẩm đang bán, chia trang và báo khi không có kết quả.
 
-Business/validation rule: Chỉ sản phẩm thuộc kênh/region phù hợp được bán.
+Quy tắc cần tuân theo: Chỉ bán sản phẩm được bật cho kênh bán và khu vực của khách.
 
-Acceptance: Trang /vn/store phân trang đúng; product unpublished không được coi là bán được.
+Cách kiểm tra: Trang `/vn/store` chia kết quả thành các trang; hàng đã ngừng hiển thị không được bán.
 
-**Trạng thái:** CODE/TEST  |  **Tuần:** 5  |  **Nguồn/test:** apps/storefront/src/modules/store/templates/index.tsx
+**Trạng thái:** Đã có mã nguồn và một số kết quả kiểm thử  |  **Tuần:** 5  |  **Nguồn hoặc việc cần kiểm tra:** apps/storefront/src/modules/store/templates/index.tsx
 
-#### FR-CAT-02  [M]  Product Detail hiển thị thông tin, variant, giá và ảnh/placeholder hợp lệ.
+#### FR-CAT-02  [M]  Trang chi tiết hiển thị thông tin, lựa chọn sản phẩm, giá và ảnh hợp lệ.
 
-Business/validation rule: Không suy đoán size hay tồn kho từ dữ liệu nguồn.
+Quy tắc cần tuân theo: Không tự đoán kích cỡ hoặc số hàng còn lại nếu dữ liệu nguồn không có.
 
-Acceptance: PDP hiển thị lựa chọn variant và giá cho Vietnam region.
+Cách kiểm tra: Trang chi tiết cho chọn phiên bản sản phẩm và hiển thị giá tại Việt Nam.
 
-**Trạng thái:** CODE/TEST  |  **Tuần:** 5,9  |  **Nguồn/test:** Product UI & Medusa Store Product API
+**Trạng thái:** Đã có mã nguồn và một số kết quả kiểm thử  |  **Tuần:** 5,9  |  **Nguồn hoặc việc cần kiểm tra:** Product UI & Medusa Store Product API
 
-#### FR-CAT-03  [M]  Customer tìm kiếm sản phẩm theo từ khóa với kết quả hợp lệ.
+#### FR-CAT-03  [M]  Khách tìm sản phẩm bằng từ khóa và nhận kết quả phù hợp.
 
-Business/validation rule: Giới hạn query và phân trang; không bắt buộc dedicated engine.
+Quy tắc cần tuân theo: Giới hạn độ dài từ khóa và chia kết quả thành trang; chưa bắt buộc dùng công cụ tìm kiếm riêng.
 
-Acceptance: Từ khóa có/không kết quả, pagination hoạt động; error state hợp lý.
+Cách kiểm tra: Thử từ khóa có và không có kết quả; kiểm tra chuyển trang và thông báo lỗi.
 
-**Trạng thái:** CODE/PARTIAL  |  **Tuần:** 5,9  |  **Nguồn/test:** /store/products?q, catalog route
+**Trạng thái:** Đã có mã nguồn, chưa kiểm thử đầy đủ  |  **Tuần:** 5,9  |  **Nguồn hoặc việc cần kiểm tra:** /store/products?q, catalog route
 
-#### FR-CAT-04  [M]  Price hiển thị theo VND/region do Medusa định giá; UI không tính giá authoritative.
+#### FR-CAT-04  [M]  Website hiển thị giá VND do Medusa cung cấp, không tự quyết định giá bán.
 
-Business/validation rule: Price/currency thuộc Medusa Pricing.
+Quy tắc cần tuân theo: Medusa quyết định giá và đơn vị tiền tệ.
 
-Acceptance: Giá ở catalog, cart, checkout phù hợp phản hồi Medusa; không dùng giá H&M làm VND thật.
+Cách kiểm tra: Giá ở trang sản phẩm, giỏ và trang đặt hàng khớp Medusa; không nói giá H&M là giá bán VND thật.
 
-**Trạng thái:** CODE/TEST  |  **Tuần:** 5–7  |  **Nguồn/test:** seed-commerce, storefront price helpers
+**Trạng thái:** Đã có mã nguồn và một số kết quả kiểm thử  |  **Tuần:** 5–7  |  **Nguồn hoặc việc cần kiểm tra:** seed-commerce, storefront price helpers
 
-#### FR-CAT-05  [S]  Category/collection/filter/sort nhất quán với catalog thực.
+#### FR-CAT-05  [S]  Danh mục, bộ lọc và cách sắp xếp phản ánh đúng sản phẩm đang có.
 
-Business/validation rule: Không hiển thị category không có data.
+Quy tắc cần tuân theo: Không hiển thị danh mục rỗng như thể có hàng để bán.
 
-Acceptance: Chọn category/sort/filter trả đúng tập item; documented fallback.
+Cách kiểm tra: Chọn danh mục, bộ lọc hoặc cách sắp xếp và đối chiếu kết quả sản phẩm.
 
-**Trạng thái:** PARTIAL  |  **Tuần:** 5,9  |  **Nguồn/test:** Store templates, category components
+**Trạng thái:** Mới hoàn thành một phần  |  **Tuần:** 5,9  |  **Nguồn hoặc việc cần kiểm tra:** Store templates, category components
 
-### 3.3 Shopping Cart
+### 3.3 Giỏ hàng
 
-#### FR-CART-01  [M]  Người dùng tạo hoặc tiếp tục cart gắn đúng region.
+#### FR-CART-01  [M]  Khách có thể tạo hoặc tiếp tục giỏ hàng cho đúng khu vực bán hàng.
 
-Business/validation rule: Cart state thuộc Medusa, cart cookie thuộc storefront.
+Quy tắc cần tuân theo: Medusa giữ dữ liệu giỏ; website chỉ giữ mã giỏ trong cookie.
 
-Acceptance: Cart mới/hiện có được dùng đúng, không lẫn account.
+Cách kiểm tra: Tạo giỏ mới, mở lại giỏ cũ và xác nhận hai tài khoản không bị lẫn giỏ.
 
-**Trạng thái:** CODE/TEST  |  **Tuần:** 6  |  **Nguồn/test:** apps/storefront/src/lib/data/cart.ts
+**Trạng thái:** Đã có mã nguồn và một số kết quả kiểm thử  |  **Tuần:** 6  |  **Nguồn hoặc việc cần kiểm tra:** apps/storefront/src/lib/data/cart.ts
 
-#### FR-CART-02  [M]  Người dùng thêm, cập nhật số lượng và xóa line item.
+#### FR-CART-02  [M]  Khách có thể thêm hàng, đổi số lượng và xóa hàng khỏi giỏ.
 
-Business/validation rule: Quantity nguyên dương; server xác thực giá/tồn.
+Quy tắc cần tuân theo: Số lượng phải là số nguyên dương; Medusa kiểm tra giá và số hàng còn lại.
 
-Acceptance: Add→quantity=2→remove→empty state, tổng tiền đúng.
+Cách kiểm tra: Thêm hàng, tăng lên 2, xóa hàng rồi kiểm tra giỏ rỗng và tổng tiền.
 
-**Trạng thái:** CODE/TEST  |  **Tuần:** 6  |  **Nguồn/test:** Cart Store API, browser E2E trên recommendation
+**Trạng thái:** Đã có mã nguồn và một số kết quả kiểm thử  |  **Tuần:** 6  |  **Nguồn hoặc việc cần kiểm tra:** Cart Store API, browser E2E trên recommendation
 
-#### FR-CART-03  [M]  Cart phản ánh pricing, shipping, tax và line totals do Medusa trả.
+#### FR-CART-03  [M]  Giỏ hàng hiển thị giá, phí giao hàng, thuế và tổng tiền do Medusa trả về.
 
-Business/validation rule: Không tự đồng bộ giá riêng tại frontend.
+Quy tắc cần tuân theo: Website không giữ một bảng giá riêng để tự tính tiền.
 
-Acceptance: Tổng tiền checkout khớp với Medusa response.
+Cách kiểm tra: Tổng tiền ở trang đặt hàng khớp số tiền Medusa trả về.
 
-**Trạng thái:** CODE/PARTIAL  |  **Tuần:** 6  |  **Nguồn/test:** Cart/checkout pages, integration test
+**Trạng thái:** Đã có mã nguồn, chưa kiểm thử đầy đủ  |  **Tuần:** 6  |  **Nguồn hoặc việc cần kiểm tra:** Cart/checkout pages, integration test
 
-#### FR-CART-04  [M]  Invalid variant/quantity/stock được xử lý an toàn.
+#### FR-CART-04  [M]  Hệ thống báo lỗi an toàn khi sản phẩm, số lượng hoặc tồn kho không hợp lệ.
 
-Business/validation rule: Không tạo orphan line items hoặc order khi invalid.
+Quy tắc cần tuân theo: Dữ liệu sai không được tạo món hàng lẻ không thuộc giỏ hoặc tạo đơn.
 
-Acceptance: API báo lỗi hợp lệ và cart vẫn nhất quán.
+Cách kiểm tra: Gửi yêu cầu sai, kiểm tra thông báo lỗi và xem giỏ vẫn đúng.
 
-**Trạng thái:** PARTIAL  |  **Tuần:** 6,7  |  **Nguồn/test:** Cần negative integration tests
+**Trạng thái:** Mới hoàn thành một phần  |  **Tuần:** 6,7  |  **Nguồn hoặc việc cần kiểm tra:** Cần negative integration tests
 
-### 3.4 Checkout & Order Creation
+### 3.4 Đặt hàng và tạo đơn
 
-#### FR-CHK-01  [M]  Checkout yêu cầu email, địa chỉ giao/billing và shipping method hợp lệ.
+#### FR-CHK-01  [M]  Đặt hàng cần email, địa chỉ giao hàng, địa chỉ thanh toán và cách giao hàng hợp lệ.
 
-Business/validation rule: Chỉ options do Medusa trả được chọn.
+Quy tắc cần tuân theo: Khách chỉ chọn được cách giao hàng do Medusa cung cấp.
 
-Acceptance: Thiếu dữ liệu không cho place order; invalid shipping bị từ chối.
+Cách kiểm tra: Bỏ trống thông tin bắt buộc hoặc chọn cách giao hàng không hợp lệ; không được tạo đơn.
 
-**Trạng thái:** CODE/TEST  |  **Tuần:** 6  |  **Nguồn/test:** Checkout components; integration test
+**Trạng thái:** Đã có mã nguồn và một số kết quả kiểm thử  |  **Tuần:** 6  |  **Nguồn hoặc việc cần kiểm tra:** Checkout components; integration test
 
-#### FR-CHK-02  [M]  Checkout tạo Payment Collection/Session với provider hợp lệ.
+#### FR-CHK-02  [M]  Hệ thống tạo phiên thanh toán bằng phương thức được Medusa cho phép.
 
-Business/validation rule: Provider ID phải được đăng ký/enabled; simulator non-prod.
+Quy tắc cần tuân theo: Chỉ dùng phương thức thanh toán đã được Medusa bật; công cụ mô phỏng chỉ dùng khi thử nghiệm.
 
-Acceptance: Không chọn provider sai hoặc session invalid để complete.
+Cách kiểm tra: Thử phương thức thanh toán sai hoặc phiên thanh toán không hợp lệ; hệ thống phải từ chối.
 
-**Trạng thái:** CODE/TEST  |  **Tuần:** 6,7  |  **Nguồn/test:** Store API /payment-collections
+**Trạng thái:** Đã có mã nguồn và một số kết quả kiểm thử  |  **Tuần:** 6,7  |  **Nguồn hoặc việc cần kiểm tra:** Store API /payment-collections
 
-#### FR-CHK-03  [M]  Khi hoàn tất cart thành công, trả một Order ID và confirmation.
+#### FR-CHK-03  [M]  Khi đặt hàng thành công, khách nhận mã đơn và trang xác nhận.
 
-Business/validation rule: Chỉ response type=order là thành công.
+Quy tắc cần tuân theo: Chỉ báo thành công khi Medusa trả về `type=order` và mã đơn.
 
-Acceptance: Order có item/amount/currency; order detail/history đọc lại được.
+Cách kiểm tra: Đơn có đúng sản phẩm, số tiền và VND; khách mở lại được chi tiết và lịch sử đơn.
 
-**Trạng thái:** CODE/TEST  |  **Tuần:** 6  |  **Nguồn/test:** checkout-order.spec.ts, order pages
+**Trạng thái:** Đã có mã nguồn và một số kết quả kiểm thử  |  **Tuần:** 6  |  **Nguồn hoặc việc cần kiểm tra:** checkout-order.spec.ts, order pages
 
-#### FR-CHK-04  [M]  Checkout thất bại phải hiển thị lỗi, không redirect sang confirmation và không xóa cart như thành công.
+#### FR-CHK-04  [M]  Khi đặt hàng thất bại, website báo lỗi, không hiện trang xác nhận và giữ giỏ hàng.
 
-Business/validation rule: Error handling không giả order.
+Quy tắc cần tuân theo: Lỗi không được biến thành trang xác nhận đơn thành công.
 
-Acceptance: Thử lỗi completion: không có success redirect; cart có thể xử lý tiếp.
+Cách kiểm tra: Tạo lỗi ở bước cuối; website hiện lỗi, không chuyển sang trang xác nhận và giỏ còn dùng được.
 
-**Trạng thái:** CODE/PARTIAL  |  **Tuần:** 6,7  |  **Nguồn/test:** payment-button, Playwright on recommendation
+**Trạng thái:** Đã có mã nguồn, chưa kiểm thử đầy đủ  |  **Tuần:** 6,7  |  **Nguồn hoặc việc cần kiểm tra:** payment-button, Playwright on recommendation
 
-### 3.5 Payment and Idempotency
+### 3.5 Thanh toán và chống tạo đơn trùng
 
-#### FR-PAY-01  [M]  Hỗ trợ phương thức thủ công/COD cho demo Việt Nam.
+#### FR-PAY-01  [M]  Bản demo tại Việt Nam hỗ trợ thanh toán khi nhận hàng (COD).
 
-Business/validation rule: Authorization không đồng nghĩa capture/thu tiền thật.
+Quy tắc cần tuân theo: Thanh toán được chấp nhận ở bước xác nhận không có nghĩa tiền đã được thu.
 
-Acceptance: Chọn COD tạo payment session và order demo; trạng thái giải thích đúng.
+Cách kiểm tra: Chọn COD, đặt đơn thử và kiểm tra giao diện không nói đã thu tiền.
 
-**Trạng thái:** CODE/TEST  |  **Tuần:** 7  |  **Nguồn/test:** pp_system_default, checkout sequence
+**Trạng thái:** Đã có mã nguồn và một số kết quả kiểm thử  |  **Tuần:** 7  |  **Nguồn hoặc việc cần kiểm tra:** pp_system_default, checkout sequence
 
-#### FR-PAY-02  [M]  Simulator dev/test mô phỏng thành công và thất bại; từ chối ở production.
+#### FR-PAY-02  [M]  Công cụ thanh toán mô phỏng thử được cả thành công lẫn thất bại; không chạy trên môi trường thật.
 
-Business/validation rule: Provider chỉ enabled ngoài production; không xử lý tiền/thẻ.
+Quy tắc cần tuân theo: Công cụ mô phỏng chỉ bật ngoài môi trường thật và không xử lý tiền hay thẻ.
 
-Acceptance: Success tạo Order, failure không tạo Order; prod config không đăng ký provider.
+Cách kiểm tra: Mô phỏng thành công tạo đơn, thất bại không tạo đơn; cấu hình production không bật công cụ.
 
-**Trạng thái:** CODE/TEST  |  **Tuần:** 7  |  **Nguồn/test:** payment-simulator/provider.ts; checkout-order.spec.ts
+**Trạng thái:** Đã có mã nguồn và một số kết quả kiểm thử  |  **Tuần:** 7  |  **Nguồn hoặc việc cần kiểm tra:** payment-simulator/provider.ts; checkout-order.spec.ts
 
-#### FR-PAY-03  [M]  Duplicate complete-cart/retry không tạo thêm Order ngoài ý muốn.
+#### FR-PAY-03  [M]  Bấm đặt hàng lại hoặc gửi lại yêu cầu không tạo thêm đơn ngoài ý muốn.
 
-Business/validation rule: Idempotency theo cart/identity/payload hoặc cơ chế Medusa đã được xác minh.
+Quy tắc cần tuân theo: Cần xác định cách nhận ra cùng một yêu cầu từ giỏ, người mua và nội dung gửi lên; kiểm tra Medusa có hỗ trợ gì.
 
-Acceptance: 2 concurrent requests + retry timeout → tối đa 1 Order; mismatch payload không cross-authorize.
+Cách kiểm tra: Gửi hai yêu cầu cùng lúc rồi gửi lại sau khi chờ quá lâu; tối đa một đơn được tạo. Nội dung khác nhau không được gắn nhầm đơn cho người khác.
 
-**Trạng thái:** GAP  |  **Tuần:** 7  |  **Nguồn/test:** Cần tests + ADR + readback
+**Trạng thái:** Chưa đáp ứng  |  **Tuần:** 7  |  **Nguồn hoặc việc cần kiểm tra:** Cần tests + ADR + readback
 
-#### FR-PAY-04  [M]  Payment failure không biến thành order success và không thay đổi reservation ngoài ý muốn.
+#### FR-PAY-04  [M]  Thanh toán thất bại không tạo đơn thành công hoặc giữ hàng sai.
 
-Business/validation rule: Medusa kiểm soát workflow/compensation.
+Quy tắc cần tuân theo: Medusa chịu trách nhiệm xử lý đơn và tồn kho khi thanh toán lỗi; cần kiểm chứng kết quả.
 
-Acceptance: Simulator failure → HTTP error, 0 order_cart links, inventory snapshot unchanged.
+Cách kiểm tra: Mô phỏng thanh toán lỗi; API trả lỗi, không có đơn gắn với giỏ và số tồn kho không đổi.
 
-**Trạng thái:** CODE/TEST  |  **Tuần:** 7  |  **Nguồn/test:** checkout-order.spec.ts
+**Trạng thái:** Đã có mã nguồn và một số kết quả kiểm thử  |  **Tuần:** 7  |  **Nguồn hoặc việc cần kiểm tra:** checkout-order.spec.ts
 
-#### FR-PAY-05  [S]  Ghi rõ các trạng thái authorize/capture/refund và trách nhiệm nhận tiền COD.
+#### FR-PAY-05  [S]  Phân biệt thanh toán được chấp nhận, đã thu tiền và đã hoàn tiền; nêu ai thu tiền COD.
 
-Business/validation rule: Không gọi order pending là đã thu tiền.
+Quy tắc cần tuân theo: Đơn đang chờ không được hiển thị là đã thu tiền.
 
-Acceptance: Report/UI phân biệt authorized/captured/refunded; state transitions rõ.
+Cách kiểm tra: Giao diện/báo cáo phân biệt “đã chấp nhận”, “đã thu”, “đã hoàn tiền” và ghi rõ khi trạng thái đổi.
 
-**Trạng thái:** PARTIAL  |  **Tuần:** 7  |  **Nguồn/test:** Provider + inventory report
+**Trạng thái:** Mới hoàn thành một phần  |  **Tuần:** 7  |  **Nguồn hoặc việc cần kiểm tra:** Provider + inventory report
 
-### 3.6 Inventory
+### 3.6 Tồn kho
 
-#### FR-INV-01  [M]  Khi Order hợp lệ được tạo, availability/reservation thay đổi đúng lượng.
+#### FR-INV-01  [M]  Khi có đơn hợp lệ, số hàng còn bán được và số hàng giữ cho đơn thay đổi đúng.
 
-Business/validation rule: Không double-decrement stocked hoặc double-reserve.
+Quy tắc cần tuân theo: Một đơn không được trừ hoặc giữ cùng số hàng hai lần.
 
-Acceptance: T0/T1/T2 readback match order quantity và inventory links.
+Cách kiểm tra: Đọc số hàng trước khi đặt, trước bước cuối và sau khi tạo đơn; phần thay đổi phải khớp số lượng đã mua.
 
-**Trạng thái:** CODE/TEST  |  **Tuần:** 6,7  |  **Nguồn/test:** inventory-consistency-notes.md 24/24
+**Trạng thái:** Đã có mã nguồn và một số kết quả kiểm thử  |  **Tuần:** 6,7  |  **Nguồn hoặc việc cần kiểm tra:** inventory-consistency-notes.md 24/24
 
-#### FR-INV-02  [M]  Không bán vượt số tồn hợp lệ trong concurrent checkout.
+#### FR-INV-02  [M]  Không bán quá số hàng trong kho khi nhiều khách đặt cùng lúc.
 
-Business/validation rule: Concurrency và stock management thuộc Medusa.
+Quy tắc cần tuân theo: Medusa quyết định còn đủ hàng hay không khi nhiều khách đặt cùng lúc.
 
-Acceptance: 2+ concurrent checkouts gần hết stock không oversell.
+Cách kiểm tra: Cho ít nhất hai khách cùng đặt khi hàng sắp hết; số hàng bán không vượt tồn kho.
 
-**Trạng thái:** GAP  |  **Tuần:** 7,12  |  **Nguồn/test:** Cần concurrency/failure test
+**Trạng thái:** Chưa đáp ứng  |  **Tuần:** 7,12  |  **Nguồn hoặc việc cần kiểm tra:** Cần concurrency/failure test
 
-#### FR-INV-03  [S]  Hủy/fulfill order cập nhật reservation và stock theo workflow hỗ trợ.
+#### FR-INV-03  [S]  Khi hủy hoặc giao đơn, số hàng giữ cho đơn và tồn kho được cập nhật đúng.
 
-Business/validation rule: Không sửa trực tiếp stock tables.
+Quy tắc cần tuân theo: Không sửa thẳng bảng tồn kho trong PostgreSQL; dùng chức năng Medusa.
 
-Acceptance: Cancel/fulfill tests đối soát delta trước/sau.
+Cách kiểm tra: Hủy/giao đơn thử rồi so sánh số hàng trước và sau.
 
-**Trạng thái:** GAP  |  **Tuần:** 7,8  |  **Nguồn/test:** Cần order state tests
+**Trạng thái:** Chưa đáp ứng  |  **Tuần:** 7,8  |  **Nguồn hoặc việc cần kiểm tra:** Cần order state tests
 
-### 3.7 Order & Tracking
+### 3.7 Đơn hàng và theo dõi đơn
 
-#### FR-ORD-01  [M]  Customer xem danh sách đơn và chi tiết đơn của mình.
+#### FR-ORD-01  [M]  Khách xem danh sách và chi tiết đơn hàng của mình.
 
-Business/validation rule: Không xem Order của tài khoản khác.
+Quy tắc cần tuân theo: Khách không được xem đơn của tài khoản khác.
 
-Acceptance: Create Order rồi detail/list cùng ID; negative access test.
+Cách kiểm tra: Tạo đơn, tìm lại trong danh sách và trang chi tiết; thử mở bằng tài khoản khác.
 
-**Trạng thái:** CODE/TEST  |  **Tuần:** 6,8  |  **Nguồn/test:** checkout-order.spec.ts
+**Trạng thái:** Đã có mã nguồn và một số kết quả kiểm thử  |  **Tuần:** 6,8  |  **Nguồn hoặc việc cần kiểm tra:** checkout-order.spec.ts
 
-#### FR-ORD-02  [M]  Có order status và khả năng theo dõi trạng thái tối thiểu.
+#### FR-ORD-02  [M]  Khách xem được trạng thái hiện tại của đơn.
 
-Business/validation rule: Chỉ hiển thị trạng thái từ Medusa.
+Quy tắc cần tuân theo: Trạng thái hiển thị phải lấy từ Medusa, không tự đặt ra trên website.
 
-Acceptance: Order history/detail phản ánh trạng thái thực tại các thời điểm demo.
+Cách kiểm tra: Đổi trạng thái đơn khi demo rồi kiểm tra lịch sử và trang chi tiết cập nhật đúng.
 
-**Trạng thái:** CODE/PARTIAL  |  **Tuần:** 8  |  **Nguồn/test:** Order pages, cần state change E2E
+**Trạng thái:** Đã có mã nguồn, chưa kiểm thử đầy đủ  |  **Tuần:** 8  |  **Nguồn hoặc việc cần kiểm tra:** Order pages, cần state change E2E
 
-#### FR-ORD-03  [S]  Nhân viên thao tác fulfillment/order qua Medusa Admin có kiểm soát.
+#### FR-ORD-03  [S]  Nhân viên xử lý đơn và giao hàng trên Medusa Admin theo quyền được cấp.
 
-Business/validation rule: Không tạo status giả riêng ở frontend.
+Quy tắc cần tuân theo: Website không tự tạo trạng thái giao hàng khác với Medusa.
 
-Acceptance: Thao tác staff/admin được kiểm chứng bằng role và readback.
+Cách kiểm tra: Nhân viên thử thao tác theo quyền rồi đọc lại đơn để xác nhận kết quả.
 
-**Trạng thái:** PARTIAL  |  **Tuần:** 8,11  |  **Nguồn/test:** Medusa Admin built-in; cần access test
+**Trạng thái:** Mới hoàn thành một phần  |  **Tuần:** 8,11  |  **Nguồn hoặc việc cần kiểm tra:** Medusa Admin built-in; cần access test
 
-### 3.8 Event & Notification
+### 3.8 Xử lý nền và thông báo
 
-#### FR-NOT-01  [M]  Order placement phát domain event hợp lệ và worker xử lý notification ngoài request checkout.
+#### FR-NOT-01  [M]  Sau khi tạo đơn, hệ thống chuyển việc gửi thông báo sang tiến trình nền.
 
-Business/validation rule: Notification failure không rollback Order.
+Quy tắc cần tuân theo: Gửi thông báo lỗi không được hủy đơn đã tạo.
 
-Acceptance: Sau Order, worker tạo notification attempt; Order tồn tại độc lập.
+Cách kiểm tra: Sau khi tạo đơn, tiến trình nền thử gửi thông báo; làm email lỗi nhưng đơn vẫn còn.
 
-**Trạng thái:** GAP  |  **Tuần:** 8  |  **Nguồn/test:** Redis event + worker infra, custom subscriber thiếu
+**Trạng thái:** Chưa đáp ứng  |  **Tuần:** 8  |  **Nguồn hoặc việc cần kiểm tra:** Redis event + worker infra, custom subscriber thiếu
 
-#### FR-NOT-02  [M]  Notification retry có giới hạn/backoff và chặn gửi trùng cùng sự kiện.
+#### FR-NOT-02  [M]  Khi gửi thông báo lỗi, hệ thống thử lại có giới hạn và tránh gửi trùng.
 
-Business/validation rule: Có idempotency/attempt IDs, failure log.
+Quy tắc cần tuân theo: Ghi mã cho mỗi lần gửi, số lần thử và lỗi để tránh gửi trùng.
 
-Acceptance: Mô phỏng provider lỗi rồi hồi phục: retry đúng quy tắc, không duplicate bừa bãi.
+Cách kiểm tra: Cho dịch vụ email lỗi rồi hoạt động lại; số lần gửi lại đúng giới hạn và khách không nhận email trùng ngoài dự kiến.
 
-**Trạng thái:** GAP  |  **Tuần:** 8  |  **Nguồn/test:** Cần subscriber/adapter và test
+**Trạng thái:** Chưa đáp ứng  |  **Tuần:** 8  |  **Nguồn hoặc việc cần kiểm tra:** Cần subscriber/adapter và test
 
-#### FR-NOT-03  [S]  Khách được gửi email xác nhận đơn trên test/sandbox adapter.
+#### FR-NOT-03  [S]  Khách nhận được email xác nhận đơn qua dịch vụ thử nghiệm.
 
-Business/validation rule: Không gửi email production từ dữ liệu demo không consent.
+Quy tắc cần tuân theo: Không gửi email thật tới người chưa đồng ý chỉ vì họ xuất hiện trong dữ liệu demo.
 
-Acceptance: Kiểm tra message được nhận qua sandbox/log sink và chứa Order ref tối thiểu.
+Cách kiểm tra: Xem email trong hộp thư thử nghiệm; thông tin đơn đủ để nhận biết nhưng không thừa dữ liệu cá nhân.
 
-**Trạng thái:** GAP  |  **Tuần:** 8  |  **Nguồn/test:** Cần email adapter
+**Trạng thái:** Chưa đáp ứng  |  **Tuần:** 8  |  **Nguồn hoặc việc cần kiểm tra:** Cần email adapter
 
-### 3.9 Administration
+### 3.9 Quản trị cửa hàng
 
-#### FR-ADM-01  [M]  Admin quản lý product, variant, inventory và orders bằng Medusa Admin.
+#### FR-ADM-01  [M]  Quản trị viên quản lý sản phẩm, tồn kho và đơn bằng Medusa Admin.
 
-Business/validation rule: Admin authentication và authorization bắt buộc.
+Quy tắc cần tuân theo: Quản trị viên phải đăng nhập và được kiểm tra quyền.
 
-Acceptance: Duyệt/sửa product và theo dõi order trên Admin trong staging.
+Cách kiểm tra: Trên môi trường thử nghiệm, xem/sửa sản phẩm và theo dõi đơn bằng tài khoản quản trị.
 
-**Trạng thái:** CODE/PARTIAL  |  **Tuần:** 5–8  |  **Nguồn/test:** Medusa Admin, manual verification
+**Trạng thái:** Đã có mã nguồn, chưa kiểm thử đầy đủ  |  **Tuần:** 5–8  |  **Nguồn hoặc việc cần kiểm tra:** Medusa Admin, manual verification
 
-#### FR-ADM-02  [S]  Báo cáo vận hành cơ bản: orders/status/errors/low stock.
+#### FR-ADM-02  [S]  Có báo cáo cơ bản về đơn, lỗi và sản phẩm sắp hết hàng.
 
-Business/validation rule: Không coi authorized COD là revenue đã thu.
+Quy tắc cần tuân theo: Không tính đơn COD mới được chấp nhận là tiền đã thu.
 
-Acceptance: Dashboard/SQL-read evidence phân biệt captured và authorized.
+Cách kiểm tra: Báo cáo tách số tiền đã thu khỏi số tiền mới chờ khách trả.
 
-**Trạng thái:** GAP  |  **Tuần:** 8,11  |  **Nguồn/test:** Cần minimal report
+**Trạng thái:** Chưa đáp ứng  |  **Tuần:** 8,11  |  **Nguồn hoặc việc cần kiểm tra:** Cần minimal report
 
-### 3.10 Cache, Search & Media
+### 3.10 Tăng tốc, tìm kiếm và ảnh sản phẩm
 
-#### FR-INT-01  [M]  Cache hot catalog/read model có chiến lược key/TTL/invalidation và fallback an toàn.
+#### FR-INT-01  [M]  Trang sản phẩm tải nhanh nhờ dữ liệu lưu tạm và vẫn cập nhật đúng khi dữ liệu thay đổi.
 
-Business/validation rule: Dữ liệu checkout/pricing luôn lấy trạng thái Medusa hợp lệ.
+Quy tắc cần tuân theo: Giá và dữ liệu dùng khi đặt hàng phải lấy theo trạng thái Medusa hợp lệ, không dựa vào bản lưu tạm đã cũ.
 
-Acceptance: Hit/miss + update product không trả stale vượt policy, Redis failure không trả sai order.
+Cách kiểm tra: Xem khi dữ liệu có/không có trong bộ nhớ đệm, sửa sản phẩm rồi kiểm tra trang cập nhật đúng; Redis lỗi không được trả đơn sai.
 
-**Trạng thái:** PARTIAL  |  **Tuần:** 9  |  **Nguồn/test:** Redis cache configured, test thiếu
+**Trạng thái:** Mới hoàn thành một phần  |  **Tuần:** 9  |  **Nguồn hoặc việc cần kiểm tra:** Redis cache configured, test thiếu
 
-#### FR-INT-02  [M]  Media product dùng object storage/file provider phù hợp và không lưu image blob ở transactional DB.
+#### FR-INT-02  [M]  Ảnh sản phẩm được lưu ở nơi phù hợp, không nhét tệp ảnh vào cơ sở dữ liệu đơn hàng.
 
-Business/validation rule: Asset rights và URL availability được xác minh.
+Quy tắc cần tuân theo: Chỉ dùng ảnh có quyền sử dụng và đường dẫn ảnh mở được.
 
-Acceptance: Upload hoặc serve media từ storage trong staging, thumbnail hoạt động.
+Cách kiểm tra: Tải ảnh thử trên môi trường cloud thử nghiệm và xem ảnh nhỏ hiển thị đúng.
 
-**Trạng thái:** PARTIAL  |  **Tuần:** 9  |  **Nguồn/test:** S3 optional config, chưa có run evidence
+**Trạng thái:** Mới hoàn thành một phần  |  **Tuần:** 9  |  **Nguồn hoặc việc cần kiểm tra:** S3 optional config, chưa có run evidence
 
-#### FR-INT-03  [S]  Search/filter/sort đáp ứng nhu cầu browsing và có kiến trúc đồng bộ khi tách search service.
+#### FR-INT-03  [S]  Tìm kiếm, lọc và sắp xếp đáp ứng việc xem hàng; có kế hoạch nếu sau này dùng công cụ tìm kiếm riêng.
 
-Business/validation rule: Dedicated service cần ADR chứ không auto requirement.
+Quy tắc cần tuân theo: Nếu muốn công cụ tìm kiếm riêng, nhóm phải ghi lý do; đó chưa phải yêu cầu bắt buộc.
 
-Acceptance: Document decision, reindex/invalidation test nếu dùng service.
+Cách kiểm tra: Ghi quyết định; nếu dùng công cụ riêng, thử khi sản phẩm thay đổi để kết quả tìm kiếm cập nhật.
 
-**Trạng thái:** PARTIAL  |  **Tuần:** 9  |  **Nguồn/test:** Keyword search, no dedicated search
+**Trạng thái:** Mới hoàn thành một phần  |  **Tuần:** 9  |  **Nguồn hoặc việc cần kiểm tra:** Keyword search, no dedicated search
 
-### 3.11 Operations
+### 3.11 Triển khai và vận hành
 
-#### FR-OPS-01  [M]  Pipeline CI thực hiện test, lint, typecheck và build trước merge/release.
+#### FR-OPS-01  [M]  Hệ thống tự kiểm tra mã nguồn trước khi nhập thay đổi hoặc phát hành.
 
-Business/validation rule: Fail gate không cho merge theo branch policy được duyệt.
+Quy tắc cần tuân theo: Bản kiểm tra thất bại không được nhập vào nhánh chính theo quy định của nhóm.
 
-Acceptance: Evidence workflow pass trên commit baseline.
+Cách kiểm tra: Lưu kết quả chạy thành công của quy trình tự động cho đúng bản mã nguồn.
 
-**Trạng thái:** CODE/TEST  |  **Tuần:** 10  |  **Nguồn/test:** CI & API GitHub Actions runs 01/11
+**Trạng thái:** Đã có mã nguồn và một số kết quả kiểm thử  |  **Tuần:** 10  |  **Nguồn hoặc việc cần kiểm tra:** CI & API GitHub Actions runs 01/11
 
-#### FR-OPS-02  [M]  Triển khai staging cloud được tái lập, có TLS, migration và readiness gate.
+#### FR-OPS-02  [M]  Có thể triển khai lại môi trường thử nghiệm cloud và kiểm tra nó sẵn sàng qua HTTPS.
 
-Business/validation rule: Secrets không commit Git; version deployed traceable.
+Quy tắc cần tuân theo: Không đưa mật khẩu/khóa vào Git và phải biết phiên bản nào đã triển khai.
 
-Acceptance: Từ commit approved deploy staging, health + checkout cloud E2E pass.
+Cách kiểm tra: Đưa một bản đã duyệt lên môi trường thử nghiệm, kiểm tra ứng dụng còn hoạt động và đặt hàng từ đầu đến cuối.
 
-**Trạng thái:** PARTIAL  |  **Tuần:** 10  |  **Nguồn/test:** deploy.yml + RUNBOOK; no cloud evidence
+**Trạng thái:** Mới hoàn thành một phần  |  **Tuần:** 10  |  **Nguồn hoặc việc cần kiểm tra:** deploy.yml + RUNBOOK; no cloud evidence
 
-#### FR-OPS-03  [M]  Có rollback code/config và backup/restore DB được diễn tập.
+#### FR-OPS-03  [M]  Nhóm diễn tập đưa phiên bản cũ trở lại và sao lưu, khôi phục dữ liệu.
 
-Business/validation rule: Không rollback migration mất dữ liệu.
+Quy tắc cần tuân theo: Quay lại phiên bản cũ không được làm mất dữ liệu mua hàng.
 
-Acceptance: Restore staging và rollback release thành công, có timestamps/logs.
+Cách kiểm tra: Diễn tập khôi phục dữ liệu và đưa bản cũ trở lại; ghi thời gian và nhật ký.
 
-**Trạng thái:** GAP  |  **Tuần:** 10,12  |  **Nguồn/test:** RUNBOOK target only
+**Trạng thái:** Chưa đáp ứng  |  **Tuần:** 10,12  |  **Nguồn hoặc việc cần kiểm tra:** RUNBOOK target only
 
-#### FR-OPS-04  [M]  Có app logs, metrics request/error/p95/resource và alert cho sự cố chính.
+#### FR-OPS-04  [M]  Có số liệu, nhật ký và cảnh báo để biết hệ thống chậm hoặc gặp lỗi.
 
-Business/validation rule: Logs không chứa secrets/PII.
+Quy tắc cần tuân theo: Nhật ký không chứa mật khẩu, khóa hoặc dữ liệu riêng của khách.
 
-Acceptance: Dashboard/alert screenshots và fault test trigger.
+Cách kiểm tra: Tạo lỗi thử nghiệm, lưu ảnh bảng số liệu và cảnh báo đã xuất hiện.
 
-**Trạng thái:** GAP  |  **Tuần:** 11  |  **Nguồn/test:** Docker logs configured, metrics gap
+**Trạng thái:** Chưa đáp ứng  |  **Tuần:** 11  |  **Nguồn hoặc việc cần kiểm tra:** Docker logs configured, metrics gap
 
-### 3.12 Recommendation (Optional)
+### 3.12 Gợi ý sản phẩm (tùy chọn)
 
-#### FR-REC-01  [C]  ETL H&M giữ ID mapping và data provenance, không tạo pseudo-orders trong Medusa.
+#### FR-REC-01  [C]  Dữ liệu H&M được chuẩn bị có thể đối chiếu về nguồn và không tạo đơn hàng giả trong Medusa.
 
-Business/validation rule: Tuân thủ competition rules/asset rights.
+Quy tắc cần tuân theo: Kiểm tra điều khoản sử dụng bộ dữ liệu H&M và quyền dùng ảnh.
 
-Acceptance: Pilot mapping valid; không trùng SKU; offline artifacts không lộ lên public.
+Cách kiểm tra: Kiểm tra sản phẩm mẫu liên kết đúng với mã Medusa, không trùng mã hàng và tệp dữ liệu riêng không bị công khai.
 
-**Trạng thái:** CODE/PARTIAL  |  **Tuần:** 13+  |  **Nguồn/test:** scripts/hm, README ghi pilot 500/1.874
+**Trạng thái:** Đã có mã nguồn, chưa kiểm thử đầy đủ  |  **Tuần:** 13+  |  **Nguồn hoặc việc cần kiểm tra:** scripts/hm, README ghi pilot 500/1.874
 
-#### FR-REC-02  [C]  Recommendation trả catalog items hợp lệ qua Store API sau khi core ổn định.
+#### FR-REC-02  [C]  Gợi ý sản phẩm đang bán qua API sau khi luồng mua hàng chính ổn định.
 
-Business/validation rule: Filter published/region/price/stock; fallback popularity.
+Quy tắc cần tuân theo: Chỉ gợi ý sản phẩm đang bán, có giá và đủ hàng tại khu vực của khách; nếu chưa biết sở thích, dùng danh sách phổ biến.
 
-Acceptance: API/UI có tests; offline metrics và serving latency được đo.
+Cách kiểm tra: Kiểm thử API và website; đo chất lượng gợi ý trên dữ liệu chuẩn bị trước và thời gian trả kết quả.
 
-**Trạng thái:** GAP  |  **Tuần:** 13+  |  **Nguồn/test:** Không có online rec API ở baseline
+**Trạng thái:** Chưa đáp ứng  |  **Tuần:** 13+  |  **Nguồn hoặc việc cần kiểm tra:** Không có online rec API ở baseline
 
-## 4. Business Rules (BR)
+## 4. Quy tắc bán hàng (BR)
 
-Quy tắc nghiệp vụ có tính bắt buộc hoặc là mục tiêu kiểm thử dựa trên plan. Khi kế hoạch chưa có implementation, quy tắc vẫn được giữ và đánh dấu cần chứng minh. Các thay đổi phải cập nhật SRS, test và ADR.
+Các quy tắc dưới đây là yêu cầu của đồ án hoặc mục tiêu cần kiểm tra. Quy tắc nào chưa được xây dựng vẫn được giữ trong bảng và đánh dấu để làm tiếp. Nếu đổi quy tắc, nhóm phải cập nhật tài liệu, bài kiểm thử và lý do lựa chọn giải pháp.
 
 | **ID** | **Quy tắc nghiệp vụ** | **Nguồn / hướng xác nhận** |
 | --- | --- | --- |
-| BR-01 | Chỉ Medusa tạo/đổi giá authoritative, Cart, Order, Payment và Inventory. | [SRC-03], storefront/backend boundary. |
-| BR-02 | Sản phẩm chỉ mua được khi published, thuộc channel/region, có giá và inventory policy hợp lệ. | Medusa Product/Inventory. |
-| BR-03 | Mọi item trong Order phải tham chiếu product/variant có thật hoặc snapshot hợp lệ do Medusa tạo. | Cart completion workflow. |
+| BR-01 | Chỉ Medusa quyết định giá bán và quản lý giỏ hàng, đơn hàng, thanh toán, tồn kho. | [SRC-03], ranh giới giữa website và Medusa. |
+| BR-02 | Chỉ bán sản phẩm đang được hiển thị, thuộc đúng khu vực/kênh bán, có giá và đáp ứng quy tắc tồn kho. | Medusa Product/Inventory. |
+| BR-03 | Mỗi món hàng trong đơn phải gắn với sản phẩm có thật hoặc thông tin sản phẩm được Medusa lưu lại lúc đặt hàng. | Quy trình hoàn tất giỏ hàng. |
 | BR-04 | Đặt hàng thành công chỉ khi Medusa trả `type=order`, có Order ID và có thể truy vấn lại. | Checkout action & tests. |
-| BR-05 | Payment `authorized` ≠ tiền đã thu; COD chỉ là phương thức thanh toán khi nhận. | Payment simulator và order report. |
+| BR-05 | Trạng thái `authorized` chỉ cho biết thanh toán được chấp nhận ở bước xác nhận; chưa chứng minh đã thu tiền. COD là trả tiền khi nhận hàng. | Payment Simulator và báo cáo đơn hàng. |
 | BR-06 | Simulator chỉ phục vụ môi trường phi production; không nhận dữ liệu thẻ hay chuyển tiền thật. | payment-simulator provider. |
 | BR-07 | Payment failure không được tạo Order thành công hoặc tăng reservation ngoài ý muốn. | Payment fail integration test. |
-| BR-08 | Retry cùng giao dịch không tạo duplicate order; conflict payload xử lý theo idempotency policy được phê duyệt. | Phải bổ sung ADR/test. |
-| BR-09 | Inventory reservation không vượt khả dụng trong các request đồng thời. | Cần concurrent test. |
-| BR-10 | Notification chạy sau khi phát sinh Order; lỗi email không hủy Order. | Mục tiêu Tuần 8. |
+| BR-08 | Gửi lại cùng một yêu cầu đặt hàng không được tạo thêm đơn; nếu nội dung yêu cầu thay đổi thì phải có cách xử lý đã thống nhất. | Cần ghi quyết định và bổ sung kiểm thử. |
+| BR-09 | Khi nhiều khách đặt cùng lúc, tổng số hàng giữ cho các đơn không vượt số hàng có thể bán. | Cần kiểm thử nhiều đơn cùng lúc. |
+| BR-10 | Chỉ gửi thông báo sau khi có đơn; lỗi email không được hủy đơn. | Mục tiêu Tuần 8. |
 | BR-11 | Customer chỉ xem order của mình; Admin/Staff thao tác theo quyền. | Medusa auth/access boundary. |
 | BR-12 | Media lưu qua file/object storage hợp lệ; database lưu metadata/URL, không lưu blob nặng. | Yêu cầu kiến trúc Tuần 9. |
 | BR-13 | Raw H&M history không được import thành Order; giá/stock demo ghi synthetic provenance. | scripts/hm/README.md. |
 | BR-14 | Secrets/PII không ghi vào git, test artifacts hoặc public logs. | Security/ops plan. |
 | BR-15 | Mọi deployment/schema change phải có migration, backup/rollback plan tương ứng. | deploy/RUNBOOK.md. |
 
-## 5. Data Requirements & Ownership
+## 5. Dữ liệu cần có và bên chịu trách nhiệm
 
-### 5.1 Mô hình dữ liệu nghiệp vụ
+### 5.1 Những loại dữ liệu chính
 
-| **Entity / group** | **Thuộc tính chính** | **Authoritative owner** | **Integrity / security** |
+| **Loại dữ liệu** | **Thông tin chính** | **Nơi quản lý** | **Điều cần bảo vệ/kiểm tra** |
 | --- | --- | --- | --- |
-| Customer / Auth Identity | Email, profile, auth identity, identity boundary. | Medusa Customer/Auth | Customer PII; không trả dữ liệu người khác; không commit credentials. |
-| Product / Variant | Title, handle, SKU, options, category/collection, images, metadata. | Medusa Product | SKU/ID unique; published/channel/region controls. |
-| Price / Region / Sales Channel | Currency VND, regions, price sets, channel visibility. | Medusa Pricing/Region/Sales Channel | UI dùng price response; không hard-code authoritative totals. |
-| Inventory Item / Level / Reservation | Stock, reservation, stock location, availability. | Medusa Inventory | Không double reserve; liên kết giữa variant và inventory item qua workflows. |
-| Cart / CartLineItem | Cart ID, region, customer, line item, quantity, addresses. | Medusa Cart | Cart mutation validation, HTTP-only cart ID cookie. |
-| Payment Collection / Session / Payment | Provider, status, amounts, authorize/capture/refund state. | Medusa Payment | Phân biệt authorized/captured; no real money. |
-| Order / OrderItem / Fulfillment | Order ID, status, line-item snapshots, fulfillment. | Medusa Order/Fulfillment | Order chỉ từ complete cart; history có authz. |
-| Notification Attempt (target) | Event ID, order ref, attempt/status, error code, timestamp. | Custom Medusa module/Notification provider (planned) | Retry dedupe, time-bounded retention, no token leakage. |
-| Operational Logs & Metrics | request ID, latency, HTTP code, service, correlation. | Observability tooling (planned) | Không log payload nhạy cảm; có retention. |
-| H&M Mapping (optional) | source article ID, Medusa product/variant IDs, source hash. | Offline ETL + mapping artifact | Không trộn với real orders; rights/provenance. |
+| Khách hàng và đăng nhập | Email, hồ sơ, thông tin xác thực. | Medusa Customer/Auth | Không để khách xem dữ liệu của người khác; không đưa mật khẩu vào Git. |
+| Sản phẩm và phiên bản | Tên, mã hàng (SKU), các lựa chọn, danh mục và ảnh. | Medusa Product | Mỗi mã phải xác định đúng sản phẩm; chỉ bán hàng được bật cho khu vực/kênh phù hợp. |
+| Giá và nơi bán | Giá VND, khu vực bán và kênh bán. | Medusa Pricing/Region/Sales Channel | Website dùng giá Medusa trả về, không tự đặt tổng tiền. |
+| Tồn kho | Số hàng có, số hàng giữ cho đơn và kho chứa. | Medusa Inventory | Không giữ cùng một số hàng hai lần; liên kết đúng sản phẩm với tồn kho. |
+| Giỏ hàng | Mã giỏ, khách, món hàng, số lượng và địa chỉ. | Medusa Cart | Kiểm tra thay đổi giỏ; website chỉ giữ mã giỏ trong cookie riêng tư. |
+| Thanh toán | Cách thanh toán, phiên thanh toán, số tiền và trạng thái. | Medusa Payment | Phân biệt đã chấp nhận với đã thu tiền; demo không nhận tiền thật. |
+| Đơn hàng và giao hàng | Mã đơn, trạng thái, sản phẩm đã mua và tiến độ giao. | Medusa Order/Fulfillment | Đơn được tạo từ giỏ hợp lệ; khách chỉ xem đơn của mình. |
+| Lần gửi thông báo (dự kiến) | Mã sự kiện/đơn, số lần thử, kết quả, lỗi và thời điểm. | Phần mở rộng Medusa dự kiến | Gửi lại có giới hạn, tránh trùng và không lộ mã đăng nhập. |
+| Nhật ký và số liệu vận hành | Mã yêu cầu, thời gian phản hồi, mã lỗi, dịch vụ liên quan. | Công cụ theo dõi dự kiến | Không ghi dữ liệu nhạy cảm; quy định thời gian lưu. |
+| Liên kết dữ liệu H&M (tùy chọn) | Mã sản phẩm H&M và mã sản phẩm/phiên bản trong Medusa. | Công cụ chuẩn bị dữ liệu offline | Không trộn lịch sử mua H&M với đơn thật; kiểm tra quyền sử dụng. |
 
-### 5.2 Quan hệ, consistency và vòng đời
+### 5.2 Dữ liệu liên quan với nhau thế nào
 
-- Product có các Variants; variant gắn SKU, pricing/inventory qua modules/links của Medusa. Không giả định foreign key SQL xuyên mọi module.
-- Cart chứa các line items, region và optional customer. Checkout cập nhật address/shipping/payment session; hoàn tất cart trả Order và lưu liên kết Order–Cart.
-- PaymentCollection chứa PaymentSessions/Payments; authorized, captured và refunded là các trạng thái khác nhau, cần đối soát độc lập.
-- InventoryLevel lưu stocked/reserved; checkout đúng tạo reservation tương ứng quantity. Không suy ra stocked_quantity tự giảm ngay tại thời điểm Order được tạo.
-- OrderItem/OrderLineItem và snapshot tồn tại theo version. Kiểm thử cần sử dụng đúng API, module links và version khi đọc lại.
-- Notification attempts (nếu bổ sung) là dữ liệu async với dedupe key, retry count và retention rõ. Không ghi token, email đầy đủ vào message logs công khai.
+- Một sản phẩm có thể có nhiều phiên bản (ví dụ màu khác nhau). Medusa liên kết phiên bản với giá và tồn kho; không được tự đoán các bảng dữ liệu bên trong đều nối trực tiếp với nhau.
+- Giỏ chứa các món hàng, khu vực bán và có thể gắn với khách. Khi đặt hàng, Medusa nhận địa chỉ, cách giao và phiên thanh toán; nếu thành công, Medusa trả đơn và giữ mối liên hệ với giỏ.
+- Một phiên thanh toán có thể đi qua các trạng thái “được chấp nhận”, “đã thu tiền” và “đã hoàn tiền”. Các trạng thái này không giống nhau, cần đối chiếu riêng.
+- Medusa theo dõi số hàng trong kho và số hàng đã giữ cho đơn. Không được suy ra số hàng trong kho giảm ngay lúc tạo đơn nếu chưa có bằng chứng.
+- Thông tin sản phẩm trong đơn được lưu tại thời điểm mua và có thể có nhiều phiên bản bản ghi. Khi kiểm tra, phải đọc đúng đơn và phiên bản hiện tại qua API/Medusa.
+- Nếu xây chức năng thông báo, mỗi lần gửi cần có mã để chống trùng, số lần thử có giới hạn và thời gian lưu rõ ràng. Không ghi mã đăng nhập hoặc email đầy đủ vào nhật ký công khai.
 
-### 5.3 Privacy và retention
+### 5.3 Quyền riêng tư và thời gian lưu dữ liệu
 
-Customer email/address/phone là PII; production-like logs và test artifacts không được đưa đầy đủ dữ liệu thật vào Git. Test dùng email/domain giả, environment và credentials riêng. Retention thời gian thực cho order/customer phải tuân thủ chính sách nhóm chọn; chưa có thông tin pháp lý/doanh nghiệp cụ thể nên không tự đặt số ngày retention bắt buộc. Raw H&M data (optional) phải được giữ offline, xác nhận quyền sử dụng, hash customer IDs với khóa bí mật và không gán historical purchases thành real orders.
+Email, địa chỉ và số điện thoại của khách là dữ liệu cá nhân. Không đưa dữ liệu thật đầy đủ vào Git hoặc nhật ký kiểm thử. Bài test dùng email giả và tài khoản riêng. Nhóm cần quyết định lưu dữ liệu khách/đơn bao lâu theo mục đích demo và quy định áp dụng; hiện chưa có đủ thông tin để tự đặt một số ngày bắt buộc. Dữ liệu H&M gốc phải giữ riêng, kiểm tra quyền sử dụng, che mã khách H&M bằng khóa bí mật và không biến lịch sử mua của họ thành đơn thật của dự án.
 
-## 6. External Interface Requirements
+## 6. Giao diện và cách các phần kết nối với nhau
 
-| **ID** | **Kênh** | **Route / integration** | **Contract & control** |
+| **Mã** | **Các phần giao tiếp** | **Đường dẫn/cách kết nối** | **Điều cần kiểm tra** |
 | --- | --- | --- | --- |
-| UI-01 | Browser / Next.js | /vn/store; /vn/products/[handle]; /vn/cart; /vn/checkout; /vn/account/orders | Mobile/desktop, form validation, error/empty/loading states. |
-| API-01 | Storefront → Medusa Store API | /store/products; /store/regions; /store/carts; /store/carts/{id}/line-items | HTTPS + publishable key; auth bearer cho private resource. |
-| API-02 | Checkout / Payment | /store/payment-collections; .../payment-sessions; /store/carts/{id}/complete | Only Medusa creates Order; idempotency target; no real card data. |
-| API-03 | Customer Orders | /store/orders; /store/orders/{id} | Authorization; only owned resource. |
-| API-04 | Store Auth | /auth/customer/emailpass; /store/auth/login (custom route exists) | Medusa auth; avoid inventing new password DB. |
-| API-05 | Admin | /app; Medusa Admin API | Admin authz and account roles. |
-| INT-01 | Backend ↔ PostgreSQL 16 | DATABASE_URL / Medusa modules | Transactions, migrations, backups, pool limits. |
-| INT-02 | Backend/Worker ↔ Redis 7 | REDIS_URL; cache/event/workflow/locking | Retries, cache invalidation, fault handling. |
-| INT-03 | Media ↔ S3-compatible storage | Medusa file provider if configured | Object URI/URL; rights, bucket policy, HTTPS. |
-| INT-04 | Notification adapter target | Medusa event bus/worker → email sandbox provider | Delivery attempt status, backoff, idempotency. |
-| OPS-01 | CI/CD ↔ cloud staging | GitHub Actions deploy.yml → VM SSH/Caddy/Compose | Release SHA, secrets, migration, readiness/rollback. |
+| UI-01 | Khách ↔ website Next.js | `/vn/store`, trang chi tiết, giỏ, đặt hàng, lịch sử đơn | Dùng được trên điện thoại/máy tính; báo rõ khi thiếu dữ liệu, đang tải hoặc có lỗi. |
+| API-01 | Website → Medusa | API sản phẩm, khu vực, giỏ và món hàng trong giỏ | Dùng HTTPS và mã truy cập phù hợp; dữ liệu riêng cần đăng nhập. |
+| API-02 | Đặt hàng → thanh toán | API tạo phiên thanh toán và hoàn tất giỏ | Chỉ Medusa tạo đơn; không nhận dữ liệu thẻ thật; cần thử chống gửi trùng. |
+| API-03 | Khách → đơn của mình | `/store/orders`, `/store/orders/{id}` | Kiểm tra quyền: khách chỉ xem đơn được phép. |
+| API-04 | Khách → đăng nhập | `/auth/customer/emailpass`, `/store/auth/login` | Dùng Medusa để xác thực; không tạo kho mật khẩu riêng. |
+| API-05 | Nhân viên → quản trị | `/app` và Medusa Admin API | Chỉ tài khoản có quyền mới vào được. |
+| INT-01 | Medusa ↔ PostgreSQL 16 | Kết nối qua `DATABASE_URL` | Bảo vệ dữ liệu, kiểm soát thay đổi cấu trúc, sao lưu và số kết nối. |
+| INT-02 | Medusa/tiến trình nền ↔ Redis 7 | Kết nối qua `REDIS_URL` | Kiểm tra dữ liệu lưu tạm cập nhật, việc nền thử lại và xử lý khi Redis lỗi. |
+| INT-03 | Ảnh ↔ nơi lưu tương thích S3 | Medusa dùng phần lưu tệp nếu được cấu hình | Kiểm tra quyền dùng ảnh, quyền truy cập và HTTPS. |
+| INT-04 | Việc gửi thông báo dự kiến | Tiến trình nền → dịch vụ email thử nghiệm | Ghi kết quả gửi, giới hạn gửi lại và tránh gửi trùng. |
+| OPS-01 | Quy trình triển khai → cloud thử nghiệm | GitHub Actions → máy chủ chạy Caddy/Compose | Biết phiên bản đã đưa lên, giữ bí mật khóa, kiểm tra ứng dụng và có cách quay lại. |
 
-### 6.1 HTTP error semantics và backward compatibility
+### 6.1 Cách báo lỗi khi các phần giao tiếp
 
-Các API cần từ chối input sai theo HTTP 4xx thích hợp; lỗi phụ thuộc dùng 5xx cùng log correlation; UI không coi HTTP 2xx/non-order result là checkout thành công. Tất cả private endpoints phải kiểm tra auth ở server. Các endpoint Medusa chuẩn được ưu tiên, custom routes phải mô tả schema, authorization, error codes, pagination/limits và versioning trước khi triển khai. Những path trong bảng là API hiện sử dụng hoặc dự kiến dựa trên code baseline, không phải cam kết toàn bộ đã có custom implementation.
+Khi người dùng nhập sai, API phải trả lỗi phù hợp (thường là HTTP 4xx). Khi hệ thống hoặc dịch vụ hỗ trợ gặp lỗi, API trả lỗi máy chủ (thường là 5xx) và ghi nhật ký để tìm nguyên nhân. Website chỉ báo đặt hàng thành công khi Medusa thực sự trả về đơn hàng; một phản hồi HTTP 2xx khác chưa đủ. Các đường dẫn chứa dữ liệu riêng tư phải kiểm tra quyền tại máy chủ. Ưu tiên dùng API có sẵn của Medusa; nếu tự tạo API mới, cần ghi rõ dữ liệu đầu vào, quyền truy cập, lỗi có thể xảy ra và giới hạn kết quả. Bảng trên gồm cả đường dẫn đang dùng và phần dự kiến, không có nghĩa mọi phần đều đã xây xong.
 
-## 7. Non-Functional Requirements (NFR)
+## 7. Yêu cầu về tốc độ, độ ổn định và bảo mật (NFR)
 
-NFR có các target đo được và trường xác nhận. Đặc biệt 30 RPS/3 RPS/p95 là threshold trong k6 source; không có bằng chứng chúng đã đạt. Availability 99,5% là đề xuất, chưa được thông qua. RPO/RTO là mục tiêu trong runbook, chưa thử restore.
+Các yêu cầu trong phần này cần được đo bằng bài kiểm thử thực tế. Mức 30 yêu cầu xem sản phẩm/giây, 3 yêu cầu đặt hàng/giây và thời gian phản hồi p95 chỉ là mục tiêu ghi trong kịch bản k6; chưa có kết quả chứng minh đã đạt. Mục tiêu hoạt động 99,5% chưa được phê duyệt. Mục tiêu mất dữ liệu/khôi phục sau sự cố cũng chưa được diễn tập.
 
-### 7.1 Performance & Capacity
+### 7.1 Tốc độ và khả năng phục vụ nhiều người
 
-#### NFR-PERF-01  [M]  Catalog read: 30 RPS/10 phút; p95 <600 ms, failure <1% (target k6).
+#### NFR-PERF-01  [M]  Khi thử xem sản phẩm ở mức 30 yêu cầu/giây trong 10 phút, 95% yêu cầu cần phản hồi dưới 600 ms và dưới 1% bị lỗi.
 
-Phương pháp xác minh: k6 load/catalog.js; lưu hardware profile, DB size và latency percentiles.
+Cách kiểm tra: Chạy k6 bằng `load/catalog.js`; ghi cấu hình máy, lượng dữ liệu và thời gian phản hồi.
 
-Baseline/evidence: Script có; chưa có benchmark report.  |  Milestone: Tuần 12
+Tình trạng và bằng chứng hiện có: Có kịch bản kiểm thử; chưa có báo cáo kết quả.  |  Tuần dự kiến: 12
 
-#### NFR-PERF-02  [M]  Checkout workload: 3 RPS/5 phút; p95 bước complete <1.500 ms, failure <1% (target).
+#### NFR-PERF-02  [M]  Khi thử đặt hàng ở mức 3 yêu cầu/giây trong 5 phút, 95% bước hoàn tất cần phản hồi dưới 1.500 ms và dưới 1% bị lỗi.
 
-Phương pháp xác minh: k6 load/checkout.js trên staging test DB/fixture; kiểm soát write side effects.
+Cách kiểm tra: Chạy `load/checkout.js` trên môi trường thử nghiệm với dữ liệu mẫu riêng; kiểm tra các đơn thử được tạo.
 
-Baseline/evidence: Script có; chưa có benchmark report.  |  Milestone: Tuần 12
+Tình trạng và bằng chứng hiện có: Có kịch bản kiểm thử; chưa có báo cáo kết quả.  |  Tuần dự kiến: 12
 
-#### NFR-PERF-03  [S]  Tài liệu workload định nghĩa RPS/concurrency/read-write ratio, peak & 5× scenario nếu khả thi.
+#### NFR-PERF-03  [S]  Ghi rõ số yêu cầu mỗi giây, số người dùng cùng lúc, tỷ lệ xem/đặt hàng và cách thử mức tải gấp 5 lần nếu có thể.
 
-Phương pháp xác minh: Workload model + 1×/5× report hoặc lý do không khả thi.
+Cách kiểm tra: Có báo cáo mức tải bình thường và gấp 5 lần, hoặc giải thích vì sao chưa thể thử.
 
-Baseline/evidence: Planned.  |  Milestone: Tuần 12
+Tình trạng và bằng chứng hiện có: Mới ở kế hoạch.  |  Tuần dự kiến: 12
 
-#### NFR-PERF-04  [M]  DB pool và connection count theo dõi dưới max_connections; tránh 53300 trong workload mục tiêu.
+#### NFR-PERF-04  [M]  Số kết nối tới PostgreSQL phải dưới giới hạn cho phép; không gặp lỗi hết kết nối khi thử mức tải mục tiêu.
 
-Phương pháp xác minh: Capture pg_stat_activity, pool, peak; failure budget 0 connection-exhaustion events.
+Cách kiểm tra: Ghi số kết nối cao nhất từ PostgreSQL và ứng dụng; số lần lỗi hết kết nối phải bằng 0.
 
-Baseline/evidence: Đã từng gặp historic 53300 local; chưa benchmark.  |  Milestone: Tuần 11–12
+Tình trạng và bằng chứng hiện có: Máy cá nhân từng gặp lỗi PostgreSQL 53300 (hết kết nối); chưa đo tải lại.  |  Tuần dự kiến: 11–12
 
-### 7.2 Reliability, Availability & Recovery
+### 7.2 Hoạt động ổn định và khôi phục khi có sự cố
 
-#### NFR-REL-01  [M]  Complete-cart retry/concurrency không tạo duplicate Order/Payment inconsistency.
+#### NFR-REL-01  [M]  Gửi yêu cầu đặt hàng lại hoặc cùng lúc không được tạo đơn trùng hay làm sai trạng thái thanh toán.
 
-Phương pháp xác minh: Two concurrent + timeout retry tests và links/inventory readback.
+Cách kiểm tra: Cho hai yêu cầu đặt hàng chạy cùng lúc, thử gửi lại sau khi chờ quá lâu rồi đọc lại đơn và tồn kho.
 
-Baseline/evidence: Chưa đủ test.  |  Milestone: Tuần 7,12
+Tình trạng và bằng chứng hiện có: Chưa đủ bài kiểm thử.  |  Tuần dự kiến: 7,12
 
-#### NFR-REL-02  [M]  Notification/search/cache failure không rollback Order hợp lệ hoặc trả order success giả.
+#### NFR-REL-02  [M]  Lỗi thông báo, tìm kiếm hoặc dữ liệu lưu tạm không được hủy đơn hợp lệ hay báo thành công khi chưa có đơn.
 
-Phương pháp xác minh: Fault injection; order creation và recovery evidence.
+Cách kiểm tra: Cố ý làm một dịch vụ hỗ trợ ngừng hoạt động, thử đặt hàng và ghi lại kết quả, cách khôi phục.
 
-Baseline/evidence: Partial infrastructure.  |  Milestone: Tuần 8,12
+Tình trạng và bằng chứng hiện có: Mới có một phần hạ tầng.  |  Tuần dự kiến: 8,12
 
-#### NFR-REL-03  [M]  RPO ≤60 phút và RTO ≤120 phút là target ban đầu của runbook.
+#### NFR-REL-03  [M]  Mục tiêu ban đầu: khi có sự cố, mất tối đa 60 phút dữ liệu và khôi phục hệ thống trong 120 phút.
 
-Phương pháp xác minh: Chạy restore từ backup, đo độ cũ bản backup và thời gian khôi phục.
+Cách kiểm tra: Chạy restore từ backup, đo độ cũ bản backup và thời gian khôi phục.
 
-Baseline/evidence: Target có; chưa drill.  |  Milestone: Tuần 10,12
+Tình trạng và bằng chứng hiện có: Mới là mục tiêu trong hướng dẫn; chưa diễn tập.  |  Tuần dự kiến: 10,12
 
-#### NFR-REL-04  [S]  Availability SLO được công bố theo demo/staging window; đề xuất khởi điểm 99,5%, cần approval.
+#### NFR-REL-04  [S]  Đề xuất hệ thống hoạt động 99,5% thời gian đo trên môi trường thử nghiệm; nhóm phải duyệt cách đo trước.
 
-Phương pháp xác minh: Availability numerator/denominator và loại downtime planned rõ; đo monitoring.
+Cách kiểm tra: Ghi rõ khoảng thời gian đo, thời gian hệ thống hoạt động/ngừng và cách tính thời gian bảo trì đã lên lịch.
 
-Baseline/evidence: Chưa chốt hay đạt.  |  Milestone: Tuần 11–12
+Tình trạng và bằng chứng hiện có: Chưa chốt mục tiêu hoặc chứng minh đạt.  |  Tuần dự kiến: 11–12
 
-#### NFR-REL-05  [M]  Health/readiness signal phản ánh trạng thái server và hạ tầng then chốt.
+#### NFR-REL-05  [M]  Có cách kiểm tra ứng dụng và các dịch vụ dữ liệu quan trọng còn hoạt động.
 
-Phương pháp xác minh: Health checks postgres/redis/backend, test dependency failure.
+Cách kiểm tra: Kiểm tra PostgreSQL, Redis và Medusa; thử khi một dịch vụ ngừng hoạt động.
 
-Baseline/evidence: Health checks có; chưa đủ failure drill.  |  Milestone: Tuần 10–12
+Tình trạng và bằng chứng hiện có: Có kiểm tra hoạt động cơ bản; chưa diễn tập đủ các lỗi.  |  Tuần dự kiến: 10–12
 
-### 7.3 Security & Privacy
+### 7.3 Bảo mật và quyền riêng tư
 
-#### NFR-SEC-01  [M]  All customer-owned resource endpoints enforce server-side authentication/authorization.
+#### NFR-SEC-01  [M]  Máy chủ phải kiểm tra quyền trước khi trả hồ sơ hoặc đơn hàng riêng của khách.
 
-Phương pháp xác minh: Negative cross-account tests và access matrix; không rò 200 response.
+Cách kiểm tra: Dùng tài khoản A thử xem dữ liệu của B; yêu cầu phải bị từ chối và không trả dữ liệu của B.
 
-Baseline/evidence: Một phần; cần security review.  |  Milestone: Tuần 11
+Tình trạng và bằng chứng hiện có: Mới kiểm một phần; cần rà lại quyền truy cập.  |  Tuần dự kiến: 11
 
-#### NFR-SEC-02  [M]  Transport trên cloud qua HTTPS/TLS và DB/Redis không public Internet.
+#### NFR-SEC-02  [M]  Truy cập từ Internet phải dùng HTTPS; PostgreSQL và Redis không mở công khai.
 
-Phương pháp xác minh: SSL/TLS curl/scanner + network exposure checklist.
+Cách kiểm tra: Thử truy cập HTTPS và rà các cổng mở trên máy chủ cloud.
 
-Baseline/evidence: Config Caddy/loopback; chưa cloud evidence.  |  Milestone: Tuần 10–11
+Tình trạng và bằng chứng hiện có: Đã có cấu hình Caddy và cổng nội bộ; chưa kiểm chứng trên cloud.  |  Tuần dự kiến: 10–11
 
-#### NFR-SEC-03  [M]  Secrets không ở Git/log/artifacts; dùng protected CI environment/VM secret storage.
+#### NFR-SEC-03  [M]  Không lưu mật khẩu và khóa bí mật trong Git hoặc nhật ký công khai.
 
-Phương pháp xác minh: Secret scan và review deploy workflow/logs.
+Cách kiểm tra: Quét mã nguồn tìm thông tin bí mật và kiểm lại quy trình triển khai, nhật ký.
 
-Baseline/evidence: .gitignore + GitHub Secrets design; cần review.  |  Milestone: Tuần 10–11
+Tình trạng và bằng chứng hiện có: Có `.gitignore` và cấu hình GitHub Secrets; cần kiểm lại cách dùng.  |  Tuần dự kiến: 10–11
 
-#### NFR-SEC-04  [M]  Không lưu raw credentials/card details; logs che customer PII/tokens.
+#### NFR-SEC-04  [M]  Không lưu mật khẩu hoặc thông tin thẻ; nhật ký phải che dữ liệu riêng của khách và mã đăng nhập.
 
-Phương pháp xác minh: Security review, log sampling, no sensitive fields.
+Cách kiểm tra: Xem mẫu nhật ký và kiểm tra không có trường dữ liệu nhạy cảm.
 
-Baseline/evidence: Chưa chứng minh đầy đủ.  |  Milestone: Tuần 11
+Tình trạng và bằng chứng hiện có: Chưa kiểm chứng đầy đủ.  |  Tuần dự kiến: 11
 
-#### NFR-SEC-05  [M]  Simulator không chạy ở production.
+#### NFR-SEC-05  [M]  Công cụ thanh toán mô phỏng không được chạy trên môi trường thật.
 
-Phương pháp xác minh: Production build/config check từ chối provider.
+Cách kiểm tra: Thử cấu hình môi trường thật và xác nhận Medusa không cho dùng công cụ mô phỏng.
 
-Baseline/evidence: Code guard đã có; test prod mode cần verify.  |  Milestone: Tuần 7,11
+Tình trạng và bằng chứng hiện có: Mã nguồn đã có chặn; cần thử lại đúng chế độ production.  |  Tuần dự kiến: 7,11
 
-### 7.4 Observability
+### 7.4 Theo dõi hoạt động và phát hiện lỗi
 
-#### NFR-OBS-01  [M]  Request rate, error rate, p50/p95/p99, CPU/RAM/DB connections được đo.
+#### NFR-OBS-01  [M]  Đo lượng truy cập, tỷ lệ lỗi, thời gian phản hồi, CPU/RAM và số kết nối cơ sở dữ liệu.
 
-Phương pháp xác minh: Metrics dashboard với 1h test sample và raw evidence.
+Cách kiểm tra: Lưu bảng số liệu và dữ liệu gốc của ít nhất một giờ thử nghiệm.
 
-Baseline/evidence: Chưa có metrics dashboard.  |  Milestone: Tuần 11–12
+Tình trạng và bằng chứng hiện có: Chưa có bảng theo dõi số liệu.  |  Tuần dự kiến: 11–12
 
-#### NFR-OBS-02  [S]  Correlate request/cart/order/payment/worker events bằng IDs và structured logging.
+#### NFR-OBS-02  [S]  Có thể nối các bản ghi để xem một đơn đã đi qua những bước nào.
 
-Phương pháp xác minh: Log trace của một Order xuyên boundaries không lộ PII.
+Cách kiểm tra: Dùng mã yêu cầu, giỏ và đơn để lần theo nhật ký; không để lộ thông tin cá nhân.
 
-Baseline/evidence: Một số structured logs; chưa end-to-end trace.  |  Milestone: Tuần 11
+Tình trạng và bằng chứng hiện có: Có một số nhật ký theo cấu trúc; chưa lần theo được toàn bộ hành trình đơn.  |  Tuần dự kiến: 11
 
-#### NFR-OBS-03  [M]  Alert cơ bản cho 5xx, backend down, DB pressure/backup failure.
+#### NFR-OBS-03  [M]  Cảnh báo khi ứng dụng ngừng hoạt động, lỗi máy chủ tăng, cơ sở dữ liệu quá tải hoặc sao lưu thất bại.
 
-Phương pháp xác minh: Fault test trigger + alert evidence.
+Cách kiểm tra: Cố ý tạo lỗi trong môi trường thử nghiệm và lưu bằng chứng cảnh báo xuất hiện.
 
-Baseline/evidence: Chưa có alerts.  |  Milestone: Tuần 11–12
+Tình trạng và bằng chứng hiện có: Chưa có cảnh báo.  |  Tuần dự kiến: 11–12
 
-### 7.5 DevOps & Maintainability
+### 7.5 Đưa phiên bản mới lên hệ thống và bảo trì
 
-#### NFR-OPS-01  [M]  Build/test/lint/typecheck nhất quán trước deploy.
+#### NFR-OPS-01  [M]  Mỗi bản mới phải qua các bước kiểm tra mã nguồn và xây dựng ứng dụng trước khi triển khai.
 
-Phương pháp xác minh: GitHub Action run pass trên commit/PR target.
+Cách kiểm tra: Lưu kết quả GitHub Actions thành công cho đúng bản mã nguồn được triển khai.
 
-Baseline/evidence: CI và API Actions pass.  |  Milestone: Tuần 10
+Tình trạng và bằng chứng hiện có: Bài kiểm tra CI và API đã chạy thành công.  |  Tuần dự kiến: 10
 
-#### NFR-OPS-02  [M]  Deploy traceable, migration được kiểm soát, rollback plan đã diễn tập.
+#### NFR-OPS-02  [M]  Biết chính xác bản nào đang chạy, cập nhật dữ liệu có kiểm soát và đã tập quay lại bản cũ.
 
-Phương pháp xác minh: Run logs, release SHA, rollback/restore record.
+Cách kiểm tra: Lưu nhật ký triển khai, mã bản phát hành và kết quả thử quay lại, khôi phục.
 
-Baseline/evidence: Workflow/runbook; chưa deploy rehearsal.  |  Milestone: Tuần 10,13
+Tình trạng và bằng chứng hiện có: Có quy trình và hướng dẫn; chưa diễn tập triển khai.  |  Tuần dự kiến: 10,13
 
-#### NFR-OPS-03  [S]  No destructive DB operations during routine deployment; data retained on container restart.
+#### NFR-OPS-03  [S]  Triển khai hoặc khởi động lại ứng dụng không được xóa dữ liệu bán hàng.
 
-Phương pháp xác minh: Review runbook + restart/recovery test.
+Cách kiểm tra: Xem hướng dẫn vận hành, khởi động lại ứng dụng rồi kiểm tra dữ liệu còn nguyên.
 
-Baseline/evidence: Compose volume present; chưa recovery report.  |  Milestone: Tuần 10–12
+Tình trạng và bằng chứng hiện có: Compose có nơi lưu dữ liệu lâu dài; chưa có báo cáo khôi phục.  |  Tuần dự kiến: 10–12
 
-### 7.6 Data Integrity
+### 7.6 Giữ dữ liệu chính xác
 
-#### NFR-DATA-01  [M]  Data integrity: Medusa là authoritative source; không chèn core table trực tiếp ngoài workflows.
+#### NFR-DATA-01  [M]  Medusa là nơi quản lý dữ liệu bán hàng chính; phần khác không tự ghi vào các bảng lõi.
 
-Phương pháp xác minh: Code review + cart/order/price/inventory reconciliation.
+Cách kiểm tra: Rà mã nguồn và đối chiếu giỏ hàng, đơn, giá và tồn kho sau khi đặt hàng.
 
-Baseline/evidence: Architecture boundary có; tests từng phần.  |  Milestone: Tuần 4–9
+Tình trạng và bằng chứng hiện có: Đã ghi trách nhiệm từng phần; mới có một số bài kiểm thử.  |  Tuần dự kiến: 4–9
 
-#### NFR-DATA-02  [M]  Customer private data chỉ dùng cho mục đích demo có kiểm soát; access/retention policy.
+#### NFR-DATA-02  [M]  Chỉ dùng dữ liệu riêng của khách cho mục đích demo đã nêu; quy định ai được xem và lưu bao lâu.
 
-Phương pháp xác minh: Privacy checklist, fixture isolation và retention notes.
+Cách kiểm tra: Rà quyền truy cập, dữ liệu mẫu và quy định thời gian lưu.
 
-Baseline/evidence: Partial.  |  Milestone: Tuần 11
+Tình trạng và bằng chứng hiện có: Mới hoàn thành một phần.  |  Tuần dự kiến: 11
 
-### 7.7 FinOps
+### 7.7 Theo dõi chi phí cloud
 
-#### NFR-COST-01  [M]  Budget tháng được phê duyệt trước cloud deploy; actual spend không vượt cap nếu không có CR.
+#### NFR-COST-01  [M]  Chốt ngân sách cloud mỗi tháng trước khi triển khai; không vượt mức đó nếu chưa được duyệt.
 
-Phương pháp xác minh: Budget ledger, service cost breakdown, cost/traffic note.
+Cách kiểm tra: Ghi chi phí từng dịch vụ và đối chiếu với ngân sách, lượng truy cập.
 
-Baseline/evidence: Chưa có số ngân sách hay report.  |  Milestone: Tuần 10,12
+Tình trạng và bằng chứng hiện có: Chưa chốt ngân sách hoặc có báo cáo chi phí.  |  Tuần dự kiến: 10,12
 
-### 7.8 Quality & Traceability
+### 7.8 Kiểm tra chất lượng và đối chiếu yêu cầu
 
-#### NFR-QUAL-01  [M]  Requirements↔implementation↔test↔evidence traceability trước final submission.
+#### NFR-QUAL-01  [M]  Trước khi nộp, mỗi yêu cầu phải đối chiếu được với phần đã làm và kết quả kiểm thử.
 
-Phương pháp xác minh: RTM với trạng thái và link artifact; unresolved gaps được ký nhận.
+Cách kiểm tra: Bảng RTM ghi tình trạng, đường dẫn tới kết quả và các việc còn thiếu đã được nhóm chấp nhận.
 
-Baseline/evidence: SRS mới, RTM chưa baseline.  |  Milestone: Tuần 13
+Tình trạng và bằng chứng hiện có: Có tài liệu yêu cầu; bảng đối chiếu RTM chưa chốt.  |  Tuần dự kiến: 13
 
-## 8. Business scenarios & acceptance test design
+## 8. Tình huống sử dụng và cách kiểm tra
 
-| **Use Case** | **Tên** | **Flow / success path** | **Linked requirements** |
+| **Mã** | **Tình huống** | **Điều cần xảy ra** | **Yêu cầu liên quan** |
 | --- | --- | --- | --- |
-| UC-01 | Customer registration / login | Khách chưa login, email hợp lệ → tạo identity/profile → login → giữ session; sai mật khẩu không truy cập. | FR-AUTH-01..03 |
-| UC-02 | Search and select product | Khách search → catalog list → PDP → variant/price region → add to cart. | FR-CAT-01..05, FR-CART-01 |
-| UC-03 | Complete purchase | Cart có item → address/shipping → payment session → complete → Order ID + confirmation. | FR-CHK-01..03, FR-PAY-01, FR-INV-01 |
-| UC-04 | Payment declined | Cart hợp lệ → simulator failure → no Order, inventory unchanged, lỗi được hiển thị. | FR-PAY-02, FR-PAY-04, FR-CHK-04 |
-| UC-05 | Duplicate/retry checkout | Hai request đồng thời + retry timeouts → một Order hợp lệ tối đa. | FR-PAY-03, NFR-REL-01 |
-| UC-06 | Order notification | Order created → event → async worker → email sandbox, retry nếu lỗi. | FR-NOT-01..03 |
-| UC-07 | Admin inventory / fulfillment | Operator xem order, inventory và thao tác theo quyền. | FR-ADM-01, FR-ORD-03 |
-| UC-08 | Cloud deploy and recovery | Release qua CI/CD → staging health test → restore/rollback drill. | FR-OPS-01..04, NFR-REL-03 |
+| UC-01 | Đăng ký và đăng nhập | Khách đăng ký bằng email hợp lệ, đăng nhập và giữ phiên đăng nhập; mật khẩu sai bị từ chối. | FR-AUTH-01..03 |
+| UC-02 | Tìm và chọn sản phẩm | Khách tìm kiếm, xem danh sách/chi tiết, chọn phiên bản và thêm vào giỏ. | FR-CAT-01..05, FR-CART-01 |
+| UC-03 | Mua hàng | Khách có hàng trong giỏ, nhập địa chỉ, chọn giao hàng/thanh toán và nhận mã đơn, trang xác nhận. | FR-CHK-01..03, FR-PAY-01, FR-INV-01 |
+| UC-04 | Thanh toán thất bại | Công cụ mô phỏng báo lỗi; không có đơn mới, tồn kho không đổi và khách thấy lỗi. | FR-PAY-02, FR-PAY-04, FR-CHK-04 |
+| UC-05 | Bấm đặt hàng lặp | Hai yêu cầu đến cùng lúc và một lần gửi lại sau khi chờ quá lâu; tối đa một đơn được tạo. | FR-PAY-03, NFR-REL-01 |
+| UC-06 | Gửi thông báo đơn | Có đơn mới thì tiến trình nền gửi email thử; nếu lỗi, gửi lại có giới hạn. | FR-NOT-01..03 |
+| UC-07 | Nhân viên xử lý đơn | Nhân viên xem đơn và tồn kho, chỉ thao tác trong quyền được cấp. | FR-ADM-01, FR-ORD-03 |
+| UC-08 | Triển khai và khôi phục | Đưa bản mới lên cloud thử nghiệm, kiểm tra hệ thống, tập khôi phục và quay lại bản cũ. | FR-OPS-01..04, NFR-REL-03 |
 
-### 8.1 Kịch bản acceptance trọng yếu (Given–When–Then)
+### 8.1 Các tình huống kiểm tra quan trọng
 
-#### AT-01 Purchase success
+#### AT-01 Đặt hàng thành công
 
-Given một variant published, có VND price, sales channel và stock; When Customer hoàn tất shipping/payment hợp lệ; Then API trả Order ID, link và order detail khớp cart; inventory reservation được đối soát.
+Chuẩn bị một sản phẩm đang bán, có giá VND và đủ hàng. Khách chọn giao hàng/thanh toán hợp lệ rồi đặt. Medusa phải trả mã đơn; chi tiết đơn khớp giỏ và số hàng giữ cho đơn được đối chiếu.
 
-#### AT-02 Payment decline
+#### AT-02 Thanh toán thất bại
 
-Given một cart hợp lệ và simulator đặt simulated_outcome=false ở test; When complete cart; Then trả lỗi thích hợp, không có Order mới gắn cart và inventory snapshot không thay đổi.
+Chuẩn bị giỏ hợp lệ và chọn kết quả thanh toán mô phỏng thất bại (`simulated_outcome=false`). Khi đặt hàng, API báo lỗi; không có đơn mới gắn với giỏ và tồn kho không đổi.
 
-#### AT-03 Idempotency
+#### AT-03 Không tạo đơn trùng
 
-Given một cart đủ điều kiện; When hai completion requests đồng thời và một retry sau timeout; Then tối đa một Order hợp lệ, không reserve thừa; nếu conflict payload phải có hành vi xác định và log evidence.
+Chuẩn bị giỏ đủ điều kiện. Gửi hai yêu cầu đặt hàng cùng lúc, rồi gửi lại sau khi chờ quá lâu. Tối đa một đơn hợp lệ được tạo và không giữ thừa hàng. Nếu hai yêu cầu có nội dung khác nhau, hệ thống phải xử lý theo quy tắc đã ghi và lưu nhật ký.
 
-#### AT-04 Customer isolation
+#### AT-04 Bảo vệ dữ liệu giữa các khách
 
-Given Customers A và B có orders khác nhau; When A gọi detail/history của B; Then không trả dữ liệu của B; tương tự thao tác admin không authenticated bị chặn.
+Tạo hai tài khoản A và B với đơn khác nhau. A không được xem đơn của B. Người chưa đăng nhập cũng không được làm việc của quản trị viên.
 
-#### AT-05 Async provider down
+#### AT-05 Dịch vụ email bị lỗi
 
-Given một Order đã tạo; When email adapter lỗi nhiều lần rồi phục hồi; Then Order vẫn tồn tại, attempts có retry có giới hạn và notification cuối không bị gửi trùng ngoài policy.
+Tạo một đơn, cho dịch vụ email lỗi nhiều lần rồi hoạt động lại. Đơn vẫn tồn tại; số lần thử gửi có giới hạn và khách không nhận email trùng ngoài quy tắc.
 
-#### AT-06 Redis failure
+#### AT-06 Redis bị lỗi
 
-Given storefront đang browse/checkout; When Redis không khả dụng trong test fault scenario; Then hệ thống phản hồi theo fallback/failure policy đã công bố và không trả order success giả.
+Khi khách đang xem sản phẩm hoặc đặt hàng, thử cho Redis ngừng hoạt động. Hệ thống phải báo lỗi hoặc dùng cách dự phòng đã nêu rõ; không được báo đặt hàng thành công giả.
 
-#### AT-07 Performance
+#### AT-07 Tốc độ khi có nhiều yêu cầu
 
-Given staging với dataset/CPU/RAM/currency đã log; When chạy catalog 30RPS/10m và checkout 3RPS/5m; Then p95 và error rate nằm trong ngưỡng đã phê duyệt; lưu raw report.
+Ghi rõ dữ liệu mẫu và cấu hình máy cloud thử nghiệm. Chạy 30 yêu cầu xem sản phẩm/giây trong 10 phút và 3 yêu cầu đặt hàng/giây trong 5 phút. So sánh thời gian phản hồi, tỷ lệ lỗi với mức đã duyệt và lưu báo cáo gốc.
 
-#### AT-08 Restore
+#### AT-08 Khôi phục dữ liệu
 
-Given staging backup có timestamp; When giả lập mất DB và restore vào staging; Then dữ liệu được đối soát, RPO/RTO đo và so với mục tiêu 60/120 phút.
+Có bản sao lưu ghi rõ thời điểm. Giả lập mất cơ sở dữ liệu trên môi trường thử nghiệm rồi khôi phục. Kiểm tra dữ liệu còn đúng, đo thời gian và lượng dữ liệu mất để so với mục tiêu 60/120 phút.
 
-## 9. Requirement Traceability & verification status
+## 9. Đối chiếu yêu cầu với kết quả hiện có
 
-Để hỗ trợ review nhanh, bảng dưới ánh xạ nhóm requirement vào tuần, baseline code/test và phần chưa đáp ứng. Một bảng traceability cấp requirement riêng cần được cập nhật sau mỗi PR và gắn test link chính xác; bảng này là phần tóm tắt có thể dùng ngay.
+Bảng dưới cho biết mỗi nhóm yêu cầu dự kiến làm ở tuần nào, đã có bằng chứng gì và còn thiếu gì. Sau mỗi lần gửi thay đổi mã nguồn để xem xét (PR), nhóm cần cập nhật bảng đối chiếu chi tiết cho từng mã yêu cầu và gắn đúng kết quả kiểm thử. Bảng dưới đây chỉ là bản tóm tắt.
 
-| **Req group** | **Week** | **Evidence hiện có** | **Gap / exit criteria** |
+| **Nhóm yêu cầu** | **Tuần** | **Đã có gì** | **Còn cần gì** |
 | --- | --- | --- | --- |
-| FR-AUTH / FR-CAT | 5 | Auth/product/catalog/store UI, HTTP tests | Access negative tests, filter/search evidence. |
-| FR-CART / FR-CHK | 6 | Store SDK flow, checkout integration, order detail | Browser E2E lên main, cloud E2E. |
-| FR-PAY / FR-INV | 7 | Simulator success/failure; inventory T0/T1/T2 24/24 | Duplicate/retry/concurrency/compensation. |
-| FR-ORD / FR-NOT | 8 | Order history/detail, Redis/worker configured | Notification async, retry, order state tracking. |
-| FR-INT | 9 | Redis caching module, search v1, S3 optional config | Cache test, object storage running, search ADR. |
-| FR-OPS / NFR-OPS | 10 | GitHub CI pass, deploy workflow/runbook | Cloud URL, release/migration and rollback rehearsal. |
-| NFR-SEC / NFR-OBS | 11 | Auth/server boundary and Docker logs | Access matrix, audit, dashboard & alert. |
-| NFR-PERF / NFR-REL / NFR-COST | 12 | k6 scripts and RPO/RTO targets | Benchmark, fault/recovery test, budget report. |
-| NFR-QUAL / FR-REC | 13 | Docs, H&M ETL pilot per README | RTM acceptance; recommendation optional. |
+| FR-AUTH / FR-CAT | 5 | Đăng nhập, trang sản phẩm và một số bài kiểm thử API. | Thử truy cập sai quyền và kiểm tra lọc/tìm kiếm. |
+| FR-CART / FR-CHK | 6 | Giỏ, đặt hàng, xem chi tiết đơn. | Đưa bài thử trên trình duyệt về `main` và thử trên cloud. |
+| FR-PAY / FR-INV | 7 | Đã thử mô phỏng thanh toán thành công/thất bại; kiểm tra tồn kho một đơn đạt 24/24 bước. | Thử gửi lại, nhiều khách đặt cùng lúc và xử lý khi lỗi. |
+| FR-ORD / FR-NOT | 8 | Có lịch sử/chi tiết đơn, đã cấu hình Redis và tiến trình nền. | Gửi thông báo, thử lại khi lỗi và theo dõi các trạng thái đơn. |
+| FR-INT | 9 | Có Redis, tìm kiếm cơ bản và cấu hình S3 tùy chọn. | Thử dữ liệu lưu tạm, chạy nơi lưu ảnh và ghi lý do chọn cách tìm kiếm. |
+| FR-OPS / NFR-OPS | 10 | Kiểm tra GitHub đã chạy thành công; có quy trình triển khai. | Địa chỉ cloud, kết quả triển khai và diễn tập quay lại bản cũ. |
+| NFR-SEC / NFR-OBS | 11 | Có ranh giới đăng nhập và nhật ký Docker. | Thử quyền truy cập, bảng số liệu và cảnh báo. |
+| NFR-PERF / NFR-REL / NFR-COST | 12 | Có kịch bản k6 và mục tiêu khôi phục. | Báo cáo đo tải, thử sự cố/khôi phục và chi phí. |
+| NFR-QUAL / FR-REC | 13 | Có tài liệu và báo cáo nhập thử H&M trong README. | Đối chiếu yêu cầu với kết quả; gợi ý sản phẩm vẫn tùy chọn. |
 
-## 10. Dependencies, assumptions, unresolved issues
+## 10. Việc còn phụ thuộc hoặc chưa quyết định
 
-| **ID** | **Cần quyết định / blocker** | **Impact nếu chưa chốt** |
+| **Mã** | **Việc cần quyết định** | **Nếu chưa quyết định** |
 | --- | --- | --- |
-| OPEN-01 | Chọn cloud provider, VM sizing, managed DB vs VM Postgres, budget cap. | Không chốt final deployment/performance NFR. |
-| OPEN-02 | Thông báo email sandbox provider, retry policy, dedupe/retention. | FR-NOT chưa thể accepted. |
-| OPEN-03 | Chính sách image rights/object storage/URL. | Media requirement chưa hoàn thành. |
-| OPEN-04 | Idempotency strategy tận dụng Medusa hoặc extension phù hợp, timeout/timeout retry behavior. | Payment consistency chưa được nghiệm thu. |
-| OPEN-05 | Availability SLO/time window và RPO/RTO approval; phương pháp đo. | Không có SLA/NFR sign-off. |
-| OPEN-06 | Quyền dữ liệu H&M; quy mô, quality và public demo. | Recommendation optional blocked. |
-| OPEN-07 | Đồng bộ browser E2E từ recommendation sang branch dựa trên main. | Thiếu CI browser acceptance trên main. |
+| OPEN-01 | Thuê cloud ở đâu, cấu hình máy nào, đặt PostgreSQL ở đâu và chi tối đa bao nhiêu. | Chưa thể chốt cách triển khai hoặc mục tiêu tốc độ. |
+| OPEN-02 | Dùng dịch vụ email thử nghiệm nào, gửi lại mấy lần và lưu kết quả bao lâu. | Chưa thể nghiệm thu yêu cầu thông báo. |
+| OPEN-03 | Quyền sử dụng ảnh, nơi lưu và đường dẫn ảnh. | Chưa thể hoàn thành phần ảnh sản phẩm. |
+| OPEN-04 | Cách tránh tạo đơn trùng khi khách gửi lại hoặc mất kết nối. | Chưa thể nghiệm thu độ chính xác của thanh toán/đơn. |
+| OPEN-05 | Mức thời gian hoạt động mong muốn, thời gian đo và mục tiêu khôi phục. | Chưa thể chốt hoặc đánh giá các chỉ tiêu ổn định. |
+| OPEN-06 | Quyền sử dụng, chất lượng và quy mô dữ liệu H&M cho demo công khai. | Chưa thể mở phần gợi ý sản phẩm. |
+| OPEN-07 | Đưa bài kiểm thử trình duyệt từ nhánh `recommendation` về nhánh dựa trên `main`. | Chưa có bài kiểm thử đó chạy tự động trên `main`. |
 
-## 11. Review, approval và change management
+## 11. Góp ý, phê duyệt và thay đổi yêu cầu
 
-Requirement owner đề xuất: Team Lead phụ trách business scope; Backend owner phụ trách checkout/consistency; Frontend owner phụ trách UX; DevOps owner phụ trách cloud/NFR; QA owner giữ evidence và RTM; giảng viên/phản biện quyết định chuẩn deliverable theo học phần. Bản thảo chỉ trở thành baseline approved sau review có biên bản.
+Đề xuất phân công: trưởng nhóm theo dõi phạm vi; người phụ trách backend theo dõi đặt hàng và dữ liệu chính xác; người phụ trách frontend theo dõi trải nghiệm khách; nhóm vận hành theo dõi cloud và chất lượng hệ thống; nhóm kiểm thử giữ kết quả và bảng đối chiếu yêu cầu. Giảng viên hoặc người phản biện góp ý theo tiêu chí học phần. Bản thảo chỉ được coi là bản đã duyệt khi có kết quả xem xét được ghi lại.
 
-Thay đổi requirement cần ghi CR-ID, ID thay đổi, lý do, tác động lên use case/architecture/data/test/cost, priority, target milestone và review decision. Với yêu cầu không thể hoàn tất, đánh dấu Deferred/Exception cùng risk acceptance và giải pháp thay thế, không xóa khỏi tài liệu hay tự đánh “Passed”.
+Khi đổi một yêu cầu, nhóm cần ghi mã thay đổi, lý do, ảnh hưởng tới người dùng, thiết kế, dữ liệu, kiểm thử, chi phí và lịch, cùng quyết định của người duyệt. Nếu chưa thể làm một yêu cầu, ghi rõ đã hoãn, rủi ro được chấp nhận và cách xử lý thay thế. Không xóa yêu cầu hoặc tự ghi “đạt”.
 
 ## Nguồn và căn cứ kiểm chứng
 

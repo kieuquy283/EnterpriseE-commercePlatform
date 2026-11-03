@@ -1,167 +1,156 @@
-# PROJECT SCOPE & ASSUMPTIONS
+# PHẠM VI DỰ ÁN VÀ CÁC GIẢ ĐỊNH
 
-> **MVP boundary · MoSCoW · Deliverables · Dependencies · Change control**
 
-**PHIÊN BẢN** 1.0 – Bản thảo hoàn chỉnh phục vụ review nhóm     **|     NGÀY**  02/11/2026
+## 1. Mục đích và cách đọc tài liệu
 
-**HỆ THỐNG:** Enterprise E-commerce Platform · Medusa v2 / Next.js / PostgreSQL / Redis
+Tài liệu PS-02 nêu rõ những gì phiên bản đầu tiên của đồ án cần làm, những phần có thể làm thêm và những phần không thực hiện. Phạm vi này dựa trên đề tài của giảng viên, kế hoạch Tuần 4–13 và mã nguồn đã kiểm tra. Một việc được ghi là “bắt buộc” không có nghĩa việc đó đã hoàn thành. [SRC-01, SRC-02, SRC-03]
 
-**BASELINE CODE:** main d0bf45a; recommendation a98457c (đánh giá độc lập)
+**Mức ưu tiên:** MUST = phải có để nghiệm thu; SHOULD = nên có sau khi hoàn thành phần bắt buộc; COULD = có thể làm thêm; OUT = không làm trong đồ án. Tình trạng đã làm đến đâu được ghi riêng. **ADR** là ghi chép lý do chọn một giải pháp kỹ thuật.
 
-**TÌNH TRẠNG:** Chưa có xác nhận phê duyệt stakeholder; các mục tiêu đề xuất chưa phải số đo đã đạt.
+## 2. Người dùng và các việc họ cần làm
 
-> Tài liệu học thuật cho nhóm phát triển hệ thống bán lẻ giả định; không phải hợp đồng với doanh nghiệp thực tế.
+Đồ án giả định một cửa hàng bán lẻ ở Việt Nam, bán bằng VND qua một kênh và một kho mẫu. Có ba nhóm người dùng: khách mua hàng, nhân viên vận hành và quản trị viên. Khách dùng website Next.js; Medusa quản lý tài khoản, sản phẩm, giỏ hàng, thanh toán, đơn hàng và tồn kho. Đồ án không xây hệ thống quản trị doanh nghiệp hay phục vụ nhiều doanh nghiệp trên cùng nền tảng.
 
-## 1. Mục đích và nguyên tắc scope
-
-Tài liệu PS-02 phân định rõ: những năng lực cần cung cấp trong production-oriented MVP của học phần, các hạng mục tùy chọn được cân nhắc sau khi core ổn định, và những gì không triển khai. Scope được xây dựng từ đề tài Enterprise E-commerce của giảng viên, kế hoạch Tuần 4–13, và source code đã kiểm tra. Không đánh đồng “Must-have” với “đã xong”. [SRC-01, SRC-02, SRC-03]
-
-**Phân loại**  MUST: bắt buộc cho nghiệm thu; SHOULD: ưu tiên nếu các Must đạt, nhưng có thể chấp nhận giải pháp đơn giản tương đương qua ADR; COULD: optional; OUT: ngoài ranh giới. Tình trạng triển khai được theo dõi riêng.
-
-## 2. Phạm vi sản phẩm và user journeys
-
-Phạm vi khách hàng mục tiêu: một store bán lẻ Việt Nam, một sales channel, VND, một warehouse/stock location mẫu. Các actor chính là Customer, Store/Operations Staff và Administrator. Giao diện public là Next.js, Medusa xử lý auth, catalog, cart, payment, order và inventory. Không triển khai ERP hay multi-tenant system.
-
-| **Journey** | **In-scope outcome** | **Giới hạn** |
+| **Việc người dùng làm** | **Kết quả cần có** | **Giới hạn** |
 | --- | --- | --- |
-| J-01 Browse & choose | Trang sản phẩm, tìm kiếm từ khóa, variants, giá theo region và tình trạng mua được. | Full-text engine riêng không mặc định bắt buộc nếu search hiện tại đạt yêu cầu. |
-| J-02 Purchase | Cart CRUD, shipping/address, COD hoặc simulator non-prod, complete cart thành Order. | Không xử lý tiền ngân hàng thật. |
-| J-03 Post-purchase | Khách xem lịch sử/chi tiết/order status; staff thao tác theo quyền. | Không xây tracking của hãng vận chuyển bên ngoài. |
-| J-04 Operations | Admin product/inventory/order; notification và operational metrics. | Không thay toàn bộ Medusa Admin. |
+| J-01 Xem và chọn hàng | Xem sản phẩm, tìm theo từ khóa, chọn phiên bản và thấy giá/tình trạng bán tại Việt Nam. | Chưa cần công cụ tìm kiếm riêng nếu chức năng hiện tại đáp ứng nhu cầu. |
+| J-02 Đặt hàng | Thêm, sửa, xóa hàng trong giỏ; nhập địa chỉ, chọn giao hàng, chọn COD hoặc thanh toán mô phỏng và tạo đơn. | Không nhận hoặc chuyển tiền thật. |
+| J-03 Sau khi đặt hàng | Khách xem đơn và trạng thái; nhân viên xử lý đơn theo quyền được cấp. | Không theo dõi vị trí giao hàng của hãng vận chuyển. |
+| J-04 Vận hành cửa hàng | Quản trị viên quản lý sản phẩm, tồn kho, đơn; bổ sung thông báo và số liệu vận hành. | Không xây lại toàn bộ giao diện quản trị Medusa. |
 
-## 3. MVP Must-have scope
+## 3. Những phần bắt buộc cho phiên bản đầu tiên
 
-| **ID** | **Feature / capability** | **Acceptance boundary** | **Status tại baseline** |
+| **Mã** | **Chức năng** | **Cách biết đã đạt** | **Tình trạng hiện tại** |
 | --- | --- | --- | --- |
-| M-01 | Authentication & access | Register/login/logout; phân biệt customer/admin; không lộ đơn người khác. | Có code/test một phần. |
-| M-02 | Catalog, PDP, variants | Published products; đúng price/region/channel; lựa chọn variant. | Có code/test. |
-| M-03 | Search v1 | Keyword search có pagination; kiểm soát query input và trả empty state. | Có code; search service chưa có. |
-| M-04 | Cart | Thêm, sửa lượng, xóa; tổng tiền do Medusa cung cấp. | Có code/test. |
-| M-05 | Checkout | Địa chỉ, giao hàng, payment session, tạo Order và xác nhận. | Có code/test. |
-| M-06 | Payment safety | Simulator success/failure trong dev; COD; duplicate/retry test, không order giả. | Success/fail có; idempotency gap. |
-| M-07 | Inventory correctness | Reservation/availability không sai khi đặt/hủy đơn; chứng minh qua tests. | Có local evidence, thiếu cạnh tranh. |
-| M-08 | Order tracking | Customer order history/detail và status; operations flow. | Có history/detail; tracking toàn bộ cần review. |
-| M-09 | Async notifications | Order event → worker → email adapter, retry & failure isolation. | Redis/worker có; app notification chưa có. |
-| M-10 | Cache / search / media architecture | Cache strategy/invalidation; product search; object storage cho media thử nghiệm có quyền sử dụng. | Redis cấu hình; S3 optional, thiếu evidence. |
-| M-11 | Cloud + CI/CD | Staging cloud chạy HTTPS; CI/CD và migration/release/rollback. | CI pass; staging/CD chưa xác minh. |
-| M-12 | Security & operations | Authz, secrets, logs, metrics, dashboard, alert. | Một phần. |
-| M-13 | NFR & resilience | k6, failure recovery, backup/restore, RPO/RTO, FinOps report. | Scripts/runbook; test reports chưa có. |
+| M-01 | Tài khoản và quyền truy cập | Khách đăng ký, đăng nhập, đăng xuất; không xem được đơn của người khác. Quản trị viên có quyền riêng. | Có mã nguồn; mới kiểm thử một phần. |
+| M-02 | Sản phẩm | Chỉ hiển thị hàng đang bán, đúng giá cho Việt Nam và cho chọn phiên bản sản phẩm. | Có mã nguồn và kiểm thử. |
+| M-03 | Tìm kiếm cơ bản | Tìm theo từ khóa, xem từng trang kết quả và thông báo khi không tìm thấy. | Có mã nguồn; chưa có công cụ tìm kiếm riêng. |
+| M-04 | Giỏ hàng | Thêm, đổi số lượng, xóa hàng; Medusa tính tổng tiền. | Có mã nguồn và kiểm thử. |
+| M-05 | Đặt hàng | Nhập địa chỉ, chọn giao hàng và cách thanh toán, tạo đơn và xem xác nhận. | Có mã nguồn và kiểm thử. |
+| M-06 | Thanh toán an toàn | Có COD và công cụ mô phỏng thành công/thất bại ở môi trường thử nghiệm; kiểm tra bấm đặt hàng lặp không tạo đơn sai. | Đã thử thành công/thất bại; chưa đủ kiểm thử chống đơn trùng. |
+| M-07 | Tồn kho chính xác | Số hàng còn và số hàng đã giữ cho đơn phải đúng khi đặt hoặc hủy đơn. | Có kết quả thử trên máy cá nhân; chưa thử nhiều đơn cùng lúc. |
+| M-08 | Theo dõi đơn | Khách xem danh sách, chi tiết và trạng thái đơn; nhân viên xử lý đơn theo quyền. | Đã có danh sách/chi tiết; cần kiểm tra đầy đủ các trạng thái. |
+| M-09 | Thông báo | Gửi email sau khi tạo đơn; lỗi email không làm hỏng đơn; có giới hạn số lần gửi lại. | Đã có hạ tầng xử lý nền, chưa có chức năng thông báo của dự án. |
+| M-10 | Tốc độ tìm/xem hàng và ảnh | Có cách lưu tạm dữ liệu để tải nhanh, tìm sản phẩm và lưu ảnh hợp pháp; cập nhật dữ liệu kịp thời. | Redis đã cấu hình, S3 là tùy chọn; chưa đủ bằng chứng kiểm thử. |
+| M-11 | Triển khai cloud | Môi trường thử nghiệm dùng HTTPS; tự động kiểm tra mã nguồn, có cách cập nhật và quay lại phiên bản trước. | Kiểm tra mã nguồn đã chạy; triển khai cloud chưa xác minh. |
+| M-12 | Bảo mật và vận hành | Kiểm tra quyền, bảo vệ thông tin bí mật, ghi lỗi và cảnh báo khi có sự cố. | Mới hoàn thành một phần. |
+| M-13 | Đo tốc độ và khôi phục | Kiểm thử lượng truy cập, sao lưu và khôi phục dữ liệu, ghi chi phí. | Có kịch bản và hướng dẫn; chưa có báo cáo kết quả đầy đủ. |
 
-## 4. Optional / conditional scope
+## 4. Phần có thể làm thêm khi đủ điều kiện
 
 | **ID** | **Hạng mục** | **Điều kiện được phép triển khai** |
 | --- | --- | --- |
-| O-01 | H&M dataset ETL và catalog mở rộng | Chứng minh quyền sử dụng/asset policy; không ảnh hưởng purchase tests và database resource. |
-| O-02 | Popularity/content/item-CF/hybrid recommendation | Đóng các Must thiếu trước; có offline quality baseline và candidate filtering. |
-| O-03 | Dedicated search engine (Meilisearch/khác) | ADR chứng minh current search không đạt feature/performance acceptance. |
-| O-04 | Advanced dashboard và personalized ranking | Có use case/metrics, không kéo theo data/privacy risk vượt ngân sách. |
-| O-05 | Managed PostgreSQL / CDN và media optimizations | Cost/security/ops ADR; không được tự động claim đã triển khai. |
-| O-06 | Autoscaling hoặc load-balanced API replicas | Chỉ sau khi có benchmark và nhu cầu thực tế. |
+| O-01 | Mở rộng danh sách sản phẩm bằng dữ liệu H&M | Xác nhận quyền dùng dữ liệu và ảnh; không làm hỏng luồng mua hàng hoặc quá tải cơ sở dữ liệu. |
+| O-02 | Gợi ý sản phẩm theo nhiều cách | Hoàn thành phần bắt buộc trước; đo chất lượng gợi ý bằng dữ liệu đã chuẩn bị và chỉ gợi ý hàng có thể bán. |
+| O-03 | Công cụ tìm kiếm riêng, như Meilisearch | Chỉ bổ sung nếu có số liệu cho thấy tìm kiếm hiện tại không đáp ứng yêu cầu. |
+| O-04 | Báo cáo nâng cao và gợi ý theo từng người | Có mục đích và cách đo rõ ràng; không vượt giới hạn chi phí hoặc quyền riêng tư. |
+| O-05 | Dịch vụ lưu dữ liệu/ảnh do nhà cung cấp quản lý | Có quyết định bằng văn bản về chi phí, bảo mật và vận hành; không coi là đã triển khai. |
+| O-06 | Tự tăng số máy chủ khi đông khách | Chỉ cân nhắc sau khi đo tải và thấy nhu cầu thực tế. |
 
-## 5. Out-of-scope
+## 5. Những việc không làm trong đồ án
 
-- Thanh toán có tiền thật, lưu thẻ, PCI certification; production payment simulator bị cấm.
-- Marketplace đa nhà bán, đa tenant, bán xuyên nhiều region/currency; ERP/WMS/CRM full-scale.
-- Hệ thống giao vận tuyến cuối, định vị tài xế, đối soát thu tiền COD ngoài đời thật.
-- Microservice decomposition quy mô lớn, Kafka/Kubernetes bắt buộc, active-active multi-region, SLA thương mại 24×7.
-- Dùng raw H&M purchases làm “đơn hàng thực” của Medusa hoặc xuất bản ảnh/dataset chưa có quyền.
-- Chứng nhận compliance/penetration testing chuyên sâu thay cho bài học thuật.
+- Nhận tiền thật, lưu thông tin thẻ, xin chứng nhận thanh toán; không dùng Payment Simulator ở môi trường production.
+- Phục vụ nhiều người bán hoặc nhiều doanh nghiệp trên cùng hệ thống; không xây đầy đủ hệ thống kế toán, kho hay quản lý khách hàng của doanh nghiệp.
+- Theo dõi tài xế, vận chuyển ngoài đời thật hoặc đối soát tiền COD thực tế.
+- Chia hệ thống thành nhiều dịch vụ độc lập quy mô lớn, chạy ở nhiều vùng địa lý hoặc cam kết hoạt động liên tục 24/7.
+- Biến lịch sử mua của H&M thành đơn hàng thật của dự án hoặc công khai ảnh/dữ liệu chưa được cấp quyền.
+- Xin chứng nhận tuân thủ hoặc thực hiện kiểm thử xâm nhập chuyên sâu.
 
-## 6. System, organizational và data boundary
+## 6. Ai chịu trách nhiệm về từng phần
 
-| **Boundary** | **Bên trong dự án** | **Bên ngoài / external** |
+| **Phần việc** | **Dự án chịu trách nhiệm** | **Giới hạn** |
 | --- | --- | --- |
-| UI | Next.js rendering, interaction, form validation, cookies. | Không trực tiếp sửa commerce DB. |
-| Commerce | Medusa product/variant/pricing/cart/order/payment/inventory. | Không viết lại Medusa core hoặc SQL insert core tables. |
-| Operations | GitHub Actions, Compose, logging/metrics, backup & recovery runbook. | Quyền hạ tầng do cloud provider quản lý theo shared responsibility. |
-| Notification | Subscriber/workflow/event, adapter email sandbox. | Sự sẵn có của email provider là external dependency. |
-| Media | Metadata & URL trong Medusa, object storage/file provider. | Không nhúng ảnh chưa được cấp phép vào public site. |
-| ML optional | Offline ETL/model artifacts, Medusa ID mapping. | Không trộn historical H&M events với project-real customers/orders. |
+| Giao diện | Next.js hiển thị trang, nhận thông tin khách nhập và lưu cookie cần thiết. | Không sửa trực tiếp cơ sở dữ liệu mua hàng. |
+| Bán hàng | Medusa quản lý sản phẩm, giá, giỏ, đơn, thanh toán và tồn kho. | Không sửa lõi Medusa hoặc ghi thẳng vào bảng dữ liệu chính. |
+| Vận hành | GitHub Actions và Compose hỗ trợ kiểm tra, triển khai, theo dõi lỗi, sao lưu/khôi phục. | Nhà cung cấp cloud vẫn quản lý phần hạ tầng thuộc trách nhiệm của họ. |
+| Thông báo | Dự kiến xử lý việc gửi email sau khi tạo đơn. | Dịch vụ gửi email bên ngoài có thể gặp sự cố. |
+| Ảnh sản phẩm | Medusa giữ thông tin và đường dẫn ảnh; ảnh được lưu ở nơi phù hợp. | Không công khai ảnh khi chưa có quyền sử dụng. |
+| Gợi ý sản phẩm (tùy chọn) | Chuẩn bị dữ liệu H&M và liên kết mã sản phẩm H&M với Medusa. | Không gán lịch sử mua H&M cho khách thật của dự án. |
 
-## 7. Work products và exit criteria
+## 7. Sản phẩm bàn giao và cách nghiệm thu
 
-| **Deliverable** | **Owner gợi ý** | **Acceptance / bằng chứng** |
+| **Sản phẩm bàn giao** | **Nhóm phụ trách đề xuất** | **Cần có để nghiệm thu** |
 | --- | --- | --- |
-| Project Definition + SRS + Scope | Team Lead / BA | Review requirement IDs, scope và open decisions. |
-| Architecture diagrams + ADRs | Architect / Backend / DevOps | Khớp code, trade-offs, flow sync/async và data ownership. |
-| Medusa commerce MVP | Backend + Frontend | End-to-end purchase trên staging, negative paths có evidence. |
-| Payment & inventory correctness report | Backend + QA | Duplicate/retry/failed payment, concurrent stock test với readback. |
-| Async notification flow | Backend + DevOps | Event published, worker processed/retried, order unaffected on failure. |
-| Cache / search / media decision | Backend + DevOps | ADR + cache hit/miss/invalidation, media URL demo hợp lệ. |
-| Cloud release + CI/CD + migration | DevOps | Working HTTPS URL, run log, migration/release/rollback drill. |
-| Security and observability pack | QA + DevOps | Checklist/authz negative tests, dashboard/alert snapshots. |
-| NFR/DR/FinOps evidence | QA + DevOps | k6 profiles, p95/errors, recovery and cost report. |
-| Demo/report pack | All | RTM, logs, screenshots, demo script, submission checklist. |
+| Định nghĩa dự án, phạm vi và yêu cầu | Trưởng nhóm / người viết yêu cầu | Đã rà các mã yêu cầu, phạm vi và quyết định còn mở. |
+| Sơ đồ hệ thống và lý do chọn thiết kế | Nhóm thiết kế / backend / vận hành | Sơ đồ đúng mã nguồn, giải thích dữ liệu đi đâu và điểm mạnh/yếu của lựa chọn. |
+| Phiên bản bán hàng đầu tiên | Backend + frontend | Khách mua hàng từ đầu đến cuối trên môi trường thử nghiệm; có kết quả thử khi lỗi. |
+| Báo cáo thanh toán và tồn kho | Backend + kiểm thử | Thử bấm đặt hàng lặp, thanh toán lỗi và nhiều khách mua cùng lúc; đọc lại dữ liệu để đối chiếu. |
+| Gửi thông báo sau khi đặt hàng | Backend + vận hành | Tiến trình nền gửi/thử lại; lỗi email không làm mất đơn. |
+| Quyết định về dữ liệu tạm, tìm kiếm, ảnh | Backend + vận hành | Ghi lý do chọn cách làm, kiểm tra dữ liệu cập nhật và ảnh hiển thị hợp lệ. |
+| Triển khai lên cloud | Nhóm vận hành | Có địa chỉ HTTPS, nhật ký triển khai và kết quả diễn tập cập nhật/quay lại. |
+| Bảo mật và theo dõi sự cố | Kiểm thử + vận hành | Thử truy cập sai quyền, lưu ảnh màn hình số liệu và cảnh báo. |
+| Báo cáo tốc độ, khôi phục, chi phí | Kiểm thử + vận hành | Có kết quả k6, thời gian phản hồi/lỗi, diễn tập khôi phục và chi phí. |
+| Bộ tài liệu/demo cuối | Cả nhóm | Bảng đối chiếu yêu cầu, nhật ký, ảnh, kịch bản demo và danh sách cần nộp. |
 
-## 8. Scope timeline theo Tuần 4–13
+## 8. Lịch thực hiện từ Tuần 4 đến Tuần 13
 
-| **Tuần** | **Phạm vi bắt buộc** | **Exit gate** |
+| **Tuần** | **Việc cần làm** | **Cần có để hoàn thành tuần** |
 | --- | --- | --- |
-| 4 | Architecture baseline, source-of-truth, backlog, requirements | Boundary và ADR ban đầu reviewed. |
-| 5 | Authentication, catalog, variants, search | FR-AUTH/CAT verification + ERD. |
-| 6 | Cart, checkout, order | Complete-order positive test và sequence. |
-| 7 | Payment, duplicate request, inventory | Success/failure/retry/concurrency evidence. |
-| 8 | Events, worker, notification, tracking | Async test không làm mất Order. |
-| 9 | Cache, search, object storage/media | Cache correctness, asset/media flow. |
-| 10 | Cloud staging, CI/CD, rollback | Cloud E2E + release run. |
-| 11 | Access, security, logging, metrics | Dashboard + security review. |
-| 12 | Load/recovery/cost | NFR report + restore exercise. |
-| 13 | Freeze, gap resolution, final demo | RTM closed or deviations justified. |
+| 4 | Chốt thiết kế, nguồn dữ liệu chính, danh sách việc và yêu cầu | Nhóm xem lại trách nhiệm từng phần và lý do chọn thiết kế. |
+| 5 | Đăng nhập, sản phẩm, lựa chọn sản phẩm và tìm kiếm | Kiểm tra các yêu cầu liên quan và sơ đồ dữ liệu. |
+| 6 | Giỏ hàng, đặt hàng và xem đơn | Thử một đơn thành công và ghi lại từng bước. |
+| 7 | Thanh toán, bấm đặt hàng lặp, tồn kho | Có kết quả thử thành công, thất bại, gửi lại và đặt cùng lúc. |
+| 8 | Xử lý nền, thông báo, theo dõi đơn | Thử email lỗi nhưng đơn vẫn tồn tại. |
+| 9 | Tốc độ tải trang, tìm kiếm và ảnh | Dữ liệu cập nhật đúng; ảnh có quyền sử dụng và hiển thị được. |
+| 10 | Triển khai cloud thử nghiệm và quay lại bản cũ | Đặt hàng từ đầu đến cuối trên cloud, có nhật ký triển khai. |
+| 11 | Bảo mật, nhật ký và số liệu | Có bảng theo dõi và kết quả rà quyền truy cập. |
+| 12 | Đo tải, thử sự cố/khôi phục và chi phí | Có báo cáo tốc độ và kết quả khôi phục dữ liệu. |
+| 13 | Dừng thêm tính năng, xử lý phần còn thiếu, demo | Đối chiếu đủ yêu cầu hoặc ghi rõ lý do hoãn. |
 
-## 9. Assumption register và phương pháp xác minh
+## 9. Các giả định và cách kiểm tra
 
 | **ID** | **Giả định / tình trạng** | **Cách xác minh & owner** |
 | --- | --- | --- |
-| A-01 | Doanh nghiệp và lượng giao dịch chỉ là scenario học thuật, không có real sales baseline. | Team Lead: công bố giả định trong báo cáo. |
-| A-02 | Một region Việt Nam, VND, một kho đáp ứng use case bắt buộc. | Backend/Product Owner: review with instructor. |
-| A-03 | Một VM chạy đủ demo ban đầu; không có HA đa vùng. | DevOps: benchmark CPU/RAM/IO và cost. |
-| A-04 | Catalog 30 RPS / checkout 3 RPS là workload kiểm thử, không phải forecast. | QA: chốt workload model, phân biệt stress vs baseline. |
-| A-05 | Manual COD và simulator chỉ mô phỏng auth; không có settlement thật. | Backend/QA: validate provider & documentation. |
-| A-06 | Cấu hình Redis/worker đủ làm nền cho async extensions. | Backend: xây subscriber và test dependency failure. |
-| A-07 | RPO≤60m và RTO≤120m là mục tiêu từ runbook, chưa đo. | DevOps: backup policy và restore drill. |
-| A-08 | Chi phí cloud sẽ trong trần ngân sách do nhóm phê duyệt; chưa chốt con số. | Owner/DevOps: ghi budget trước khi deploy. |
-| A-09 | Dữ liệu H&M và ảnh chỉ dùng trong phạm vi được phép. | Data owner: xác minh Kaggle competition rules/asset rights. |
-| A-10 | E2E Playwright trên recommendation chưa nằm trên main, dữ liệu pilot chưa kiểm đếm lại DB ở phiên hiện tại. | QA: integrate tests/re-read DB, ghi evidence. |
+| A-01 | Cửa hàng và lượng đơn chỉ là tình huống học tập, không có số bán hàng thực tế. | Trưởng nhóm ghi rõ giả định trong báo cáo. |
+| A-02 | Bán tại Việt Nam, dùng VND và một kho là đủ cho phần bắt buộc. | Nhóm phụ trách sản phẩm hỏi ý kiến giảng viên. |
+| A-03 | Một máy chủ đủ cho bản demo ban đầu, chưa có hệ thống dự phòng ở nhiều nơi. | Nhóm vận hành đo CPU, RAM, tốc độ ổ đĩa và chi phí. |
+| A-04 | 30 yêu cầu xem sản phẩm/giây và 3 yêu cầu đặt hàng/giây là mức thử nghiệm, không phải dự báo nhu cầu. | Nhóm kiểm thử chốt điều kiện và cách chạy bài đo. |
+| A-05 | COD và công cụ mô phỏng không chứng minh đã thu tiền. | Nhóm backend/kiểm thử đối chiếu mã nguồn và tài liệu. |
+| A-06 | Redis và worker là nền tảng để bổ sung việc gửi thông báo sau. | Nhóm backend xây phần thông báo rồi thử khi dịch vụ hỗ trợ gặp lỗi. |
+| A-07 | Mục tiêu là mất tối đa 60 phút dữ liệu và khôi phục trong 120 phút; hiện chưa đo thực tế. | Nhóm vận hành diễn tập sao lưu, khôi phục. |
+| A-08 | Chưa chốt ngân sách cloud mỗi tháng. | Trưởng nhóm và nhóm vận hành duyệt ngân sách trước khi triển khai. |
+| A-09 | Chỉ dùng dữ liệu và ảnh H&M trong phạm vi được cho phép. | Người phụ trách dữ liệu kiểm tra điều khoản Kaggle và quyền dùng ảnh. |
+| A-10 | Bài kiểm thử trình duyệt trên nhánh `recommendation` chưa có trên `main`; dữ liệu mẫu chưa được kiểm đếm lại ở cơ sở dữ liệu hiện tại. | Nhóm kiểm thử chuyển bài test, chạy lại và lưu kết quả. |
 
-## 10. Constraints, dependencies và các quyết định mở
+## 10. Giới hạn và những việc còn phải quyết định
 
 | **Mã** | **Ràng buộc / quyết định** | **Hệ quả** |
 | --- | --- | --- |
-| C-01 | Deadline Tuần 13 và nhóm 5–7 theo brief; nguồn lực hữu hạn. | Chọn vertical slice; optional không được làm trễ core. |
-| C-02 | Medusa 2.21.2, Node/npm trong repo; không fork core. | Dùng supported APIs/workflows, version-lock tests. |
-| C-03 | PostgreSQL từng gặp quá giới hạn connection local. | Import batch serial; giám sát pool trước scale. |
-| D-01 | Chọn cloud provider và có cần managed DB. | Open: owner DevOps + team lead; budget ADR. |
-| D-02 | Chọn sandbox email provider/log sink. | Open: đảm bảo async demo + retry evidence. |
-| D-03 | Chọn object storage cho product images. | Open: data rights, bucket policy, CDN tradeoff. |
-| D-04 | Chọn availability target và window đo. | Open: single VM không mặc định HA. |
+| C-01 | Hạn cuối Tuần 13, nhóm khoảng 5–7 người và thời gian có hạn. | Ưu tiên hoàn thành luồng mua hàng; việc thêm không được làm trễ phần chính. |
+| C-02 | Dự án dùng Medusa 2.21.2 và Node/npm; không sửa lõi Medusa. | Dùng các API/quy trình Medusa hỗ trợ và kiểm thử đúng phiên bản. |
+| C-03 | PostgreSQL từng hết số kết nối cho phép trên máy cá nhân. | Nhập dữ liệu theo đợt, hạn chế nhiều việc chạy cùng lúc và đo số kết nối. |
+| D-01 | Chọn nhà cung cấp cloud và nơi chạy PostgreSQL. | Trưởng nhóm và nhóm vận hành phải so sánh chi phí, ghi lý do chọn. |
+| D-02 | Chọn dịch vụ email thử nghiệm. | Cần gửi thử, kiểm tra gửi lại khi lỗi và lưu kết quả. |
+| D-03 | Chọn nơi lưu ảnh sản phẩm. | Cần xác nhận quyền dùng ảnh và cách giới hạn quyền truy cập. |
+| D-04 | Chọn mục tiêu thời gian hệ thống hoạt động và khoảng thời gian đo. | Một máy chủ không có dự phòng khi chính máy đó hỏng. |
 
-## 11. Milestone acceptance và non-acceptance
+## 11. Khi nào một mốc được xem là hoàn thành
 
-Mỗi milestone chỉ được đánh dấu Accepted nếu có (1) artifact trong Git ở commit xác định, (2) test/run log hoặc demo evidence với môi trường/dữ liệu/timestamp, (3) pass acceptance criteria và (4) owner review. Các trạng thái cần dùng: Not Started, In Progress, Implemented–Unverified, Verified in Local, Verified in Staging, Accepted, Deferred/Out-of-Scope.
+Chỉ đánh dấu một mốc là **đã nghiệm thu** khi có: (1) tài liệu hoặc mã nguồn gắn với một bản lưu Git cụ thể; (2) kết quả kiểm thử hoặc demo ghi rõ ngày giờ, môi trường và dữ liệu; (3) kết quả đáp ứng tiêu chí đã đặt ra; và (4) người phụ trách đã xem lại. Trạng thái nên ghi rõ là: chưa bắt đầu, đang làm, đã viết nhưng chưa thử, đã thử trên máy cá nhân, đã thử trên môi trường cloud, đã nghiệm thu hoặc hoãn/không làm.
 
 | **Gate** | **Chấp nhận khi** | **Không được tính là đạt chỉ vì** |
 | --- | --- | --- |
-| G-1 Core | Auth/catalog/cart/checkout/order tích hợp E2E staging. | Có API route mà chưa chạy end-to-end. |
-| G-2 Correctness | Negative/failure/retry/concurrency tests + DB readback. | Chỉ có một happy-path hoặc unit test. |
-| G-3 Cloud | HTTPS URL, pipeline deploy log, migration, rollback rehearsal. | Có Dockerfiles hoặc runbook. |
-| G-4 NFR | k6 report, p95/errors, resource metrics, restore drill, cost. | Có ngưỡng thresholds trong source. |
-| G-5 Final | RTM, security report, demo script, gap approval. | Slide nói “production-ready” không kèm evidence. |
+| G-1 Mua hàng | Đăng nhập, xem hàng, thêm giỏ, đặt và xem đơn trên môi trường cloud thử nghiệm. | Chỉ có đường dẫn API nhưng chưa thử cả hành trình. |
+| G-2 Dữ liệu chính xác | Đã thử lỗi, gửi lại, nhiều yêu cầu cùng lúc và đọc lại đơn/tồn kho. | Chỉ có một bài thử thành công. |
+| G-3 Cloud | Có địa chỉ HTTPS, nhật ký triển khai và kết quả tập quay lại bản cũ. | Chỉ có tệp cấu hình hoặc hướng dẫn. |
+| G-4 Chất lượng hệ thống | Có báo cáo k6, thời gian phản hồi/lỗi, tài nguyên, khôi phục và chi phí. | Chỉ ghi mức mục tiêu trong mã nguồn. |
+| G-5 Bàn giao | Có bảng đối chiếu yêu cầu, kết quả bảo mật, kịch bản demo và phần còn thiếu đã được duyệt. | Slide tự nói “sẵn sàng dùng thật” mà không có bằng chứng. |
 
-## 12. Change control và rollback scope
+## 12. Cách quản lý thay đổi và quay lại phiên bản trước
 
-Mọi change request cần: CR-ID; requirement liên quan; loại (add/change/defer); lý do; tác động use case/data/NFR/security/cost; độ ưu tiên; effort; ảnh hưởng milestone; người phê duyệt; kế hoạch kiểm thử và rollback. Không loại bỏ Must-have bằng cách đổi tên thành Optional nếu chưa có quyết định được ghi nhận.
+Mỗi đề nghị thay đổi cần ghi mã, yêu cầu liên quan, việc muốn thêm/sửa/hoãn, lý do, ảnh hưởng tới người dùng, dữ liệu, tốc độ, bảo mật và chi phí, mức ưu tiên, thời gian cần làm, người duyệt, cách kiểm thử và cách quay lại nếu có lỗi. Không được tự chuyển việc bắt buộc thành việc tùy chọn nếu chưa có quyết định được ghi lại.
 
-Triển khai rollback bằng rollback code/config và migration backward-compatible; không xóa database hay xóa commerce data để “trả lại trạng thái sạch”. Tình huống import catalog/đặt đơn thử phải dùng fixture riêng hoặc unpublish có kiểm soát. Không chạy docker compose down -v trên database chứa dữ liệu cần giữ.
+Khi bản mới gặp lỗi, nhóm cần có cách đưa mã nguồn và cấu hình về bản ổn định. Việc thay đổi cấu trúc cơ sở dữ liệu phải được thiết kế để không làm mất dữ liệu khi quay lại. Với sản phẩm hoặc đơn thử, dùng dữ liệu mẫu riêng hoặc ngừng hiển thị sản phẩm theo quy trình; không xóa cả cơ sở dữ liệu để “làm sạch”. Không chạy `docker compose down -v` với dữ liệu cần giữ.
 
-## 13. Ghi nhận thực tế hiện có và deferred backlog
+## 13. Việc đã xác nhận và việc còn lại
 
 | **Đã xác nhận qua source/evidence** | **Cần làm tiếp** |
 | --- | --- |
-| Backend + Storefront và docker compose đã có; CI/API tests gần nhất pass. | Staging deployment/release, dashboard, recovery evidence. |
-| Provider simulator success/failure có trên main; basic checkout test. | Duplicate/retry idempotency, inventory concurrent safety. |
-| Redis/worker được cấu hình. | Custom notification adapter, retry, event schema. |
-| H&M pilot được README ghi nhận 500 products/1.874 variants. | Không mở rộng 5k–10k trước quality/rights/resource gates. |
-| Playwright E2E có trên recommendation. | Đồng bộ vào branch xuất phát từ main, chạy CI và lưu artifacts. |
+| Có Medusa, website và Docker Compose; các bài kiểm tra CI/API gần nhất đã chạy thành công. | Cần triển khai cloud thử nghiệm, theo dõi số liệu và thử khôi phục. |
+| Công cụ mô phỏng thanh toán thành công/thất bại đã có trên `main`, cùng bài kiểm thử đặt hàng cơ bản. | Cần thử bấm đặt hàng lặp và nhiều khách mua hàng cuối cùng cùng lúc. |
+| Redis và tiến trình nền đã được cấu hình. | Cần viết chức năng gửi thông báo và kiểm tra gửi lại khi lỗi. |
+| README ghi nhận đã nhập thử 500 sản phẩm H&M với 1.874 phiên bản. | Chưa nhập nhiều hơn trước khi kiểm chất lượng, quyền sử dụng và tài nguyên máy. |
+| Có bài kiểm thử trình duyệt Playwright trên nhánh `recommendation`. | Cần đưa về nhánh dựa trên `main`, chạy tự động và lưu kết quả. |
 
 ## Nguồn và căn cứ kiểm chứng
 

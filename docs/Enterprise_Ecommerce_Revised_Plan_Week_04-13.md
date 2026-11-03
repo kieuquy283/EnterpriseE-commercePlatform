@@ -1,12 +1,5 @@
 # KẾ HOẠCH TRIỂN KHAI ENTERPRISE E-COMMERCE PLATFORM — BẢN ĐIỀU CHỈNH
 
-> **Phiên bản:** 2.0 — 02/11/2026  
-> **Thời lượng:** **10 tuần học, giữ nguyên Tuần 4 → Tuần 13** theo kế hoạch nhóm cung cấp; **không tự suy ra ngày bắt đầu/kết thúc từng tuần**.  
-> **Phạm vi:** Production-oriented MVP của môn *Cloud Application Development*; trọng tâm là giao dịch chính xác, vận hành cloud và bằng chứng kỹ thuật.  
-> **Repository:** [kieuquy283/EnterpriseE-commercePlatform](https://github.com/kieuquy283/EnterpriseE-commercePlatform)  
-> **Baseline kiểm tra:** `main` tại `5c96a1199cdff6f77237dadf045674ce8d8d9f3f`; `recommendation` tại `a98457c3de911963d12878b9143c996df017732a`.  
-> **Trạng thái:** Kế hoạch cập nhật, **chưa phải tài liệu đã được giảng viên/stakeholder phê duyệt**. Mọi con số NFR phía dưới là *mục tiêu thử nghiệm*, không phải kết quả đã đạt.
-
 ---
 
 ## 1. Tóm tắt điều chỉnh và đánh giá kế hoạch gốc
