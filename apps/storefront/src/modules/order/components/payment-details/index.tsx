@@ -1,6 +1,10 @@
 import { Container, Heading, Text } from "@modules/common/components/ui"
 
 import { paymentInfoMap } from "@lib/constants"
+import {
+  COD_PAYMENT_PROVIDER_ID,
+  isSimulatorPaymentProvider,
+} from "@lib/util/checkout-payment"
 import Divider from "@modules/common/components/divider"
 import { convertToLocale } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
@@ -11,6 +15,20 @@ type PaymentDetailsProps = {
 
 const PaymentDetails = ({ order }: PaymentDetailsProps) => {
   const payment = order.payment_collections?.[0].payments?.[0]
+  const paymentAmount = payment
+    ? convertToLocale({
+        amount: payment.amount,
+        currency_code: order.currency_code,
+      })
+    : null
+
+  const paymentDescription = payment
+    ? payment.provider_id === COD_PAYMENT_PROVIDER_ID
+      ? `${paymentAmount} to be collected on delivery`
+      : isSimulatorPaymentProvider(payment.provider_id)
+        ? `${paymentAmount} — simulated payment (no real charge)`
+        : `Payment amount: ${paymentAmount}`
+    : null
 
   return (
     <div>
@@ -40,10 +58,7 @@ const PaymentDetails = ({ order }: PaymentDetailsProps) => {
                   {paymentInfoMap[payment.provider_id]?.icon}
                 </Container>
                 <Text data-testid="payment-amount">
-                  {`${convertToLocale({
-                    amount: payment.amount,
-                    currency_code: order.currency_code,
-                  })} to be collected on delivery`}
+                  {paymentDescription}
                 </Text>
               </div>
             </div>

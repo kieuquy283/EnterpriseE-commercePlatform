@@ -1,0 +1,52 @@
+{
+  "run_id": "ts-20261026-order-01",
+  "state": "completed",
+  "started_at": "2026-10-26T09:03:56.261Z",
+  "environment": "local",
+  "runner": "typescript-medusa-exec",
+  "base_url": "http://127.0.0.1:9000",
+  "updated_at": "2026-10-26T09:04:01.151Z",
+  "fixture": {
+    "run_id": "ts-20261026-order-01",
+    "product_id": "prod_01M5555A9JAW58WJYFPXC2JFM4",
+    "handle": "ao-thun-essential",
+    "variant_id": "variant_01M5555ACK1K0YCMWJ7XXSVYSA",
+    "sku": "TEE-ESSENTIAL-BLK",
+    "manage_inventory": true,
+    "allow_backorder": false,
+    "required_quantity": 1,
+    "inventory_item_id": "iitem_01M5555AD6JTJMAN2JGAMFBJD6",
+    "inventory_level_id": "ilev_01M5555AFDZ3H78XH3Q132NXJ5",
+    "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+    "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+    "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+    "currency_code": "vnd",
+    "quantity": 2,
+    "calculated_unit_price": 249000,
+    "payment_provider_id": "pp_system_default"
+  },
+  "cart_id": "cart_01M5VQ7G8JR2H68GAQRP96JR41",
+  "shipping_option_id": "so_01M5555A7RBPXR2DQFGJV32EGR",
+  "shipping_option_name": "Standard delivery",
+  "payment_collection_id": "pay_col_01M5VQ7JZ1JFM830BJBJ463YY3",
+  "payment_session_ids": [
+    "payses_01M5VQ7K3EQMJRFXZZSTGNCACE"
+  ],
+  "order_id": "order_01M5VQ7KFZJNCP690YV4PV8VQF",
+  "completion_received_at": "2026-10-26T09:04:00.863Z",
+  "order_version": 1,
+  "order_item_ids": [
+    "orditem_01M5VQ7KG2MTWFPKRNQYF4YVQ2"
+  ],
+  "order_line_item_ids": [
+    "ordli_01M5VQ7KG16VN1187M4X1X2HJ1"
+  ],
+  "reservation_ids": [
+    "resitem_01M5VQ7KMDW25KAQRVJ64B8JD9"
+  ],
+  "payment_ids": [
+    "pay_01M5VQ7KP6CF4YM0TNTJH75Y3B"
+  ],
+  "validation_passed": true,
+  "completed_at": "2026-10-26T09:04:01.151Z"
+}

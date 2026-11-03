@@ -37,6 +37,17 @@ module.exports = defineConfig({
     disable: process.env.ADMIN_DISABLED === "true",
   },
   modules: [
+    ...(process.env.NODE_ENV === "production"
+      ? []
+      : [{
+          resolve: "@medusajs/medusa/payment",
+          options: {
+            providers: [{
+              resolve: "./src/modules/payment-simulator",
+              id: "simulator",
+            }],
+          },
+        }]),
     ...(redisUrl
       ? [
           {

@@ -1,24 +1,26 @@
 "use client"
 
+import { isSupportedCheckoutPaymentProvider } from "@lib/util/checkout-payment"
 import { Heading, Text, clx } from "@modules/common/components/ui"
-
 import PaymentButton from "../payment-button"
 import { useSearchParams } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
 
 const Review = ({ cart }: { cart: HttpTypes.StoreCart }) => {
   const searchParams = useSearchParams()
-
   const isOpen = searchParams.get("step") === "review"
 
-  const previousStepsCompleted =
+  const previousStepsCompleted = Boolean(
     cart.shipping_address &&
-    (cart.shipping_methods?.length ?? 0) > 0 &&
-    cart.payment_collection?.payment_sessions?.some(
-      (session) =>
-        session.provider_id === "pp_system_default" &&
-        session.status === "pending"
-    )
+      cart.billing_address &&
+      cart.email &&
+      (cart.shipping_methods?.length ?? 0) > 0 &&
+      cart.payment_collection?.payment_sessions?.some(
+        (session) =>
+          session.status === "pending" &&
+          isSupportedCheckoutPaymentProvider(session.provider_id)
+      )
+  )
 
   return (
     <div className="bg-white">
@@ -49,6 +51,12 @@ const Review = ({ cart }: { cart: HttpTypes.StoreCart }) => {
           </div>
           <PaymentButton cart={cart} data-testid="submit-order-button" />
         </>
+      )}
+      {isOpen && !previousStepsCompleted && (
+        <Text>
+          Complete your address, shipping method, and payment selection before
+          placing the order.
+        </Text>
       )}
     </div>
   )

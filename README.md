@@ -59,6 +59,14 @@ Set-Location ../..
 
 Đổi email và mật khẩu Admin trước khi chạy. Seed tạo publishable API key tên **Storefront** và liên kết nó với sales channel. Seed bỏ qua nếu vùng `Vietnam` đã tồn tại; bước này dành cho database mới.
 
+Để bổ sung riêng hồ sơ Customer và giỏ hàng mẫu phục vụ ERD sau khi đã có dữ liệu nền, chạy từ gốc repository:
+
+```powershell
+npm run backend:seed:sample
+```
+
+Lệnh tạo bộ mẫu áo thun × 2, túi canvas × 1 và lưu ID vào `docs/erd/evidence/seed-sample/manifest.json`. Xem [hướng dẫn seed sample](docs/erd/seed-sample-guide.md) để biết điều kiện và cách chạy lại.
+
 ### 4. Chạy Medusa và lấy publishable API key
 
 Trong **PowerShell thứ nhất**, tại gốc repo:
@@ -101,6 +109,14 @@ Các lần chạy tiếp theo chỉ cần `docker compose up -d postgres redis`,
 Để dừng ứng dụng, nhấn `Ctrl+C` trong các terminal Node.js. Khi không dùng database/Redis nữa, chạy `docker compose stop postgres redis`; lệnh này giữ nguyên dữ liệu trong Docker volumes.
 
 ## Kiểm tra luồng đặt hàng
+
+Kiểm tra inventory trước/sau tạo Order bằng script TypeScript của tuần 3:
+
+```powershell
+npm run backend:check:inventory-order -- my-checkout-01
+```
+
+Lệnh chạy qua `medusa exec`, tạo một Order thử nghiệm thật mua 2 đơn vị và lưu snapshot T0/T1/T2 vào `docs/report/evidence/inventory-order-<run_id>/`. Dùng run ID mới mỗi lần, backend/database local phải sẵn sàng. Xem [hướng dẫn chạy](docs/report/inventory-order-run-guide.md) và [Inventory Consistency Notes](docs/report/inventory-consistency-notes.md).
 
 Trên storefront: mở một sản phẩm → thêm vào giỏ → checkout → nhập địa chỉ Việt Nam → chọn **Standard delivery** → chọn COD → đặt hàng. Đăng nhập để xem đơn trong tài khoản. Trong Admin, kiểm tra đơn và tồn kho đã được Medusa cập nhật.
 

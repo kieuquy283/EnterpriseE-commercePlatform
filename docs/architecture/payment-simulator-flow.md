@@ -1,136 +1,84 @@
-# Payment Success/Failure Flow (Medusa v2)
+# Payment Simulator: luồng thành công và thất bại
 
-## Mục đích và trạng thái
+## Trạng thái và phạm vi
 
-Tài liệu này thiết kế **Payment Simulator** cho môi trường demo/test. Simulator **chưa được triển khai** trong repository. Luồng hiện chạy là Cash on Delivery (COD): storefront hiển thị nhãn này cho Medusa Manual System Payment Provider `pp_system_default`. Mọi thao tác commerce tiếp tục đi qua Medusa Store API; simulator đề xuất là một **Medusa Payment Module Provider**, không phải một HTTP API công khai mới.
+Tài liệu này mô tả mã nguồn sau khi nhập `main` vào `recommendation`. **Đã triển khai:** Medusa Payment Module Provider `simulator`, giao diện lựa chọn kết quả thử nghiệm và backend integration tests cho cả thành công lẫn thất bại. **Chỉ dùng ngoài production:** `medusa-config.ts` không đăng ký provider khi `NODE_ENV=production`, và chính provider cũng từ chối khởi tạo trong môi trường đó. Docker Compose chạy backend ở production nên không bật simulator. COD vẫn dùng `pp_system_default`. [Provider](../../apps/backend/src/modules/payment-simulator/provider.ts), [Medusa config](../../apps/backend/medusa-config.ts), [Compose](../../docker-compose.yml), [seed region](../../apps/backend/src/scripts/seed-commerce.ts).
 
-Nhãn dùng trong tài liệu:
+Simulator không thu tiền thật, không nhận thông tin thẻ và không chứng minh một đơn đã được thanh toán hoặc capture. Medusa là bên quản lý Cart, Payment, Order và Inventory; Next.js chỉ gửi yêu cầu qua Store API và hiển thị kết quả. [Ranh giới Storefront–Backend](storefront-backend-boundary.md), [Cart Server Actions](../../apps/storefront/src/lib/data/cart.ts).
 
-- **[ĐÃ CÓ]** Code hoặc test trong repository ở `origin/main` tại `71d2b6d`.
-- **[MEDUSA]** Hành vi mô tả trong tài liệu chính thức của Medusa; chi tiết thực thi nội bộ của bản `2.21.2` chưa được chứng minh bằng test failure trong repo.
-- **[THIẾT KẾ]** Việc cần triển khai và xác minh sau PR tài liệu này.
+## Payment Success
 
-## Hiện trạng có thể kiểm chứng
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Shopper as Khách hàng
+    participant UI as Next.js Checkout UI
+    participant Action as Next.js Server Actions
+    participant API as Medusa Store API
+    participant Sim as Simulator Provider
+    Shopper->>UI: Chọn simulator và kết quả success
+    UI->>Action: initiatePaymentSession(cart, provider_id, data)
+    Action->>API: Khởi tạo payment session qua SDK
+    API->>Sim: initiatePayment(data)
+    Sim-->>API: pending session với simulated_outcome=true
+    API-->>Action: Payment collection và session
+    Action-->>UI: Chuyển sang review
+    Shopper->>UI: Place order
+    UI->>Action: placeOrder()
+    Action->>API: Complete cart
+    API->>Sim: authorizePayment(session data)
+    Sim-->>API: authorized
+    Note over API: Order và inventory do Medusa xử lý nội bộ
+    API-->>Action: type=order và order.id
+    Action->>Action: Làm mới cache và xóa cart cookie
+    Action-->>UI: Chuyển tới trang xác nhận
+    UI-->>Shopper: Hiển thị đơn hàng
+```
 
-| Thành phần | Bằng chứng | Giới hạn |
+Giao diện luôn khởi tạo lại session simulator khi khách bấm Continue, kể cả khi vẫn chọn cùng provider, để dùng lựa chọn thành công/thất bại mới nhất. `placeOrder` chỉ coi `type === "order"` là thành công; sau đó xóa cookie giỏ và chuyển đến trang xác nhận. [Payment UI](../../apps/storefront/src/modules/checkout/components/payment/index.tsx), [cart actions](../../apps/storefront/src/lib/data/cart.ts).
+
+## Payment Failure
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Shopper as Khách hàng
+    participant UI as Next.js Checkout UI
+    participant Action as Next.js Server Actions
+    participant API as Medusa Store API
+    participant Sim as Simulator Provider
+    Shopper->>UI: Chọn simulator và kết quả failure
+    UI->>Action: initiatePaymentSession(cart, provider_id, data)
+    Action->>API: Khởi tạo payment session qua SDK
+    API->>Sim: initiatePayment(data)
+    Sim-->>API: pending session với simulated_outcome=false
+    API-->>UI: Session sẵn sàng qua Action
+    Shopper->>UI: Place order
+    UI->>Action: placeOrder()
+    Action->>API: Complete cart
+    API->>Sim: authorizePayment(session data)
+    Sim-->>API: error
+    API-->>Action: HTTP error hoặc kết quả không có Order
+    Action-->>UI: Báo lỗi và giữ cart cookie
+    UI-->>Shopper: Hiển thị lỗi để xem lại hoặc thử lại
+    Note over API: Integration test xác nhận không có order link và inventory không đổi
+```
+
+Backend integration test hiện xác nhận nhánh thất bại trả HTTP 400, không có liên kết `order_cart` cho giỏ và inventory snapshot không đổi. Test gọi Store API trực tiếp, chưa kiểm chứng mọi bước giao diện Next.js hoặc các tình huống mất mạng. Lỗi khởi tạo session cũng được Payment UI bắt và hiển thị. Không có cơ chế tự thử lại hay idempotency key tường minh trong `placeOrder`; không suy ra cách Medusa xử lý transaction, compensation hoặc duplicate request ở bên trong. [Checkout integration test](../../apps/backend/integration-tests/http/checkout-order.spec.ts), [Payment UI](../../apps/storefront/src/modules/checkout/components/payment/index.tsx), [PaymentButton](../../apps/storefront/src/modules/checkout/components/payment-button/index.tsx), [cart actions](../../apps/storefront/src/lib/data/cart.ts).
+
+## API contract và trách nhiệm
+
+| Bước | Contract đã dùng | Trách nhiệm |
 | --- | --- | --- |
-| Region Vietnam | [`seed-commerce.ts`](../../apps/backend/src/scripts/seed-commerce.ts) bật `pp_system_default`. | Chưa đăng ký provider simulator. |
-| Chọn phương thức | [`payment.ts`](../../apps/storefront/src/lib/data/payment.ts) gọi `GET /store/payment-providers?region_id=...`; [`Payment`](../../apps/storefront/src/modules/checkout/components/payment/index.tsx) lọc chỉ `pp_system_default`, gọi `initiatePaymentSession(cart, { provider_id })` và chuyển sang review. | UI hiện không chọn được provider khác. |
-| Session và đặt hàng | [`cart.ts`](../../apps/storefront/src/lib/data/cart.ts) dùng Medusa SDK để khởi tạo session và complete cart. [`Review`](../../apps/storefront/src/modules/checkout/components/review/index.tsx) cùng [`PaymentButton`](../../apps/storefront/src/modules/checkout/components/payment-button/index.tsx) yêu cầu session `pending` của `pp_system_default` trước Place order. | Storefront không gọi một endpoint authorization riêng. |
-| Success | [`checkout-order.spec.ts`](../../apps/backend/integration-tests/http/checkout-order.spec.ts) tạo payment collection/session qua Store API, complete cart và assert `type: "order"`, order detail/history. [`check-inventory-order.ts`](../../apps/backend/src/scripts/check-inventory-order.ts) và [`validation.ts`](../../apps/backend/src/scripts/inventory-order/validation.ts) có ca kiểm chứng trạng thái authorized, Payment gắn session/collection, chưa capture/refund. | Integration test chính chỉ assert order; script inventory/order chỉ kiểm chứng fixture thành công và không đại diện cho simulator. |
-| Failure UI | `placeOrder` ném lỗi nếu complete cart trả kết quả khác order hoặc API lỗi; [`PaymentButton`](../../apps/storefront/src/modules/checkout/components/payment-button/index.tsx) hiển thị lỗi. Cookie cart chỉ bị xóa sau response `type: "order"`. | Chưa có backend test ép authorization fail; không suy ra trạng thái cuối của mọi kiểu lỗi/network timeout. |
+| Lấy phương thức thanh toán | `GET /store/payment-providers?region_id=...` | Medusa trả phương thức của region; UI chỉ hiển thị COD và simulator hợp lệ. [Payment data](../../apps/storefront/src/lib/data/payment.ts), [UI filter](../../apps/storefront/src/lib/util/checkout-payment.ts). |
+| Tạo session | Storefront gọi `sdk.store.payment.initiatePaymentSession(cart, { provider_id, data })`. Test backend gọi trực tiếp `POST /store/payment-collections` và `POST /store/payment-collections/{id}/payment-sessions`. | Simulator nhận `data.simulated_outcome: boolean`, mặc định `true` nếu không cung cấp, trả session `pending`. [Cart action](../../apps/storefront/src/lib/data/cart.ts), [provider](../../apps/backend/src/modules/payment-simulator/provider.ts), [test](../../apps/backend/integration-tests/http/checkout-order.spec.ts). |
+| Hoàn tất cart | `POST /store/carts/{id}/complete` qua Medusa SDK. | Medusa gọi provider để authorize; Storefront chỉ xác nhận thành công khi nhận `type=order`. [Cart action](../../apps/storefront/src/lib/data/cart.ts), [test](../../apps/backend/integration-tests/http/checkout-order.spec.ts). |
+| Xem đơn | `GET /store/orders/{id}` và danh sách đơn của khách. | Medusa trả dữ liệu đơn; trang xác nhận và lịch sử chỉ hiển thị kết quả. [Orders data](../../apps/storefront/src/lib/data/orders.ts), [test](../../apps/backend/integration-tests/http/checkout-order.spec.ts). |
 
-Medusa [mô tả Payment Collection](https://docs.medusajs.com/resources/commerce-modules/payment/payment-collection), [Payment Session](https://docs.medusajs.com/resources/commerce-modules/payment/payment-session) và [Payment Module Provider](https://docs.medusajs.com/resources/references/payment/provider). Tài liệu Medusa đang công bố phiên bản mới hơn `2.21.2`; contract mới chỉ được áp dụng sau khi kiểm tra tương thích với bản đang pin. Đặc biệt, **Update Payment Session Client Data chỉ có từ v2.22.1**, nên thiết kế này không phụ thuộc route đó.
+UI chỉ bật simulator khi `NEXT_PUBLIC_PAYMENT_SIMULATOR_ENABLED=true`, `NEXT_PUBLIC_PAYMENT_SIMULATOR_PROVIDER_ID` là ID khác COD và provider đó được Medusa trả về cho region. Giá trị ở `NEXT_PUBLIC_*` được đưa vào bản build Next.js, nên cần build lại sau khi đổi. Trong mã hiện tại, ID backend là `pp_simulator_simulator`; integration test dùng đúng ID này. [Checkout flags](../../apps/storefront/src/lib/util/checkout-payment.ts), [constants](../../apps/backend/src/modules/payment-simulator/constants.ts), [test](../../apps/backend/integration-tests/http/checkout-order.spec.ts).
 
-## Payment Success — thiết kế simulator
+## Giới hạn cần kiểm thử tiếp
 
-Các cuộc gọi từ browser/Next.js tới Store API dùng đường đi đã có; các bước với `Simulator` và việc chọn provider mới là thiết kế. `authorizePayment` là phương thức provider được Medusa [mô tả](https://docs.medusajs.com/resources/references/payment/provider) là chạy trong quá trình complete cart, không phải API mà storefront gọi trực tiếp.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Buyer as Người mua
-    participant UI as Storefront UI
-    participant Next as Next.js Server Actions
-    participant API as Medusa Store API
-    participant Core as Medusa Payment/Cart
-    participant Sim as Simulator Provider (đề xuất)
-
-    Note over UI,Sim: [THIẾT KẾ] Đăng ký provider vào Medusa và region. UI hiện chỉ dùng pp_system_default
-    Buyer->>UI: Chọn simulator trong bước Payment
-    UI->>Next: initiatePaymentSession(cart, provider_id)
-    Next->>API: [ĐÃ CÓ] SDK initiatePaymentSession
-    API->>Core: [MEDUSA] Tạo/lấy Payment Collection và Payment Session
-    Core->>Sim: [THIẾT KẾ] initiatePayment(input)
-    Sim-->>Core: Session data an toàn
-    Core-->>API: Payment Collection với session pending
-    API-->>Next: Payment Collection
-    Next-->>UI: Chuyển tới Review
-
-    Buyer->>UI: Place order
-    UI->>Next: [ĐÃ CÓ] placeOrder()
-    Next->>API: [ĐÃ CÓ] POST /store/carts/{id}/complete
-    API->>Core: [MEDUSA] Complete Cart
-    Core->>Sim: [THIẾT KẾ] authorizePayment(session data)
-    Sim-->>Core: status authorized
-    Note over Core: [MEDUSA] Payment/Order được tạo khi hoàn tất thành công. Chưa capture tiền
-    Core-->>API: Order và kết quả completion
-    API-->>Next: type order, order.id
-    Next->>Next: [ĐÃ CÓ] Revalidate, xóa cart cookie
-    Next-->>UI: Redirect /{countryCode}/order/{id}/confirmed
-    UI->>Next: Tải trang xác nhận
-    Next->>API: [ĐÃ CÓ] GET /store/orders/{id}
-    API-->>Next: Order
-    Next-->>UI: Hiển thị xác nhận
-```
-
-`authorized` trong simulator chỉ là kết quả mô phỏng authorization. Nó **không chứng minh tiền đã được thu**. Ca COD hiện tại cũng chỉ cho biết “thu tiền khi giao hàng”; không gọi order creation là payment capture.
-
-## Payment Failure — thiết kế simulator
-
-Kịch bản chính là provider từ chối authorization **đồng bộ** bằng cách ném lỗi trong `authorizePayment`. Không dùng `pending_authorization` cho ca thất bại: Medusa cho phép tạo order đang chờ thanh toán với trạng thái đó. Phân nhánh dưới đây còn thể hiện lỗi khởi tạo session. Kết quả `type: "cart"` kèm `error` là contract Medusa [mô tả cho complete cart](https://docs.medusajs.com/resources/storefront-development/checkout/complete-cart); code storefront hiện cũng xử lý API error bằng cách ném lỗi.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Buyer as Người mua
-    participant UI as Storefront UI
-    participant Next as Next.js Server Actions
-    participant API as Medusa Store API
-    participant Core as Medusa Payment/Cart
-    participant Sim as Simulator Provider (đề xuất)
-
-    Buyer->>UI: Chọn simulator
-    UI->>Next: initiatePaymentSession(cart, provider_id)
-    Next->>API: [ĐÃ CÓ] SDK initiatePaymentSession
-    API->>Core: [MEDUSA] Khởi tạo Payment Collection/Session
-    Core->>Sim: [THIẾT KẾ] initiatePayment(input)
-    alt Khởi tạo session lỗi
-        Sim-->>Core: Throw error
-        Core-->>API: Lỗi khởi tạo
-        API-->>Next: API error
-        Next-->>UI: [ĐÃ CÓ] Hiển thị payment-method-error-message
-    else Session pending được tạo
-        Sim-->>Core: Session data an toàn
-        Core-->>API: Payment Session pending
-        API-->>Next: Payment Collection
-        Next-->>UI: Review
-        Buyer->>UI: Place order
-        UI->>Next: [ĐÃ CÓ] placeOrder()
-        Next->>API: [ĐÃ CÓ] POST /store/carts/{id}/complete
-        API->>Core: [MEDUSA] Complete Cart
-        Core->>Sim: [THIẾT KẾ] authorizePayment(session data)
-        Sim-->>Core: Throw deterministic decline error
-        Core-->>API: Completion thất bại
-        API-->>Next: type cart + error hoặc API error
-        Next-->>UI: [ĐÃ CÓ] Lỗi tại Place order
-        Note over Next,UI: [ĐÃ CÓ] Giữ cart cookie. Không redirect tới Order Confirmation
-        Note over Core,Sim: [THIẾT KẾ] Test phải xác nhận không có Order cho decline này
-    end
-```
-
-Lỗi mạng sau khi gửi complete cart có thể khiến client không biết server đã tạo order hay chưa. Khi đó **không tự động gửi lại** hoặc hứa “không có order”; cần đọc lại trạng thái cart/order bằng quyền phù hợp trước khi cho phép retry. Tài liệu Medusa có [mô tả việc đảo payment nếu complete cart thất bại sau authorization](https://docs.medusajs.com/resources/storefront-development/checkout/complete-cart), nhưng repo chưa kiểm chứng nhánh đó trên `2.21.2` hoặc với simulator; phải có integration test trước khi dựa vào nó.
-
-## API contract và ranh giới trách nhiệm
-
-| Contract | Trạng thái | Request/response quan trọng | Chủ sở hữu |
-| --- | --- | --- | --- |
-| `GET /store/payment-providers?region_id={id}` | [ĐÃ CÓ] | Trả `payment_providers[]`; chỉ hiển thị provider Medusa cho region. | Medusa Store API; Next.js đọc qua `payment.ts`. |
-| `POST /store/payment-collections` | [ĐÃ CÓ trong integration test] | Body `{ "cart_id": "cart_..." }`, trả `payment_collection`. SDK `initiatePaymentSession` của storefront gom bước này với khởi tạo session khi cần. | Medusa Store API. |
-| `POST /store/payment-collections/{id}/payment-sessions` | [ĐÃ CÓ trong integration test] | Body `{ "provider_id": "pp_system_default" }` cho COD hiện tại; simulator dùng ID thực tế sau đăng ký, chưa biết trước. | Medusa Store API. |
-| `POST /store/carts/{id}/complete` | [ĐÃ CÓ] | Body `{}`; success `type: "order"` + `order.id`; failure có thể `type: "cart"` + `error` hoặc HTTP/API error. Chỉ xóa cart cookie khi `type: "order"`. | Medusa Store API; `placeOrder` xử lý kết quả. |
-| `GET /store/orders/{id}` | [ĐÃ CÓ] | Đọc Order cho trang confirmed; không suy trạng thái đã thu tiền từ riêng order ID. | Medusa Store API. |
-| `initiatePayment`, `authorizePayment`, `getPaymentStatus` | [THIẾT KẾ] | Phương thức **nội bộ Payment Module Provider** theo Medusa; không có `/store/payment-simulator/*` trong repo. Success trả `authorized`; decline ném lỗi được kiểm soát. | Simulator provider dưới backend, gọi bởi Medusa. |
-
-Storefront không tự tạo Payment/Order, không tính lại số tiền và không chọn kết quả success/failure bằng query parameter do người mua cung cấp. Để test ổn định, simulator cần cấu hình outcome ở phía server hoặc fixture test có quyền, gắn với session của lần chạy; không lưu bí mật trong `PaymentSession.data` vì [dữ liệu đó có thể đọc từ storefront](https://docs.medusajs.com/resources/commerce-modules/payment/payment-session). Không thiết kế webhook hoặc giao dịch ngân hàng vì simulator đồng bộ và không có bên thứ ba.
-
-## Việc cần triển khai sau tài liệu này
-
-1. Tạo Payment Module Provider trong `apps/backend/src/modules/` theo interface tương thích chính xác với Medusa `2.21.2`; đăng ký ở `apps/backend/medusa-config.ts`, thêm provider ID thực tế vào region qua workflow/migration dữ liệu có thể chạy lại. Không sửa Medusa core.
-2. Mở rộng `apps/storefront/src/modules/checkout/components/payment/`, `review/`, `payment-button/` và `apps/storefront/src/lib/constants.tsx` để hiển thị simulator khi Medusa trả provider đó, giữ COD hoạt động. Dùng lại `initiatePaymentSession` và `placeOrder` trong `cart.ts`.
-3. Bổ sung backend integration tests: success phải trả một order và session/payment authorized; deterministic decline phải hiển thị completion failure, kiểm tra cart/order readback và khả năng retry an toàn. Thêm browser E2E cho lỗi UI, mất mạng và quay lại checkout. Không khẳng định cơ chế rollback/idempotency trước khi có kết quả test.
-
-## Nguồn
-
-- Repository: [checkout/order sequence](checkout-order-sequence.md), [storefront/backend boundary](storefront-backend-boundary.md), [backend checkout test](../../apps/backend/integration-tests/http/checkout-order.spec.ts), [inventory/order validation](../../apps/backend/src/scripts/inventory-order/validation.ts), [seed region](../../apps/backend/src/scripts/seed-commerce.ts).
-- Medusa documentation: [Payment step](https://docs.medusajs.com/resources/storefront-development/checkout/payment), [Complete cart](https://docs.medusajs.com/resources/storefront-development/checkout/complete-cart), [Payment provider interface](https://docs.medusajs.com/resources/references/payment/provider), [Payment session states](https://docs.medusajs.com/resources/commerce-modules/payment/payment-session).
+- Kiểm thử trình duyệt cho cả hai lựa chọn, đổi kết quả sau khi quay lại bước payment và lỗi khi tạo session.
+- Gửi complete-cart trùng hoặc mất phản hồi mạng rồi thử lại; đọc lại trạng thái giỏ/đơn trước khi kết luận chưa có đơn.
+- Đối chiếu việc giữ hàng, thu tiền COD và các trạng thái authorized/captured/refunded trên môi trường mục tiêu. Simulator chỉ mô phỏng authorization và các hàm capture/refund hiện trả dữ liệu mà không kết nối cổng thanh toán. [Provider](../../apps/backend/src/modules/payment-simulator/provider.ts).

@@ -1,0 +1,9 @@
+$kind: http-request
+name: store/shipping-options
+url: "{{base_url}}/store/shipping-options?cart_id={{cart_id}}"
+method: GET
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+queryParams:
+  cart_id: "{{cart_id}}"
+order: 9000

@@ -31,10 +31,13 @@ function storeHeaders(publishableKey: string, token?: string) {
   }
 }
 
-async function completeCheckout(
+const simulatorProviderId = "pp_simulator_simulator"
+
+async function prepareCheckout(
   api: ApiClient,
   headers: ReturnType<typeof storeHeaders>,
-  email: string
+  email: string,
+  simulatedOutcome: boolean
 ) {
   const { data: regionResponse } = await api.get<{
     regions: Array<{ id: string; name: string }>
@@ -108,24 +111,63 @@ async function completeCheckout(
   )
   await api.post(
     `/store/payment-collections/${paymentResponse.payment_collection.id}/payment-sessions`,
-    { provider_id: "pp_system_default" },
+    {
+      provider_id: simulatorProviderId,
+      data: { simulated_outcome: simulatedOutcome },
+    },
     { headers }
   )
 
-  const { data: completion } = await api.post<{
-    type: string
-    order: { id: string; items: unknown[] }
-  }>(
-    `/store/carts/${cartId}/complete`,
-    {},
-    { headers }
-  )
+  return {
+    cartId,
+    paymentCollectionId: paymentResponse.payment_collection.id,
+  }
+}
 
-  expect(completion.type).toBe("order")
-  expect(completion.order.id).toBeDefined()
-  expect(completion.order.items).toHaveLength(1)
+async function getSimulatorPaymentSession(
+  container: MedusaContainer,
+  paymentCollectionId: string
+) {
+  const query = container.resolve(ContainerRegistrationKeys.QUERY)
+  const { data: paymentSessions } = await query.graph({
+    entity: "payment_session",
+    fields: ["id", "provider_id", "data"],
+    filters: { payment_collection_id: paymentCollectionId },
+  })
+  const paymentSession = paymentSessions[0]
 
-  return completion.order.id
+  if (!paymentSession) {
+    throw new Error("Payment session was not created")
+  }
+
+  return paymentSession
+}
+
+async function getInventorySnapshot(container: MedusaContainer) {
+  const query = container.resolve(ContainerRegistrationKeys.QUERY)
+  const { data: inventoryItems } = await query.graph({
+    entity: "inventory_item",
+    fields: ["id"],
+    filters: { sku: "TEE-ESSENTIAL-BLK" },
+  })
+  const inventoryItem = inventoryItems[0]
+
+  if (!inventoryItem) {
+    throw new Error("Seed inventory item is not available")
+  }
+
+  const { data: inventoryLevels } = await query.graph({
+    entity: "inventory_level",
+    fields: ["id", "location_id", "stocked_quantity", "reserved_quantity"],
+    filters: { inventory_item_id: inventoryItem.id },
+  })
+
+  return inventoryLevels.map((level) => ({
+    id: level.id,
+    location_id: level.location_id,
+    stocked_quantity: level.stocked_quantity,
+    reserved_quantity: level.reserved_quantity,
+  }))
 }
 
 medusaIntegrationTestRunner({
@@ -149,6 +191,7 @@ medusaIntegrationTestRunner({
         })
       }
 
+      await seedCommerce({ container, args: [] })
       await seedCommerce({ container, args: [] })
 
       const { data: salesChannels } = await query.graph({
@@ -199,7 +242,32 @@ medusaIntegrationTestRunner({
       expect(login.token).toBeDefined()
 
       const customerHeaders = storeHeaders(publishableKey, login.token)
-      const orderId = await completeCheckout(storeApi, customerHeaders, email)
+      const checkout = await prepareCheckout(
+        storeApi,
+        customerHeaders,
+        email,
+        true
+      )
+      const paymentSession = await getSimulatorPaymentSession(
+        getContainer(),
+        checkout.paymentCollectionId
+      )
+      expect(paymentSession.provider_id).toBe(simulatorProviderId)
+      expect(paymentSession.data.simulated_outcome).toBe(true)
+
+      const { data: completion } = await storeApi.post<{
+        type: string
+        order: { id: string; items: unknown[] }
+      }>(
+        `/store/carts/${checkout.cartId}/complete`,
+        {},
+        { headers: customerHeaders }
+      )
+      expect(completion.type).toBe("order")
+      expect(completion.order.id).toBeDefined()
+      expect(completion.order.items).toHaveLength(1)
+
+      const orderId = completion.order.id
       const { data: orderResponse } = await storeApi.get<{
         order: { id: string; items: unknown[] }
       }>(`/store/orders/${orderId}`, { headers })
@@ -213,6 +281,44 @@ medusaIntegrationTestRunner({
         { headers: customerHeaders }
       )
       expect(historyResponse.orders.map((order) => order.id)).toContain(orderId)
+    })
+
+    it("does not create an order or change inventory when simulated payment fails", async () => {
+      const headers = storeHeaders(publishableKey)
+      const email = `payment-failure-${Date.now()}@example.test`
+      const checkout = await prepareCheckout(
+        storeApi,
+        headers,
+        email,
+        false
+      )
+      const container = getContainer()
+      const paymentSession = await getSimulatorPaymentSession(
+        container,
+        checkout.paymentCollectionId
+      )
+      expect(paymentSession.provider_id).toBe(simulatorProviderId)
+      expect(paymentSession.data.simulated_outcome).toBe(false)
+
+      const inventoryBefore = await getInventorySnapshot(container)
+      await expect(
+        storeApi.post(
+          `/store/carts/${checkout.cartId}/complete`,
+          {},
+          { headers }
+        )
+      ).rejects.toMatchObject({
+        response: { status: 400 },
+      })
+
+      const query = container.resolve(ContainerRegistrationKeys.QUERY)
+      const { data: orderLinks } = await query.graph({
+        entity: "order_cart",
+        fields: ["id"],
+        filters: { cart_id: checkout.cartId },
+      })
+      expect(orderLinks).toHaveLength(0)
+      expect(await getInventorySnapshot(container)).toEqual(inventoryBefore)
     })
   },
 })
