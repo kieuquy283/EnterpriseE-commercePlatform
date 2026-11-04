@@ -78,6 +78,8 @@ Trong `apps/storefront`, đặt `PLAYWRIGHT_BASE_URL=http://127.0.0.1:8001`, `RE
 
 ## Source và giới hạn
 
+PDP-specific verification, production builds ON/OFF và benchmark đa product contexts: xem [PDP runbook](pdp/runbook.md) và [system report](pdp/reports/system_test_report.md). Với `medusa start`, build backend sau khi sửa source rồi restart API test trước khi đo; không restart khi HTTP suite đang chạy. Benchmark Home ở báo cáo cũ không chứng minh throughput PDP; mục tiêu PDP30RPS hiện chưa đạt.
+
 - [Module](../../apps/backend/src/modules/recommendation/index.ts), [publish workflow](../../apps/backend/src/workflows/recommendation/publish.ts), [Store API](../../apps/backend/src/api/store/recommendations/route.ts).
 - [Medusa adapter](../../apps/backend/src/modules/recommendation/store-products.ts) phụ thuộc exports/middleware của đúng Medusa 2.21.2; khi upgrade phải chạy lại tests. Không tự xây giá hoặc công thức inventory.
 - [Offline generator](../../scripts/hm/build-mvp-candidates.py), [ID remapper](../../scripts/hm/remap-candidates.py), [Next adapter](../../apps/storefront/src/lib/data/recommendations.ts).

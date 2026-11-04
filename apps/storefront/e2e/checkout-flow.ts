@@ -19,7 +19,8 @@ export async function addCurrentProductToCart(page: Page) {
     addBtn.click(),
   ])
   expect(response.ok()).toBeTruthy()
-  await response.finished()
+  // Server Action responses can keep streaming optional Suspense sections after
+  // the cart mutation commits. Wait for the observable cart state below.
   await expect(page.getByTestId("nav-cart-link").first()).toContainText(/Cart \([1-9]\d*\)/)
 }
 

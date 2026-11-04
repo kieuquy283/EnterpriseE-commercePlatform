@@ -36,6 +36,14 @@ class CandidateTests(unittest.TestCase):
 
     def test_ranking_and_cap(self):
         self.assertEqual(module.ranked({"b": 2, "a": 2, "c": 1}, 2), ["a", "b"])
+        self.assertEqual(len(module.ranked({str(i): 1 for i in range(110)})), 100)
+
+    def test_unknown_taxonomy_does_not_qualify_from_other_fields(self):
+        a = {"index_group": "Ladies", "product_type": "Unknown", "section": "S", "department": "D", "garment_group": "G", "colors": {"black"}, "tokens": {"cotton"}}
+        self.assertEqual(module.similarity(a, a), 0)
+        b = {**a, "product_type": "Dress", "product_group": "Full body"}
+        self.assertEqual(module.similarity({**b, "index_group": "Unknown"}, {**b, "index_group": "Unknown"}), 0)
+        self.assertEqual(module.similarity(b, {**b, "product_type": " dress "}), 1)
 
     def test_taxonomy_and_missing(self):
         a = {"index_group": "Ladies", "product_type": "Dress", "product_group": "Full body"}

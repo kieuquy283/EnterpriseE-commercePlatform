@@ -15,10 +15,14 @@ def ranked(counts, limit=100):
 
 
 def similarity(left, right):
-    if not left.get("index_group") or left.get("index_group") != right.get("index_group"):
+    def known(value):
+        normalized = (value or "").strip().casefold()
+        return normalized if normalized not in ("", "unknown") else None
+
+    if not known(left.get("index_group")) or known(left.get("index_group")) != known(right.get("index_group")):
         return 0.0
     fields = {"product_type": .30, "product_group": .20, "section": .15, "department": .10, "garment_group": .10}
-    if not any(left.get(key) and left.get(key) == right.get(key) for key in ("product_type", "product_group")):
+    if not any(known(left.get(key)) and known(left.get(key)) == known(right.get(key)) for key in ("product_type", "product_group")):
         return 0.0
     score = eligible = 0.0
     for key, weight in fields.items():

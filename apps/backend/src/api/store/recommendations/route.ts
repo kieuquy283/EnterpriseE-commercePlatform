@@ -1,5 +1,5 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { MedusaError, Modules } from "@medusajs/framework/utils"
+import { ContainerRegistrationKeys, MedusaError, Modules } from "@medusajs/framework/utils"
 import RecommendationModuleService from "../../../modules/recommendation/service"
 import { resolveStoreProducts } from "../../../modules/recommendation/store-products"
 
@@ -55,11 +55,6 @@ async function recommendations(req: MedusaRequest, res: MedusaResponse) {
       throw error
     }
     let targetGroup: unknown
-    if (placement === "product_detail") {
-      const targets = await loadProducts([product as string])
-      if (!targets.some((p) => p.id === product && saleable(p))) return res.status(404).json({ message: "Product not available" })
-      targetGroup = targets[0]?.metadata?.product_group
-    }
     let ids: string[] = []
     let version: string | null = null
     let strategy = "catalog_featured"
@@ -87,7 +82,15 @@ async function recommendations(req: MedusaRequest, res: MedusaResponse) {
       fallbackReason = "candidate_store_unavailable"
     }
     const batchSize = displayLimit
-    let candidates = ids.length ? await loadProducts(ids.slice(0, batchSize)) : []
+    // Resolve the PDP target and first ranked candidates in one native batch.
+    let candidates = placement === "product_detail"
+      ? await loadProducts([product as string, ...ids.slice(0, batchSize)])
+      : ids.length ? await loadProducts(ids.slice(0, batchSize)) : []
+    if (placement === "product_detail") {
+      const target = candidates.find((item) => item.id === product && saleable(item))
+      if (!target) return res.status(404).json({ message: "Product not available" })
+      targetGroup = target.metadata?.product_group
+    }
     if (candidates.filter((p) => p.id !== product && saleable(p)).length < displayLimit && ids.length > batchSize) {
       candidates.push(...await loadProducts(ids.slice(batchSize, 100)))
     }
@@ -95,12 +98,15 @@ async function recommendations(req: MedusaRequest, res: MedusaResponse) {
     candidates = ids.map((id) => byId.get(id)).filter((p): p is StoreProduct => !!p && p.id !== product && saleable(p))
     if (candidates.length < displayLimit) {
       const primaryCount = candidates.length
-      let fallback = popularIds.length ? await loadProducts(popularIds) : []
-      const order = new Map(popularIds.map((id, index) => [id, index]))
-      fallback.sort((a, b) => {
-        const groupOrder = Number(b.metadata?.product_group === targetGroup) - Number(a.metadata?.product_group === targetGroup)
-        return groupOrder || (order.get(a.id) ?? 100) - (order.get(b.id) ?? 100)
-      })
+      // Group ordering needs metadata only, not calculated prices for all 100 items.
+      // Every displayed fallback still passes the native Store pipeline below.
+      if (popularIds.length && targetGroup) {
+        const { data } = await req.scope.resolve(ContainerRegistrationKeys.QUERY).graph({
+          entity: "product", fields: ["id", "metadata"], filters: { id: popularIds },
+        })
+        const sameGroup = new Set(data.filter((item) => item.metadata?.product_group === targetGroup).map((item) => item.id))
+        popularIds = [...popularIds].sort((a, b) => Number(sameGroup.has(b)) - Number(sameGroup.has(a)))
+      }
       const seen = new Set(candidates.map((p) => p.id))
       const fill = (items: StoreProduct[]) => {
         for (const item of items) {
@@ -108,7 +114,12 @@ async function recommendations(req: MedusaRequest, res: MedusaResponse) {
           if (item.id !== product && !seen.has(item.id) && saleable(item)) { candidates.push(item); seen.add(item.id) }
         }
       }
-      fill(fallback)
+      const fallbackIds = popularIds.filter((id) => id !== product && !seen.has(id))
+      for (let offset = 0; offset < fallbackIds.length && candidates.length < displayLimit; offset += displayLimit) {
+        const batch = fallbackIds.slice(offset, offset + displayLimit)
+        const loaded = new Map((await loadProducts(batch)).map((item) => [item.id, item]))
+        fill(batch.map((id) => loaded.get(id)).filter((item): item is StoreProduct => !!item))
+      }
       if (candidates.length < displayLimit) fill(await loadProducts())
       fallbackReason ||= "insufficient_saleable_candidates"
       if (candidates.length > primaryCount) strategy = primaryCount ? `${strategy}_with_fallback` : "catalog_featured"

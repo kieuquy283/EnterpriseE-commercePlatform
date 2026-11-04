@@ -2,6 +2,7 @@ node_modules/
 dist/
 .medusa/
 .next/
+.next-pdp-*/
 .turbo/
 .npm-cache/
 .tmp/

@@ -11,6 +11,53 @@ const rows: Candidate[] = [
 ]
 
 describe("recommendation contracts", () => {
+  it("preserves candidate ranks and fills only missing slots in popularity order", async () => {
+    const previous = process.env.ENABLE_RECOMMENDATIONS
+    process.env.ENABLE_RECOMMENDATIONS = "true"
+    const product = (id: string) => ({ id, title: id, handle: id, variants: [{ id: `variant_${id}`, manage_inventory: false, calculated_price: { calculated_amount: 100, currency_code: "vnd" } }] })
+    const resolve = jest.mocked(storeProducts.resolveStoreProducts).mockImplementation(async (_req, query) => ({ products: [...(query.id as string[])].reverse().map(product) }))
+    const response = { status: jest.fn().mockReturnThis(), json: jest.fn(), setHeader: jest.fn() }
+    const request = { query: { placement: "product_detail", product_id: "prod_S", region_id: "reg_test" }, scope: { resolve: (name: string) => {
+      if (name === "region") return { retrieveRegion: async () => ({ id: "reg_test" }) }
+      if (name === "recommendation") return {
+        listRecommendationActives: async () => [{ run_id: "run" }], retrieveRecommendationRun: async () => ({ status: "ready", version: "test" }),
+        listRecommendationCandidates: async (filter: { placement: string }) => (filter.placement === "home" ? ["prod_A", "prod_D", "prod_C", "prod_E", "prod_F", "prod_G"] : ["prod_B", "prod_A"]).map((target_product_id) => ({ target_product_id })),
+      }
+      throw new Error("Unexpected dependency")
+    } } }
+    try {
+      await GET(request as unknown as MedusaRequest, response as unknown as MedusaResponse)
+      expect(response.json).toHaveBeenCalledWith(expect.objectContaining({ strategy: "hm_metadata_similarity_with_fallback", products: ["prod_B", "prod_A", "prod_D", "prod_C", "prod_E", "prod_F"].map((id) => publicProduct(product(id))) }))
+      expect(resolve).toHaveBeenCalledTimes(2)
+    } finally {
+      resolve.mockReset()
+      if (previous === undefined) delete process.env.ENABLE_RECOMMENDATIONS
+      else process.env.ENABLE_RECOMMENDATIONS = previous
+    }
+  })
+
+  it("uses commerce fallback for a failed candidate store and obeys disabled flag", async () => {
+    const previous = process.env.ENABLE_RECOMMENDATIONS
+    process.env.ENABLE_RECOMMENDATIONS = "true"
+    const resolve = jest.mocked(storeProducts.resolveStoreProducts).mockResolvedValue({ products: [] })
+    const response = { status: jest.fn().mockReturnThis(), json: jest.fn(), setHeader: jest.fn() }
+    const request = { query: { placement: "home", region_id: "reg_test" }, scope: { resolve: (name: string) => {
+      if (name === "region") return { retrieveRegion: async () => ({ id: "reg_test" }) }
+      throw new Error("Injected candidate store outage")
+    } } }
+    try {
+      await GET(request as unknown as MedusaRequest, response as unknown as MedusaResponse)
+      expect(response.json).toHaveBeenCalledWith(expect.objectContaining({ products: [], fallback_reason: "candidate_store_unavailable" }))
+      process.env.ENABLE_RECOMMENDATIONS = "false"
+      await GET(request as unknown as MedusaRequest, response as unknown as MedusaResponse)
+      expect(response.status).toHaveBeenCalledWith(404)
+      expect(resolve).toHaveBeenCalledTimes(1)
+    } finally {
+      resolve.mockReset()
+      if (previous === undefined) delete process.env.ENABLE_RECOMMENDATIONS
+      else process.env.ENABLE_RECOMMENDATIONS = previous
+    }
+  })
   it("fails safely when commerce validation is unavailable", async () => {
     const previous = process.env.ENABLE_RECOMMENDATIONS
     process.env.ENABLE_RECOMMENDATIONS = "true"

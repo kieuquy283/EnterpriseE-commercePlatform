@@ -1,0 +1,199 @@
+{
+  "workload": {
+    "placement": "product_detail",
+    "rps": 30,
+    "duration": "60s",
+    "contexts": 30,
+    "profiles": {
+      "full": 10,
+      "sparse": 10,
+      "zero": 10
+    },
+    "hm_products": 500,
+    "api_concurrency_cap": 8,
+    "candidate_version": "pdp-private-v3",
+    "machine": "Docker Desktop 8 CPU / 7.631 GiB"
+  },
+  "runs": [
+    {
+      "name": "initial-old-runtime",
+      "local_summary": "data/hm/processed/k6/pdp-initial-summary.json",
+      "summary_sha256": "eba15578b18a0c23e790367482b75c8ffcbea3cc4cf1f27e6506d94699a2163b",
+      "replicas": 1,
+      "exit_code": 1,
+      "metrics": {
+        "http_req_duration": {
+          "min": 12.611075,
+          "med": 82.6287585,
+          "max": 2027.337038,
+          "p(50)": 82.6287585,
+          "p(95)": 1118.8604516999994,
+          "p(99)": 1477.47059773,
+          "avg": 326.44285441287525,
+          "thresholds": {
+            "p(95)<800": true
+          }
+        },
+        "http_req_failed": {
+          "passes": 1204,
+          "fails": 598,
+          "thresholds": {
+            "rate<0.01": true
+          },
+          "value": 0.6681465038845728
+        },
+        "iterations": {
+          "count": 1801,
+          "rate": 29.804941286867432
+        },
+        "dropped_iterations": {
+          "rate": 0,
+          "count": 0,
+          "thresholds": {
+            "count==0": false
+          }
+        },
+        "capacity_rejections": null,
+        "checks": {
+          "passes": 1194,
+          "fails": 2408,
+          "value": 0.33148250971682397
+        }
+      },
+      "target_verdict": "NOT_MET"
+    },
+    {
+      "name": "single-final-isolated",
+      "local_summary": "data/hm/processed/k6/pdp-final-isolated-summary.json",
+      "summary_sha256": "3288c1d703f084b9555da64775ec61003e5048bbc7cab3f99cf00edf2f970ea0",
+      "replicas": 1,
+      "exit_code": 1,
+      "metrics": {
+        "http_req_duration": {
+          "med": 272.2442205,
+          "max": 1228.72517,
+          "p(50)": 272.2442205,
+          "p(95)": 732.8172974499996,
+          "p(99)": 864.23577811,
+          "avg": 296.4363555743619,
+          "min": 2.066514,
+          "thresholds": {
+            "p(95)<800": false
+          }
+        },
+        "http_req_failed": {
+          "passes": 880,
+          "fails": 922,
+          "thresholds": {
+            "rate<0.01": true
+          },
+          "value": 0.48834628190899
+        },
+        "iterations": {
+          "count": 1801,
+          "rate": 29.89073423743508
+        },
+        "dropped_iterations": {
+          "count": 0,
+          "rate": 0,
+          "thresholds": {
+            "count==0": false
+          }
+        },
+        "capacity_rejections": {
+          "count": 880,
+          "rate": 14.605133886142626
+        },
+        "checks": {
+          "passes": 1842,
+          "fails": 1760,
+          "thresholds": {
+            "rate>0.99": true
+          },
+          "value": 0.5113825652415325
+        }
+      },
+      "target_verdict": "NOT_MET"
+    },
+    {
+      "name": "three-final",
+      "local_summary": "data/hm/processed/k6/pdp-three-api-summary.json",
+      "summary_sha256": "e1f0841001c785883f9737fa6a0556adc198c072caeffa102a4d24a4bd59d768",
+      "replicas": 3,
+      "exit_code": 1,
+      "metrics": {
+        "http_req_duration": {
+          "max": 2557.870428,
+          "p(50)": 785.586873,
+          "p(95)": 1494.6145365,
+          "p(99)": 1879.8372521499998,
+          "avg": 757.5440038914257,
+          "min": 33.29674,
+          "med": 785.586873,
+          "thresholds": {
+            "p(95)<800": true
+          }
+        },
+        "http_req_failed": {
+          "passes": 431,
+          "fails": 1365,
+          "thresholds": {
+            "rate<0.01": true
+          },
+          "value": 0.23997772828507796
+        },
+        "iterations": {
+          "count": 1795,
+          "rate": 29.653479740134497
+        },
+        "dropped_iterations": {
+          "count": 5,
+          "rate": 0.08260022211736628,
+          "thresholds": {
+            "count==0": true
+          }
+        },
+        "capacity_rejections": {
+          "count": 431,
+          "rate": 7.120139146516974
+        },
+        "checks": {
+          "passes": 2728,
+          "fails": 862,
+          "thresholds": {
+            "rate>0.99": true
+          },
+          "value": 0.7598885793871867
+        }
+      },
+      "target_verdict": "NOT_MET"
+    }
+  ],
+  "resource_samples": {
+    "single_during_earlier_isolated_run": {
+      "api_cpu_percent": 154.11,
+      "api_ram_mib": 945.2,
+      "pg_cpu_percent": 22.54,
+      "pg_ram_mib": 121.8,
+      "pg_connections": 11,
+      "pg_max_connections": 200
+    },
+    "three_during_load": {
+      "api_cpu_percent": [
+        150.47,
+        154.51,
+        168.98
+      ],
+      "api_ram_mib": [
+        496.3,
+        485.3,
+        474.5
+      ],
+      "pg_cpu_percent": 58.35,
+      "pg_ram_mib": 155.5,
+      "pg_connections": 21,
+      "pg_max_connections": 200
+    },
+    "caveat": "point samples, not peaks; single resource sample belongs to earlier isolated run, not final post-recovery run"
+  }
+}
