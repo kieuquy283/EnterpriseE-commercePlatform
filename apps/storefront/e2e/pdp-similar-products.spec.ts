@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test"
 import { readFileSync, writeFileSync } from "node:fs"
 import path from "node:path"
+import { addProductToCart } from "./checkout-flow"
 
 // Fault cases run only with the explicitly configured, loopback-only test harness.
 const faults = process.env.PDP_FAULT_TESTS === "true"
@@ -49,6 +50,19 @@ test.describe("PDP similarity contract", () => {
         expect(await rail.locator("a").count()).toBeLessThanOrEqual(6)
         await expect(page.getByTestId("add-product-button").first()).toBeVisible()
       }
+    })
+
+    test("H&M cart and checkout remain usable when recommendations return 503", async ({ page }) => {
+      setMode("503")
+      const [item] = JSON.parse(readFileSync(path.join(root, "browser-contexts.json"), "utf8"))
+      await addProductToCart(page, item.handle)
+      await page.goto("/vn/cart")
+      const row = page.getByTestId("product-row").first()
+      await expect(row).toBeVisible()
+      await expect(row.locator(`a[href="/vn/products/${item.handle}"]`).first()).toBeVisible()
+      await page.getByTestId("checkout-button").click()
+      await page.waitForURL(/\/vn\/checkout/)
+      await expect(page.getByTestId("shipping-first-name-input")).toBeVisible()
     })
   }
 
