@@ -3,11 +3,15 @@ import { DEFAULT_PRODUCT_HANDLE, TEST_ADDRESS } from "./test-helpers"
 
 export async function addProductToCart(page: Page, productHandle = DEFAULT_PRODUCT_HANDLE) {
   await page.goto(`/vn/products/${productHandle}`)
-  const optionButtons = page.locator('[data-testid="option-button"]')
-  if ((await optionButtons.count()) > 0) {
-    await optionButtons.first().click()
-  }
   const addBtn = page.locator('[data-testid="add-product-button"]').first()
+  // ProductActions streams independently of the initial PDP document.
+  await expect(addBtn).toBeVisible()
+  const optionGroups = page.locator('[data-testid="product-options"]:visible')
+  for (const group of await optionGroups.all()) {
+    const button = group.getByTestId("option-button").first()
+    await button.click()
+    await expect(button).toHaveClass(/border-ui-border-interactive/)
+  }
   await expect(addBtn).toBeEnabled({ timeout: 10_000 })
   await addCurrentProductToCart(page)
 }
