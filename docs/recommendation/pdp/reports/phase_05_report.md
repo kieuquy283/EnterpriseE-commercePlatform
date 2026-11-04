@@ -6,7 +6,7 @@ Chốt ngày 04/11/2026, Asia/Saigon; thời điểm cụ thể theo system repo
 
 Chi tiết command/expected/actual/exit và evidence: [System report](system_test_report.md), [source evidence](../evidence/source-verification.json), [offline evidence](../evidence/offline-verification.json), [load evidence](../evidence/pdp-load-verification.json).
 
-Python9, backend unit32, HTTP4/3 suites, production browser18ON+1OFF đạt PASS. Lint/typecheck/build đã chạy;18 lint warnings có sẵn. API privacy, ranking, limit, status/region/channel/price, stock/backorder, publisher partial fault/immutability, migration down/up guard đều có tests. Không coi unit fake là HTTP/native Medusa evidence.
+Python9,backend unit32,HTTP4/3 suites,production browser19ON+1OFF đạt PASS trên verified code commit9dfd91e. Lint/typecheck/build đã chạy;18 lint warnings có sẵn. API privacy,ranking,limit,status/region/channel/price,stock/backorder,publisher partial fault/immutability,migration down/up guard đều có tests. Không coi unit fake là HTTP/native Medusa evidence. Backend flag OFF được kiểm thêm bằng API/container thật và production browser ON như Phase04.
 
 PDP load **không đạt target30RPS** sau các tối ưu nhỏ. Không hạ ngưỡng0.70, không sửa benchmark SLO800ms/error1%/dropped0 để báo PASS. Một replica bị capacity rejection; ba replicas giảm lỗi nhưng p95 xấu hơn và dropped>0. Giữ các run fail; không gộp chúng với Home benchmark. Xem load evidence cho run cuối riêng và số liệu chính xác.
 

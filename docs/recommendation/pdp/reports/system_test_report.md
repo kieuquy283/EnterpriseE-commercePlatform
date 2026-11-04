@@ -18,12 +18,12 @@ Windows PowerShell, Node24.15.0, Python3.10.11, npm11.12.1, Medusa2.21.2, Next15
 | PDP-T06 | Safe fallback/faults | Unit candidate store failure, HTTP invalid pointer; real Redis-down200/6/105ms; PG-down504/5057ms frontdoor |0|PASS within scope |
 | PDP-T07 | ≤6/unique/no self/valid links/rank/VND | Unit ordered resolver test + production E2E |0|PASS |
 | PDP-T08 | Full/sparse/zero H&M/non-H&M/no image | Three real H&M contexts + base commerce PDP; placeholder SVG asserted |0|PASS |
-| PDP-T09 | Build flags/503/404/timeout/empty/duplicate | Production ON full18 tests; independent OFF1 test; fault proxy injects Rec failures only |0|PASS; backend OFF deployment NOT_RUN |
+| PDP-T09 | Build flags/503/404/timeout/empty/duplicate | Production ON final19 tests;independent OFF1 test;API tạm backend OFF thật9007 trả404,frontend ON8005 browser fallback PASS |0|PASS within local test scope |
 | PDP-T10 | 360px/keyboard/semantic headings | Production PDP cases + mobile commerce regression |0|PASS targeted checks |
-| PDP-T11 | Auth/catalog/cart/COD/payment failure/order/inventory | Full HTTP4 tests, full production browser18 tests including existing11 commerce/Home cases |0|PASS |
+| PDP-T11 | Auth/catalog/cart/COD/payment failure/order/inventory | Full HTTP4 tests,full production browser19 tests including existing11 commerce/Home cases;H&M add cart/checkout khi Rec503 |0|PASS |
 | PDP-T12 |30RPS60s mixed PDP, p95<800,error<1%,dropped0 | k6 final1 replica732.81ms/48.83%/0;3 replicas1494.61ms/24.00%/5 |1|FAIL / TARGET NOT MET |
 | PDP-T13 | Human relevance + public rights | Agent metadata/code review only; no real reviewer/license approval |—|NOT_RUN / PUBLIC NO-GO |
-| PDP-T14 | Flags/rollback/remoteCI/PR | Local rollback verified; PR/CI status in Phase06 |0 local|PARTIAL until remote review |
+| PDP-T14 | Flags/rollback/remoteCI/PR | Local rollback verified;Draft PR9,API CI9dfd91e success,fullCI code9dfd91e success;review/main merge pending |0 local|PARTIAL until remote review |
 
 Extra checks: backend unit **32/32**, backend lint/typecheck/build exit0; storefront typecheck/build ON/build OFF exit0, lint0 errors/18 existing warnings. Component-only automated accessibility audit/axe, screen-reader audit, browser matrix outside Chromium and randomized long-duration load **NOT_RUN**; targeted keyboard/mobile checks are not a full WCAG certification.
 

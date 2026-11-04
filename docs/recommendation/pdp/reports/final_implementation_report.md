@@ -12,7 +12,7 @@ Chốt ngày04/11/2026 13:27 Asia/Saigon. Branch review `recommendation-pdp`, ba
 |01 Data & Mapping |PASS;1874 mappings/500 Products/raw articles readback |[Report](phase_01_report.md) |
 |02 Offline similarity |Technical PASS;human relevance NOT_RUN |[Report](phase_02_report.md) |
 |03 Publishing & API |Correctness PASS;32 unit/4 HTTP tests |[Report](phase_03_report.md) |
-|04 PDP production UI |PASS;18 full browser tests+1 OFF |[Report](phase_04_report.md) |
+|04 PDP production UI |PASS;19 full browser tests+1 OFF;backend OFF thực tế |[Report](phase_04_report.md) |
 |05 System/performance |PARTIAL;30RPS target NOT MET |[Report](phase_05_report.md) |
 |06 Review/reporting |PASS reporting;restricted private GO/public NO-GO |[Report](phase_06_report.md) |
 
@@ -34,7 +34,7 @@ Giữ contract `GET /store/recommendations?placement=product_detail&product_id=�
 
 ## Tests và benchmark actual
 
-Python **9/9**, backend unit **32/32**, full HTTP **4/4 (3 suites)**, production browser **18/18**, production frontend OFF **1/1**. Backend/frontend typecheck/lint/build exit0;18 existing frontend lint warnings. Build test backend không bao gồm Admin bundle. Failures/retests được giữ và giải thích trong [system report](system_test_report.md); không bỏ assertions để báo PASS.
+Python **9/9**, backend unit **32/32**, full HTTP **4/4 (3 suites)**, production browser **19/19**, production frontend OFF **1/1** trên code commit `9dfd91e6658e12dc8246321f7d603460594ed7f6`. Backend/frontend typecheck/lint/build exit0;18 existing frontend lint warnings. Build test backend không bao gồm Admin bundle. Failures/retests được giữ và giải thích trong [system report](system_test_report.md); không bỏ assertions để báo PASS.
 
 PDP30 contexts,30RPS60s,500-product test catalog,Docker8CPU/7.631GiB:
 
@@ -61,8 +61,10 @@ Redis stop→200/6/105ms;PG stop→Caddy504/5057ms;start lại vàprobe200v3. Kh
 
 ## Git và vận hành
 
-Branch `recommendation-pdp` tách từ baseline đã có MVP;giữ input docs/zip của người dùng,không forcepush/reset/main merge. PR review và remoteCI trạng thái sẽ được ghi chỉ khi có URL/run thực tế. RawCSV/privatekeys/customerhash/artifacts/logs không vàoGit.
+Branch `recommendation-pdp` tách từ baseline đã có MVP;giữ input docs/zip của người dùng,không forcepush/reset/main merge. Đã mở [Draft PR #9](https://github.com/kieuquy283/EnterpriseE-commercePlatform/pull/9) vào main, chưa merge;PR bao gồm MVP nền từ recommendation, không chỉ delta PDP. [API tests trên9dfd91e](https://github.com/kieuquy283/EnterpriseE-commercePlatform/actions/runs/41786518503) đã success; [CI trên cùng SHA](https://github.com/kieuquy283/EnterpriseE-commercePlatform/actions/runs/41786518538) đã success trên verified code commit9dfd91e. Không suy run cũ thành PASS cho commit docs về sau. RawCSV/privatekeys/customerhash/artifacts/logs không vàoGit.
 
 [PDP runbook](../runbook.md) bổ sung [runbook nền](../../runbook.md):productionON8003/OFF8004,harness9006,Medusa9004;previewdev8001 vẫn là môi trường khác. Tắt frontend flag cần rebuild. Ready-run rollback không cần xóa Product/Orders/DB. API phụ thuộc native exportsMedusa2.21.2;upgrade phải retest. Dedicated Medusa agent skills/MCP không có trong session;kiểm theo installed source vàregression tests,không tự cài thêmtooling.
 
 Xác nhận runtime cuối: Medusa container Node22.22.0 (docker compose exec -T recommendation-api node --version, exit0); host Node24.15.0/Python3.10.11. Báo cáo cập nhật lúc 2026-11-04T13:28:58+07:00 (Asia/Saigon).
+
+Bản cập nhật cuối chỉ bổ sung reports/evidence cho code9dfd91e đã test vàCI success;không đổi application code.Khi commit docs được push,CI trên HEAD mới phải theo dõi riêng,không suy từ green của9dfd91e.

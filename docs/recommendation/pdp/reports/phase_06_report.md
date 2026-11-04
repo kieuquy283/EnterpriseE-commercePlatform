@@ -7,14 +7,14 @@ Chốt: 04/11/2026 13:27 Asia/Saigon. Baseline `recommendation / 6f3c8d99cac44d9
 | Check | Expected | Actual / command | Verdict |
 | --- | --- | --- | --- |
 | Scope | PDP only, reuse Home | `git diff`: không đổi Home UI/commerce code; Home candidates nguyên ranking |PASS |
-| Native validity | No custom pricing/stock | Source adapter +32 unit/4 HTTP/18 browser |PASS |
+| Native validity | No custom pricing/stock | Source adapter +32 unit/4 HTTP/19 browser |PASS |
 | Reproducibility | Data/config/source hashes | Two actual runs same candidate SHA, raw105542 articles audited |PASS |
 | Privacy | No raw CSV/customer IDs/scores/secrets | Explicit API projection/tests; data/hm ignored; SDK debug false; local-only harness |PASS targeted review |
 | Rollback | Ready version restore/flags | Real v3→v2→v3 probes; independent production frontend OFF test |PASS |
 | PDP30RPS | p95<800,error<1%,dropped0 | Final1 API732.81ms/48.83%/0;3 API1494.61ms/24.00%/5 |NOT MET |
 | Human relevance | Reviewer person20 contexts | Không có human reviewer; agent không tự chấm thay |NOT_RUN |
 | Public rights | Explicit rights metadata/images/derived | Không có bằng chứng mới |BLOCKED |
-| CI/PR/main | Reviewable PR, actual remote checks | Xem final report; không auto merge/force push |Pending review |
+| CI/PR/main | Reviewable PR, actual remote checks | [Draft PR9](https://github.com/kieuquy283/EnterpriseE-commercePlatform/pull/9);API tests9dfd91e success;fullCI cùng SHA success |Pending review;not merged |
 
 Commands cuối: `git diff --check` exit0; offline verification/Python suite exit0; backend unit/typecheck/lint/build vàHTTP exit0; browserON18/OFF1 exit0; k6 exit1 giữ nguyên. YAML/relative-link checks và Git status chốt trong final report. Các reports dẫn raw log paths ngoài Git; không giả tạo archived logs cho tool outputs chỉ quan sát trực tiếp.
 

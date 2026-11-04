@@ -29,7 +29,9 @@ Lần PDP-only đầu6/7: hidden React Suspense copy làm strict locator match2 
 
 ## Acceptance, review, rollback
 
-0..6 unique/no self/VND/label/placeholder/keyboard/mobile/API error/build flags: PASS trên production browser. Loading reuse Suspense skeleton hiện có; empty/error fallback hoặc hide. Không cần ảnh H&M mới. Backend flag404 được unit verify; frontend404 test là injected equivalent, không tuyên bố đã chạy deployment backend-OFF thực tế.
+0..6 unique/no self/VND/label/placeholder/keyboard/mobile/API error/build flags: PASS trên production browser. Loading reuse Suspense skeleton hiện có; empty/error fallback hoặc hide. Không cần ảnh H&M mới. Bổ sung xác minh backend-OFF thật bằng API tạm9007,flagfalse/WORKER_MODE=server,build rồi start cùng source:test probe404/113ms;Next production ON tạm8005 vẫn render PDP và legacy fallback qua Chromium. Tắt cả2 process tạm sau test;không thay API chính.
+
+Post-commit suite trên `9dfd91e` đạt **19/19 ON (40.5s),1/1 OFF (1.3s)**,thêm H&M cart→checkout khi Rec503. Ca mới lúc đầu fail vì helper đếm options trước khi ProductActions stream tới;helper chờ add-button visible,chọn từng nhóm option vàassert selected class rồi mớiadd. Rerun ca riêngexit0 vàfull19exit0. Không sửa nghiệp vụ ProductActions hoặc bỏ enabled assertion. Raw logs `browser-on-final-sha.log`,`browser-off-final-sha.log` tại private evidence directory.
 
 AGENT_REVIEW; human relevance NOT_RUN. Rollback OFF frontend + rebuild hoặc backend OFF; không sửa Product/Order. Phase **PASS PRIVATE UI correctness**, không chứng nhận performance/public rights.
 
