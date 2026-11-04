@@ -1,0 +1,4 @@
+services:
+  recommendation-api:
+    environment:
+      ENABLE_RECOMMENDATIONS: "false"

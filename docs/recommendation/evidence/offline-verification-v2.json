@@ -1,0 +1,11 @@
+{
+  "version": "rec-private-pilot-v2",
+  "threshold": 0.7,
+  "real_data_repeat_identical": true,
+  "hashes": {
+    "candidates-home.jsonl": "ce27266041825f0745f5f68db48250497cbdaea5b414d6623036ddd0f804e1a7",
+    "candidates-product-detail.jsonl": "6ac4503b1098fbcbc00b30abccfa0ffa251840a9dcbc70071831eec7e0343353"
+  },
+  "human_review": false,
+  "agent_review_contexts": 20
+}

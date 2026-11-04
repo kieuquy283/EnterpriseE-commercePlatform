@@ -70,6 +70,7 @@ services:
       ALLOW_INSECURE_LOCAL_SESSION_COOKIE: "true"
       NODE_ENV: production
       LOG_LEVEL: ${LOG_LEVEL:-info}
+      ENABLE_RECOMMENDATIONS: ${ENABLE_RECOMMENDATIONS:-false}
       WORKER_MODE: server
     ports: ["127.0.0.1:9000:9000"]
     depends_on:
@@ -113,6 +114,7 @@ services:
       args:
         NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY:-pk_set_after_seed}
         NEXT_PUBLIC_MEDUSA_BACKEND_URL: http://localhost:9000
+        NEXT_PUBLIC_ENABLE_RECOMMENDATIONS: ${NEXT_PUBLIC_ENABLE_RECOMMENDATIONS:-false}
     environment:
       MEDUSA_BACKEND_URL: http://backend:9000
       NEXT_PUBLIC_MEDUSA_BACKEND_URL: http://localhost:9000

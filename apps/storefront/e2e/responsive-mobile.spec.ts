@@ -8,6 +8,7 @@ import {
   fillAddress,
   selectDelivery,
   selectPaymentAndReview,
+  addCurrentProductToCart,
 } from "./checkout-flow"
 
 test.describe("Responsive & Mobile View (E2E-12)", () => {
@@ -32,8 +33,7 @@ test.describe("Responsive & Mobile View (E2E-12)", () => {
     // Click add to cart button
     const addBtn = page.locator('[data-testid="add-product-button"]').first()
     await expect(addBtn).toBeEnabled({ timeout: 10_000 })
-    await addBtn.click()
-    await page.waitForTimeout(1000)
+    await addCurrentProductToCart(page)
 
     // 3. Navigate to Cart on mobile
     await page.goto("/vn/cart")

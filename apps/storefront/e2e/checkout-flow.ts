@@ -9,8 +9,18 @@ export async function addProductToCart(page: Page, productHandle = DEFAULT_PRODU
   }
   const addBtn = page.locator('[data-testid="add-product-button"]').first()
   await expect(addBtn).toBeEnabled({ timeout: 10_000 })
-  await addBtn.click()
-  await page.waitForTimeout(1500)
+  await addCurrentProductToCart(page)
+}
+
+export async function addCurrentProductToCart(page: Page) {
+  const addBtn = page.locator('[data-testid="add-product-button"]').first()
+  const [response] = await Promise.all([
+    page.waitForResponse((result) => result.request().method() === "POST" && Boolean(result.request().headers()["next-action"]) && result.url().includes("/products/")),
+    addBtn.click(),
+  ])
+  expect(response.ok()).toBeTruthy()
+  await response.finished()
+  await expect(page.getByTestId("nav-cart-link").first()).toContainText(/Cart \([1-9]\d*\)/)
 }
 
 export async function goToCheckout(page: Page) {

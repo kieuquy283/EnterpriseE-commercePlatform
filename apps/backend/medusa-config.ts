@@ -18,6 +18,9 @@ const workerMode =
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
+    ...(process.env.NODE_ENV === "test"
+      ? { databaseDriverOptions: { connection: { ssl: false }, pool: { min: 0, max: 5 } } }
+      : {}),
     redisUrl,
     workerMode,
     ...(process.env.ALLOW_INSECURE_LOCAL_SESSION_COOKIE === "true"
@@ -37,6 +40,7 @@ module.exports = defineConfig({
     disable: process.env.ADMIN_DISABLED === "true",
   },
   modules: [
+    { resolve: "./src/modules/recommendation" },
     ...(process.env.NODE_ENV === "production"
       ? []
       : [{

@@ -1,0 +1,93 @@
+services:
+  recommendation-test-redis:
+    image: redis:7-alpine
+    networks: [commerce]
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  recommendation-scale-proxy:
+    image: caddy:2-alpine
+    profiles: [scale]
+    volumes: ["./recommendation-scale-test.Caddyfile:/etc/caddy/Caddyfile:ro"]
+    ports: ["127.0.0.1:9005:9005"]
+    networks: [commerce]
+    depends_on: [recommendation-api, recommendation-api-2, recommendation-api-3]
+  recommendation-proxy:
+    image: caddy:2-alpine
+    volumes: ["./recommendation-test.Caddyfile:/etc/caddy/Caddyfile:ro"]
+    ports: ["127.0.0.1:9004:9004"]
+    networks: [commerce]
+    depends_on: [recommendation-api]
+  recommendation-k6:
+    image: grafana/k6:1.0.0
+    profiles: [load]
+    environment:
+      BASE_URL: http://recommendation-api:9002
+      TEST_CONTEXT: /context.json
+      PUBLISHABLE_KEY: ${RECOMMENDATION_TEST_KEY:-}
+      REGION_ID: ${RECOMMENDATION_TEST_REGION:-}
+      RPS: ${RECOMMENDATION_TEST_RPS:-30}
+      DURATION: ${RECOMMENDATION_TEST_DURATION:-60s}
+    volumes:
+      - ../load:/scripts:ro
+      - ../data/hm/processed/recommendation-test-context.json:/context.json:ro
+      - ../data/hm/processed/k6:/results
+    command: ["run", "--summary-export=/results/recommendations-summary.json", "/scripts/recommendations.js"]
+    networks: [commerce]
+  recommendation-api: &recommendation-api-base
+    image: commerce-backend:local
+    working_dir: /app/apps/backend
+    command: ["node", "/app/node_modules/@medusajs/cli/cli.js", "start", "-p", "9002"]
+    environment:
+      NODE_ENV: test
+      ENABLE_RECOMMENDATIONS: ${RECOMMENDATION_TEST_ENABLE:-true}
+      RECOMMENDATION_MAX_CONCURRENCY: "8"
+      ADMIN_DISABLED: "true"
+      REDIS_URL: redis://recommendation-test-redis:6379
+      DATABASE_URL: postgresql://recommendation_test:local-test-only@recommendation-test-postgres:5432/recommendation_test?sslmode=disable
+      JWT_SECRET: recommendation-test-only-jwt
+      COOKIE_SECRET: recommendation-test-only-cookie
+      STORE_CORS: http://localhost:8001
+      AUTH_CORS: http://localhost:8001
+    volumes:
+      - ../apps/backend/src:/app/apps/backend/src
+      - ../apps/backend/medusa-config.ts:/app/apps/backend/medusa-config.ts:ro
+      - ../apps/backend/integration-tests:/app/apps/backend/integration-tests:ro
+      - ../apps/backend/jest.config.js:/app/apps/backend/jest.config.js:ro
+      - ../scripts/hm:/app/scripts/hm:ro
+      - ../data/hm/test-serving/processed:/app/data/hm/processed
+    ports: ["127.0.0.1:9002:9002"]
+    networks: [commerce]
+    depends_on:
+      recommendation-test-postgres: { condition: service_healthy }
+      recommendation-test-redis: { condition: service_healthy }
+  recommendation-api-2:
+    <<: *recommendation-api-base
+    profiles: [scale]
+    ports: []
+  recommendation-api-3:
+    <<: *recommendation-api-base
+    profiles: [scale]
+    ports: []
+  recommendation-test-postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: recommendation_test
+      POSTGRES_PASSWORD: local-test-only
+      POSTGRES_DB: recommendation_test
+    command: ["postgres", "-c", "max_connections=200"]
+    ports: ["127.0.0.1:5434:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U recommendation_test -d recommendation_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks: [commerce]
+    mem_limit: 1g
+networks:
+  commerce:
+    external: true
+    name: ${RECOMMENDATION_COMMERCE_NETWORK:-e-commerce_default}

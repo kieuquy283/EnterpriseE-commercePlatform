@@ -2,6 +2,7 @@ import { listProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
 import { HttpTypes } from "@medusajs/types"
 import Product from "../product-preview"
+import { getRecommendations } from "@lib/data/recommendations"
 
 type RelatedProductsProps = {
   product: HttpTypes.StoreProduct
@@ -16,6 +17,21 @@ export default async function RelatedProducts({
 
   if (!region) {
     return null
+  }
+
+  const recommendations = await getRecommendations(region.id, product.id)
+  if (recommendations?.products.length) {
+    return (
+      <section className="product-page-constraint" aria-labelledby="similar-products-heading" data-testid="similar-products">
+        <h2 id="similar-products-heading" className="text-2xl-regular mb-8">{recommendations.strategy === "hm_metadata_similarity" ? "Similar products" : "You may also like"}</h2>
+        <p className="mb-6 text-ui-fg-subtle">{recommendations.strategy === "hm_metadata_similarity" ? "Based on product attributes." : "Selected products from the available catalog."}</p>
+        <ul className="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-6">
+          {recommendations.products.filter((item) => item.id !== product.id).slice(0, 6).map((item) => (
+            <li key={item.id}><Product region={region} product={item} /></li>
+          ))}
+        </ul>
+      </section>
+    )
   }
 
   // edit this function to define your related products logic

@@ -1,0 +1,44 @@
+[
+  {
+    "name": "recommendation-test-recommendation-k6-run-dcd38950b986",
+    "cpu": "12.32%",
+    "memory": "23.47MiB / 7.631GiB",
+    "pids": "13"
+  },
+  {
+    "name": "recommendation-test-recommendation-scale-proxy-1",
+    "cpu": "5.00%",
+    "memory": "17.31MiB / 7.631GiB",
+    "pids": "11"
+  },
+  {
+    "name": "recommendation-test-recommendation-api-1",
+    "cpu": "144.42%",
+    "memory": "943.6MiB / 7.631GiB",
+    "pids": "19"
+  },
+  {
+    "name": "recommendation-test-recommendation-api-3-1",
+    "cpu": "148.19%",
+    "memory": "975.5MiB / 7.631GiB",
+    "pids": "19"
+  },
+  {
+    "name": "recommendation-test-recommendation-api-2-1",
+    "cpu": "149.28%",
+    "memory": "843.4MiB / 7.631GiB",
+    "pids": "19"
+  },
+  {
+    "name": "recommendation-test-recommendation-proxy-1",
+    "cpu": "0.00%",
+    "memory": "10.8MiB / 7.631GiB",
+    "pids": "11"
+  },
+  {
+    "name": "recommendation-test-recommendation-test-postgres-1",
+    "cpu": "56.99%",
+    "memory": "75.82MiB / 1GiB",
+    "pids": "21"
+  }
+]

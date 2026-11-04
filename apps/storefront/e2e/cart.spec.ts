@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test"
 import { DEFAULT_PRODUCT_HANDLE, DEFAULT_PRODUCT_TITLE } from "./test-helpers"
+import { addCurrentProductToCart } from "./checkout-flow"
 
 test.describe("Cart Operations (E2E-02 & E2E-10)", () => {
   test("E2E-10: Displays empty cart state and returns 404 for checkout without cart", async ({ page }) => {
@@ -27,10 +28,7 @@ test.describe("Cart Operations (E2E-02 & E2E-10)", () => {
 
     const addProductBtn = page.locator('[data-testid="add-product-button"]').first()
     await expect(addProductBtn).toBeEnabled()
-    await addProductBtn.click()
-
-    // Wait for button to finish loading
-    await page.waitForTimeout(2000)
+    await addCurrentProductToCart(page)
 
     // 2. Navigate to /vn/cart
     await page.goto("/vn/cart")

@@ -103,7 +103,8 @@ test.describe("Checkout COD Flow (E2E-03, E2E-05, E2E-06)", () => {
     await expect(page).toHaveURL(/checkout/)
     expect(page.url()).not.toContain("/confirmed")
 
-    const errorMessage = page.locator('[data-testid="manual-payment-error-message"]')
+    const errorMessage = page.locator('[data-testid="payment-error-message"]')
     await expect(errorMessage).toBeVisible({ timeout: 10_000 })
+    await expect(errorMessage).toContainText("Simulated order placement error")
   })
 })

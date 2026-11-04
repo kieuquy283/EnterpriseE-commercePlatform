@@ -1,0 +1,14 @@
+{
+  "reviewer_type": "agent_metadata_spot_check",
+  "human_review": false,
+  "sample_contexts": 20,
+  "distinct_product_types": 20,
+  "min_score": 0.7,
+  "nonempty_sample_contexts": 16,
+  "sample_contexts_with_six": 7,
+  "reviewed_neighbor_rows": 66,
+  "same_product_type_neighbors": 66,
+  "exact_category_baseline_contexts_with_six": 8,
+  "metric_caveat": "Taxonomy agreement is a diagnostic, not human relevance ground truth; exact-category baseline optimizes this property by definition.",
+  "decision": "Private experiment only; human quality and dataset rights remain prerequisites for public release."
+}

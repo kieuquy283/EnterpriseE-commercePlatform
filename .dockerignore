@@ -18,3 +18,5 @@ data/hm
 !**/.env.example
 **/coverage
 **/.turbo
+**/test-results
+**/playwright-report
