@@ -1,0 +1,52 @@
+{
+  "sequence": 27,
+  "case_id": "W4-04",
+  "participant": "A",
+  "method": "POST",
+  "url": "http://127.0.0.1:9000/store/payment-collections/pay_col_01M6M1A6QPTBKXQQH5V9JJ2PJ8/payment-sessions",
+  "started_at": "2026-11-04T19:41:57.917Z",
+  "finished_at": "2026-11-04T19:41:58.001Z",
+  "http_status": 200,
+  "response_headers": {
+    "content_type": "application/json; charset=utf-8",
+    "date": "Wed, 04 Nov 2026 19:41:58 GMT"
+  },
+  "response_file": "W4-04/http/027-response.json",
+  "request_body": {
+    "provider_id": "pp_system_default",
+    "data": {
+      "week4_outcome": "success"
+    }
+  },
+  "response_body": {
+    "payment_collection": {
+      "id": "pay_col_01M6M1A6QPTBKXQQH5V9JJ2PJ8",
+      "currency_code": "vnd",
+      "amount": 279000,
+      "payment_sessions": [
+        {
+          "id": "payses_01M6M1A6TNG1TQ71F99YS2WEN6",
+          "currency_code": "vnd",
+          "provider_id": "pp_system_default",
+          "data": {
+            "week4_outcome": "success"
+          },
+          "context": {},
+          "status": "pending",
+          "authorized_at": null,
+          "payment_collection_id": "pay_col_01M6M1A6QPTBKXQQH5V9JJ2PJ8",
+          "payment": null,
+          "metadata": {},
+          "raw_amount": {
+            "value": "279000",
+            "precision": 20
+          },
+          "created_at": "2026-11-04T19:41:57.973Z",
+          "updated_at": "2026-11-04T19:41:57.973Z",
+          "deleted_at": null,
+          "amount": 279000
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "recorded_at": "2026-11-04T19:48:13.838Z",
+  "scope": "Backend and week4 validation tools",
+  "checks": [
+    {
+      "command": "npm run typecheck --workspace @dtc/backend",
+      "exit_code": 0,
+      "result": "Pass"
+    },
+    {
+      "command": "npm run test:unit -- src/scripts/week4-inventory/__tests__/validation.unit.spec.ts",
+      "cwd": "apps/backend",
+      "exit_code": 0,
+      "result": "Pass",
+      "tests_passed": 17,
+      "tests_total": 17
+    },
+    {
+      "command": "npm run build --workspace @dtc/backend",
+      "exit_code": 0,
+      "result": "Pass",
+      "lint": {
+        "errors": 0,
+        "warnings": 0
+      },
+      "backend_seconds": 23.1,
+      "admin_seconds": 65.6
+    }
+  ],
+  "source_archive_matches": true,
+  "sources": [
+    {
+      "file": "apps/backend/src/scripts/check-week4-inventory.ts",
+      "current_sha256": "39e3ae71499c2b5fc53527cc0eea73f7c67fbb3ed7ad3f34ece81c73b12ff3d8",
+      "archived_sha256": "39e3ae71499c2b5fc53527cc0eea73f7c67fbb3ed7ad3f34ece81c73b12ff3d8"
+    },
+    {
+      "file": "apps/backend/src/scripts/inventory-order/snapshot.ts",
+      "current_sha256": "a5c579832428259596c2b7974ec5bfb7adbe2a47851b92df856afdb03a413258",
+      "archived_sha256": "a5c579832428259596c2b7974ec5bfb7adbe2a47851b92df856afdb03a413258"
+    },
+    {
+      "file": "apps/backend/src/scripts/week4-inventory/validation.ts",
+      "current_sha256": "5bdfd872e9b287c42c787099a4fd15d36fc66f1e4d46b82cce1aeb2be83000e6",
+      "archived_sha256": "5bdfd872e9b287c42c787099a4fd15d36fc66f1e4d46b82cce1aeb2be83000e6"
+    },
+    {
+      "file": "apps/backend/src/modules/week4-payment/service.ts",
+      "current_sha256": "2b96121c3197a925c9ced878c08864fa47d0b3df25752655e52e71a8b6b2605f",
+      "archived_sha256": "2b96121c3197a925c9ced878c08864fa47d0b3df25752655e52e71a8b6b2605f"
+    },
+    {
+      "file": "apps/backend/src/modules/week4-payment/index.ts",
+      "current_sha256": "e076f8076bc4a7bd157d70a50320bf39b21fe654c9fbdf60e4ecefca6f89b901",
+      "archived_sha256": "e076f8076bc4a7bd157d70a50320bf39b21fe654c9fbdf60e4ecefca6f89b901"
+    }
+  ]
+}

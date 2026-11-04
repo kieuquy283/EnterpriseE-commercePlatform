@@ -1,0 +1,34 @@
+W4-03 — Checkout thiếu shipping
+
+Kết quả cuối: PASS (11/11 kiểm tra).
+Run thực thi: auto-20261105-suite-01.
+Run đối chiếu cuối: auto-20261105-verify-01.
+SKU: W4-INVENTORY-TEST; quantity của cart kiểm tra: 1.
+Cart ID: cart_01M6M1A2VMG5K3V1DVMRA76HHQ.
+Item: iitem_01M6BG5WYG10RW1DN1Q5RWJDM0; kho: sloc_01M5555A4F96W5XBT8FJGE2EG4.
+Provider: pp_system_default.
+
+Baseline trước Complete: 4/2/2 (stocked/reserved/available).
+Thời gian baseline: 2026-11-04T19:41:55.239Z (02:41:55 5/11/2026 UTC+07) đến 2026-11-04T19:41:55.312Z.
+Sau response/compensation: 4/2/2.
+Thời gian sau: 2026-11-04T19:41:55.706Z (02:41:55 5/11/2026 UTC+07) đến 2026-11-04T19:41:55.796Z.
+Delta: stocked=0, reserved=0, available=0.
+
+HTTP thực tế: 400; type=invalid_data.
+Message: No shipping method selected but the cart contains items that require shipping.
+Request bắt đầu: 2026-11-04T19:41:55.323Z (02:41:55 5/11/2026 UTC+07).
+Response ghi nhận: 2026-11-04T19:41:55.697Z (02:41:55 5/11/2026 UTC+07).
+HTTP exchange gốc: ../W4-03/http/019-response.json.
+
+Cart completed_at sau lỗi: null.
+Active Cart–Order links: [].
+Số active Order: 4 -> 4.
+Reservation trước: [{"id":"resitem_01M6BQDX722CH5K78236NA4WBJ","inventory_item_id":"iitem_01M6BG5WYG10RW1DN1Q5RWJDM0","location_id":"sloc_01M5555A4F96W5XBT8FJGE2EG4","line_item_id":"ordli_01M6BQDX2DF1Q95VFKD6FCG8G0","quantity":2,"allow_backorder":false,"created_at":"2026-11-01T14:15:18.001Z","updated_at":"2026-11-01T14:15:18.001Z"}].
+Reservation sau: [{"id":"resitem_01M6BQDX722CH5K78236NA4WBJ","inventory_item_id":"iitem_01M6BG5WYG10RW1DN1Q5RWJDM0","location_id":"sloc_01M5555A4F96W5XBT8FJGE2EG4","line_item_id":"ordli_01M6BQDX2DF1Q95VFKD6FCG8G0","quantity":2,"allow_backorder":false,"created_at":"2026-11-01T14:15:18.001Z","updated_at":"2026-11-01T14:15:18.001Z"}].
+Payment sessions sau: [{"id":"payses_01M6M1A44607XS1ZE5TPC12SH7","payment_collection_id":"pay_col_01M6M1A414V0D4Y82XX19RKE6E","provider_id":"pp_system_default","currency_code":"vnd","amount":249000,"status":"pending","authorized_at":null}].
+Không có capture/refund mới trong snapshot của attempt.
+
+Validation cuối: ../../verification-20261105/W4-03/validation.json.
+Snapshot/HTTP gốc giữ nguyên. Các lần đọc module tuần tự, không phải snapshot nguyên tử.
+
+Kết luận: lỗi checkout xảy ra đúng nhánh mong đợi và inventory/reservation được bảo toàn theo baseline. Không reset tồn, xóa reservation hoặc sửa dữ liệu để ép khớp.

@@ -1,0 +1,8 @@
+{
+  "run_id": "auto-20261105-suite-01",
+  "state": "W4-04_cart_created",
+  "active_case": "W4-04",
+  "cart_id": "cart_01M6M1A6XFE6Y3FWYKSWXTZZ66",
+  "occurred_at": "2026-11-04T19:42:02.023Z",
+  "message": "W4-04 failed: expected_checkout_error"
+}

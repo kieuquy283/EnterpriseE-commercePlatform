@@ -1,0 +1,557 @@
+[
+  {
+    "sequence": 1,
+    "case_id": "preflight",
+    "participant": "",
+    "method": "GET",
+    "url": "http://127.0.0.1:9000/health",
+    "started_at": "2026-11-04T19:41:48.639Z",
+    "finished_at": "2026-11-04T19:41:48.721Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "text/html; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:48 GMT"
+    },
+    "response_file": "preflight/http/001-response.json"
+  },
+  {
+    "sequence": 2,
+    "case_id": "preflight",
+    "participant": "",
+    "method": "GET",
+    "url": "http://127.0.0.1:9000/store/products?handle=week4-inventory-test&region_id=reg_01M5555A2ZAPR5SYW3THXG2SVC&fields=%2Bvariants.calculated_price",
+    "started_at": "2026-11-04T19:41:48.857Z",
+    "finished_at": "2026-11-04T19:41:49.069Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:49 GMT"
+    },
+    "response_file": "preflight/http/002-response.json"
+  },
+  {
+    "sequence": 3,
+    "case_id": "preflight",
+    "participant": "",
+    "method": "GET",
+    "url": "http://127.0.0.1:9000/store/payment-providers?region_id=reg_01M5555A2ZAPR5SYW3THXG2SVC",
+    "started_at": "2026-11-04T19:41:49.077Z",
+    "finished_at": "2026-11-04T19:41:49.111Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:49 GMT"
+    },
+    "response_file": "preflight/http/003-response.json"
+  },
+  {
+    "sequence": 4,
+    "case_id": "W4-02",
+    "participant": "",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts",
+    "started_at": "2026-11-04T19:41:49.552Z",
+    "finished_at": "2026-11-04T19:41:49.976Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:49 GMT"
+    },
+    "response_file": "W4-02/http/004-response.json"
+  },
+  {
+    "sequence": 5,
+    "case_id": "W4-02",
+    "participant": "",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M19YR4YJ2JRRRNQ4P81JEA/line-items",
+    "started_at": "2026-11-04T19:41:49.984Z",
+    "finished_at": "2026-11-04T19:41:50.520Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:50 GMT"
+    },
+    "response_file": "W4-02/http/005-response.json"
+  },
+  {
+    "sequence": 6,
+    "case_id": "W4-02",
+    "participant": "",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M19YR4YJ2JRRRNQ4P81JEA",
+    "started_at": "2026-11-04T19:41:50.525Z",
+    "finished_at": "2026-11-04T19:41:51.160Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:51 GMT"
+    },
+    "response_file": "W4-02/http/006-response.json"
+  },
+  {
+    "sequence": 7,
+    "case_id": "W4-02",
+    "participant": "",
+    "method": "GET",
+    "url": "http://127.0.0.1:9000/store/shipping-options?cart_id=cart_01M6M19YR4YJ2JRRRNQ4P81JEA",
+    "started_at": "2026-11-04T19:41:51.166Z",
+    "finished_at": "2026-11-04T19:41:51.352Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:51 GMT"
+    },
+    "response_file": "W4-02/http/007-response.json"
+  },
+  {
+    "sequence": 8,
+    "case_id": "W4-02",
+    "participant": "",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M19YR4YJ2JRRRNQ4P81JEA/shipping-methods",
+    "started_at": "2026-11-04T19:41:51.358Z",
+    "finished_at": "2026-11-04T19:41:52.262Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:52 GMT"
+    },
+    "response_file": "W4-02/http/008-response.json"
+  },
+  {
+    "sequence": 9,
+    "case_id": "W4-02",
+    "participant": "",
+    "method": "GET",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M19YR4YJ2JRRRNQ4P81JEA",
+    "started_at": "2026-11-04T19:41:52.268Z",
+    "finished_at": "2026-11-04T19:41:52.341Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:52 GMT"
+    },
+    "response_file": "W4-02/http/009-response.json"
+  },
+  {
+    "sequence": 10,
+    "case_id": "W4-02",
+    "participant": "",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/payment-collections",
+    "started_at": "2026-11-04T19:41:52.347Z",
+    "finished_at": "2026-11-04T19:41:52.468Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:52 GMT"
+    },
+    "response_file": "W4-02/http/010-response.json"
+  },
+  {
+    "sequence": 11,
+    "case_id": "W4-02",
+    "participant": "",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/payment-collections/pay_col_01M6M1A1CVN41HW6K7DD9D4HMA/payment-sessions",
+    "started_at": "2026-11-04T19:41:52.473Z",
+    "finished_at": "2026-11-04T19:41:52.576Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:52 GMT"
+    },
+    "response_file": "W4-02/http/011-response.json"
+  },
+  {
+    "sequence": 12,
+    "case_id": "W4-02",
+    "participant": "",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M19YR4YJ2JRRRNQ4P81JEA/complete",
+    "started_at": "2026-11-04T19:41:52.678Z",
+    "finished_at": "2026-11-04T19:41:53.656Z",
+    "http_status": 400,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:53 GMT"
+    },
+    "response_file": "W4-02/http/012-response.json"
+  },
+  {
+    "sequence": 13,
+    "case_id": "W4-03",
+    "participant": "",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts",
+    "started_at": "2026-11-04T19:41:53.824Z",
+    "finished_at": "2026-11-04T19:41:54.070Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:54 GMT"
+    },
+    "response_file": "W4-03/http/013-response.json"
+  },
+  {
+    "sequence": 14,
+    "case_id": "W4-03",
+    "participant": "",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A2VMG5K3V1DVMRA76HHQ/line-items",
+    "started_at": "2026-11-04T19:41:54.081Z",
+    "finished_at": "2026-11-04T19:41:54.460Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:54 GMT"
+    },
+    "response_file": "W4-03/http/014-response.json"
+  },
+  {
+    "sequence": 15,
+    "case_id": "W4-03",
+    "participant": "",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A2VMG5K3V1DVMRA76HHQ",
+    "started_at": "2026-11-04T19:41:54.467Z",
+    "finished_at": "2026-11-04T19:41:54.967Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:54 GMT"
+    },
+    "response_file": "W4-03/http/015-response.json"
+  },
+  {
+    "sequence": 16,
+    "case_id": "W4-03",
+    "participant": "",
+    "method": "GET",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A2VMG5K3V1DVMRA76HHQ",
+    "started_at": "2026-11-04T19:41:54.975Z",
+    "finished_at": "2026-11-04T19:41:55.045Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:55 GMT"
+    },
+    "response_file": "W4-03/http/016-response.json"
+  },
+  {
+    "sequence": 17,
+    "case_id": "W4-03",
+    "participant": "",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/payment-collections",
+    "started_at": "2026-11-04T19:41:55.053Z",
+    "finished_at": "2026-11-04T19:41:55.147Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:55 GMT"
+    },
+    "response_file": "W4-03/http/017-response.json"
+  },
+  {
+    "sequence": 18,
+    "case_id": "W4-03",
+    "participant": "",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/payment-collections/pay_col_01M6M1A414V0D4Y82XX19RKE6E/payment-sessions",
+    "started_at": "2026-11-04T19:41:55.152Z",
+    "finished_at": "2026-11-04T19:41:55.232Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:55 GMT"
+    },
+    "response_file": "W4-03/http/018-response.json"
+  },
+  {
+    "sequence": 19,
+    "case_id": "W4-03",
+    "participant": "",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A2VMG5K3V1DVMRA76HHQ/complete",
+    "started_at": "2026-11-04T19:41:55.323Z",
+    "finished_at": "2026-11-04T19:41:55.697Z",
+    "http_status": 400,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:55 GMT"
+    },
+    "response_file": "W4-03/http/019-response.json"
+  },
+  {
+    "sequence": 20,
+    "case_id": "W4-04",
+    "participant": "A",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts",
+    "started_at": "2026-11-04T19:41:55.844Z",
+    "finished_at": "2026-11-04T19:41:56.037Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:56 GMT"
+    },
+    "response_file": "W4-04/http/020-response.json"
+  },
+  {
+    "sequence": 21,
+    "case_id": "W4-04",
+    "participant": "A",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A4SWS7X4QQKQPRRT8PJV/line-items",
+    "started_at": "2026-11-04T19:41:56.046Z",
+    "finished_at": "2026-11-04T19:41:56.436Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:56 GMT"
+    },
+    "response_file": "W4-04/http/021-response.json"
+  },
+  {
+    "sequence": 22,
+    "case_id": "W4-04",
+    "participant": "A",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A4SWS7X4QQKQPRRT8PJV",
+    "started_at": "2026-11-04T19:41:56.442Z",
+    "finished_at": "2026-11-04T19:41:56.903Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:56 GMT"
+    },
+    "response_file": "W4-04/http/022-response.json"
+  },
+  {
+    "sequence": 23,
+    "case_id": "W4-04",
+    "participant": "A",
+    "method": "GET",
+    "url": "http://127.0.0.1:9000/store/shipping-options?cart_id=cart_01M6M1A4SWS7X4QQKQPRRT8PJV",
+    "started_at": "2026-11-04T19:41:56.912Z",
+    "finished_at": "2026-11-04T19:41:57.056Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:57 GMT"
+    },
+    "response_file": "W4-04/http/023-response.json"
+  },
+  {
+    "sequence": 24,
+    "case_id": "W4-04",
+    "participant": "A",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A4SWS7X4QQKQPRRT8PJV/shipping-methods",
+    "started_at": "2026-11-04T19:41:57.064Z",
+    "finished_at": "2026-11-04T19:41:57.737Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:57 GMT"
+    },
+    "response_file": "W4-04/http/024-response.json"
+  },
+  {
+    "sequence": 25,
+    "case_id": "W4-04",
+    "participant": "A",
+    "method": "GET",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A4SWS7X4QQKQPRRT8PJV",
+    "started_at": "2026-11-04T19:41:57.745Z",
+    "finished_at": "2026-11-04T19:41:57.812Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:57 GMT"
+    },
+    "response_file": "W4-04/http/025-response.json"
+  },
+  {
+    "sequence": 26,
+    "case_id": "W4-04",
+    "participant": "A",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/payment-collections",
+    "started_at": "2026-11-04T19:41:57.821Z",
+    "finished_at": "2026-11-04T19:41:57.910Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:57 GMT"
+    },
+    "response_file": "W4-04/http/026-response.json"
+  },
+  {
+    "sequence": 27,
+    "case_id": "W4-04",
+    "participant": "A",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/payment-collections/pay_col_01M6M1A6QPTBKXQQH5V9JJ2PJ8/payment-sessions",
+    "started_at": "2026-11-04T19:41:57.917Z",
+    "finished_at": "2026-11-04T19:41:58.001Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:58 GMT"
+    },
+    "response_file": "W4-04/http/027-response.json"
+  },
+  {
+    "sequence": 28,
+    "case_id": "W4-04",
+    "participant": "B",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts",
+    "started_at": "2026-11-04T19:41:58.009Z",
+    "finished_at": "2026-11-04T19:41:58.200Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:58 GMT"
+    },
+    "response_file": "W4-04/http/028-response.json"
+  },
+  {
+    "sequence": 29,
+    "case_id": "W4-04",
+    "participant": "B",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A6XFE6Y3FWYKSWXTZZ66/line-items",
+    "started_at": "2026-11-04T19:41:58.209Z",
+    "finished_at": "2026-11-04T19:41:58.546Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:58 GMT"
+    },
+    "response_file": "W4-04/http/029-response.json"
+  },
+  {
+    "sequence": 30,
+    "case_id": "W4-04",
+    "participant": "B",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A6XFE6Y3FWYKSWXTZZ66",
+    "started_at": "2026-11-04T19:41:58.554Z",
+    "finished_at": "2026-11-04T19:41:59.015Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:59 GMT"
+    },
+    "response_file": "W4-04/http/030-response.json"
+  },
+  {
+    "sequence": 31,
+    "case_id": "W4-04",
+    "participant": "B",
+    "method": "GET",
+    "url": "http://127.0.0.1:9000/store/shipping-options?cart_id=cart_01M6M1A6XFE6Y3FWYKSWXTZZ66",
+    "started_at": "2026-11-04T19:41:59.024Z",
+    "finished_at": "2026-11-04T19:41:59.155Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:59 GMT"
+    },
+    "response_file": "W4-04/http/031-response.json"
+  },
+  {
+    "sequence": 32,
+    "case_id": "W4-04",
+    "participant": "B",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A6XFE6Y3FWYKSWXTZZ66/shipping-methods",
+    "started_at": "2026-11-04T19:41:59.163Z",
+    "finished_at": "2026-11-04T19:41:59.841Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:59 GMT"
+    },
+    "response_file": "W4-04/http/032-response.json"
+  },
+  {
+    "sequence": 33,
+    "case_id": "W4-04",
+    "participant": "B",
+    "method": "GET",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A6XFE6Y3FWYKSWXTZZ66",
+    "started_at": "2026-11-04T19:41:59.848Z",
+    "finished_at": "2026-11-04T19:41:59.919Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:41:59 GMT"
+    },
+    "response_file": "W4-04/http/033-response.json"
+  },
+  {
+    "sequence": 34,
+    "case_id": "W4-04",
+    "participant": "B",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/payment-collections",
+    "started_at": "2026-11-04T19:41:59.930Z",
+    "finished_at": "2026-11-04T19:42:00.043Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:42:00 GMT"
+    },
+    "response_file": "W4-04/http/034-response.json"
+  },
+  {
+    "sequence": 35,
+    "case_id": "W4-04",
+    "participant": "B",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/payment-collections/pay_col_01M6M1A8SRAG1NHAYNAZBKR0M9/payment-sessions",
+    "started_at": "2026-11-04T19:42:00.051Z",
+    "finished_at": "2026-11-04T19:42:00.231Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:42:00 GMT"
+    },
+    "response_file": "W4-04/http/035-response.json"
+  },
+  {
+    "sequence": 36,
+    "case_id": "W4-04",
+    "participant": "A",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A4SWS7X4QQKQPRRT8PJV/complete",
+    "started_at": "2026-11-04T19:42:00.366Z",
+    "finished_at": "2026-11-04T19:42:00.968Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:42:00 GMT"
+    },
+    "response_file": "W4-04/http/036-response.json"
+  },
+  {
+    "sequence": 37,
+    "case_id": "W4-04",
+    "participant": "B",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A6XFE6Y3FWYKSWXTZZ66/complete",
+    "started_at": "2026-11-04T19:42:01.194Z",
+    "finished_at": "2026-11-04T19:42:01.825Z",
+    "http_status": 400,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:42:01 GMT"
+    },
+    "response_file": "W4-04/http/037-response.json"
+  }
+]

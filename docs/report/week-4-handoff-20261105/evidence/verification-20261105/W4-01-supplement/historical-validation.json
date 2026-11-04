@@ -1,0 +1,52 @@
+{
+  "case_id": "W4-01",
+  "historical_run_id": "week4-manual-01",
+  "assessed_at": "2026-11-04T19:46:55.311Z",
+  "all_passed": true,
+  "passed": 10,
+  "total": 10,
+  "checks": [
+    {
+      "name": "complete_and_readbacks_same_order",
+      "passed": true
+    },
+    {
+      "name": "sku_quantity_price_amount",
+      "passed": true
+    },
+    {
+      "name": "inventory_timeline",
+      "passed": true
+    },
+    {
+      "name": "reservation_pages_complete",
+      "passed": true
+    },
+    {
+      "name": "reservation_order_line_item_and_quantity",
+      "passed": true
+    },
+    {
+      "name": "capture_preserves_reservation",
+      "passed": true
+    },
+    {
+      "name": "authorized_before_capture",
+      "passed": true
+    },
+    {
+      "name": "full_capture_matches_payment",
+      "passed": true
+    },
+    {
+      "name": "not_fulfilled",
+      "passed": true
+    },
+    {
+      "name": "current_cart_order_readback_confirms_historical_order",
+      "passed": true
+    }
+  ],
+  "historical_evidence": "C:/demo1/EnterpriseE-commercePlatform/docs/report/evidence/inventory-week4-20261101-01/W4-01",
+  "current_readback_scope": "Current link/configuration verification, not reconstructed historical request metadata"
+}

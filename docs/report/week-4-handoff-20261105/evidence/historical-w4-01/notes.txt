@@ -1,0 +1,199 @@
+W4-01 — Checkout thành công, authorize và capture payment
+
+Kết quả: PASS trong phạm vi bộ bằng chứng đã cung cấp.
+Ngày sự kiện: 01/11/2026. Múi giờ trình bày: UTC+07 (Asia/Saigon).
+Run ID: week4-manual-01, lấy từ metadata.sample_run của Admin Order.
+Test case: W4-01; suite: week4_inventory_edge_cases.
+Thư mục evidence: ./
+
+1. Mục tiêu và phạm vi
+
+Kiểm tra một lần checkout mua 2 sản phẩm tạo Order và reservation đúng lượng;
+payment được authorized sau checkout và được capture đủ số tiền sau đó.
+Capture không làm trừ thêm tồn khả dụng hoặc tạo thêm reservation.
+Ca này chưa thực hiện fulfillment, cancellation, retry hay checkout đồng thời.
+Kết luận dựa trên đối chiếu 13 file JSON đã lưu, không chạy lại giao dịch.
+
+2. Fixture và các ID đã xác minh
+
+- SKU: W4-INVENTORY-TEST.
+- Variant ID: variant_01M6BG5WXFHR6XZKDHRZCENMNW.
+- Quantity: 2; unit_price: 249000 VND.
+- manage_inventory=true, allow_backorder=false, requires_shipping=true,
+  đọc từ variant/item trong response Order.
+- Inventory item ID: iitem_01M6BG5WYG10RW1DN1Q5RWJDM0.
+- Inventory level ID: ilev_01M6BG8PDBJFPWTSJK3JG0E7MA.
+- Location ID: sloc_01M5555A4F96W5XBT8FJGE2EG4.
+- Region ID: reg_01M5555A2ZAPR5SYW3THXG2SVC.
+- Shipping method: Standard delivery, amount=30000 VND.
+- Shipping option ID: so_01M5555A7RBPXR2DQFGJV32EGR.
+- Order ID: order_01M6BQDX2ADNG6PFVZ8GFYG3A5.
+- Order display_id=4, version=1.
+- OrderLineItem ID: ordli_01M6BQDX2DF1Q95VFKD6FCG8G0.
+- OrderItem detail ID: orditem_01M6BQDX2E8VQ47C67QG1QQ9D4.
+- Reservation ID: resitem_01M6BQDX722CH5K78236NA4WBJ.
+- Payment provider: pp_system_default.
+- Payment collection ID: pay_col_01M6BPD7B3GEVRPRT3DK8PQKDB.
+- Payment session ID: payses_01M6BQ03DVF9R8M2RGCCDE2VBQ.
+- Payment ID: pay_01M6BQDX9YKMVRC3ZCRTT01A78.
+- Capture ID: capt_01M6BRHZW57WE3KPM7MN9QTZ89.
+- Cart ID: cart_01M6BMW62AQK90ATJ2PY9FAXDC
+
+3. Inventory Before/After
+
+Các mốc T0/T1/T2/T3 được hiểu theo tên file do người thực hiện gán.
+Các response inventory đều chỉ có một level, cùng item/level/location ở mục 2.
+
+Mốc | Ý nghĩa                         | Stocked | Reserved | Incoming | Available | Số reservation
+T0  | Trước chuẩn bị checkout         | 4       | 0        | 0        | 4         | 0
+T1  | Trước complete cart             | 4       | 0        | 0        | 4         | 0
+T2  | Sau complete, trước capture     | 4       | 2        | 0        | 2         | 1
+T3  | Sau capture                     | 4       | 2        | 0        | 2         | 1
+
+available_quantity = stocked_quantity - reserved_quantity tại cả bốn mốc.
+
+Chênh lệch:
+- T0 -> T1: Δstocked=0, Δreserved=0, Δincoming=0, Δavailable=0.
+- T1 -> T2: Δstocked=0, Δreserved=+2, Δincoming=0, Δavailable=-2.
+- T2 -> T3: Δstocked=0, Δreserved=0, Δincoming=0, Δavailable=0.
+
+T0/T1 inventory giống nhau và chưa có reservation. Sau complete, stocked vẫn
+là 4, reserved tăng đúng 2, available giảm đúng 2. Sau capture, cả response
+inventory và response reservations giống T2, không giữ thêm hàng lần nữa.
+
+4. Checkout và reservation
+
+- complete-response.json trả type=order, Order ID đúng như mục 2.
+- t2-store-order.json, t2-admin-order.json và t3-admin-order.json cùng Order ID,
+  cùng một OrderLineItem, đúng SKU/variant, quantity=2 và unit_price=249000.
+- T2 có đúng một reservation mới, quantity=2, đúng inventory item và location.
+- reservation.line_item_id = ordli_01M6BQDX2DF1Q95VFKD6FCG8G0,
+  khớp order.items[0].id, không nhầm với ID của OrderItem detail.
+- T3 vẫn là reservation trên, cùng ID/quantity/item/location/line_item_id.
+- T0/T1: reservations=[], count=0, offset=0, limit=100.
+- T2/T3: count=1, trả đủ một reservation, offset=0, limit=100.
+  Vì count không vượt số dòng đã trả nên không thiếu trang reservations.
+- Inventory mỗi mốc cũng trả đủ một level: count=1, offset=0, limit=50.
+
+5. Authorization, capture và số tiền
+
+Đối chiếu số tiền theo các trường item_total/shipping_total/total của Order:
+2 x 249000 = 498000 VND tiền hàng.
+498000 + 30000 shipping = 528000 VND tổng đơn, tax_total=0.
+Payment collection/payment/capture cùng currency_code=vnd.
+
+T2 — sau checkout, trước capture:
+- Order payment_status=authorized.
+- Collection status=authorized, amount=528000, authorized_amount=528000,
+  captured_amount=0, refunded_amount=0, completed_at=null.
+- Payment captured_at=null, canceled_at=null, captures=[], refunds=[].
+
+T3 — sau capture:
+- Order payment_status=captured.
+- Collection status=completed, amount=528000, authorized_amount=528000,
+  captured_amount=528000, refunded_amount=0.
+- Cùng Payment ID như T2; captured_at=2026-11-01T14:35:00.375Z.
+- Có đúng một capture, ID như mục 2, amount=528000 VND.
+- capture-response.json khớp Payment ID, collection ID, session ID,
+  capture ID, capture amount và payment.captured_at trong t3-admin-order.json.
+- Payment canceled_at=null; refunds=[] trong T3 Admin Order.
+
+Order status vẫn pending ở T2/T3 nhưng payment_status đã chuyển từ authorized
+sang captured. Đây là hai trường trạng thái khác nhau, không coi Order pending
+là bằng chứng chưa capture.
+
+6. Fulfillment và giải thích stocked không giảm
+
+T2/T3 đều có fulfillment_status=not_fulfilled, fulfillments=[].
+Order item detail có fulfilled_quantity=0, shipped_quantity=0,
+delivered_quantity=0.
+
+Vì chưa fulfillment, stocked vẫn là 4. Hai đơn vị vẫn đang được reservation
+giữ cho Order nên reserved=2 và available=2 sau capture. Các số liệu này khớp
+expected của W4-01, không phải lỗi thiếu bước trừ stocked tại thời điểm capture.
+
+7. Thời điểm sự kiện từ JSON
+
+Sự kiện                         | Timestamp UTC                | UTC+07 ngày 01/11/2026
+Order created_at                | 2026-11-01T14:15:17.840Z      | 21:15:17.840
+Reservation created_at          | 2026-11-01T14:15:18.001Z      | 21:15:18.001
+Payment created_at              | 2026-11-01T14:15:18.078Z      | 21:15:18.078
+Capture created_at              | 2026-11-01T14:35:00.358Z      | 21:35:00.358
+Payment captured_at             | 2026-11-01T14:35:00.375Z      | 21:35:00.375
+Payment collection completed_at | 2026-11-01T14:35:00.425Z      | 21:35:00.425
+
+Đây là thời điểm sự kiện/entity, không phải timestamp chụp từng file T0/T1/T2/T3.
+Không sử dụng LastWriteTime của file hoặc inventory.updated_at làm thời điểm
+gửi request/chụp snapshot. Bộ file hiện chưa lưu riêng các thời điểm này.
+
+8. Đối chiếu Expected / Actual
+
+- Chuẩn bị checkout chưa giữ hàng:
+  Expected T1=T0; Actual 4/0/4, không reservation -> PASS.
+- Checkout trả Order cho đúng SKU và quantity:
+  Expected type=order, quantity=2; Actual các response khớp -> PASS.
+- Sau checkout reserve đúng lượng:
+  Expected Δreserved=+2, Δavailable=-2, Δstocked=0;
+  Actual T1 4/0/4 -> T2 4/2/2 -> PASS.
+- Reservation thuộc đúng item/kho/OrderLineItem:
+  Expected IDs và quantity khớp; Actual khớp như mục 4 -> PASS.
+- Authorization trước capture:
+  Expected authorized, captured_amount=0; Actual T2 khớp -> PASS.
+- Capture đủ tổng đơn:
+  Expected captured_amount=528000 VND và capture thuộc cùng payment;
+  Actual capture-response và T3 Admin Order khớp -> PASS.
+- Capture không giữ/trừ thêm inventory:
+  Expected T3=T2 cả inventory và reservation;
+  Actual cùng 4/2/2, cùng một reservation quantity=2 -> PASS.
+- Chưa fulfillment:
+  Expected không trừ stocked; Actual not_fulfilled, stocked=4 -> PASS.
+
+9. Danh mục bằng chứng
+
+Tất cả file dưới đây nằm trong thư mục evidence đã ghi ở đầu notes:
+- t0-inventory.json; t0-reservations-page-0.json: baseline T0.
+- t1-inventory.json; t1-reservations-page-0.json: trước complete T1.
+- complete-response.json: complete trả Order.
+- t2-store-order.json: Store API đọc lại cùng Order.
+- t2-admin-order.json: authorization, payment và trạng thái chưa fulfillment.
+- t2-inventory.json; t2-reservations-page-0.json: inventory/reservation sau complete.
+- capture-response.json: payment được capture đủ 528000 VND.
+- t3-admin-order.json: trạng thái captured, capture record, chưa fulfillment.
+- t3-inventory.json; t3-reservations-page-0.json: sau capture không thay đổi tồn/giữ hàng.
+
+10. Giới hạn và kết luận
+
+- Chỉ đối chiếu các JSON được cung cấp, không gửi lại checkout/capture hoặc sửa DB.
+- Các file là response body, không kèm raw HTTP status/header, request payload,
+  Cart ID hay timestamp đo riêng của từng snapshot. Không tự bổ sung các giá trị này.
+- Chưa có readback liên kết Cart-Order; đã đối chiếu nhất quán Order, line item,
+  payment và reservation bằng các ID xuất hiện trong bộ file.
+- required_quantity của link variant-inventory không có trực tiếp trong JSON;
+  đã xác minh quantity đặt=2 và reservation quantity=2, chưa kiểm chứng cấu hình
+  link hoặc quy tắc cho bundle/kit.
+- Không có environment/version manifest riêng của lần chạy W4-01 trong 13 file;
+  không gán thông tin môi trường của preflight SKU tuần 3 làm evidence cho ca này.
+- Provider pp_system_default là manual/system; trạng thái capture trong Medusa
+  không chứng minh chuyển tiền ngân hàng thật.
+- Snapshot đọc ở các thời điểm riêng, không chứng minh tính nguyên tử hoặc
+  tính đúng khi có checkout đồng thời. Không suy rộng kết quả sang các ca lỗi.
+- Sau ca này vẫn còn reservation quantity=2 cho Order đã ghi; không tự hủy đơn,
+  fulfillment, xóa reservation hoặc điều chỉnh stock để dọn dữ liệu.
+
+Kết luận: W4-01 PASS theo dữ liệu thực đo: checkout giữ đúng 2 đơn vị của
+W4-INVENTORY-TEST, payment chuyển authorized -> captured đủ 528000 VND,
+inventory/reservation giữ nguyên sau capture và chưa có fulfillment.
+Không phát hiện bất nhất trong phạm vi 13 JSON đã đối chiếu.
+
+
+
+
+BỔ SUNG KIỂM CHỨNG NGÀY 05/11/2026
+Thời gian đọc: 2026-11-04T19:44:27.379Z (02:44:27 5/11/2026 UTC+07) đến 2026-11-04T19:44:27.599Z.
+Nguồn: ../verification-20261105/W4-01-supplement/current-readback.json.
+Cart ID đã xác minh: cart_01M6BMW62AQK90ATJ2PY9FAXDC.
+Cart completed_at: 2026-11-01T14:15:17.943Z.
+Cart–Order link: [{"order_id":"order_01M6BQDX2ADNG6PFVZ8GFYG3A5","cart_id":"cart_01M6BMW62AQK90ATJ2PY9FAXDC"}].
+required_quantity hiện tại: 1.
+Môi trường/version hiện tại: ../verification-20261105/environment.json.
+Đây là readback mới, không khôi phục HTTP status hoặc timestamp T0/T1/T2/T3 của ngày01/11. Giới hạn lịch sử vẫn áp dụng cho các trường chưa có log gốc.

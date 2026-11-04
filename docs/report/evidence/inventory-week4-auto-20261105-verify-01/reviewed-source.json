@@ -1,0 +1,43 @@
+{
+  "previous_run_id": "auto-20261105-suite-01",
+  "previous_directory": "C:\\demo1\\EnterpriseE-commercePlatform\\docs\\report\\evidence\\inventory-week4-auto-20261105-suite-01",
+  "reason": "Recognize the native Not enough stock response; original HTTP/snapshots and first validation remain untouched",
+  "sources": [
+    {
+      "file": "W4-02/t1.json",
+      "sha256": "ba99e3cf1d6c01d8fa4114b94aaa52ab813deadadbdabbde9e2b7172e3010dd5"
+    },
+    {
+      "file": "W4-02/t2.json",
+      "sha256": "746df9c63a9940d6e17e2bb08e53034065e60378f782c1cf0a4bda8732f74d31"
+    },
+    {
+      "file": "W4-02/complete-response.json",
+      "sha256": "44b380124ca262aa6b71698e86b9e95a168bfdcea959ea968d96f0d8eb59f3e2"
+    },
+    {
+      "file": "W4-03/t1.json",
+      "sha256": "62e045bc940bbe78d01655d6b024adfa45769518336433c535b55a2cb94a9b15"
+    },
+    {
+      "file": "W4-03/t2.json",
+      "sha256": "e4839a63d01654dd869a545cd4bebfbcdcd8e4fde93e8bb6a8c37dc047d20c92"
+    },
+    {
+      "file": "W4-03/complete-response.json",
+      "sha256": "add6ab9eefa519c720e6b02f207d20fd7e5fcffbabc7eb7ac773756240fce96b"
+    },
+    {
+      "file": "W4-04/t1-after-a.json",
+      "sha256": "721de85fc88ae611638571dbca2cc93c5b9fd25d6192fa0958788ddbed3438ba"
+    },
+    {
+      "file": "W4-04/t2.json",
+      "sha256": "b3830aec61a430fa64d9cf08186ff4b96c5739771c0a520b40ef60a194e4fe31"
+    },
+    {
+      "file": "W4-04/b-complete-response.json",
+      "sha256": "989ea9be91861938a0864e7f8259030bee995e9cdd59b9cd929ecc440db4ecdd"
+    }
+  ]
+}

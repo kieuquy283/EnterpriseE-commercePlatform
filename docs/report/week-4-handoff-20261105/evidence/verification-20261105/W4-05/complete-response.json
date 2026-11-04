@@ -1,0 +1,432 @@
+{
+  "http_status": 200,
+  "body": {
+    "type": "order",
+    "order": {
+      "id": "order_01M6M1A9C6KA58YT5JKRG580V4",
+      "status": "pending",
+      "summary": {
+        "paid_total": 0,
+        "raw_paid_total": {
+          "value": "0",
+          "precision": 20
+        },
+        "refunded_total": 0,
+        "accounting_total": 279000,
+        "credit_line_total": 0,
+        "transaction_total": 0,
+        "pending_difference": 279000,
+        "raw_refunded_total": {
+          "value": "0",
+          "precision": 20
+        },
+        "current_order_total": 279000,
+        "original_order_total": 279000,
+        "raw_accounting_total": {
+          "value": "279000",
+          "precision": 20
+        },
+        "raw_credit_line_total": {
+          "value": "0",
+          "precision": 20
+        },
+        "raw_transaction_total": {
+          "value": "0",
+          "precision": 20
+        },
+        "raw_pending_difference": {
+          "value": "279000",
+          "precision": 20
+        },
+        "raw_current_order_total": {
+          "value": "279000",
+          "precision": 20
+        },
+        "raw_original_order_total": {
+          "value": "279000",
+          "precision": 20
+        }
+      },
+      "currency_code": "vnd",
+      "display_id": 6,
+      "custom_display_id": null,
+      "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+      "total": 279000,
+      "subtotal": 279000,
+      "tax_total": 0,
+      "discount_total": 0,
+      "discount_subtotal": 0,
+      "discount_tax_total": 0,
+      "original_total": 279000,
+      "original_subtotal": 279000,
+      "original_tax_total": 0,
+      "item_total": 249000,
+      "item_subtotal": 249000,
+      "item_tax_total": 0,
+      "original_item_total": 249000,
+      "original_item_subtotal": 249000,
+      "original_item_tax_total": 0,
+      "shipping_total": 30000,
+      "shipping_subtotal": 30000,
+      "shipping_tax_total": 0,
+      "original_shipping_tax_total": 0,
+      "original_shipping_subtotal": 30000,
+      "original_shipping_total": 30000,
+      "credit_line_total": 0,
+      "credit_line_subtotal": 0,
+      "credit_line_tax_total": 0,
+      "created_at": "2026-11-04T19:42:00.584Z",
+      "updated_at": "2026-11-04T19:42:00.584Z",
+      "credit_lines": [],
+      "items": [
+        {
+          "id": "ordli_01M6M1A9C7NZQQG2W6VTH2P8E8",
+          "title": "Week 4 Inventory Test",
+          "subtitle": "One Size",
+          "thumbnail": null,
+          "variant_id": "variant_01M6BG5WXFHR6XZKDHRZCENMNW",
+          "product_id": "prod_01M6BG5WR38CA1QKCZ90XES8CE",
+          "product_title": "Week 4 Inventory Test",
+          "product_description": "Sản phẩm kiểm thử tồn kho tuần 4.",
+          "product_subtitle": "",
+          "product_type": null,
+          "product_type_id": null,
+          "product_collection": null,
+          "product_handle": "week4-inventory-test",
+          "variant_sku": "W4-INVENTORY-TEST",
+          "variant_barcode": null,
+          "variant_title": "One Size",
+          "variant_option_values": null,
+          "requires_shipping": true,
+          "is_giftcard": false,
+          "is_discountable": true,
+          "is_tax_inclusive": false,
+          "is_custom_price": false,
+          "metadata": {},
+          "raw_compare_at_unit_price": null,
+          "raw_unit_price": {
+            "value": "249000",
+            "precision": 20
+          },
+          "created_at": "2026-11-04T19:42:00.585Z",
+          "updated_at": "2026-11-04T19:42:00.585Z",
+          "deleted_at": null,
+          "tax_lines": [],
+          "adjustments": [],
+          "compare_at_unit_price": null,
+          "unit_price": 249000,
+          "quantity": 1,
+          "raw_quantity": {
+            "value": "1",
+            "precision": 20
+          },
+          "line_item_metadata": {},
+          "detail": {
+            "id": "orditem_01M6M1A9C7FA2EXJ6PMCWQREM2",
+            "version": 1,
+            "metadata": {},
+            "order_id": "order_01M6M1A9C6KA58YT5JKRG580V4",
+            "raw_unit_price": null,
+            "raw_compare_at_unit_price": null,
+            "raw_quantity": {
+              "value": "1",
+              "precision": 20
+            },
+            "raw_fulfilled_quantity": {
+              "value": "0",
+              "precision": 20
+            },
+            "raw_delivered_quantity": {
+              "value": "0",
+              "precision": 20
+            },
+            "raw_shipped_quantity": {
+              "value": "0",
+              "precision": 20
+            },
+            "raw_return_requested_quantity": {
+              "value": "0",
+              "precision": 20
+            },
+            "raw_return_received_quantity": {
+              "value": "0",
+              "precision": 20
+            },
+            "raw_return_dismissed_quantity": {
+              "value": "0",
+              "precision": 20
+            },
+            "raw_written_off_quantity": {
+              "value": "0",
+              "precision": 20
+            },
+            "created_at": "2026-11-04T19:42:00.585Z",
+            "updated_at": "2026-11-04T19:42:00.585Z",
+            "deleted_at": null,
+            "item_id": "ordli_01M6M1A9C7NZQQG2W6VTH2P8E8",
+            "unit_price": null,
+            "compare_at_unit_price": null,
+            "quantity": 1,
+            "fulfilled_quantity": 0,
+            "delivered_quantity": 0,
+            "shipped_quantity": 0,
+            "return_requested_quantity": 0,
+            "return_received_quantity": 0,
+            "return_dismissed_quantity": 0,
+            "written_off_quantity": 0
+          },
+          "subtotal": 249000,
+          "total": 249000,
+          "original_subtotal": 249000,
+          "original_total": 249000,
+          "discount_subtotal": 0,
+          "discount_tax_total": 0,
+          "discount_total": 0,
+          "tax_total": 0,
+          "original_tax_total": 0,
+          "refundable_total_per_unit": 249000,
+          "refundable_total": 249000,
+          "fulfilled_total": 0,
+          "shipped_total": 0,
+          "return_requested_total": 0,
+          "return_received_total": 0,
+          "return_dismissed_total": 0,
+          "write_off_total": 0,
+          "raw_subtotal": {
+            "value": "249000",
+            "precision": 20
+          },
+          "raw_total": {
+            "value": "249000",
+            "precision": 20
+          },
+          "raw_original_subtotal": {
+            "value": "249000",
+            "precision": 20
+          },
+          "raw_original_total": {
+            "value": "249000",
+            "precision": 20
+          },
+          "raw_discount_subtotal": {
+            "value": "0",
+            "precision": 20
+          },
+          "raw_discount_tax_total": {
+            "value": "0",
+            "precision": 20
+          },
+          "raw_discount_total": {
+            "value": "0",
+            "precision": 20
+          },
+          "raw_tax_total": {
+            "value": "0",
+            "precision": 20
+          },
+          "raw_original_tax_total": {
+            "value": "0",
+            "precision": 20
+          },
+          "raw_refundable_total_per_unit": {
+            "value": "249000",
+            "precision": 20
+          },
+          "raw_refundable_total": {
+            "value": "249000",
+            "precision": 20
+          },
+          "raw_fulfilled_total": {
+            "value": "0",
+            "precision": 20
+          },
+          "raw_shipped_total": {
+            "value": "0",
+            "precision": 20
+          },
+          "raw_return_requested_total": {
+            "value": "0",
+            "precision": 20
+          },
+          "raw_return_received_total": {
+            "value": "0",
+            "precision": 20
+          },
+          "raw_return_dismissed_total": {
+            "value": "0",
+            "precision": 20
+          },
+          "raw_write_off_total": {
+            "value": "0",
+            "precision": 20
+          },
+          "variant": {
+            "id": "variant_01M6BG5WXFHR6XZKDHRZCENMNW",
+            "title": "One Size",
+            "sku": "W4-INVENTORY-TEST",
+            "barcode": null,
+            "ean": null,
+            "upc": null,
+            "allow_backorder": false,
+            "manage_inventory": true,
+            "hs_code": null,
+            "origin_country": null,
+            "mid_code": null,
+            "material": null,
+            "weight": null,
+            "length": null,
+            "height": null,
+            "width": null,
+            "metadata": null,
+            "variant_rank": 0,
+            "thumbnail": null,
+            "product_id": "prod_01M6BG5WR38CA1QKCZ90XES8CE",
+            "product": {
+              "id": "prod_01M6BG5WR38CA1QKCZ90XES8CE",
+              "title": "Week 4 Inventory Test",
+              "handle": "week4-inventory-test",
+              "subtitle": "",
+              "description": "Sản phẩm kiểm thử tồn kho tuần 4.",
+              "is_giftcard": false,
+              "status": "published",
+              "thumbnail": null,
+              "weight": null,
+              "length": null,
+              "height": null,
+              "width": null,
+              "origin_country": null,
+              "hs_code": null,
+              "mid_code": null,
+              "material": null,
+              "discountable": true,
+              "external_id": null,
+              "metadata": null,
+              "type_id": null,
+              "type": null,
+              "collection_id": null,
+              "collection": null,
+              "created_at": "2026-11-01T12:08:35.334Z",
+              "updated_at": "2026-11-01T12:08:35.334Z",
+              "deleted_at": null
+            },
+            "created_at": "2026-11-01T12:08:35.504Z",
+            "updated_at": "2026-11-01T12:08:35.504Z",
+            "deleted_at": null
+          }
+        }
+      ],
+      "shipping_methods": [
+        {
+          "id": "ordsm_01M6M1A9C6V20JGN3NZ8GPPSKQ",
+          "name": "Standard delivery",
+          "description": null,
+          "is_tax_inclusive": false,
+          "is_custom_amount": false,
+          "shipping_option_id": "so_01M5555A7RBPXR2DQFGJV32EGR",
+          "data": {},
+          "metadata": null,
+          "raw_amount": {
+            "value": "30000",
+            "precision": 20
+          },
+          "created_at": "2026-11-04T19:42:00.585Z",
+          "updated_at": "2026-11-04T19:42:00.585Z",
+          "deleted_at": null,
+          "tax_lines": [],
+          "adjustments": [],
+          "amount": 30000,
+          "order_id": "order_01M6M1A9C6KA58YT5JKRG580V4",
+          "detail": {
+            "id": "ordspmv_01M6M1A9C60H113P60FK1Q1J6F",
+            "version": 1,
+            "order_id": "order_01M6M1A9C6KA58YT5JKRG580V4",
+            "return_id": null,
+            "exchange_id": null,
+            "claim_id": null,
+            "created_at": "2026-11-04T19:42:00.585Z",
+            "updated_at": "2026-11-04T19:42:00.585Z",
+            "deleted_at": null,
+            "shipping_method_id": "ordsm_01M6M1A9C6V20JGN3NZ8GPPSKQ"
+          },
+          "subtotal": 30000,
+          "total": 30000,
+          "original_subtotal": 30000,
+          "original_total": 30000,
+          "discount_total": 0,
+          "discount_subtotal": 0,
+          "discount_tax_total": 0,
+          "tax_total": 0,
+          "original_tax_total": 0,
+          "raw_subtotal": {
+            "value": "30000",
+            "precision": 20
+          },
+          "raw_total": {
+            "value": "30000",
+            "precision": 20
+          },
+          "raw_original_subtotal": {
+            "value": "30000",
+            "precision": 20
+          },
+          "raw_original_total": {
+            "value": "30000",
+            "precision": 20
+          },
+          "raw_discount_total": {
+            "value": "0",
+            "precision": 20
+          },
+          "raw_discount_subtotal": {
+            "value": "0",
+            "precision": 20
+          },
+          "raw_discount_tax_total": {
+            "value": "0",
+            "precision": 20
+          },
+          "raw_tax_total": {
+            "value": "0",
+            "precision": 20
+          },
+          "raw_original_tax_total": {
+            "value": "0",
+            "precision": 20
+          }
+        }
+      ],
+      "payment_collections": [
+        {
+          "id": "pay_col_01M6M1A6QPTBKXQQH5V9JJ2PJ8",
+          "currency_code": "vnd",
+          "completed_at": null,
+          "status": "authorized",
+          "metadata": null,
+          "raw_amount": {
+            "value": "279000",
+            "precision": 20
+          },
+          "raw_authorized_amount": {
+            "value": "279000",
+            "precision": 20
+          },
+          "raw_captured_amount": {
+            "value": "0",
+            "precision": 20
+          },
+          "raw_refunded_amount": {
+            "value": "0",
+            "precision": 20
+          },
+          "created_at": "2026-11-04T19:41:57.878Z",
+          "updated_at": "2026-11-04T19:42:00.813Z",
+          "deleted_at": null,
+          "amount": 279000,
+          "authorized_amount": 279000,
+          "captured_amount": 0,
+          "refunded_amount": 0
+        }
+      ]
+    }
+  }
+}

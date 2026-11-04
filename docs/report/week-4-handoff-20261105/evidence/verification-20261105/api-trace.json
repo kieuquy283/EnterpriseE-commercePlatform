@@ -1,0 +1,62 @@
+[
+  {
+    "sequence": 1,
+    "case_id": "preflight",
+    "participant": "",
+    "method": "GET",
+    "url": "http://127.0.0.1:9000/health",
+    "started_at": "2026-11-04T19:44:25.967Z",
+    "finished_at": "2026-11-04T19:44:26.062Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "text/html; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:44:26 GMT"
+    },
+    "response_file": "preflight/http/001-response.json"
+  },
+  {
+    "sequence": 2,
+    "case_id": "preflight",
+    "participant": "",
+    "method": "GET",
+    "url": "http://127.0.0.1:9000/store/products?handle=week4-inventory-test&region_id=reg_01M5555A2ZAPR5SYW3THXG2SVC&fields=%2Bvariants.calculated_price",
+    "started_at": "2026-11-04T19:44:26.227Z",
+    "finished_at": "2026-11-04T19:44:27.219Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:44:27 GMT"
+    },
+    "response_file": "preflight/http/002-response.json"
+  },
+  {
+    "sequence": 3,
+    "case_id": "preflight",
+    "participant": "",
+    "method": "GET",
+    "url": "http://127.0.0.1:9000/store/payment-providers?region_id=reg_01M5555A2ZAPR5SYW3THXG2SVC",
+    "started_at": "2026-11-04T19:44:27.226Z",
+    "finished_at": "2026-11-04T19:44:27.265Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:44:27 GMT"
+    },
+    "response_file": "preflight/http/003-response.json"
+  },
+  {
+    "sequence": 4,
+    "case_id": "W4-05",
+    "participant": "retry-A",
+    "method": "POST",
+    "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A4SWS7X4QQKQPRRT8PJV/complete",
+    "started_at": "2026-11-04T19:44:27.841Z",
+    "finished_at": "2026-11-04T19:44:28.419Z",
+    "http_status": 200,
+    "response_headers": {
+      "content_type": "application/json; charset=utf-8",
+      "date": "Wed, 04 Nov 2026 19:44:28 GMT"
+    },
+    "response_file": "W4-05/http/004-response.json"
+  }
+]

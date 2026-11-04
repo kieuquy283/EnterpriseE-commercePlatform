@@ -1,0 +1,25 @@
+{
+  "initial_level": {
+    "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+    "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+    "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+    "stocked_quantity": 4,
+    "reserved_quantity": 2,
+    "incoming_quantity": 0,
+    "available_quantity": 2,
+    "updated_at": "2026-11-04T19:41:53.351Z"
+  },
+  "final_level": {
+    "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+    "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+    "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+    "stocked_quantity": 4,
+    "reserved_quantity": 3,
+    "incoming_quantity": 0,
+    "available_quantity": 1,
+    "updated_at": "2026-11-04T19:42:00.691Z"
+  },
+  "retained_order_id": "order_01M6M1A9C6KA58YT5JKRG580V4",
+  "retained_quantity": 1,
+  "cleanup": "None; no new cart/order, stock reset or reservation deletion during completion verification"
+}

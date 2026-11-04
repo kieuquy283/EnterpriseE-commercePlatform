@@ -1,0 +1,28 @@
+{
+  "run_id": "auto-20261105-suite-01",
+  "state": "W4-04_cart_created",
+  "started_at": "2026-11-04T19:41:48.606Z",
+  "updated_at": "2026-11-04T19:41:58.207Z",
+  "fixture": {
+    "run_id": "auto-20261105-suite-01",
+    "product_id": "prod_01M6BG5WR38CA1QKCZ90XES8CE",
+    "handle": "week4-inventory-test",
+    "variant_id": "variant_01M6BG5WXFHR6XZKDHRZCENMNW",
+    "sku": "W4-INVENTORY-TEST",
+    "manage_inventory": true,
+    "allow_backorder": false,
+    "required_quantity": 1,
+    "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+    "inventory_level_id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+    "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+    "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+    "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+    "currency_code": "vnd",
+    "quantity": 2,
+    "calculated_unit_price": 249000,
+    "payment_provider_id": "pp_system_default"
+  },
+  "initial_available": 2,
+  "active_case": "W4-04",
+  "active_cart_id": "cart_01M6M1A6XFE6Y3FWYKSWXTZZ66"
+}

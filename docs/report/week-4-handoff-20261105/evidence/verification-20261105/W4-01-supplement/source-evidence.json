@@ -1,0 +1,58 @@
+{
+  "historical_directory": "C:\\demo1\\EnterpriseE-commercePlatform\\docs\\report\\evidence\\inventory-week4-20261101-01\\W4-01",
+  "snapshot_scope": "New current readback, not reconstructed historical snapshot timestamps",
+  "source_hashes": [
+    {
+      "file": "complete-response.json",
+      "sha256": "f4a24462429c36779471ff4a733f980ae374b32d4b05dcd0fd051280372bdb05"
+    },
+    {
+      "file": "capture-response.json",
+      "sha256": "77611d6eb197cca08174bba1fa50dc521888da4c1549e57618ca9e5d14c9ba57"
+    },
+    {
+      "file": "t0-inventory.json",
+      "sha256": "6e04295678fcb142f08b139a5326aa5da12f8dc295dd4747f4b8bc502e1a0445"
+    },
+    {
+      "file": "t0-reservations-page-0.json",
+      "sha256": "27961858e21a7eeb7c828d793dc3c30119e6a032b9c3ed75f1ffb2d9713abe4f"
+    },
+    {
+      "file": "t1-inventory.json",
+      "sha256": "6e04295678fcb142f08b139a5326aa5da12f8dc295dd4747f4b8bc502e1a0445"
+    },
+    {
+      "file": "t1-reservations-page-0.json",
+      "sha256": "27961858e21a7eeb7c828d793dc3c30119e6a032b9c3ed75f1ffb2d9713abe4f"
+    },
+    {
+      "file": "t2-inventory.json",
+      "sha256": "a958bc694b986e8663d8c59c3b4c616a661faacccdeda670471e4b62b027ec2b"
+    },
+    {
+      "file": "t2-reservations-page-0.json",
+      "sha256": "c7e3c3e7d5db4c7487f8c69f9c13a026cff1bdfb01e4d0486c3e88cc3af5ce9e"
+    },
+    {
+      "file": "t3-inventory.json",
+      "sha256": "a958bc694b986e8663d8c59c3b4c616a661faacccdeda670471e4b62b027ec2b"
+    },
+    {
+      "file": "t3-reservations-page-0.json",
+      "sha256": "c7e3c3e7d5db4c7487f8c69f9c13a026cff1bdfb01e4d0486c3e88cc3af5ce9e"
+    },
+    {
+      "file": "t2-admin-order.json",
+      "sha256": "f8339c6e4310cee4057f5ec0bfe8b6c6e61982a640dd4b1ecdf928c95306aff2"
+    },
+    {
+      "file": "t2-store-order.json",
+      "sha256": "555eb540714737c65ec3893e7b6115d50be273bcbc0f840b8cd1ed0ae4c55970"
+    },
+    {
+      "file": "t3-admin-order.json",
+      "sha256": "ada3309be36af095e9abe856d561aaf6f731d18c127e259cd997a58425a4e9e3"
+    }
+  ]
+}

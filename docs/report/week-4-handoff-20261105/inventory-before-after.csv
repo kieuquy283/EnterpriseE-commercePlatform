@@ -1,0 +1,17 @@
+case_id,snapshot,captured_at,stocked_quantity,reserved_quantity,incoming_quantity,available_quantity,source
+W4-01,t0,,4,0,0,4,evidence/historical-w4-01/t0-inventory.json
+W4-01,t1,,4,0,0,4,evidence/historical-w4-01/t1-inventory.json
+W4-01,t2,,4,2,0,2,evidence/historical-w4-01/t2-inventory.json
+W4-01,t3,,4,2,0,2,evidence/historical-w4-01/t3-inventory.json
+W4-02,t0,2026-11-04T19:41:49.514Z,4,2,0,2,evidence/run-20261105/W4-02/t0.json
+W4-02,t1,2026-11-04T19:41:52.582Z,4,2,0,2,evidence/run-20261105/W4-02/t1.json
+W4-02,t2,2026-11-04T19:41:53.666Z,4,2,0,2,evidence/run-20261105/W4-02/t2.json
+W4-03,t0,2026-11-04T19:41:53.779Z,4,2,0,2,evidence/run-20261105/W4-03/t0.json
+W4-03,t1,2026-11-04T19:41:55.239Z,4,2,0,2,evidence/run-20261105/W4-03/t1.json
+W4-03,t2,2026-11-04T19:41:55.706Z,4,2,0,2,evidence/run-20261105/W4-03/t2.json
+W4-04,t0,2026-11-04T19:42:00.254Z,4,2,0,2,evidence/run-20261105/W4-04/t0.json
+W4-04,a-order-snapshot,2026-11-04T19:42:00.982Z,4,3,0,1,evidence/run-20261105/W4-04/a-order-snapshot.json
+W4-04,t1-after-a,2026-11-04T19:42:01.127Z,4,3,0,1,evidence/run-20261105/W4-04/t1-after-a.json
+W4-04,t2,2026-11-04T19:42:01.833Z,4,3,0,1,evidence/run-20261105/W4-04/t2.json
+W4-05,t1,2026-11-04T19:44:27.659Z,4,3,0,1,evidence/verification-20261105/W4-05/t1.json
+W4-05,t2,2026-11-04T19:44:28.429Z,4,3,0,1,evidence/verification-20261105/W4-05/t2.json

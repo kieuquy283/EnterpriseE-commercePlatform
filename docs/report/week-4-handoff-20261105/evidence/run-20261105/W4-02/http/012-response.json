@@ -1,0 +1,20 @@
+{
+  "sequence": 12,
+  "case_id": "W4-02",
+  "participant": "",
+  "method": "POST",
+  "url": "http://127.0.0.1:9000/store/carts/cart_01M6M19YR4YJ2JRRRNQ4P81JEA/complete",
+  "started_at": "2026-11-04T19:41:52.678Z",
+  "finished_at": "2026-11-04T19:41:53.656Z",
+  "http_status": 400,
+  "response_headers": {
+    "content_type": "application/json; charset=utf-8",
+    "date": "Wed, 04 Nov 2026 19:41:53 GMT"
+  },
+  "response_file": "W4-02/http/012-response.json",
+  "request_body": null,
+  "response_body": {
+    "type": "not_allowed",
+    "message": "Session: payses_01M6M1A1GTA0AC410NJ0S8CPDY was not authorized with the provider."
+  }
+}

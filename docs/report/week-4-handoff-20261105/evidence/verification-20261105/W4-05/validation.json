@@ -1,0 +1,165 @@
+{
+  "all_passed": true,
+  "passed": 7,
+  "total": 7,
+  "checks": [
+    {
+      "name": "same_inventory_level_and_location",
+      "expected": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+      "actual": [
+        [
+          "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA"
+        ],
+        [
+          "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA"
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "name": "available_quantity_formula",
+      "expected": "available = stocked - reserved",
+      "actual": [
+        [
+          {
+            "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+            "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+            "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+            "stocked_quantity": 4,
+            "reserved_quantity": 3,
+            "incoming_quantity": 0,
+            "available_quantity": 1
+          }
+        ],
+        [
+          {
+            "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+            "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+            "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+            "stocked_quantity": 4,
+            "reserved_quantity": 3,
+            "incoming_quantity": 0,
+            "available_quantity": 1
+          }
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "name": "retry_returns_same_order",
+      "expected": "order_01M6M1A9C6KA58YT5JKRG580V4",
+      "actual": {
+        "http_status": 200,
+        "type": "order",
+        "order_id": "order_01M6M1A9C6KA58YT5JKRG580V4"
+      },
+      "passed": true
+    },
+    {
+      "name": "retry_inventory_unchanged",
+      "expected": [
+        {
+          "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "stocked_quantity": 4,
+          "reserved_quantity": 3,
+          "incoming_quantity": 0,
+          "available_quantity": 1
+        }
+      ],
+      "actual": [
+        {
+          "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "stocked_quantity": 4,
+          "reserved_quantity": 3,
+          "incoming_quantity": 0,
+          "available_quantity": 1
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "retry_reservations_unchanged",
+      "expected": [
+        {
+          "id": "resitem_01M6BQDX722CH5K78236NA4WBJ",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "line_item_id": "ordli_01M6BQDX2DF1Q95VFKD6FCG8G0",
+          "quantity": 2,
+          "allow_backorder": false,
+          "created_at": "2026-11-01T14:15:18.001Z",
+          "updated_at": "2026-11-01T14:15:18.001Z"
+        },
+        {
+          "id": "resitem_01M6M1A9FC5QHNJ3FT34D505QD",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "line_item_id": "ordli_01M6M1A9C7NZQQG2W6VTH2P8E8",
+          "quantity": 1,
+          "allow_backorder": false,
+          "created_at": "2026-11-04T19:42:00.691Z",
+          "updated_at": "2026-11-04T19:42:00.691Z"
+        }
+      ],
+      "actual": [
+        {
+          "id": "resitem_01M6BQDX722CH5K78236NA4WBJ",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "line_item_id": "ordli_01M6BQDX2DF1Q95VFKD6FCG8G0",
+          "quantity": 2,
+          "allow_backorder": false,
+          "created_at": "2026-11-01T14:15:18.001Z",
+          "updated_at": "2026-11-01T14:15:18.001Z"
+        },
+        {
+          "id": "resitem_01M6M1A9FC5QHNJ3FT34D505QD",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "line_item_id": "ordli_01M6M1A9C7NZQQG2W6VTH2P8E8",
+          "quantity": 1,
+          "allow_backorder": false,
+          "created_at": "2026-11-04T19:42:00.691Z",
+          "updated_at": "2026-11-04T19:42:00.691Z"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "retry_no_duplicate_order_or_payment",
+      "expected": {
+        "carts": 11,
+        "cart_line_items": 13,
+        "orders": 5,
+        "payments": 5
+      },
+      "actual": {
+        "carts": 11,
+        "cart_line_items": 13,
+        "orders": 5,
+        "payments": 5
+      },
+      "passed": true
+    },
+    {
+      "name": "retry_order_cart_link_unchanged",
+      "expected": [
+        {
+          "order_id": "order_01M6M1A9C6KA58YT5JKRG580V4",
+          "cart_id": "cart_01M6M1A4SWS7X4QQKQPRRT8PJV"
+        }
+      ],
+      "actual": [
+        {
+          "order_id": "order_01M6M1A9C6KA58YT5JKRG580V4",
+          "cart_id": "cart_01M6M1A4SWS7X4QQKQPRRT8PJV"
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

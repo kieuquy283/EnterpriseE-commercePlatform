@@ -1,0 +1,152 @@
+{
+  "sequence": 2,
+  "case_id": "preflight",
+  "participant": "",
+  "method": "GET",
+  "url": "http://127.0.0.1:9000/store/products?handle=week4-inventory-test&region_id=reg_01M5555A2ZAPR5SYW3THXG2SVC&fields=%2Bvariants.calculated_price",
+  "started_at": "2026-11-04T19:44:26.227Z",
+  "finished_at": "2026-11-04T19:44:27.219Z",
+  "http_status": 200,
+  "response_headers": {
+    "content_type": "application/json; charset=utf-8",
+    "date": "Wed, 04 Nov 2026 19:44:27 GMT"
+  },
+  "response_file": "preflight/http/002-response.json",
+  "request_body": null,
+  "response_body": {
+    "products": [
+      {
+        "id": "prod_01M6BG5WR38CA1QKCZ90XES8CE",
+        "title": "Week 4 Inventory Test",
+        "subtitle": "",
+        "description": "Sản phẩm kiểm thử tồn kho tuần 4.",
+        "handle": "week4-inventory-test",
+        "is_giftcard": false,
+        "discountable": true,
+        "thumbnail": null,
+        "collection_id": null,
+        "type_id": null,
+        "weight": null,
+        "length": null,
+        "height": null,
+        "width": null,
+        "hs_code": null,
+        "origin_country": null,
+        "mid_code": null,
+        "material": null,
+        "created_at": "2026-11-01T12:08:35.334Z",
+        "updated_at": "2026-11-01T12:08:35.334Z",
+        "variants": [
+          {
+            "id": "variant_01M6BG5WXFHR6XZKDHRZCENMNW",
+            "title": "One Size",
+            "sku": "W4-INVENTORY-TEST",
+            "barcode": null,
+            "ean": null,
+            "upc": null,
+            "allow_backorder": false,
+            "manage_inventory": true,
+            "hs_code": null,
+            "origin_country": null,
+            "mid_code": null,
+            "material": null,
+            "weight": null,
+            "length": null,
+            "height": null,
+            "width": null,
+            "metadata": null,
+            "variant_rank": 0,
+            "thumbnail": null,
+            "product_id": "prod_01M6BG5WR38CA1QKCZ90XES8CE",
+            "created_at": "2026-11-01T12:08:35.504Z",
+            "updated_at": "2026-11-01T12:08:35.504Z",
+            "deleted_at": null,
+            "options": [
+              {
+                "id": "optval_01M6BG5WR5J0P9SBWZPE6PSCQP",
+                "value": "One Size",
+                "rank": null,
+                "metadata": null,
+                "option_id": "opt_01M6BG5WR4S4HC5YH62EWRTAZK",
+                "option": {
+                  "id": "opt_01M6BG5WR4S4HC5YH62EWRTAZK",
+                  "title": "Size",
+                  "is_exclusive": true,
+                  "metadata": null,
+                  "created_at": "2026-11-01T12:08:35.335Z",
+                  "updated_at": "2026-11-01T12:08:35.335Z",
+                  "deleted_at": null
+                },
+                "created_at": "2026-11-01T12:08:35.335Z",
+                "updated_at": "2026-11-01T12:08:35.335Z",
+                "deleted_at": null
+              }
+            ],
+            "calculated_price": {
+              "id": "pset_01M6BG5X06FY8G0QAKKF9QNRR0",
+              "is_calculated_price_price_list": false,
+              "is_calculated_price_tax_inclusive": false,
+              "calculated_amount": 249000,
+              "raw_calculated_amount": {
+                "value": "249000",
+                "precision": 20
+              },
+              "is_original_price_price_list": false,
+              "is_original_price_tax_inclusive": false,
+              "original_amount": 249000,
+              "raw_original_amount": {
+                "value": "249000",
+                "precision": 20
+              },
+              "currency_code": "vnd",
+              "calculated_price": {
+                "id": "price_01M6BG5X05XFSW88VVAPTE3TVV",
+                "price_list_id": null,
+                "price_list_type": null,
+                "min_quantity": null,
+                "max_quantity": null
+              },
+              "original_price": {
+                "id": "price_01M6BG5X05XFSW88VVAPTE3TVV",
+                "price_list_id": null,
+                "price_list_type": null,
+                "min_quantity": null,
+                "max_quantity": null
+              }
+            }
+          }
+        ],
+        "type": null,
+        "collection": null,
+        "options": [
+          {
+            "id": "opt_01M6BG5WR4S4HC5YH62EWRTAZK",
+            "title": "Size",
+            "is_exclusive": true,
+            "metadata": null,
+            "created_at": "2026-11-01T12:08:35.335Z",
+            "updated_at": "2026-11-01T12:08:35.335Z",
+            "deleted_at": null,
+            "values": [
+              {
+                "id": "optval_01M6BG5WR5J0P9SBWZPE6PSCQP",
+                "value": "One Size",
+                "rank": null,
+                "metadata": null,
+                "option_id": "opt_01M6BG5WR4S4HC5YH62EWRTAZK",
+                "created_at": "2026-11-01T12:08:35.335Z",
+                "updated_at": "2026-11-01T12:08:35.335Z",
+                "deleted_at": null
+              }
+            ]
+          }
+        ],
+        "tags": [],
+        "images": []
+      }
+    ],
+    "count": 1,
+    "offset": 0,
+    "limit": 50
+  }
+}

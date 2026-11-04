@@ -1,0 +1,26 @@
+{
+  "sequence": 10,
+  "case_id": "W4-02",
+  "participant": "",
+  "method": "POST",
+  "url": "http://127.0.0.1:9000/store/payment-collections",
+  "started_at": "2026-11-04T19:41:52.347Z",
+  "finished_at": "2026-11-04T19:41:52.468Z",
+  "http_status": 200,
+  "response_headers": {
+    "content_type": "application/json; charset=utf-8",
+    "date": "Wed, 04 Nov 2026 19:41:52 GMT"
+  },
+  "response_file": "W4-02/http/010-response.json",
+  "request_body": {
+    "cart_id": "cart_01M6M19YR4YJ2JRRRNQ4P81JEA"
+  },
+  "response_body": {
+    "payment_collection": {
+      "id": "pay_col_01M6M1A1CVN41HW6K7DD9D4HMA",
+      "currency_code": "vnd",
+      "amount": 528000,
+      "payment_sessions": []
+    }
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "all_passed": true,
+  "passed": 11,
+  "total": 11,
+  "checks": [
+    {
+      "name": "same_inventory_level_and_location",
+      "expected": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+      "actual": [
+        [
+          "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA"
+        ],
+        [
+          "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA"
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "name": "available_quantity_formula",
+      "expected": "available = stocked - reserved",
+      "actual": [
+        [
+          {
+            "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+            "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+            "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+            "stocked_quantity": 4,
+            "reserved_quantity": 2,
+            "incoming_quantity": 0,
+            "available_quantity": 2
+          }
+        ],
+        [
+          {
+            "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+            "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+            "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+            "stocked_quantity": 4,
+            "reserved_quantity": 2,
+            "incoming_quantity": 0,
+            "available_quantity": 2
+          }
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "name": "checkout_failed_http_status",
+      "expected": 400,
+      "actual": 400,
+      "passed": true
+    },
+    {
+      "name": "expected_checkout_error",
+      "expected": "invalid_data",
+      "actual": {
+        "type": "invalid_data",
+        "message": "No shipping method selected but the cart contains items that require shipping."
+      },
+      "passed": true
+    },
+    {
+      "name": "shipping_validation_reached",
+      "expected": "Error identifies missing shipping",
+      "actual": "No shipping method selected but the cart contains items that require shipping.",
+      "passed": true
+    },
+    {
+      "name": "inventory_restored_to_baseline",
+      "expected": [
+        {
+          "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "stocked_quantity": 4,
+          "reserved_quantity": 2,
+          "incoming_quantity": 0,
+          "available_quantity": 2
+        }
+      ],
+      "actual": [
+        {
+          "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "stocked_quantity": 4,
+          "reserved_quantity": 2,
+          "incoming_quantity": 0,
+          "available_quantity": 2
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "reservations_restored_to_baseline",
+      "expected": [
+        {
+          "id": "resitem_01M6BQDX722CH5K78236NA4WBJ",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "line_item_id": "ordli_01M6BQDX2DF1Q95VFKD6FCG8G0",
+          "quantity": 2,
+          "allow_backorder": false,
+          "created_at": "2026-11-01T14:15:18.001Z",
+          "updated_at": "2026-11-01T14:15:18.001Z"
+        }
+      ],
+      "actual": [
+        {
+          "id": "resitem_01M6BQDX722CH5K78236NA4WBJ",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "line_item_id": "ordli_01M6BQDX2DF1Q95VFKD6FCG8G0",
+          "quantity": 2,
+          "allow_backorder": false,
+          "created_at": "2026-11-01T14:15:18.001Z",
+          "updated_at": "2026-11-01T14:15:18.001Z"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "same_cart_uncompleted",
+      "expected": {
+        "id": "cart_01M6M1A2VMG5K3V1DVMRA76HHQ",
+        "completed_at": null
+      },
+      "actual": {
+        "id": "cart_01M6M1A2VMG5K3V1DVMRA76HHQ",
+        "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+        "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+        "currency_code": "vnd",
+        "completed_at": null,
+        "sample_run": "auto-20261105-suite-01"
+      },
+      "passed": true
+    },
+    {
+      "name": "no_active_order_cart_link",
+      "expected": [],
+      "actual": [],
+      "passed": true
+    },
+    {
+      "name": "no_active_order_added",
+      "expected": 4,
+      "actual": 4,
+      "passed": true
+    },
+    {
+      "name": "no_capture_or_refund",
+      "expected": {
+        "captures": [],
+        "refunds": []
+      },
+      "actual": {
+        "captures": [],
+        "refunds": []
+      },
+      "passed": true
+    }
+  ]
+}

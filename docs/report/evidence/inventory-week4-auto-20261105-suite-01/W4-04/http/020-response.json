@@ -1,0 +1,94 @@
+{
+  "sequence": 20,
+  "case_id": "W4-04",
+  "participant": "A",
+  "method": "POST",
+  "url": "http://127.0.0.1:9000/store/carts",
+  "started_at": "2026-11-04T19:41:55.844Z",
+  "finished_at": "2026-11-04T19:41:56.037Z",
+  "http_status": 200,
+  "response_headers": {
+    "content_type": "application/json; charset=utf-8",
+    "date": "Wed, 04 Nov 2026 19:41:56 GMT"
+  },
+  "response_file": "W4-04/http/020-response.json",
+  "request_body": {
+    "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+    "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+    "metadata": {
+      "sample_suite": "week4_inventory_edge_cases",
+      "sample_case": "W4-04",
+      "sample_run": "auto-20261105-suite-01",
+      "participant": "A"
+    }
+  },
+  "response_body": {
+    "cart": {
+      "id": "cart_01M6M1A4SWS7X4QQKQPRRT8PJV",
+      "currency_code": "vnd",
+      "locale": null,
+      "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+      "created_at": "2026-11-04T19:41:55.902Z",
+      "updated_at": "2026-11-04T19:41:55.902Z",
+      "completed_at": null,
+      "total": 0,
+      "subtotal": 0,
+      "tax_total": 0,
+      "discount_total": 0,
+      "discount_subtotal": 0,
+      "discount_tax_total": 0,
+      "original_total": 0,
+      "original_tax_total": 0,
+      "item_total": 0,
+      "item_subtotal": 0,
+      "item_tax_total": 0,
+      "item_discount_total": 0,
+      "original_item_total": 0,
+      "original_item_subtotal": 0,
+      "original_item_tax_total": 0,
+      "shipping_total": 0,
+      "shipping_subtotal": 0,
+      "shipping_tax_total": 0,
+      "shipping_discount_total": 0,
+      "original_shipping_tax_total": 0,
+      "original_shipping_subtotal": 0,
+      "original_shipping_total": 0,
+      "credit_line_subtotal": 0,
+      "credit_line_tax_total": 0,
+      "credit_line_total": 0,
+      "metadata": {
+        "sample_run": "auto-20261105-suite-01",
+        "participant": "A",
+        "sample_case": "W4-04",
+        "sample_suite": "week4_inventory_edge_cases"
+      },
+      "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+      "shipping_address_id": "caaddr_01M6M1A4SX4V5BP0VW3V6AY4S6",
+      "customer_id": null,
+      "items": [],
+      "shipping_methods": [],
+      "credit_lines": [],
+      "region": {
+        "id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+        "name": "Vietnam",
+        "currency_code": "vnd",
+        "automatic_taxes": true,
+        "countries": [
+          {
+            "iso_2": "vn",
+            "iso_3": "vnm",
+            "num_code": "704",
+            "name": "VIET NAM",
+            "display_name": "Viet Nam",
+            "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+            "metadata": null,
+            "created_at": "2026-10-17T14:43:47.360Z",
+            "updated_at": "2026-10-17T14:44:53.475Z",
+            "deleted_at": null
+          }
+        ]
+      },
+      "promotions": []
+    }
+  }
+}

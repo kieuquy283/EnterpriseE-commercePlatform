@@ -2,7 +2,13 @@ import { defineConfig, loadEnv } from "@medusajs/framework/utils"
 
 loadEnv(process.env.NODE_ENV || "development", process.cwd())
 
+const enableWeek4InventoryTests =
+  process.env.WEEK4_INVENTORY_TESTS === "true" &&
+  process.env.NODE_ENV !== "production"
+
+
 const redisUrl = process.env.REDIS_URL
+
 const s3Configured = Boolean(
   process.env.S3_BUCKET &&
     process.env.S3_ACCESS_KEY_ID &&
@@ -33,7 +39,24 @@ module.exports = defineConfig({
   admin: {
     disable: process.env.ADMIN_DISABLED === "true",
   },
-  modules: [
+  modules: [  
+        ...(enableWeek4InventoryTests
+      ? [
+          {
+            resolve: "@medusajs/medusa/payment",
+            options: {
+              providers: [
+                {
+                  resolve: "./src/modules/week4-payment",
+                  id: "local",
+                  options: {},
+                },
+              ],
+            },
+          },
+        ]
+      : []),
+
     ...(redisUrl
       ? [
           {

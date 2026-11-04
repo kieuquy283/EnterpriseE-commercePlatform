@@ -1,0 +1,185 @@
+{
+  "all_passed": true,
+  "passed": 12,
+  "total": 12,
+  "checks": [
+    {
+      "name": "same_inventory_level_and_location",
+      "expected": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+      "actual": [
+        [
+          "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA"
+        ],
+        [
+          "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA"
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "name": "available_quantity_formula",
+      "expected": "available = stocked - reserved",
+      "actual": [
+        [
+          {
+            "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+            "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+            "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+            "stocked_quantity": 4,
+            "reserved_quantity": 2,
+            "incoming_quantity": 0,
+            "available_quantity": 2
+          }
+        ],
+        [
+          {
+            "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+            "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+            "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+            "stocked_quantity": 4,
+            "reserved_quantity": 2,
+            "incoming_quantity": 0,
+            "available_quantity": 2
+          }
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "name": "checkout_failed_http_status",
+      "expected": 400,
+      "actual": 400,
+      "passed": true
+    },
+    {
+      "name": "expected_checkout_error",
+      "expected": "not_allowed",
+      "actual": {
+        "type": "not_allowed",
+        "message": "Session: payses_01M6M1A1GTA0AC410NJ0S8CPDY was not authorized with the provider."
+      },
+      "passed": true
+    },
+    {
+      "name": "authorization_rejection_reached",
+      "expected": "Provider authorization rejected",
+      "actual": "Session: payses_01M6M1A1GTA0AC410NJ0S8CPDY was not authorized with the provider.",
+      "passed": true
+    },
+    {
+      "name": "payment_session_status",
+      "expected": [
+        {
+          "provider_id": "pp_week4_local",
+          "status": "error"
+        }
+      ],
+      "actual": [
+        {
+          "id": "payses_01M6M1A1GTA0AC410NJ0S8CPDY",
+          "payment_collection_id": "pay_col_01M6M1A1CVN41HW6K7DD9D4HMA",
+          "provider_id": "pp_week4_local",
+          "currency_code": "vnd",
+          "amount": 528000,
+          "status": "error",
+          "authorized_at": null
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "inventory_restored_to_baseline",
+      "expected": [
+        {
+          "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "stocked_quantity": 4,
+          "reserved_quantity": 2,
+          "incoming_quantity": 0,
+          "available_quantity": 2
+        }
+      ],
+      "actual": [
+        {
+          "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "stocked_quantity": 4,
+          "reserved_quantity": 2,
+          "incoming_quantity": 0,
+          "available_quantity": 2
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "reservations_restored_to_baseline",
+      "expected": [
+        {
+          "id": "resitem_01M6BQDX722CH5K78236NA4WBJ",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "line_item_id": "ordli_01M6BQDX2DF1Q95VFKD6FCG8G0",
+          "quantity": 2,
+          "allow_backorder": false,
+          "created_at": "2026-11-01T14:15:18.001Z",
+          "updated_at": "2026-11-01T14:15:18.001Z"
+        }
+      ],
+      "actual": [
+        {
+          "id": "resitem_01M6BQDX722CH5K78236NA4WBJ",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "line_item_id": "ordli_01M6BQDX2DF1Q95VFKD6FCG8G0",
+          "quantity": 2,
+          "allow_backorder": false,
+          "created_at": "2026-11-01T14:15:18.001Z",
+          "updated_at": "2026-11-01T14:15:18.001Z"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "same_cart_uncompleted",
+      "expected": {
+        "id": "cart_01M6M19YR4YJ2JRRRNQ4P81JEA",
+        "completed_at": null
+      },
+      "actual": {
+        "id": "cart_01M6M19YR4YJ2JRRRNQ4P81JEA",
+        "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+        "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+        "currency_code": "vnd",
+        "completed_at": null,
+        "sample_run": "auto-20261105-suite-01"
+      },
+      "passed": true
+    },
+    {
+      "name": "no_active_order_cart_link",
+      "expected": [],
+      "actual": [],
+      "passed": true
+    },
+    {
+      "name": "no_active_order_added",
+      "expected": 4,
+      "actual": 4,
+      "passed": true
+    },
+    {
+      "name": "no_capture_or_refund",
+      "expected": {
+        "captures": [],
+        "refunds": []
+      },
+      "actual": {
+        "captures": [],
+        "refunds": []
+      },
+      "passed": true
+    }
+  ]
+}

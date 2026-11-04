@@ -1,0 +1,131 @@
+{
+  "sequence": 33,
+  "case_id": "W4-04",
+  "participant": "B",
+  "method": "GET",
+  "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A6XFE6Y3FWYKSWXTZZ66",
+  "started_at": "2026-11-04T19:41:59.848Z",
+  "finished_at": "2026-11-04T19:41:59.919Z",
+  "http_status": 200,
+  "response_headers": {
+    "content_type": "application/json; charset=utf-8",
+    "date": "Wed, 04 Nov 2026 19:41:59 GMT"
+  },
+  "response_file": "W4-04/http/033-response.json",
+  "request_body": null,
+  "response_body": {
+    "cart": {
+      "id": "cart_01M6M1A6XFE6Y3FWYKSWXTZZ66",
+      "currency_code": "vnd",
+      "locale": null,
+      "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+      "created_at": "2026-11-04T19:41:58.064Z",
+      "updated_at": "2026-11-04T19:41:58.618Z",
+      "completed_at": null,
+      "total": 528000,
+      "subtotal": 528000,
+      "tax_total": 0,
+      "discount_total": 0,
+      "discount_subtotal": 0,
+      "discount_tax_total": 0,
+      "original_total": 528000,
+      "original_tax_total": 0,
+      "item_total": 498000,
+      "item_subtotal": 498000,
+      "item_tax_total": 0,
+      "item_discount_total": 0,
+      "original_item_total": 498000,
+      "original_item_subtotal": 498000,
+      "original_item_tax_total": 0,
+      "shipping_total": 30000,
+      "shipping_subtotal": 30000,
+      "shipping_tax_total": 0,
+      "shipping_discount_total": 0,
+      "original_shipping_tax_total": 0,
+      "original_shipping_subtotal": 30000,
+      "original_shipping_total": 30000,
+      "credit_line_subtotal": 0,
+      "credit_line_tax_total": 0,
+      "credit_line_total": 0,
+      "metadata": {
+        "sample_run": "auto-20261105-suite-01",
+        "participant": "B",
+        "sample_case": "W4-04",
+        "sample_suite": "week4_inventory_edge_cases"
+      },
+      "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+      "shipping_address_id": "caaddr_01M6M1A7ETMNHCT04JF9M6ZKND",
+      "billing_address_id": "caaddr_01M6M1A7ESAAWP4Q806GE1T7HD",
+      "customer_id": "cus_01M6M1A7DZJ8NRTGPE8XAPJSJ9",
+      "items": [
+        {
+          "id": "cali_01M6M1A75WYW74PAYQXEDXW222",
+          "thumbnail": null,
+          "variant_id": "variant_01M6BG5WXFHR6XZKDHRZCENMNW",
+          "product_id": "prod_01M6BG5WR38CA1QKCZ90XES8CE",
+          "is_giftcard": false,
+          "product_type_id": null,
+          "product_title": "Week 4 Inventory Test",
+          "product_description": "Sản phẩm kiểm thử tồn kho tuần 4.",
+          "product_subtitle": "",
+          "product_type": null,
+          "product_collection": null,
+          "product_handle": "week4-inventory-test",
+          "variant_sku": "W4-INVENTORY-TEST",
+          "variant_barcode": null,
+          "variant_title": "One Size",
+          "requires_shipping": true,
+          "metadata": {},
+          "created_at": "2026-11-04T19:41:58.332Z",
+          "updated_at": "2026-11-04T19:41:58.332Z",
+          "title": "Week 4 Inventory Test",
+          "quantity": 2,
+          "unit_price": 249000,
+          "compare_at_unit_price": null,
+          "is_tax_inclusive": false,
+          "tax_lines": [],
+          "adjustments": [],
+          "product": {
+            "id": "prod_01M6BG5WR38CA1QKCZ90XES8CE",
+            "collection_id": null,
+            "type_id": null,
+            "categories": [],
+            "tags": []
+          }
+        }
+      ],
+      "shipping_methods": [
+        {
+          "amount": 30000,
+          "is_tax_inclusive": false,
+          "shipping_option_id": "so_01M5555A7RBPXR2DQFGJV32EGR",
+          "id": "casm_01M6M1A86JDBBBYH3QMV6183FZ",
+          "tax_lines": [],
+          "adjustments": []
+        }
+      ],
+      "credit_lines": [],
+      "region": {
+        "id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+        "name": "Vietnam",
+        "currency_code": "vnd",
+        "automatic_taxes": true,
+        "countries": [
+          {
+            "iso_2": "vn",
+            "iso_3": "vnm",
+            "num_code": "704",
+            "name": "VIET NAM",
+            "display_name": "Viet Nam",
+            "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+            "metadata": null,
+            "created_at": "2026-10-17T14:43:47.360Z",
+            "updated_at": "2026-10-17T14:44:53.475Z",
+            "deleted_at": null
+          }
+        ]
+      },
+      "promotions": []
+    }
+  }
+}

@@ -1,0 +1,41 @@
+W4-04 — Thiếu hàng khi complete cart B
+
+Kết quả cuối: PASS (10/10 kiểm tra).
+Run thực thi: auto-20261105-suite-01.
+Run đối chiếu cuối: auto-20261105-verify-01.
+SKU: W4-INVENTORY-TEST; quantity của cart kiểm tra: 2.
+Cart ID: cart_01M6M1A6XFE6Y3FWYKSWXTZZ66.
+Item: iitem_01M6BG5WYG10RW1DN1Q5RWJDM0; kho: sloc_01M5555A4F96W5XBT8FJGE2EG4.
+Provider: pp_system_default.
+
+Baseline SAU A, TRƯỚC B: 4/3/1 (stocked/reserved/available).
+Thời gian baseline: 2026-11-04T19:42:01.127Z (02:42:01 5/11/2026 UTC+07) đến 2026-11-04T19:42:01.187Z.
+Sau response/compensation: 4/3/1.
+Thời gian sau: 2026-11-04T19:42:01.833Z (02:42:01 5/11/2026 UTC+07) đến 2026-11-04T19:42:01.904Z.
+Delta: stocked=0, reserved=0, available=0.
+
+HTTP thực tế: 400; type=not_allowed.
+Message: Not enough stock available for item iitem_01M6BG5WYG10RW1DN1Q5RWJDM0 at location sloc_01M5555A4F96W5XBT8FJGE2EG4
+Request bắt đầu: 2026-11-04T19:42:01.194Z (02:42:01 5/11/2026 UTC+07).
+Response ghi nhận: 2026-11-04T19:42:01.825Z (02:42:01 5/11/2026 UTC+07).
+HTTP exchange gốc: C:/demo1/EnterpriseE-commercePlatform/docs/report/evidence/inventory-week4-auto-20261105-suite-01/W4-04/http/037-response.json.
+
+Cart completed_at sau lỗi: null.
+Active Cart–Order links: [].
+Số active Order: 5 -> 5.
+Reservation trước: [{"id":"resitem_01M6BQDX722CH5K78236NA4WBJ","inventory_item_id":"iitem_01M6BG5WYG10RW1DN1Q5RWJDM0","location_id":"sloc_01M5555A4F96W5XBT8FJGE2EG4","line_item_id":"ordli_01M6BQDX2DF1Q95VFKD6FCG8G0","quantity":2,"allow_backorder":false,"created_at":"2026-11-01T14:15:18.001Z","updated_at":"2026-11-01T14:15:18.001Z"},{"id":"resitem_01M6M1A9FC5QHNJ3FT34D505QD","inventory_item_id":"iitem_01M6BG5WYG10RW1DN1Q5RWJDM0","location_id":"sloc_01M5555A4F96W5XBT8FJGE2EG4","line_item_id":"ordli_01M6M1A9C7NZQQG2W6VTH2P8E8","quantity":1,"allow_backorder":false,"created_at":"2026-11-04T19:42:00.691Z","updated_at":"2026-11-04T19:42:00.691Z"}].
+Reservation sau: [{"id":"resitem_01M6BQDX722CH5K78236NA4WBJ","inventory_item_id":"iitem_01M6BG5WYG10RW1DN1Q5RWJDM0","location_id":"sloc_01M5555A4F96W5XBT8FJGE2EG4","line_item_id":"ordli_01M6BQDX2DF1Q95VFKD6FCG8G0","quantity":2,"allow_backorder":false,"created_at":"2026-11-01T14:15:18.001Z","updated_at":"2026-11-01T14:15:18.001Z"},{"id":"resitem_01M6M1A9FC5QHNJ3FT34D505QD","inventory_item_id":"iitem_01M6BG5WYG10RW1DN1Q5RWJDM0","location_id":"sloc_01M5555A4F96W5XBT8FJGE2EG4","line_item_id":"ordli_01M6M1A9C7NZQQG2W6VTH2P8E8","quantity":1,"allow_backorder":false,"created_at":"2026-11-04T19:42:00.691Z","updated_at":"2026-11-04T19:42:00.691Z"}].
+Payment sessions sau: [{"id":"payses_01M6M1A8ZMJCKFYCJPZB70A222","payment_collection_id":"pay_col_01M6M1A8SRAG1NHAYNAZBKR0M9","provider_id":"pp_system_default","currency_code":"vnd","amount":528000,"status":"pending","authorized_at":null}].
+Không có capture/refund mới trong snapshot của attempt.
+
+Validation cuối: C:/demo1/EnterpriseE-commercePlatform/docs/report/evidence/inventory-week4-auto-20261105-verify-01/W4-04/validation.json.
+Snapshot/HTTP gốc giữ nguyên. Các lần đọc module tuần tự, không phải snapshot nguyên tử.
+
+Cart A: cart_01M6M1A4SWS7X4QQKQPRRT8PJV, quantity=1; Order A: order_01M6M1A9C6KA58YT5JKRG580V4.
+A và B đã được chuẩn bị khi available=2. A giữ1 đơn vị, đưa inventory từ4/2/2 thành4/3/1; B quantity2 bị chặn.
+Order A giữ nguyên reservation hợp lệ; B không để lại reservation hoặc active Order link.
+Lần validator đầu báo Fail9/10 vì chưa nhận diện câu Not enough stock. Đây là lỗi nhận dạng thông báo của công cụ đối chiếu. Sau khi sửa và bổ sung unit test, đối chiếu lại cùng response/snapshot đạt10/10.
+Giữ nguyên validation.json và failure.json của lần đầu; reviewed-source.json ghi hash nguồn. Không chạy lại checkout A/B để sửa kết quả.
+Order A payment: [{"id":"pay_col_01M6M1A6QPTBKXQQH5V9JJ2PJ8","currency_code":"vnd","amount":279000,"status":"authorized","authorized_amount":279000,"captured_amount":0,"refunded_amount":0,"completed_at":null}].
+
+Kết luận: lỗi checkout xảy ra đúng nhánh mong đợi và inventory/reservation được bảo toàn theo baseline. Không reset tồn, xóa reservation hoặc sửa dữ liệu để ép khớp.

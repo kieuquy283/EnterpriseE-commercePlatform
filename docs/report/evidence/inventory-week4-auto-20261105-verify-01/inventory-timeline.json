@@ -1,0 +1,58 @@
+[
+  {
+    "case_id": "preflight",
+    "snapshot": "snapshot",
+    "captured_at": "2026-11-04T19:44:27.287Z",
+    "capture_finished_at": "2026-11-04T19:44:27.352Z",
+    "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+    "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+    "stocked_quantity": 4,
+    "reserved_quantity": 3,
+    "incoming_quantity": 0,
+    "available_quantity": 1,
+    "cart_id": "",
+    "order_id": ""
+  },
+  {
+    "case_id": "W4-01-supplement",
+    "snapshot": "current-readback",
+    "captured_at": "2026-11-04T19:44:27.379Z",
+    "capture_finished_at": "2026-11-04T19:44:27.599Z",
+    "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+    "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+    "stocked_quantity": 4,
+    "reserved_quantity": 3,
+    "incoming_quantity": 0,
+    "available_quantity": 1,
+    "cart_id": "cart_01M6BMW62AQK90ATJ2PY9FAXDC",
+    "order_id": "order_01M6BQDX2ADNG6PFVZ8GFYG3A5"
+  },
+  {
+    "case_id": "W4-05",
+    "snapshot": "t1",
+    "captured_at": "2026-11-04T19:44:27.659Z",
+    "capture_finished_at": "2026-11-04T19:44:27.835Z",
+    "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+    "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+    "stocked_quantity": 4,
+    "reserved_quantity": 3,
+    "incoming_quantity": 0,
+    "available_quantity": 1,
+    "cart_id": "cart_01M6M1A4SWS7X4QQKQPRRT8PJV",
+    "order_id": "order_01M6M1A9C6KA58YT5JKRG580V4"
+  },
+  {
+    "case_id": "W4-05",
+    "snapshot": "t2",
+    "captured_at": "2026-11-04T19:44:28.429Z",
+    "capture_finished_at": "2026-11-04T19:44:28.568Z",
+    "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+    "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+    "stocked_quantity": 4,
+    "reserved_quantity": 3,
+    "incoming_quantity": 0,
+    "available_quantity": 1,
+    "cart_id": "cart_01M6M1A4SWS7X4QQKQPRRT8PJV",
+    "order_id": "order_01M6M1A9C6KA58YT5JKRG580V4"
+  }
+]

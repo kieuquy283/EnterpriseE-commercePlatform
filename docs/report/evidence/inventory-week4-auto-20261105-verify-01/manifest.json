@@ -1,0 +1,75 @@
+{
+  "run_id": "auto-20261105-verify-01",
+  "state": "completed",
+  "started_at": "2026-11-04T19:44:25.933Z",
+  "updated_at": "2026-11-04T19:44:28.585Z",
+  "fixture": {
+    "run_id": "auto-20261105-verify-01",
+    "product_id": "prod_01M6BG5WR38CA1QKCZ90XES8CE",
+    "handle": "week4-inventory-test",
+    "variant_id": "variant_01M6BG5WXFHR6XZKDHRZCENMNW",
+    "sku": "W4-INVENTORY-TEST",
+    "manage_inventory": true,
+    "allow_backorder": false,
+    "required_quantity": 1,
+    "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+    "inventory_level_id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+    "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+    "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+    "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+    "currency_code": "vnd",
+    "quantity": 2,
+    "calculated_unit_price": 249000,
+    "payment_provider_id": "pp_system_default"
+  },
+  "initial_available": 1,
+  "verification_of": "auto-20261105-suite-01",
+  "cases": [
+    {
+      "case_id": "W4-02",
+      "status": "Pass",
+      "passed": 12,
+      "total": 12,
+      "cart_id": "cart_01M6M19YR4YJ2JRRRNQ4P81JEA",
+      "reviewed_source_directory": "C:\\demo1\\EnterpriseE-commercePlatform\\docs\\report\\evidence\\inventory-week4-auto-20261105-suite-01",
+      "original_validator_status": "Pass",
+      "original_validator_passed": 12,
+      "original_validator_total": 12
+    },
+    {
+      "case_id": "W4-03",
+      "status": "Pass",
+      "passed": 11,
+      "total": 11,
+      "cart_id": "cart_01M6M1A2VMG5K3V1DVMRA76HHQ",
+      "reviewed_source_directory": "C:\\demo1\\EnterpriseE-commercePlatform\\docs\\report\\evidence\\inventory-week4-auto-20261105-suite-01",
+      "original_validator_status": "Pass",
+      "original_validator_passed": 11,
+      "original_validator_total": 11
+    },
+    {
+      "case_id": "W4-04",
+      "status": "Pass",
+      "passed": 10,
+      "total": 10,
+      "cart_a_id": "cart_01M6M1A4SWS7X4QQKQPRRT8PJV",
+      "order_a_id": "order_01M6M1A9C6KA58YT5JKRG580V4",
+      "cart_b_id": "cart_01M6M1A6XFE6Y3FWYKSWXTZZ66",
+      "a_quantity": 1,
+      "b_quantity": 2,
+      "reviewed_source_directory": "C:\\demo1\\EnterpriseE-commercePlatform\\docs\\report\\evidence\\inventory-week4-auto-20261105-suite-01",
+      "original_validator_status": "Fail",
+      "original_validator_passed": 9,
+      "original_validator_total": 10
+    },
+    {
+      "case_id": "W4-05",
+      "status": "Pass",
+      "passed": 7,
+      "total": 7,
+      "cart_id": "cart_01M6M1A4SWS7X4QQKQPRRT8PJV",
+      "order_id": "order_01M6M1A9C6KA58YT5JKRG580V4"
+    }
+  ],
+  "completed_at": "2026-11-04T19:44:28.585Z"
+}

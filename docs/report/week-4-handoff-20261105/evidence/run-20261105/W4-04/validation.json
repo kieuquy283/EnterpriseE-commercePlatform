@@ -1,0 +1,178 @@
+{
+  "all_passed": false,
+  "passed": 9,
+  "total": 10,
+  "checks": [
+    {
+      "name": "same_inventory_level_and_location",
+      "expected": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+      "actual": [
+        [
+          "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA"
+        ],
+        [
+          "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA"
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "name": "available_quantity_formula",
+      "expected": "available = stocked - reserved",
+      "actual": [
+        [
+          {
+            "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+            "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+            "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+            "stocked_quantity": 4,
+            "reserved_quantity": 3,
+            "incoming_quantity": 0,
+            "available_quantity": 1
+          }
+        ],
+        [
+          {
+            "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+            "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+            "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+            "stocked_quantity": 4,
+            "reserved_quantity": 3,
+            "incoming_quantity": 0,
+            "available_quantity": 1
+          }
+        ]
+      ],
+      "passed": true
+    },
+    {
+      "name": "checkout_failed_http_status",
+      "expected": "HTTP error with an inventory diagnostic",
+      "actual": 400,
+      "passed": true
+    },
+    {
+      "name": "expected_checkout_error",
+      "expected": "inventory",
+      "actual": {
+        "type": "not_allowed",
+        "message": "Not enough stock available for item iitem_01M6BG5WYG10RW1DN1Q5RWJDM0 at location sloc_01M5555A4F96W5XBT8FJGE2EG4"
+      },
+      "passed": false
+    },
+    {
+      "name": "inventory_restored_to_baseline",
+      "expected": [
+        {
+          "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "stocked_quantity": 4,
+          "reserved_quantity": 3,
+          "incoming_quantity": 0,
+          "available_quantity": 1
+        }
+      ],
+      "actual": [
+        {
+          "id": "ilev_01M6BG8PDBJFPWTSJK3JG0E7MA",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "stocked_quantity": 4,
+          "reserved_quantity": 3,
+          "incoming_quantity": 0,
+          "available_quantity": 1
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "reservations_restored_to_baseline",
+      "expected": [
+        {
+          "id": "resitem_01M6BQDX722CH5K78236NA4WBJ",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "line_item_id": "ordli_01M6BQDX2DF1Q95VFKD6FCG8G0",
+          "quantity": 2,
+          "allow_backorder": false,
+          "created_at": "2026-11-01T14:15:18.001Z",
+          "updated_at": "2026-11-01T14:15:18.001Z"
+        },
+        {
+          "id": "resitem_01M6M1A9FC5QHNJ3FT34D505QD",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "line_item_id": "ordli_01M6M1A9C7NZQQG2W6VTH2P8E8",
+          "quantity": 1,
+          "allow_backorder": false,
+          "created_at": "2026-11-04T19:42:00.691Z",
+          "updated_at": "2026-11-04T19:42:00.691Z"
+        }
+      ],
+      "actual": [
+        {
+          "id": "resitem_01M6BQDX722CH5K78236NA4WBJ",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "line_item_id": "ordli_01M6BQDX2DF1Q95VFKD6FCG8G0",
+          "quantity": 2,
+          "allow_backorder": false,
+          "created_at": "2026-11-01T14:15:18.001Z",
+          "updated_at": "2026-11-01T14:15:18.001Z"
+        },
+        {
+          "id": "resitem_01M6M1A9FC5QHNJ3FT34D505QD",
+          "inventory_item_id": "iitem_01M6BG5WYG10RW1DN1Q5RWJDM0",
+          "location_id": "sloc_01M5555A4F96W5XBT8FJGE2EG4",
+          "line_item_id": "ordli_01M6M1A9C7NZQQG2W6VTH2P8E8",
+          "quantity": 1,
+          "allow_backorder": false,
+          "created_at": "2026-11-04T19:42:00.691Z",
+          "updated_at": "2026-11-04T19:42:00.691Z"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "name": "same_cart_uncompleted",
+      "expected": {
+        "id": "cart_01M6M1A6XFE6Y3FWYKSWXTZZ66",
+        "completed_at": null
+      },
+      "actual": {
+        "id": "cart_01M6M1A6XFE6Y3FWYKSWXTZZ66",
+        "region_id": "reg_01M5555A2ZAPR5SYW3THXG2SVC",
+        "sales_channel_id": "sc_01M5555A0N5T656VFQ874BGK26",
+        "currency_code": "vnd",
+        "completed_at": null,
+        "sample_run": "auto-20261105-suite-01"
+      },
+      "passed": true
+    },
+    {
+      "name": "no_active_order_cart_link",
+      "expected": [],
+      "actual": [],
+      "passed": true
+    },
+    {
+      "name": "no_active_order_added",
+      "expected": 5,
+      "actual": 5,
+      "passed": true
+    },
+    {
+      "name": "no_capture_or_refund",
+      "expected": {
+        "captures": [],
+        "refunds": []
+      },
+      "actual": {
+        "captures": [],
+        "refunds": []
+      },
+      "passed": true
+    }
+  ]
+}

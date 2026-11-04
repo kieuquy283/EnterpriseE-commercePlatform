@@ -1,0 +1,20 @@
+{
+  "sequence": 37,
+  "case_id": "W4-04",
+  "participant": "B",
+  "method": "POST",
+  "url": "http://127.0.0.1:9000/store/carts/cart_01M6M1A6XFE6Y3FWYKSWXTZZ66/complete",
+  "started_at": "2026-11-04T19:42:01.194Z",
+  "finished_at": "2026-11-04T19:42:01.825Z",
+  "http_status": 400,
+  "response_headers": {
+    "content_type": "application/json; charset=utf-8",
+    "date": "Wed, 04 Nov 2026 19:42:01 GMT"
+  },
+  "response_file": "W4-04/http/037-response.json",
+  "request_body": null,
+  "response_body": {
+    "type": "not_allowed",
+    "message": "Not enough stock available for item iitem_01M6BG5WYG10RW1DN1Q5RWJDM0 at location sloc_01M5555A4F96W5XBT8FJGE2EG4"
+  }
+}

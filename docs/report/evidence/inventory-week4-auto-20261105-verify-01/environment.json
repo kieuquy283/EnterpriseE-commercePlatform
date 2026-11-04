@@ -1,0 +1,19 @@
+{
+  "run_id": "auto-20261105-verify-01",
+  "captured_at": "2026-11-04T19:44:27.281Z",
+  "environment": "development",
+  "node": "v24.21.0",
+  "versions": {
+    "medusa": "2.21.2",
+    "js-sdk": "2.21.2",
+    "framework": "2.21.2",
+    "core-flows": "2.21.2",
+    "inventory": "2.21.2",
+    "order": "2.21.2",
+    "payment": "2.21.2"
+  },
+  "base_url": "http://127.0.0.1:9000",
+  "provider_flag": true,
+  "snapshot_consistency": "Sequential module reads, no other inventory work intentionally run concurrently",
+  "fixture_preparation": "Reused existing fixture without reseeding, stock reset or deleting historical reservations"
+}

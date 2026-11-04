@@ -1,0 +1,7 @@
+{
+  "http_status": 400,
+  "body": {
+    "type": "invalid_data",
+    "message": "No shipping method selected but the cart contains items that require shipping."
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "http_status": 400,
+  "body": {
+    "type": "not_allowed",
+    "message": "Not enough stock available for item iitem_01M6BG5WYG10RW1DN1Q5RWJDM0 at location sloc_01M5555A4F96W5XBT8FJGE2EG4"
+  }
+}

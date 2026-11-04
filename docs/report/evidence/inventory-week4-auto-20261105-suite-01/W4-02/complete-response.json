@@ -1,0 +1,7 @@
+{
+  "http_status": 400,
+  "body": {
+    "type": "not_allowed",
+    "message": "Session: payses_01M6M1A1GTA0AC410NJ0S8CPDY was not authorized with the provider."
+  }
+}

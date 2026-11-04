@@ -1,0 +1,31 @@
+{
+  "sequence": 3,
+  "case_id": "preflight",
+  "participant": "",
+  "method": "GET",
+  "url": "http://127.0.0.1:9000/store/payment-providers?region_id=reg_01M5555A2ZAPR5SYW3THXG2SVC",
+  "started_at": "2026-11-04T19:41:49.077Z",
+  "finished_at": "2026-11-04T19:41:49.111Z",
+  "http_status": 200,
+  "response_headers": {
+    "content_type": "application/json; charset=utf-8",
+    "date": "Wed, 04 Nov 2026 19:41:49 GMT"
+  },
+  "response_file": "preflight/http/003-response.json",
+  "request_body": null,
+  "response_body": {
+    "payment_providers": [
+      {
+        "id": "pp_system_default",
+        "is_enabled": true
+      },
+      {
+        "id": "pp_week4_local",
+        "is_enabled": true
+      }
+    ],
+    "count": 2,
+    "offset": 0,
+    "limit": 20
+  }
+}
