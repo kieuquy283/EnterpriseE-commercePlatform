@@ -1,0 +1,5 @@
+# Phase 02 — bounded Kaggle acquisition
+
+The installed Kaggle API 1.7.4.5 supports `kaggle competitions download <competition> -f <file> -p <path>`. Official [CLI documentation](https://github.com/Kaggle/kaggle-cli/blob/main/docs/competitions.md) describes nested file paths. `scripts/hm/download-images.py` defaults to a 20-file pilot prioritizing one representative per Product, skips existing paths, retries with backoff, and writes a private report. Use `--limit 1874` only after a successful pilot and disk review. **2026-11-06 update:** credential refresh enabled selective downloads; the helper now handles flattened output paths and ZIP-wrapped JPEGs. The four-worker bounded run obtained images for 496/500 Products. See [actual evidence](reports/real_hm_images_2026-11-06.md).
+
+Historical first attempt: competition file listing returned 401; a bounded `--limit 1` request exited 1 with zero downloaded bytes. That access failure was resolved on 2026-11-06. No full archive download was attempted. Missing items are reported, never replaced with another Product's image.

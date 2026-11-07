@@ -52,6 +52,9 @@ services:
       COOKIE_SECRET: recommendation-test-only-cookie
       STORE_CORS: http://localhost:8001
       AUTH_CORS: http://localhost:8001
+      HM_IMAGE_TEST_BACKEND_URL: http://127.0.0.1:9002
+      HM_IMAGE_INPUT_DIR: /app/data/hm/image-input
+      HM_IMAGE_JOURNAL_DIR: /app/data/hm/processed
     volumes:
       - ../apps/backend/src:/app/apps/backend/src
       - ../apps/backend/medusa-config.ts:/app/apps/backend/medusa-config.ts:ro
@@ -59,6 +62,11 @@ services:
       - ../apps/backend/jest.config.js:/app/apps/backend/jest.config.js:ro
       - ../scripts/hm:/app/scripts/hm:ro
       - ../data/hm/test-serving/processed:/app/data/hm/processed
+      - ../data/hm/processed:/app/data/hm/image-input:ro
+      - ../data/hm/test-serving/image-fixtures:/app/data/hm/image-fixtures
+      - ../data/hm/images-optimized:/app/data/hm/images-optimized:ro
+      - ../data/hm/test-serving/images-optimized:/app/data/hm/test-serving/images-optimized:ro
+      - ../data/hm/test-serving/media-static:/app/apps/backend/static
     ports: ["127.0.0.1:9002:9002"]
     networks: [commerce]
     depends_on:

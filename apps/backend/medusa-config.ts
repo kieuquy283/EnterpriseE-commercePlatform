@@ -9,6 +9,7 @@ const s3Configured = Boolean(
     process.env.S3_SECRET_ACCESS_KEY &&
     process.env.S3_FILE_URL
 )
+const hmImageTestBackendUrl = process.env.HM_IMAGE_TEST_BACKEND_URL
 
 const workerMode =
   process.env.WORKER_MODE === "server" || process.env.WORKER_MODE === "worker"
@@ -115,6 +116,19 @@ module.exports = defineConfig({
             },
           },
         ]
+      : []),
+    ...(process.env.NODE_ENV === "test" && hmImageTestBackendUrl && !s3Configured
+      ? [{
+          resolve: "@medusajs/medusa/file",
+          options: {
+            providers: [{
+              resolve: "@medusajs/medusa/file-local",
+              id: "hm-test-local",
+              is_default: true,
+              options: { backend_url: `${hmImageTestBackendUrl.replace(/\/$/, "")}/static` },
+            }],
+          },
+        }]
       : []),
   ],
 })
