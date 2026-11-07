@@ -1,5 +1,0 @@
-# Phase 06 — storefront verification
-
-The existing Product Preview and Similar Products cards read each Medusa Store Product's own `thumbnail`/`images`. PDP gallery also reads Product images. The shared `ProductImage` component now renders a placeholder for absent or failed URLs. Next.js currently allows localhost and configured S3 origins, with image optimization disabled; production image origins and access controls need an explicit review before deployment.
-
-Typecheck/lint/build and fixture browser tests establish code behavior only. A synthetic JPEG was attached to one test Product: Store API and Similar Products API returned its thumbnail, and Playwright loaded the image in both a Similar Products card and the target PDP gallery. A second browser case blocked the JPEG request and observed placeholders in card and gallery. Actual H&M thumbnail, gallery and recommendation-card display cannot pass until images are legally acquired, attached to test Products, and read back through Store API. Do not infer real image coverage from the 500-Product catalog alone.

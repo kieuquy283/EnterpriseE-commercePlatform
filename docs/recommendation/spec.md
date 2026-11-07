@@ -2,7 +2,7 @@
 
 > **Document ID:** REC-SPEC · **Version:** 1.1 · **Status:** IMPLEMENTED cho private pilot; kết quả nghiệm thu trong [reports](reports/final_implementation_report.md). Public NO-GO.
 > **Owner:** Data/Recommendation lead; reviewed by Backend, Frontend, QA/DevOps.
-> **Plan:** [plan.md](plan.md) · **Parent:** [SRS](../03_Software_Requirements_Specification.md) `FR-REC-01/02` (COULD).
+> **Implementation evidence:** [final report](reports/final_implementation_report.md) · **Parent:** [SRS](../03_Software_Requirements_Specification.md) `FR-REC-01/02` (COULD).
 > **Scope:** Non-personalized **Popularity (Home)** + **Metadata Similarity (PDP)** only.
 
 ## 1. Mục đích và ranh giới
@@ -196,18 +196,18 @@ GET /store/recommendations?placement=product_detail&product_id=prod_...&region_i
 
 **Latency targets (proposal):** warm p95 < 250ms, cold p95 < 800ms at 30 RPS, error rate <1%, measured with a fixed test profile; adapt to real VM budget and record deviations. No false claim of an achieved SLO.
 
-## 10. Phase traceability
+## 10. Implementation traceability
 
-| Spec area | Phase | Files planned |
+| Spec area | Report | Implementation files |
 |---|---|---|
-| DEC baseline/rights | [00](phase_00_baseline_rights.md) | `docs/recommendation/phase_00...`, future rights decision in same folder |
-| Data contract/coverage | [01](phase_01_data_readiness.md) | `scripts/hm/profile-interactions.py`, optional selection/mapping validation |
-| Popularity | [02](phase_02_popularity_offline.md) | `scripts/hm/build-popularity-candidates.py`, tests, train-only counts |
-| Similarity | [03](phase_03_similarity_offline.md) | `scripts/hm/build-similar-candidates.py`, tests |
-| Versioning/data models | [04](phase_04_candidate_publishing.md) | `apps/backend/src/modules/recommendation/`, publish script |
-| REST/Store API | [05](phase_05_serving_api.md) | `apps/backend/src/api/store/recommendations/route.ts`, HTTP tests |
-| Home/PDP | [06](phase_06_storefront.md) | `apps/storefront/src/lib/data/recommendations.ts`, UI + E2E |
-| Final metrics/release | [07](phase_07_evaluation_release.md) | `load/recommendations.js`, reports under `docs/recommendation/evidence/` |
+| DEC baseline/rights | [00](reports/phase_00_report.md) | [dataset rights decision](dataset-rights-decision.md) |
+| Data contract/coverage | [01](reports/phase_01_report.md) | `scripts/hm/profile-interactions.py`, selection/mapping validation |
+| Popularity | [02](reports/phase_02_report.md) | `scripts/hm/build-popularity-candidates.py`, tests, train-only counts |
+| Similarity | [03](reports/phase_03_report.md) | `scripts/hm/build-similar-candidates.py`, tests |
+| Versioning/data models | [04](reports/phase_04_report.md) | `apps/backend/src/modules/recommendation/`, publish script |
+| REST/Store API | [05](reports/phase_05_report.md) | `apps/backend/src/api/store/recommendations/route.ts`, HTTP tests |
+| Home/PDP | [06](reports/phase_06_report.md) | `apps/storefront/src/lib/data/recommendations.ts`, UI + E2E |
+| Final metrics/release | [07](reports/phase_07_report.md) | `load/recommendations.js`, reports under `docs/recommendation/evidence/` |
 
 ## 11. Out-of-scope, open issues and change control
 

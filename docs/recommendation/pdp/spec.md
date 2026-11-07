@@ -1,9 +1,9 @@
 # Technical & Functional Specification — H&M Similar Products API + PDP
 
-> **ID:** REC-PDP-SPEC · **Version:** 1.0 · **Status:** Target contract cho kế hoạch chuyên biệt.
+> **ID:** REC-PDP-SPEC · **Version:** 1.0 · **Status:** Contract; xem [báo cáo triển khai](reports/final_implementation_report.md) để biết kết quả kiểm chứng.
 > **Parent requirement:** SRS `FR-REC-01/02` là optional; **MUST dưới đây là MUST sau khi nhóm chọn làm PDP Recommendation**.
 > **Implementation strategy:** Reuse code trên `recommendation`; xác minh trên SHA thực tế, không chép lại module đã có.
-> **Plan:** [plan.md](plan.md).
+> **Implementation evidence:** [final report](reports/final_implementation_report.md) and [runbook](runbook.md).
 
 ## 1. Mục đích và giới hạn
 

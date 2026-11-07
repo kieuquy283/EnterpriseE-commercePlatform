@@ -1,5 +1,0 @@
-# Phase 05 — Medusa media integration
-
-`apps/backend/src/scripts/import-hm-images.ts` uses installed Medusa 2.21.2 `Modules.FILE.createFiles` and `updateProductsWorkflow`. It verifies H&M Product provenance plus current Variant SKU and ID, uploads checksum-validated derivatives, appends upload/update journal records, keeps existing gallery URLs, then reads `thumbnail`/`images` back. The representative image is used when present; if missing, the lowest valid article ID becomes the Product thumbnail. All gallery images belong to that mapped Product.
-
-The File Module's local provider exposes even nominally private files via `/static`; therefore this importer allows writes only in an isolated test DB with explicit environment flag and loopback media URL. `medusa-config.ts` and the dedicated Compose stack configure port 9002 and an isolated static mount. Do not point that test backend at a public host. A synthetic fixture was uploaded, read through Store API, rerun idempotently and rolled back using `rollback-hm-images.ts`; real H&M image readback and public storage rights remain pending.
