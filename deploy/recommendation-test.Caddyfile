@@ -1,0 +1,8 @@
+:9004 {
+    reverse_proxy recommendation-api:9002 {
+        transport http {
+            dial_timeout 1s
+            response_header_timeout 5s
+        }
+    }
+}

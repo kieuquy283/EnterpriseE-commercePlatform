@@ -2,6 +2,7 @@ import { listProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
 import { HttpTypes } from "@medusajs/types"
 import Product from "../product-preview"
+import { getRecommendations } from "@lib/data/recommendations"
 
 type RelatedProductsProps = {
   product: HttpTypes.StoreProduct
@@ -16,6 +17,28 @@ export default async function RelatedProducts({
 
   if (!region) {
     return null
+  }
+
+  const recommendations = await getRecommendations(region.id, product.id)
+  const seen = new Set<string>([product.id])
+  const uniqueProducts = (items: HttpTypes.StoreProduct[]) => items.filter((item) => {
+    if (seen.has(item.id)) return false
+    seen.add(item.id)
+    return true
+  }).slice(0, 6)
+  const recommendedProducts = uniqueProducts(recommendations?.products ?? [])
+  if (recommendedProducts.length && recommendations) {
+    return (
+      <section className="product-page-constraint" aria-labelledby="similar-products-heading" data-testid="similar-products">
+        <h2 id="similar-products-heading" className="text-2xl-regular mb-8">{recommendations.strategy === "hm_metadata_similarity" ? "Similar products" : "You may also like"}</h2>
+        <p className="mb-6 text-ui-fg-subtle">{recommendations.strategy === "hm_metadata_similarity" ? "Based on product attributes." : "Selected products from the available catalog."}</p>
+        <ul className="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-6">
+          {recommendedProducts.map((item) => (
+            <li key={item.id}><Product region={region} product={item} /></li>
+          ))}
+        </ul>
+      </section>
+    )
   }
 
   // edit this function to define your related products logic
@@ -37,21 +60,19 @@ export default async function RelatedProducts({
     queryParams,
     countryCode,
   }).then(({ response }) => {
-    return response.products.filter(
-      (responseProduct) => responseProduct.id !== product.id
-    )
-  })
+    return uniqueProducts(response.products)
+  }).catch(() => [])
 
   if (!products.length) {
     return null
   }
 
   return (
-    <div className="product-page-constraint">
+    <section className="product-page-constraint" aria-labelledby="related-products-heading" data-testid="related-products">
       <div className="flex flex-col items-center text-center mb-16">
-        <span className="text-base-regular text-gray-600 mb-6">
+        <h2 id="related-products-heading" className="text-base-regular text-gray-600 mb-6">
           Related products
-        </span>
+        </h2>
         <p className="text-2xl-regular text-ui-fg-base max-w-lg">
           You might also want to check out these products.
         </p>
@@ -64,6 +85,6 @@ export default async function RelatedProducts({
           </li>
         ))}
       </ul>
-    </div>
+    </section>
   )
 }

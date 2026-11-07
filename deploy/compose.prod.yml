@@ -17,6 +17,7 @@ services:
       STORE_CORS: https://${STORE_DOMAIN:?Set STORE_DOMAIN}
       ADMIN_CORS: https://${API_DOMAIN:?Set API_DOMAIN}
       AUTH_CORS: https://${STORE_DOMAIN:?Set STORE_DOMAIN},https://${API_DOMAIN:?Set API_DOMAIN}
+      ALLOW_INSECURE_LOCAL_SESSION_COOKIE: "false"
 
   storefront:
     build:

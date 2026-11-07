@@ -1,6 +1,6 @@
 # H&M catalog import and recommendation inputs
 
-These scripts use the manually extracted CSV files in `data/hm/`. The directory is gitignored. Keep the source files and all outputs local. No images are present in the current dataset directory.
+These scripts use the manually extracted CSV files in `data/hm/`. The directory is gitignored. Keep the source files and all outputs local. Install the image-pipeline dependency with `python -m pip install -r scripts/hm/requirements.txt` before running image validation, optimization, or their tests. Image availability depends on the local dataset; image assets are never committed.
 
 1. Run the existing Medusa migrations and commerce seed against a **development database**. The seed must provide the `Online Store` sales channel, `Vietnam Warehouse` and shipping profile.
 2. From the repository root, prepare a bounded catalog: `python scripts/hm/prepare.py --max-products 500`. This reads `articles.csv` and writes `data/hm/processed/catalog.jsonl` and `manifest.json`. The group key combines `product_code`, type, group, department and section because actual data contains conflicting attributes under the same `product_code`. Use `--max-products 0` only after the bounded import is validated and resources are sized.
@@ -12,4 +12,4 @@ The CSVs have no reliable stock, current VND price, order grouping, login creden
 
 On 2026-10-31, the bounded 500-product catalog was imported into the local development PostgreSQL using the backend Docker Compose service, which provides `DATABASE_URL` and `REDIS_URL`. The native CLI attempts from `apps/backend` had lacked `DATABASE_URL` because it exists in the root `.env`, not `apps/backend/.env`; the reported pool error was misleading. PostgreSQL `max_connections` was restored to 100. Database verification found 500 published H&M products, 1,874 variants and 1,874 inventory levels. The mapping artifact has 1,874 unique article IDs. A second import created zero products and found all 500 existing products. This verifies the bounded sample, not the full dataset or storefront behavior.
 
-Run the scripts only after checking the dataset's Kaggle competition rules and the intended use of its contents. The current directory has no `images/`; storefront product thumbnails will need permitted assets or placeholders.
+Run the scripts only after checking the dataset's Kaggle competition rules and the intended use of its contents. Missing product images need permitted assets or placeholders.

@@ -1,0 +1,6 @@
+# Test-only overlay: build mounted source before starting additional replicas.
+services:
+  recommendation-api-2:
+    command: ["sh", "-c", "npm run build && node /app/node_modules/@medusajs/cli/cli.js start -p 9002"]
+  recommendation-api-3:
+    command: ["sh", "-c", "npm run build && node /app/node_modules/@medusajs/cli/cli.js start -p 9002"]

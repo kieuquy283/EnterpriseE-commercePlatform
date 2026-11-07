@@ -9,6 +9,7 @@ const s3Configured = Boolean(
     process.env.S3_SECRET_ACCESS_KEY &&
     process.env.S3_FILE_URL
 )
+const hmImageTestBackendUrl = process.env.HM_IMAGE_TEST_BACKEND_URL
 
 const workerMode =
   process.env.WORKER_MODE === "server" || process.env.WORKER_MODE === "worker"
@@ -18,8 +19,14 @@ const workerMode =
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
+    ...(process.env.NODE_ENV === "test"
+      ? { databaseDriverOptions: { connection: { ssl: false }, pool: { min: 0, max: 5 } } }
+      : {}),
     redisUrl,
     workerMode,
+    ...(process.env.ALLOW_INSECURE_LOCAL_SESSION_COOKIE === "true"
+      ? { cookieOptions: { secure: false, sameSite: "lax" } }
+      : {}),
     http: {
       storeCors: process.env.STORE_CORS || "http://localhost:8000",
       adminCors: process.env.ADMIN_CORS || "http://localhost:9000",
@@ -34,6 +41,7 @@ module.exports = defineConfig({
     disable: process.env.ADMIN_DISABLED === "true",
   },
   modules: [
+    { resolve: "./src/modules/recommendation" },
     ...(process.env.NODE_ENV === "production"
       ? []
       : [{
@@ -108,6 +116,19 @@ module.exports = defineConfig({
             },
           },
         ]
+      : []),
+    ...(process.env.NODE_ENV === "test" && hmImageTestBackendUrl && !s3Configured
+      ? [{
+          resolve: "@medusajs/medusa/file",
+          options: {
+            providers: [{
+              resolve: "@medusajs/medusa/file-local",
+              id: "hm-test-local",
+              is_default: true,
+              options: { backend_url: `${hmImageTestBackendUrl.replace(/\/$/, "")}/static` },
+            }],
+          },
+        }]
       : []),
   ],
 })
