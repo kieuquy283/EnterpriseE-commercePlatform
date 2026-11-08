@@ -1,0 +1,25 @@
+# H&M image pipeline — final implementation report
+
+> **Update, 2026-11-06:** Kaggle CLI access was repaired after this checkpoint. 496 real JPEGs were downloaded, validated, optimized, and imported into the isolated `recommendation_test` catalog; Store and Recommendation API readback passed. Real-image Chromium E2E passed 4/4 on `localhost:8001`, including Home. The main `commerce` DB still has 0/500 H&M thumbnails. See the [real-image evidence report](real_hm_images_2026-11-06.md). The historical BLOCKED entries below describe the earlier run, not the current acquisition status.
+
+2026-11-06 Asia/Saigon. Branch `recommendation-pdp`, baseline SHA `452799380adb9745c1c3f480c484df20761f0970`; code remains uncommitted. Existing user ZIP remained untouched. This is a private implementation checkpoint, not a claim of completed real-image integration.
+
+| Phase | Result | Evidence |
+| --- | --- | --- |
+| 00 Source and rights | BLOCKED for Kaggle access; decision documented | [report](phase_00_report.md) |
+| 01 Manifest | Local PASS, exact DB ID reconciliation PARTIAL | [report](phase_01_report.md) |
+| 02 Download | BLOCKED, Kaggle 401/one-file request failed | [report](phase_02_report.md) |
+| 03 Validation | Fixture PASS, real BLOCKED | [report](phase_03_report.md) |
+| 04 Optimization | Fixture PASS, real BLOCKED | [report](phase_04_report.md) |
+| 05 Medusa import | Fixture upload/readback/idempotency/rollback PASS; real BLOCKED | [report](phase_05_report.md) |
+| 06 Storefront | Missing-image and synthetic image card/gallery browser PASS; real H&M E2E BLOCKED | [report](phase_06_report.md) |
+
+Implemented: deterministic image manifest/coverage, bounded Kaggle CLI acquisition with resume/backoff and report, JPEG decode/checksum/duplicate validation, idempotent Pillow derivatives, Medusa test-only File Module/product workflow importer with journal and readback, guarded rollback, local file provider/Compose media mount, shared frontend image fallback, and unit/Playwright tests. Main paths: `scripts/hm/{image_pipeline.py,build-image-manifest.py,download-images.py,validate-images.py,optimize-images.py,create-image-test-fixture.py,tests/test_image_pipeline.py}`, `apps/backend/{medusa-config.ts,src/scripts/import-hm-images.ts,src/scripts/rollback-hm-images.ts,src/scripts/__tests__/import-hm-images.unit.spec.ts}`, `deploy/docker-compose.recommendation-test.yml`, `apps/storefront/src/modules/products/components/{product-image,thumbnail,image-gallery}`, `apps/storefront/e2e/hm-image-fallback.spec.ts`. Documentation is entirely under `docs/recommendation/images/`.
+
+Actual quantities: selected 500 Products/1,874 Variants; 500 representative requests; 1,874 missing; 0 real image downloads, 0 valid real JPEGs, 0 real derivatives/imports. One clearly synthetic fixture yielded 2 derivatives, 2 File Module uploads and 1 test Product media update; rerun updated 0; rollback restored its original empty thumbnail/gallery. No performance/storage improvement is claimed. Similar Products still uses Medusa Product media, so the code path will use each recommended Product's own thumbnail when imported, but real visual readback is pending.
+
+Verification: 17/17 Python tests, 37/37 backend unit tests on final source, backend/frontend typecheck exit 0, backend lint exit 0 with no issues, frontend lint exit 0 with 18 existing warnings, final backend and production frontend builds exit 0, 2/2 H&M missing-image browser tests, 1/1 catalog browser regression. Fixture importer/readback/rerun/rollback passed on test DB; Similar Products API matched Product thumbnail and synthetic image browser E2E passed 2/2, including broken URL fallback. Detailed commands and limitations are in [system test report](system_test_report.md). Full commerce mutation regression, real image browser checks, performance and live image rights review NOT_RUN/BLOCKED.
+
+Rerun after ordinary Kaggle authorization and rules acceptance: `python scripts/hm/build-image-manifest.py`; `python scripts/hm/download-images.py --limit 20`; `python scripts/hm/validate-images.py`; `python scripts/hm/optimize-images.py`. Inspect coverage and pilot. Only then run `medusa exec ./src/scripts/import-hm-images.ts` with `NODE_ENV=test`, `HM_IMAGE_ALLOW_LOCAL_MEDIA_WRITE=1`, and a verified isolated `recommendation_test` or `hm_images_test` DB. Test backend File Module origin/storage and use Store API readback before browser E2E. Do not use the main `commerce` DB. Retain `data/hm/processed/image-import-journal.jsonl` for upload resume and prior media references. Rollback must use Medusa workflow against the isolated DB; no automatic deletion of Products/Orders or source images.
+
+Security/rights: original CSVs and image artifacts stay ignored. The local File provider serves `/static` and does not establish permission for public image distribution. [Kaggle rules](https://www.kaggle.com/competitions/h-and-m-personalized-fashion-recommendations/rules) limit data use and redistribution. **PRIVATE DEMO with actual H&M images: NO-GO until access/import/readback pass. PUBLIC RELEASE: NO-GO.** Placeholder-only private storefront smoke test is GO.

@@ -1,0 +1,9 @@
+:9005 {
+    reverse_proxy recommendation-api:9002 recommendation-api-2:9002 recommendation-api-3:9002 {
+        lb_policy round_robin
+        transport http {
+            dial_timeout 1s
+            response_header_timeout 5s
+        }
+    }
+}

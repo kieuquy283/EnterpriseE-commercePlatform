@@ -1,0 +1,22 @@
+{
+  "report_finalized_at": "2026-11-04T04:42:48Z",
+  "scope": "private H&M recommendation MVP",
+  "python_tests_passed": 7,
+  "backend_unit_tests_passed": 30,
+  "backend_http_tests_passed": 4,
+  "backend_http_suites_passed": 3,
+  "storefront_e2e_tests_passed": 11,
+  "final_storefront_e2e_duration": "1.9m",
+  "final_storefront_e2e_command": "npm exec -- playwright test --reporter=list",
+  "final_storefront_e2e_context": {
+    "PLAYWRIGHT_BASE_URL": "http://127.0.0.1:8001",
+    "RECOMMENDATIONS_EXPECT_ENABLED": "true"
+  },
+  "local_e2e_log": "data/hm/processed/verified-storefront-e2e.log",
+  "ci_yaml_parse": "PASS",
+  "git_diff_check": "PASS",
+  "remote_ci": "NOT_RUN",
+  "public_dataset_rights": "UNVERIFIED",
+  "human_relevance_review": "NOT_RUN",
+  "public_release": "NO_GO"
+}

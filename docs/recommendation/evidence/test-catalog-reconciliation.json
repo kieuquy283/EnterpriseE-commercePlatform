@@ -1,0 +1,7 @@
+{
+  "verified_mappings": 1874,
+  "products": 500,
+  "mapping_sha256": "2ff289922381173b7533663cfda68046307f42a4045c410e7159e7bc485967f7",
+  "reimport_preserved_mapping_hash": true,
+  "verification_command": "Medusa exec ./src/scripts/check-hm-mapping.ts (actual exit 0)"
+}

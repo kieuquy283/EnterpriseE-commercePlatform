@@ -1,0 +1,46 @@
+{
+  "products": 500,
+  "articles": 1874,
+  "existing_rows_validated": 3198,
+  "generated_rows": 3198,
+  "coverage": {
+    "zero": 77,
+    "at_least_1": 423,
+    "at_least_3": 269,
+    "at_least_6": 167
+  },
+  "exact_category_baseline": {
+    "zero": 43,
+    "at_least_1": 457,
+    "at_least_3": 355,
+    "at_least_6": 238
+  },
+  "index_group_distribution": {
+    "Ladieswear": 211,
+    "Baby/Children": 104,
+    "Menswear": 73,
+    "Sport": 23,
+    "Divided": 89
+  },
+  "missing_fields": {
+    "product_type": 1,
+    "product_group": 1,
+    "section": 0,
+    "department": 0,
+    "garment_group": 0,
+    "index_group": 0,
+    "description": 1
+  },
+  "candidate_sha256": "8f6a7e84076e2bc5f1c7e8a7c0bf65fbf407e7d1a9da6b49130a55c39bf1d740",
+  "version": "pdp-private-v3",
+  "threshold": 0.7,
+  "human_review": "NOT_RUN",
+  "source_hashes": {
+    "catalog.jsonl": "d00815f6ac454dd6f6410fba1059a58abc92ccf8a916dd0f99162441c313ddf3",
+    "medusa-mapping.jsonl": "2ff289922381173b7533663cfda68046307f42a4045c410e7159e7bc485967f7"
+  },
+  "scorer_sha256": "2859b44ea0370fd4b9e85d2651785937cf9ad8d5c6a0b19c7274fea83617140b",
+  "raw_article_rows": 105542,
+  "config_sha256": "8a00cc330ed6e1344869568c4c92d252a4bb52ac575c539eeacc306f66ef5f04",
+  "raw_articles_sha256": "25f21882053517f7684ea43f524225a9481a7bb9aab9cf0abfc7fe8c4576a72b"
+}

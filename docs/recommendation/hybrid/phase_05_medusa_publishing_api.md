@@ -1,0 +1,15 @@
+# Phase 05 — Medusa publication & Store API
+
+**Status:** PLANNED · **Priority:** P0 · **Dependencies:** 04, isolated DB từ 00 · **Owner:** Medusa Backend Engineer · **Estimate:** 2–4 person-days (giả định). Đưa danh sách ứng viên đã đánh giá vào run mới, rồi Medusa kiểm tra món còn bán được trước khi trả về PDP. Home Popularity và commerce hiện tại phải giữ nguyên.
+
+**Already exists:** `apps/backend/src/modules/recommendation/{models,service.ts,store-products.ts}`, `src/workflows/recommendation/publish.ts`, `src/api/store/recommendations/route.ts`, `src/scripts/publish-hm-recommendations.ts`. Publisher hiện đòi Home+PDP trong cùng run, chỉ nhận strategy `hm_metadata_similarity` cho PDP. **Missing:** hybrid strategy validation/ADR, versioned score provenance mới. **Unverified:** publish/test performance của Hybrid.
+
+**Inputs:** validated candidate JSONL+manifest Phase 04, Medusa 2.21.2 test DB. **Outputs:** ready immutable Hybrid run, active pointer/rollback proof, compatible API. **Files to modify if needed:** existing `publish.ts`, candidate tests, `route.ts`, `src/scripts/publish-hm-recommendations.ts`; new migration **chỉ nếu có ADR chứng minh bắt buộc**. Report `reports/phase_05_report.md` (proposed).
+
+1. **P0** Viết ADR trong report: giữ schema hiện tại nếu đủ; strategy mới `hm_hybrid_similarity` chỉ sau khi validator/response/UI test; hỗ trợ metadata run cũ và Home.
+2. **P0** Validate input hashes, DB Product IDs/context/target, rank/score/unique/top100; publish staging→ready→active với idempotency, failed batch giữ old pointer.
+3. **P0** Bảo toàn API query/status/response; batch native Medusa Store Product lookup với publishable key/region/channel, saleable variant price/stock/backorder; no self/duplicate và fallback có nhãn đúng. Không trả source IDs/scores/metadata.
+4. **P0** Test Home preserved, metadata backward compatibility, rollback, invalid params, deleted/draft/no-price/out-of-channel/zero-stock/backorder; instrument batch count/DB connections. Test lỗi candidate store/timeout/concurrency.
+5. **P1** Profile query cost trước khi thêm cache; nếu cache candidate IDs, key chứa version/context/region/channel và invalidation rõ. Không cache stale saleability.
+
+**Acceptance:** Given run cũ ready, when Hybrid publish lỗi, then active pointer và Home response không đổi. Given invalid/unavailable target, when API gọi, then 400/404/503 hoặc 200 empty/fallback theo [spec](spec.md), không rò dữ liệu. Given 100 candidates, then native reads bounded, không 100 per-product calls. **Test:** `npm run test:unit --workspace=@dtc/backend`; `npm run test:integration:http --workspace=@dtc/backend` trên disposable DB (đã xác minh scripts). **Gate:** PASS khi rollback/idempotency/native commerce cases pass trên test stack; BLOCKED nếu DB isolation hoặc Hybrid quality gate chưa đạt. **Risk/fallback:** internal Medusa export ở 2.21.2 thay đổi → giữ old run/disable flag. **Rollback:** active pointer về metadata ready run; không drop DB/core tables. **Core commerce:** không sửa Product/Price/Stock/Order. **Next:** 06. Báo cáo: `reports/phase_05_report.md` (proposed).

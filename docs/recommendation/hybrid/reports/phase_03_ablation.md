@@ -1,0 +1,5 @@
+# V2.1 Phase 03 — controlled ablation
+
+**Status: PARTIAL; candidate artifacts created, quality comparison blocked by missing judgments.** `build-hybrid-candidates.py` now accepts explicit `--weights META IMAGE POPULARITY` and records them in immutable manifests. Three private runs were generated from the same 496-image embeddings and metadata-eligible candidate pool: metadata/image 0.80/0.20, 0.60/0.40, and image-only diagnostic 0/1/0. Existing V1, weighted V2 0.40/0.45/0.15 and RRF remain frozen comparators. All new runs contain 3,198 PDP rows, 167 contexts with ≥6 and 77 zero; no candidate expansion or threshold change.
+
+`python scripts/hm/check-ablation-label-coverage.py ...` exited 0. The 171-pair Astra pool lacks 2 top-six labels for 80/20, 2 for 60/40, 21 for image-only and 6 for RRF, affecting 2, 2, 10 and 5 contexts respectively. No nDCG score was produced for those runs; missing labels are not grade 0. More blind dev judgments are needed before ranking these variants. No finalist selected and holdout remains sealed. CLIP-text experiment NOT_RUN.

@@ -1,0 +1,7 @@
+# V2.1 Phase 01 — paired error analysis
+
+**Status: PASS for measured 40-context Astra proxy diagnosis; no global causality claim.** `python scripts/hm/analyze-hybrid-v2.py --output data/hm/processed/evaluation/v2-1-error-analysis-v1` exited 0 and wrote private `pairs.csv`, `contexts.json`, `summary.json` (Git ignored). Each of 171 pooled pairs records V1/V2 rank/score, Astra grade, metadata similarity, image cosine, bounded popularity, image presence, taxonomy match and top-six membership. Every V2 score was recomputed and checked against the stored candidate row. The script rejects stale candidate/embedding/label pool hashes.
+
+Among 29 judgeable contexts: V2 wins 10, V1 wins 5, ties 14; 11 are unjudgeable. The largest two V2 losses (−0.705 and −0.527 nDCG) are `Underwear Tights`. In the first, V2 removed four grade-2 targets and added grades 0/1/1/1. In the second, it replaced several high grades with 0/1 targets. These are concrete swaps in private `pairs.csv`; score decomposition alone does not prove which signal caused them. Across the judged pair union, median metadata score 0.903, image cosine 0.6494 and normalized popularity 0.0 (max 0.5). Raw scales differ; numeric weights are not directly interpretable as shares of rank effect. No candidate-set changes occurred at any of the 500 contexts.
+
+Next hypothesis tests: reduce image weight, remove popularity, compare RRF and inspect whether `Underwear Tights` imagery is a poor product representation. No raw images or Product IDs copied into docs.

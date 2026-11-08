@@ -4,6 +4,7 @@ import ChevronDown from "@modules/common/icons/chevron-down"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { convertToLocale } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
+import PersonalizationConsent from "@modules/account/components/personalization-consent"
 
 type OverviewProps = {
   customer: HttpTypes.StoreCustomer | null
@@ -131,6 +132,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
           </div>
         </div>
       </div>
+      {process.env.NEXT_PUBLIC_ENABLE_PERSONALIZED_RECOMMENDATIONS === "true" && <PersonalizationConsent />}
     </div>
   )
 }

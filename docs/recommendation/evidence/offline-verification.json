@@ -1,0 +1,16 @@
+{
+  "repeat_hash_match": true,
+  "structural_validation": true,
+  "artifacts": {
+    "candidates-home.jsonl": {
+      "rows": 100,
+      "nonempty_contexts": 1,
+      "sha256": "acc452b3ebb5986288e128b2b6ea2ac4e5be98c4ef156dae58bbd2e0cbec9e89"
+    },
+    "candidates-product-detail.jsonl": {
+      "rows": 5794,
+      "nonempty_contexts": 492,
+      "sha256": "e9e349c73651cf996962fad502842ab147440086eb9f299306d261e90538a9af"
+    }
+  }
+}

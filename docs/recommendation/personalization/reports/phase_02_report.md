@@ -1,0 +1,9 @@
+# Phase 02 — Interaction events
+
+**2026-11-07 · PARTIAL.** Implemented protected, consent-gated `POST /store/personalization/events` for `product_view` and `recommendation_click`; client `purchase` is rejected. `record-event` workflow validates current consent epoch and handles retry/idempotency. Added custom event table with unique event key, event time, product and order-line reference. Added default-off Medusa subscriber for verified `order.placed` and `order.canceled`; it labels the signal **order placed**, not payment captured. Its event names/payload shape were checked against [official Medusa event docs](https://docs.medusajs.com/resources/references/order/events).
+
+The disposable personalization HTTP test passed 1/1 and checked duplicate browser event, no-consent rejection, forged `purchase` rejection, and withdrawal erasure. The existing Checkout/Order HTTP suite was extended with an explicitly consenting synthetic customer and passed 2/2: the real Medusa complete-cart workflow emitted one `order_placed` recommendation signal, and `cancelOrderWorkflow` emitted one `order_canceled` signal. The profile no longer included that canceled order interest. Backend typecheck/build/lint passed. Generated migrations were applied in fresh runner DBs; the newest uncommitted migration was corrected to backfill `occurred_at` from `created_at` before setting NOT NULL.
+
+**Unmet:** rate limiting/abuse protection, credible impression attribution, retention cleanup and out-of-order replay through the actual event bus. Clicks are only interest signals; CTR cannot be computed from them. The subscriber and event collection flags remain OFF outside isolated tests.
+
+Rollback: disable event and order-event flags; erase private test data through consent withdrawal; preserve Medusa Orders.

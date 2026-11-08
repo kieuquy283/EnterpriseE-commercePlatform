@@ -1,0 +1,5 @@
+# V2.1 Phase 02 — sealed holdout and labeling protocol
+
+**Status: PARTIAL.** `python scripts/hm/freeze-pdp-holdout.py --output data/hm/processed/evaluation/v2-1-sealed-holdout-100.json` exited 0 before tuning; 100 Product contexts, zero overlap with the 40-context development sample. The ignored manifest records catalog/mapping/V1/dev SHA, seed and sampling rule; status `SEALED_UNLABELED_HOLDOUT`. Do not open candidates or labels for these contexts while selecting weights.
+
+Judge intended PDP alternatives using source and target images plus true descriptions: 0 not useful replacement, 1 moderately similar, 2 highly suitable alternative. Type, appearance, fit and function matter; color secondary. Blind randomized candidate union for each finalist; hide model/rank/score. Two independent human judges should cover at least 20–30% of pairs, log disagreement and reconcile; Astra can help triage but is not a human judge. A context with no positive judged target is reported unjudgeable. Label files/images stay private. Human availability and rights review remain BLOCKED/NOT_VERIFIED; Phase 05 cannot pass yet.

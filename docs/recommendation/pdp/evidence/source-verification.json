@@ -1,0 +1,80 @@
+{
+  "baseline": "6f3c8d99cac44d94f296dbe912ed82d820ac6584",
+  "source_sha256": {
+    "apps/backend/src/api/store/recommendations/route.ts": "90e49939d13aaa2d599f4d703a7a178f721d4c4c6f5d70d580d419f8d290b122",
+    "apps/backend/src/modules/recommendation/store-products.ts": "20f3fbe728722500d8cbf4a1fbcb681fdcc1249fa933742a17f8a045eb6f4cd2",
+    "apps/storefront/src/modules/products/components/related-products/index.tsx": "44abeb9410d2ef01a2f3c21ffe845b27a2f6a80e9c922493952c5ed893949774",
+    "scripts/hm/build-mvp-candidates.py": "2859b44ea0370fd4b9e85d2651785937cf9ad8d5c6a0b19c7274fea83617140b",
+    "load/recommendations.js": "84994119466a24a6bf90f555ef3943a7cc517ccf594c51d141d76bfcb5a881a3"
+  },
+  "python_tests": 9,
+  "backend_unit_tests": 32,
+  "backend_http_tests": 4,
+  "backend_http_suites": 3,
+  "production_browser_on": 19,
+  "production_browser_off": 1,
+  "redis_outage": {
+    "status": 200,
+    "elapsed_ms": 105,
+    "products": 6
+  },
+  "postgres_outage_via_caddy": {
+    "status": 504,
+    "elapsed_ms": 5057
+  },
+  "rollback_versions": [
+    "rec-private-serving-v2",
+    "pdp-private-v3"
+  ],
+  "human_review": "NOT_RUN",
+  "public_release": "NO_GO",
+  "verified_code_commit": "9dfd91e6658e12dc8246321f7d603460594ed7f6",
+  "actual_backend_off": {
+    "api_status": 404,
+    "api_probe_ms": 113,
+    "frontend_on_browser": "PASS",
+    "temporary_api_port": 9007,
+    "temporary_frontend_port": 8005,
+    "temporary_processes_cleaned_up": true
+  },
+  "runtime": {
+    "host_node": "24.15.0",
+    "container_node": "22.22.0",
+    "python": "3.10.11",
+    "medusa": "2.21.2",
+    "next": "15.5.24",
+    "postgres": "16.15"
+  },
+  "post_commit_logs": {
+    "python": "data/hm/processed/pdp-verification/python-9dfd91e.log",
+    "http": "data/hm/processed/pdp-verification/http-9dfd91e.log",
+    "browser_on": "data/hm/processed/pdp-verification/browser-on-final-sha.log",
+    "browser_off": "data/hm/processed/pdp-verification/browser-off-final-sha.log"
+  },
+  "pr_url": "https://github.com/kieuquy283/EnterpriseE-commercePlatform/pull/9",
+  "finalized_at": "2026-11-04T06:52:12.325050+00:00",
+  "remote_ci_for_verified_code": {
+    "commit": "9dfd91e6658e12dc8246321f7d603460594ed7f6",
+    "api_tests": {
+      "run_id": 41786518503,
+      "conclusion": "success"
+    },
+    "ci": {
+      "run_id": 41786518538,
+      "conclusion": "success"
+    },
+    "observed_at": "2026-11-04T06:50:48.260923+00:00"
+  },
+  "private_log_sha256": {
+    "python": "1a8951b88fe7b72786a2eff695546b15e59501915906720039b40ce4405521b5",
+    "http": "dfb5a2102f81b25be72ea07709eca1e4c204c2a9a9b13359ed44263f61c7cf31",
+    "browser_on": "427122b53e6e68b731d6bf1cdd4362a89ad77d0c92fe2169703e901d3c05680d",
+    "browser_off": "460c81b70b0b55a9026dcd342a73810740485d94503a1a14fa875eb4df4fd0fc"
+  },
+  "documentation_checks": {
+    "relative_links": "PASS",
+    "git_diff_check": "PASS",
+    "compose_test_scale_config": "PASS",
+    "master_plan_spec_unchanged": true
+  }
+}

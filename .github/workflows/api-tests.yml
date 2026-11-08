@@ -36,4 +36,4 @@ jobs:
           cache: npm
       - run: npm ci --no-fund
       - name: Run HTTP API integration tests
-        run: npm run test:integration:http --workspace=@dtc/backend -- integration-tests/http/checkout-order.spec.ts
+        run: npm run test:integration:http --workspace=@dtc/backend
