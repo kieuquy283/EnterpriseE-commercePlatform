@@ -5,7 +5,11 @@ test.describe("Private recommendation rails", () => {
     await page.goto("/vn")
     const popular = page.getByTestId("popular-products")
     if (process.env.RECOMMENDATIONS_EXPECT_ENABLED !== "true") {
-      await expect(popular).toHaveCount(0)
+      await expect(popular).toBeVisible()
+      await expect(popular.getByRole("heading", { name: "Explore products" })).toBeVisible()
+      const count = await popular.getByTestId("product-wrapper").count()
+      expect(count).toBeGreaterThan(0)
+      expect(count).toBeLessThanOrEqual(12)
       await page.goto("/vn/products/ao-thun-essential")
       await expect(page.getByTestId("similar-products")).toHaveCount(0)
       await expect(page.getByRole("heading", { name: "Ao thun Essential", exact: true })).toBeVisible()
