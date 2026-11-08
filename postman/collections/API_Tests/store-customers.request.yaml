@@ -1,0 +1,22 @@
+$kind: http-request
+name: store/customers
+url: "{{base_url}}/store/customers"
+method: POST
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"postman-test@example.com\",\r
+
+    \  \"first_name\": \"Postman\",\r
+
+    \  \"last_name\": \"Test\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_0nuo}}"
+order: 16880
