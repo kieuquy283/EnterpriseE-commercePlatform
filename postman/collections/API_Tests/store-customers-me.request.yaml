@@ -1,0 +1,11 @@
+$kind: http-request
+name: store/customers/me
+url: "{{base_url}}/store/customers/me"
+method: GET
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_16wq}}"
+order: 17000

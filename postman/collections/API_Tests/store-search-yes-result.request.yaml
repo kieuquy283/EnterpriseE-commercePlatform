@@ -1,0 +1,9 @@
+$kind: http-request
+name: store/search-yes-result
+url: "{{base_url}}/store/catalog?q=Ao%20thun%20Essential"
+method: GET
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+queryParams:
+  q: Ao%20thun%20Essential
+order: 16000

@@ -1,0 +1,10 @@
+$kind: http-request
+name: store/catalog
+url: "{{base_url}}/store/catalog?limit=20&offset=0"
+method: GET
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+queryParams:
+  limit: "20"
+  offset: "0"
+order: 14000
