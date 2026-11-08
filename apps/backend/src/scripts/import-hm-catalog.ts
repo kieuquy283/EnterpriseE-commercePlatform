@@ -1,9 +1,10 @@
 import type { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys, MedusaError, Modules, ProductStatus } from "@medusajs/framework/utils"
 import { createInventoryLevelsWorkflow, createProductsWorkflow } from "@medusajs/medusa/core-flows"
-import { createReadStream, existsSync, mkdirSync, createWriteStream } from "node:fs"
+import { createReadStream, existsSync, mkdirSync } from "node:fs"
+import { open } from "node:fs/promises"
 import { createInterface } from "node:readline"
-import { resolve } from "node:path"
+import { dirname, resolve } from "node:path"
 
 // Demo prices are synthetic whole VND, unrelated to historical H&M transaction prices.
 
@@ -29,8 +30,16 @@ function demoPrice(code: string) {
 }
 
 export default async function importHmCatalog({ container }: ExecArgs) {
-  const inputPath = resolve(process.cwd(), "../../data/hm/processed/catalog.jsonl")
+  const inputPath = resolve(process.env.HM_IMPORT_CATALOG_PATH ?? resolve(process.cwd(), "../../data/hm/processed/catalog.jsonl"))
   const outputDir = resolve(process.cwd(), "../../data/hm/processed")
+  const mappingPath = resolve(process.env.HM_IMPORT_MAPPING_PATH ?? resolve(outputDir, "medusa-mapping.jsonl"))
+  const customMappingPath = process.env.HM_IMPORT_MAPPING_PATH !== undefined
+  if (inputPath === mappingPath) {
+    throw new MedusaError(MedusaError.Types.NOT_ALLOWED, "Import mapping output must not overwrite its catalog input")
+  }
+  if (customMappingPath && existsSync(mappingPath)) {
+    throw new MedusaError(MedusaError.Types.NOT_ALLOWED, "Explicit H&M mapping output already exists; choose a new file")
+  }
   if (!existsSync(inputPath)) {
     throw new MedusaError(MedusaError.Types.NOT_FOUND, `Missing ${inputPath}. Run python scripts/hm/prepare.py from repo root first.`)
   }
@@ -49,8 +58,10 @@ export default async function importHmCatalog({ container }: ExecArgs) {
     throw new MedusaError(MedusaError.Types.NOT_FOUND, "Run the commerce seed first; sales channel, shipping profile or stock location is missing")
   }
 
-  mkdirSync(outputDir, { recursive: true })
-  const mapping = createWriteStream(resolve(outputDir, "medusa-mapping.jsonl"), { flags: "w" })
+  mkdirSync(dirname(mappingPath), { recursive: true })
+  // Claim custom outputs before creating products. Exclusive open also closes
+  // the race between the existence check and opening an existing artifact.
+  const mapping = await open(mappingPath, customMappingPath ? "wx" : "w")
   let created = 0
   let existing = 0
   let variantsMapped = 0
@@ -117,7 +128,7 @@ export default async function importHmCatalog({ container }: ExecArgs) {
         if (!medusaVariant) {
           throw new MedusaError(MedusaError.Types.INVALID_DATA, `Existing product ${handle} lacks article ${variant.article_id}; refusing incomplete mapping`)
         }
-        mapping.write(JSON.stringify({
+        await mapping.writeFile(JSON.stringify({
           source: "hm", article_id: variant.article_id, product_code: item.product_code,
           product_id: product.id, variant_id: medusaVariant.id,
         }) + "\n")
@@ -151,7 +162,7 @@ export default async function importHmCatalog({ container }: ExecArgs) {
       if ((created + existing) % 100 === 0) logger.info(`H&M import: ${created} created, ${existing} existing`)
     }
   } finally {
-    await new Promise<void>((done) => mapping.end(done))
+    await mapping.close()
   }
   logger.info(`H&M catalog import complete: ${created} created, ${existing} existing, ${variantsMapped} variants mapped`)
 }

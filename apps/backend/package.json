@@ -24,7 +24,9 @@
     "test:unit": "cross-env TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
     "seed": "medusa exec ./src/scripts/seed-commerce.ts",
     "seed:sample": "medusa exec ./src/scripts/seed-erd-sample.ts",
-    "check:inventory-order": "medusa exec ./src/scripts/check-inventory-order.ts"
+    "check:inventory-order": "medusa exec ./src/scripts/check-inventory-order.ts",
+    "check:hm-data-quality": "medusa exec ./src/scripts/check-hm-data-quality.ts",
+    "check:inventory-concurrency": "medusa exec ./src/scripts/check-inventory-concurrency.ts"
   },
   "dependencies": {
     "@medusajs/admin-sdk": "2.21.2",
