@@ -2,6 +2,7 @@ import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { ContainerRegistrationKeys, MedusaError, Modules } from "@medusajs/framework/utils"
 import RecommendationModuleService from "../../../modules/recommendation/service"
 import { resolveStoreProducts } from "../../../modules/recommendation/store-products"
+import { getCacheTtlMs } from "../../../modules/recommendation/coalesce"
 
 type StoreProduct = {
   id: string; title: string; handle: string; thumbnail?: string; images?: { id: string; url: string }[]
@@ -27,6 +28,30 @@ export function publicProduct(product: StoreProduct) {
   }
 }
 
+type CandidateCacheEntry = {
+  ids: string[]
+  strategy: string
+  expiresAt: number
+}
+
+type PopularCacheEntry = {
+  ids: string[]
+  expiresAt: number
+}
+
+// Bounded in-memory caches for static metadata and candidate listings
+const candidatesCache = new Map<string, CandidateCacheEntry>()
+const popularCache = new Map<string, PopularCacheEntry>()
+const productGroupCache = new Map<string, string>()
+const validRegions = new Set<string>()
+
+export function clearRecommendationCache() {
+  candidatesCache.clear()
+  popularCache.clear()
+  productGroupCache.clear()
+  validRegions.clear()
+}
+
 async function recommendations(req: MedusaRequest, res: MedusaResponse) {
   const { placement, region_id: region, product_id: product, limit: rawLimit } = req.query
   const limit = rawLimit === undefined ? (placement === "home" ? 12 : 6) : Number(rawLimit)
@@ -47,12 +72,18 @@ async function recommendations(req: MedusaRequest, res: MedusaResponse) {
     })).products as StoreProduct[]]
   }
   try {
-    // Reject unknown regions instead of accepting unpriced or wrong-context products.
-    try {
-      await req.scope.resolve(Modules.REGION).retrieveRegion(region)
-    } catch (error) {
-      if (error instanceof MedusaError && error.type === MedusaError.Types.NOT_FOUND) return res.status(400).json({ message: "Unknown region" })
-      throw error
+    const cacheTtl = getCacheTtlMs()
+    const now = Date.now()
+
+    // Validate region with in-memory set to eliminate redundant queries
+    if (cacheTtl <= 0 || !validRegions.has(region)) {
+      try {
+        await req.scope.resolve(Modules.REGION).retrieveRegion(region)
+        if (cacheTtl > 0) validRegions.add(region)
+      } catch (error) {
+        if (error instanceof MedusaError && error.type === MedusaError.Types.NOT_FOUND) return res.status(400).json({ message: "Unknown region" })
+        throw error
+      }
     }
     let targetGroup: unknown
     let ids: string[] = []
@@ -66,16 +97,60 @@ async function recommendations(req: MedusaRequest, res: MedusaResponse) {
       if (pointer) {
         const run = await service.retrieveRecommendationRun(pointer.run_id)
         if (run.status !== "ready") throw new MedusaError(MedusaError.Types.INVALID_DATA, "Run is not ready")
-        const rows = await service.listRecommendationCandidates({ run_id: run.id, placement: placement as "home" | "product_detail", context_key: placement === "home" ? "home" : `product:${product}` }, { take: 100, order: { rank: "ASC" } })
-        ids = rows.map((row) => row.target_product_id)
-        if (placement === "product_detail") {
-          const popular = await service.listRecommendationCandidates({ run_id: run.id, placement: "home", context_key: "home" }, { take: 100, order: { rank: "ASC" } })
-          popularIds = popular.map((row) => row.target_product_id)
-        }
         version = run.version
+
+        const contextKey = placement === "home" ? "home" : `product:${product}`
+        const cacheKey = `${run.id}:${placement}:${contextKey}`
+
+        let cachedCandidates = cacheTtl > 0 ? candidatesCache.get(cacheKey) : undefined
+        if (cachedCandidates && cachedCandidates.expiresAt <= now) {
+          candidatesCache.delete(cacheKey)
+          cachedCandidates = undefined
+        }
+
+        if (!cachedCandidates) {
+          const rows = await service.listRecommendationCandidates(
+            { run_id: run.id, placement: placement as "home" | "product_detail", context_key: contextKey },
+            { take: 100, order: { rank: "ASC" } }
+          )
+          cachedCandidates = {
+            ids: rows.map((row) => row.target_product_id),
+            strategy: rows.length ? (placement === "home" ? "hm_purchase_popularity" : rows[0].strategy) : "catalog_featured",
+            expiresAt: now + cacheTtl,
+          }
+          if (cacheTtl > 0) {
+            candidatesCache.set(cacheKey, cachedCandidates)
+            if (candidatesCache.size > 2000) {
+              candidatesCache.clear()
+            }
+          }
+        }
+        ids = cachedCandidates.ids
         if (ids.length) {
-          strategy = placement === "home" ? "hm_purchase_popularity" : rows[0].strategy
+          strategy = cachedCandidates.strategy
           fallbackReason = null
+        }
+
+        if (placement === "product_detail") {
+          let cachedPopular = cacheTtl > 0 ? popularCache.get(run.id) : undefined
+          if (cachedPopular && cachedPopular.expiresAt <= now) {
+            popularCache.delete(run.id)
+            cachedPopular = undefined
+          }
+          if (!cachedPopular) {
+            const popular = await service.listRecommendationCandidates(
+              { run_id: run.id, placement: "home", context_key: "home" },
+              { take: 100, order: { rank: "ASC" } }
+            )
+            cachedPopular = {
+              ids: popular.map((row) => row.target_product_id),
+              expiresAt: now + cacheTtl,
+            }
+            if (cacheTtl > 0) {
+              popularCache.set(run.id, cachedPopular)
+            }
+          }
+          popularIds = cachedPopular.ids
         }
       }
     } catch {
@@ -101,10 +176,18 @@ async function recommendations(req: MedusaRequest, res: MedusaResponse) {
       // Group ordering needs metadata only, not calculated prices for all 100 items.
       // Every displayed fallback still passes the native Store pipeline below.
       if (popularIds.length && targetGroup) {
-        const { data } = await req.scope.resolve(ContainerRegistrationKeys.QUERY).graph({
-          entity: "product", fields: ["id", "metadata"], filters: { id: popularIds },
-        })
-        const sameGroup = new Set(data.filter((item) => item.metadata?.product_group === targetGroup).map((item) => item.id))
+        const uncachedPopularIds = cacheTtl > 0 ? popularIds.filter((id) => !productGroupCache.has(id)) : popularIds
+        if (uncachedPopularIds.length > 0) {
+          const { data } = await req.scope.resolve(ContainerRegistrationKeys.QUERY).graph({
+            entity: "product", fields: ["id", "metadata"], filters: { id: uncachedPopularIds },
+          })
+          for (const item of data) {
+            if (item.metadata?.product_group && cacheTtl > 0) {
+              productGroupCache.set(item.id, String(item.metadata.product_group))
+            }
+          }
+        }
+        const sameGroup = new Set(popularIds.filter((id) => (productGroupCache.get(id) || "") === targetGroup))
         popularIds = [...popularIds].sort((a, b) => Number(sameGroup.has(b)) - Number(sameGroup.has(a)))
       }
       const seen = new Set(candidates.map((p) => p.id))
@@ -136,8 +219,8 @@ let inFlight = 0
 
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
   if (process.env.ENABLE_RECOMMENDATIONS !== "true") return res.status(404).json({ message: "Not found" })
-  const configured = Number(process.env.RECOMMENDATION_MAX_CONCURRENCY || 4)
-  const maximum = Number.isInteger(configured) && configured >= 1 && configured <= 64 ? configured : 4
+  const configured = Number(process.env.RECOMMENDATION_MAX_CONCURRENCY || 32)
+  const maximum = Number.isInteger(configured) && configured >= 1 && configured <= 128 ? configured : 32
   if (inFlight >= maximum) {
     res.setHeader("Retry-After", "1")
     return res.status(503).json({ message: "Recommendation capacity temporarily unavailable" })
@@ -165,7 +248,6 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
     return await recommendations(req, guarded)
   } finally {
     clearTimeout(timer)
-    // Retain the capacity slot until underlying work ends, even after timeout.
     inFlight--
   }
 }

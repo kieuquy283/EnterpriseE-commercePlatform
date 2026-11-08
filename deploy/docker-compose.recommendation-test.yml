@@ -44,7 +44,8 @@ services:
     environment:
       NODE_ENV: test
       ENABLE_RECOMMENDATIONS: ${RECOMMENDATION_TEST_ENABLE:-true}
-      RECOMMENDATION_MAX_CONCURRENCY: "8"
+      RECOMMENDATION_MAX_CONCURRENCY: ${RECOMMENDATION_MAX_CONCURRENCY:-32}
+      RECOMMENDATION_CACHE_TTL_MS: ${RECOMMENDATION_CACHE_TTL_MS:-5000}
       ADMIN_DISABLED: "true"
       REDIS_URL: redis://recommendation-test-redis:6379
       DATABASE_URL: postgresql://recommendation_test:local-test-only@recommendation-test-postgres:5432/recommendation_test?sslmode=disable

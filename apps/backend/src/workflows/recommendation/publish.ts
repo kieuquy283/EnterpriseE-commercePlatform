@@ -2,6 +2,8 @@ import { createHash } from "node:crypto"
 import { createStep, createWorkflow, StepResponse, WorkflowResponse } from "@medusajs/framework/workflows-sdk"
 import { ContainerRegistrationKeys, MedusaError } from "@medusajs/framework/utils"
 import RecommendationModuleService from "../../modules/recommendation/service"
+import { clearAnonymousCache } from "../../modules/recommendation/coalesce"
+import { clearRecommendationCache } from "../../api/store/recommendations/route"
 import type { MedusaContainer } from "@medusajs/framework/types"
 
 export type Candidate = {
@@ -83,6 +85,8 @@ const publishStep = createStep("publish", async (input: Input, { container }) =>
   const pointer = await service.listRecommendationActives({ id: "recommendation_active" })
   if (pointer.length) await service.updateRecommendationActives({ id: "recommendation_active", run_id: run.id })
   else await service.createRecommendationActives({ id: "recommendation_active", run_id: run.id })
+  clearRecommendationCache()
+  clearAnonymousCache()
   return new StepResponse({ run_id: run.id, version: run.version })
 })
 
