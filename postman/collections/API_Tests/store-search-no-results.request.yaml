@@ -1,0 +1,9 @@
+$kind: http-request
+name: store/search-no-results
+url: "{{base_url}}/store/catalog?q=__no_match_{{$guid}}__"
+method: GET
+headers:
+  x-publishable-api-key: "{{publishable_key}}"
+queryParams:
+  q: __no_match_{{$guid}}__
+order: 15000
