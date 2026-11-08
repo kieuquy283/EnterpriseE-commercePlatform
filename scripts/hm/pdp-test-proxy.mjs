@@ -7,7 +7,7 @@ const root = path.resolve("data/hm/processed/pdp-verification")
 fs.mkdirSync(root, { recursive: true })
 const modeFile = path.join(root, "proxy-mode.json")
 if (!fs.existsSync(modeFile)) fs.writeFileSync(modeFile, JSON.stringify({ mode: "normal" }))
-const allowed = new Set(["normal", "503", "404", "empty", "timeout", "duplicates"])
+const allowed = new Set(["normal", "503", "404", "empty", "timeout", "duplicates", "hybrid"])
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url, "http://127.0.0.1")
@@ -40,9 +40,12 @@ const server = http.createServer(async (req, res) => {
     delete outgoing["content-length"]
     delete outgoing["transfer-encoding"]
     res.writeHead(response.status, outgoing)
-    if (url.pathname === "/store/recommendations" && mode === "duplicates" && response.ok) {
+    if (url.pathname === "/store/recommendations" && ["duplicates", "hybrid"].includes(mode) && response.ok) {
       const json = await response.json()
-      if (json.products?.length) json.products = [...json.products, ...json.products]
+      if (mode === "duplicates" && json.products?.length) json.products = [...json.products, ...json.products]
+      if (mode === "hybrid" && url.searchParams.get("placement") === "product_detail" && json.strategy === "hm_metadata_similarity") {
+        json.strategy = "hm_hybrid_similarity"
+      }
       return res.end(JSON.stringify(json))
     }
     res.end(Buffer.from(await response.arrayBuffer()))

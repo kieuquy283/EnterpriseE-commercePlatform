@@ -12,6 +12,19 @@ test.describe("PDP similarity contract", () => {
   test.afterEach(() => { if (faults) setMode("normal") })
 
   if (faults) {
+    test("Hybrid strategy renders the correct PDP label and product cards", async ({ page }) => {
+      setMode("hybrid")
+      const [item] = JSON.parse(readFileSync(path.join(root, "browser-contexts.json"), "utf8"))
+      await page.goto(`/vn/products/${item.handle}`)
+      const rail = page.locator('[data-testid="similar-products"]:visible')
+      await expect(rail.getByRole("heading", { name: "Similar products" })).toBeVisible()
+      await expect(rail).toContainText("Based on product attributes and appearance.")
+      const hrefs = await rail.locator("a").evaluateAll((items) => items.map((element) => element.getAttribute("href")))
+      expect(hrefs.length).toBeGreaterThan(0)
+      expect(hrefs.length).toBeLessThanOrEqual(6)
+      expect(new Set(hrefs).size).toBe(hrefs.length)
+      expect(hrefs).not.toContain(`/vn/products/${item.handle}`)
+    })
     for (const mode of ["normal", "duplicates", "empty", "503", "404", "timeout"]) {
       test(`production PDP survives recommendation ${mode}`, async ({ page }) => {
         setMode(mode)
@@ -27,7 +40,7 @@ test.describe("PDP similarity contract", () => {
         expect(new Set(hrefs).size).toBe(hrefs.length)
         expect(hrefs).not.toContain(`/vn/products/${contexts[0].handle}`)
         for (const card of await rail.getByTestId("product-wrapper").all()) await expect(card).toContainText("₫")
-        if (mode === "normal") await expect(rail.getByTestId("product-wrapper").first().locator("svg")).toBeVisible()
+        if (mode === "normal") await expect(rail.getByTestId("product-wrapper").first().locator("img, svg").first()).toBeVisible()
         await expect(rail.getByRole("heading", { level: 2 })).toBeVisible()
         await links.first().focus()
         await expect(links.first()).toBeFocused()

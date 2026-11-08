@@ -1,0 +1,9 @@
+# Phase 07 report — system gate/release
+
+**Cập nhật 07/11/2026:** real offline Hybrid v2 artifacts đã được tạo và Astra proxy evaluation đã chạy; [kết quả](real_v2_implementation_report.md) chưa cho thấy cải thiện, nên PRIVATE/PUBLIC GO vẫn là NO. Không publish Hybrid. Báo cáo bên dưới mô tả các system tests đã chạy trước lần tạo artifacts này; live v2 Store API/E2E/performance vẫn NOT_RUN.
+
+**Ngày/SHA/môi trường:** 07/11/2026 Asia/Saigon, `recommendation-pdp` `cf16e0b` + uncommitted Hybrid changes; isolated Docker `recommendation-test`, PostgreSQL `recommendation_test`, Redis, Medusa and Next test server. **Verdict:** PARTIAL system verification; PRIVATE HYBRID GO = NO, PUBLIC GO = NO.
+
+**Actual verification:** Python 26/26, backend unit 38/38, HTTP integration 4/4 in 3 suites, storefront Playwright 20 PASS/6 skipped, lint/typecheck/build PASS; see [system matrix](system_test_report.md). Docker daemon initially unavailable, then Docker Desktop started and isolated test stack passed health checks. Human relevance, real image embedding/Hybrid artifact, k6 and fault injection NOT_RUN; public rights unresolved. No performance or model accuracy claim. Prior PDP 30RPS report is historical metadata-only and cannot validate v2.
+
+**Expected vs actual:** source/fixture, isolated mapping, HTTP and browser commerce regression PASS; real embedding, human review, actual Hybrid publish/readback, Redis/worker failure, PDP performance and rights gates unmet. **Self-review:** six image tests are explicitly SKIPPED, and proxy Hybrid UI test is a fixture. **Rollback:** no Hybrid DB state to revert; changes uncommitted, active metadata run untouched. **Next:** choose rights-reviewed local checkpoint, run real vectors/candidates and independent human review; only then publish/test v2, measure k6 and faults. No production/public release.

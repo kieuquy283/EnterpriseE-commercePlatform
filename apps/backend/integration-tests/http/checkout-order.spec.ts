@@ -3,11 +3,13 @@ import type { MedusaContainer } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import {
   createApiKeysWorkflow,
+  cancelOrderWorkflow,
   createShippingProfilesWorkflow,
   linkSalesChannelsToApiKeyWorkflow,
 } from "@medusajs/medusa/core-flows"
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils"
 import seedCommerce from "../../src/scripts/seed-commerce"
+import PersonalizationModuleService from "../../src/modules/personalization/service"
 
 jest.setTimeout(120_000)
 
@@ -171,7 +173,7 @@ async function getInventorySnapshot(container: MedusaContainer) {
 }
 
 medusaIntegrationTestRunner({
-  env: { REDIS_URL: "" },
+  env: { REDIS_URL: "", ENABLE_PERSONALIZED_RECOMMENDATIONS: "true", ENABLE_PERSONALIZATION_ORDER_EVENTS: "true" },
   testSuite: ({ api, getContainer }) => {
     let publishableKey: string
     const storeApi: ApiClient = api
@@ -242,6 +244,11 @@ medusaIntegrationTestRunner({
       expect(login.token).toBeDefined()
 
       const customerHeaders = storeHeaders(publishableKey, login.token)
+      await storeApi.post(
+        "/store/personalization/consent",
+        { granted: true, terms_version: "v1" },
+        { headers: customerHeaders }
+      )
       const checkout = await prepareCheckout(
         storeApi,
         customerHeaders,
@@ -281,6 +288,27 @@ medusaIntegrationTestRunner({
         { headers: customerHeaders }
       )
       expect(historyResponse.orders.map((order) => order.id)).toContain(orderId)
+      const personalization: PersonalizationModuleService = getContainer().resolve("personalization")
+      let orderSignals = await personalization.listRecommendationEvents({ event_type: "order_placed" })
+      for (let attempt = 0; attempt < 30 && !orderSignals.some((row) => row.event_key.startsWith(`order_placed:${orderId}:`)); attempt++) {
+        await new Promise((resolve) => setTimeout(resolve, 100))
+        orderSignals = await personalization.listRecommendationEvents({ event_type: "order_placed" })
+      }
+      expect(orderSignals.filter((row) => row.event_key.startsWith(`order_placed:${orderId}:`))).toHaveLength(1)
+      await cancelOrderWorkflow(getContainer()).run({ input: { order_id: orderId } })
+      let canceledSignals = await personalization.listRecommendationEvents({ event_type: "order_canceled" })
+      for (let attempt = 0; attempt < 30 && !canceledSignals.some((row) => row.event_key.startsWith(`order_canceled:${orderId}:`)); attempt++) {
+        await new Promise((resolve) => setTimeout(resolve, 100))
+        canceledSignals = await personalization.listRecommendationEvents({ event_type: "order_canceled" })
+      }
+      expect(canceledSignals.filter((row) => row.event_key.startsWith(`order_canceled:${orderId}:`))).toHaveLength(1)
+      let [profile] = await personalization.listRecommendationProfiles({ customer_id: orderSignals[0].customer_id })
+      for (let attempt = 0; attempt < 30 && (profile?.interests as { source_products?: unknown[] } | undefined)?.source_products?.length; attempt++) {
+        await new Promise((resolve) => setTimeout(resolve, 100))
+        const updatedProfiles = await personalization.listRecommendationProfiles({ customer_id: orderSignals[0].customer_id })
+        profile = updatedProfiles[0]
+      }
+      expect((profile.interests as { source_products: unknown[] }).source_products).toEqual([])
     })
 
     it("does not create an order or change inventory when simulated payment fails", async () => {

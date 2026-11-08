@@ -1,0 +1,14 @@
+# Phase 08 — Session tracking (OPTIONAL / AFTER V2)
+
+**Status:** PLANNED, OPTIONAL / AFTER V2 · **Priority:** P2 · **Dependencies:** Phase 07 private release và quyết định phạm vi/privacy riêng · **Owner:** Product + Privacy + Backend/ML · **Estimate:** 3–6 person-days (giả định). Giai đoạn này mới tính chuyện học từ hành vi người dùng của dự án. Nó **không** là điều kiện Hybrid v2 GO và không huấn luyện Collaborative Filtering trong v2.
+
+**Already exists:** Storefront/Medusa customer/cart/order flows; API Recommendation hiện không nhận `customer_id`. **Missing:** verified impression/click/session event pipeline, notice/consent, retention policy. **Unverified:** số tương tác thực hoặc đủ dữ liệu để cá nhân hóa. H&M historical transactions không phải view/click của website.
+
+**Inputs:** privacy decision, event consent/notice, stable request IDs/model version, anonymous session policy. **Outputs:** optional event schema và tracking experiment; report `reports/phase_08_report.md` (proposed). **Files proposed only after scope approval:** `apps/backend/src/modules/recommendation/models/recommendation-event.ts`, event ingest route/workflow và storefront impression/click instrumentation; migration mới theo Medusa conventions, không sửa core tables.
+
+1. **P2** Thiết kế event `product_view`, `recommendation_impression`, `recommendation_click`, `add_to_cart`, `order_placed` với event UUID/idempotency, session pseudonym, authenticated identity server-derived, placement, request ID, strategy/run version, Product ID, timestamp, source (`project`/`synthetic`/`H&M historical`).
+2. **P2** Quy định consent/notice, retention, deletion/aggregation, anti-bot, rate limit và log redaction. Không nhận arbitrary customer_id từ client.
+3. **P2** Gắn UI events và Medusa order event đúng nguồn; `order_placed` COD không phải payment captured. Synthetic demo events gắn nhãn riêng, không train như user real.
+4. **P2** Chỉ đánh giá personalization/CF khi tương tác độc lập đủ coverage, split thời gian và metrics; giữ anonymous popularity fallback.
+
+**Acceptance:** Given người dùng không đồng ý tracking theo policy, when truy cập PDP, then commerce và nonpersonalized recommendations vẫn chạy. Given duplicate event UUID, when ingest lại, then chỉ một bản được ghi. Given client gửi customer_id khác, then không được dùng để đọc personal recommendations. **Test:** proposed privacy/unit/HTTP/E2E; command chưa có, TODO khi scope được duyệt. **Gate:** PASS theo privacy/security/metrics riêng; BLOCKED nếu chưa có consent/retention policy. **Risk/fallback:** dữ liệu sparse/PII → không bật personalization. **Rollback:** tắt event feature flag, giữ commerce độc lập, xóa/retention theo policy đã duyệt. **Core commerce:** không đổi checkout. Báo cáo chỉ tạo khi thực thi: `reports/phase_08_report.md`.

@@ -42,6 +42,7 @@ module.exports = defineConfig({
   },
   modules: [
     { resolve: "./src/modules/recommendation" },
+    { resolve: "./src/modules/personalization" },
     ...(process.env.NODE_ENV === "production"
       ? []
       : [{

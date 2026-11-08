@@ -7,6 +7,7 @@ import ProductTabs from "@modules/products/components/product-tabs"
 import RelatedProducts from "@modules/products/components/related-products"
 import ProductInfo from "@modules/products/templates/product-info"
 import SkeletonRelatedProducts from "@modules/skeletons/templates/skeleton-related-products"
+import ConsentAwareProductView from "@modules/products/components/consent-aware-product-view"
 import { notFound } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
 
@@ -31,6 +32,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
 
   return (
     <>
+      <Suspense fallback={null}><ConsentAwareProductView productId={product.id} /></Suspense>
       <div
         className="content-container  flex flex-col small:flex-row small:items-start py-6 relative"
         data-testid="product-container"

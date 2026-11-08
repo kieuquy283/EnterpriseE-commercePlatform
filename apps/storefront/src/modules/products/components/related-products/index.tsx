@@ -28,10 +28,11 @@ export default async function RelatedProducts({
   }).slice(0, 6)
   const recommendedProducts = uniqueProducts(recommendations?.products ?? [])
   if (recommendedProducts.length && recommendations) {
+    const isSimilarity = ["hm_metadata_similarity", "hm_hybrid_similarity"].includes(recommendations.strategy)
     return (
       <section className="product-page-constraint" aria-labelledby="similar-products-heading" data-testid="similar-products">
-        <h2 id="similar-products-heading" className="text-2xl-regular mb-8">{recommendations.strategy === "hm_metadata_similarity" ? "Similar products" : "You may also like"}</h2>
-        <p className="mb-6 text-ui-fg-subtle">{recommendations.strategy === "hm_metadata_similarity" ? "Based on product attributes." : "Selected products from the available catalog."}</p>
+        <h2 id="similar-products-heading" className="text-2xl-regular mb-8">{isSimilarity ? "Similar products" : "You may also like"}</h2>
+        <p className="mb-6 text-ui-fg-subtle">{recommendations.strategy === "hm_hybrid_similarity" ? "Based on product attributes and appearance." : isSimilarity ? "Based on product attributes." : "Selected products from the available catalog."}</p>
         <ul className="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-6">
           {recommendedProducts.map((item) => (
             <li key={item.id}><Product region={region} product={item} /></li>

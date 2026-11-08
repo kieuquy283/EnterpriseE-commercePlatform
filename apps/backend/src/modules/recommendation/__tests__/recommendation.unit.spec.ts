@@ -11,6 +11,29 @@ const rows: Candidate[] = [
 ]
 
 describe("recommendation contracts", () => {
+  it("reports the active Hybrid strategy without changing Product projection", async () => {
+    const previous = process.env.ENABLE_RECOMMENDATIONS
+    process.env.ENABLE_RECOMMENDATIONS = "true"
+    const product = (id: string) => ({ id, title: id, handle: id, variants: [{ id: `variant_${id}`, manage_inventory: false, calculated_price: { calculated_amount: 100, currency_code: "vnd" } }] })
+    const resolve = jest.mocked(storeProducts.resolveStoreProducts).mockResolvedValue({ products: [product("prod_S"), product("prod_A")] })
+    const response = { status: jest.fn().mockReturnThis(), json: jest.fn(), setHeader: jest.fn() }
+    const request = { query: { placement: "product_detail", product_id: "prod_S", region_id: "reg_test", limit: "1" }, scope: { resolve: (name: string) => {
+      if (name === "region") return { retrieveRegion: async () => ({ id: "reg_test" }) }
+      if (name === "recommendation") return {
+        listRecommendationActives: async () => [{ run_id: "run" }], retrieveRecommendationRun: async () => ({ status: "ready", version: "hyb_test" }),
+        listRecommendationCandidates: async (filter: { placement: string }) => filter.placement === "home" ? [] : [{ target_product_id: "prod_A", strategy: "hm_hybrid_similarity" }],
+      }
+      throw new Error("Unexpected dependency")
+    } } }
+    try {
+      await GET(request as unknown as MedusaRequest, response as unknown as MedusaResponse)
+      expect(response.json).toHaveBeenCalledWith(expect.objectContaining({ strategy: "hm_hybrid_similarity", version: "hyb_test", products: [publicProduct(product("prod_A"))] }))
+    } finally {
+      resolve.mockReset()
+      if (previous === undefined) delete process.env.ENABLE_RECOMMENDATIONS
+      else process.env.ENABLE_RECOMMENDATIONS = previous
+    }
+  })
   it("preserves candidate ranks and fills only missing slots in popularity order", async () => {
     const previous = process.env.ENABLE_RECOMMENDATIONS
     process.env.ENABLE_RECOMMENDATIONS = "true"
@@ -21,7 +44,7 @@ describe("recommendation contracts", () => {
       if (name === "region") return { retrieveRegion: async () => ({ id: "reg_test" }) }
       if (name === "recommendation") return {
         listRecommendationActives: async () => [{ run_id: "run" }], retrieveRecommendationRun: async () => ({ status: "ready", version: "test" }),
-        listRecommendationCandidates: async (filter: { placement: string }) => (filter.placement === "home" ? ["prod_A", "prod_D", "prod_C", "prod_E", "prod_F", "prod_G"] : ["prod_B", "prod_A"]).map((target_product_id) => ({ target_product_id })),
+        listRecommendationCandidates: async (filter: { placement: string }) => (filter.placement === "home" ? ["prod_A", "prod_D", "prod_C", "prod_E", "prod_F", "prod_G"] : ["prod_B", "prod_A"]).map((target_product_id) => ({ target_product_id, strategy: filter.placement === "home" ? "hm_purchase_popularity" : "hm_metadata_similarity" })),
       }
       throw new Error("Unexpected dependency")
     } } }
@@ -79,6 +102,8 @@ describe("recommendation contracts", () => {
   })
   it("accepts complete placement input and rejects corrupt import", () => {
     expect(() => validateCandidates({ version: "test", manifest: {}, candidates: rows })).not.toThrow()
+    expect(() => validateCandidates({ version: "test", manifest: {}, candidates: [rows[0], { ...rows[1], strategy: "hm_hybrid_similarity" }] })).not.toThrow()
+    expect(() => validateCandidates({ version: "test", manifest: {}, candidates: [rows[0], rows[1], { ...rows[1], target_product_id: "prod_C", rank: 2, strategy: "hm_hybrid_similarity" }] })).toThrow()
     expect(() => validateCandidates({ version: "test", manifest: {}, candidates: [rows[0], rows[0]] })).toThrow()
     expect(() => validateCandidates({ version: "test", manifest: {}, candidates: [rows[0], { ...rows[1], target_product_id: "prod_B" }] })).toThrow()
     expect(() => validateCandidates({ version: "test", manifest: {}, candidates: [rows[0], { ...rows[1], score: NaN }] })).toThrow()

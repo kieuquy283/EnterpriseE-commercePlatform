@@ -27,7 +27,7 @@ export function validateCandidates(input: Input) {
       (row.placement === "home" ? row.context_key !== "home" : !/^product:prod_[a-zA-Z0-9]+$/.test(row.context_key)) ||
       row.context_key === `product:${row.target_product_id}` ||
       (row.placement === "product_detail" && row.score > 1) ||
-      row.strategy !== (row.placement === "home" ? "hm_purchase_popularity" : "hm_metadata_similarity")) {
+      (row.placement === "home" ? row.strategy !== "hm_purchase_popularity" : !["hm_metadata_similarity", "hm_hybrid_similarity"].includes(row.strategy))) {
       throw new MedusaError(MedusaError.Types.INVALID_DATA, "Invalid candidate")
     }
     const key = `${row.placement}:${row.context_key}`
@@ -42,6 +42,7 @@ export function validateCandidates(input: Input) {
   for (const rows of contexts.values()) {
     const sorted = [...rows].sort((a, b) => a.rank - b.rank)
     if (new Set(rows.map((r) => r.target_product_id)).size !== rows.length ||
+      new Set(rows.map((r) => r.strategy)).size !== 1 ||
       sorted.some((r, i) => r.rank !== i + 1 || (i > 0 && r.score > sorted[i - 1].score))) {
       throw new MedusaError(MedusaError.Types.INVALID_DATA, "Duplicate target, invalid rank or ordering")
     }

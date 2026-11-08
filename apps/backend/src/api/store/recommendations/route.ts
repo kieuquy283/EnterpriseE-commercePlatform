@@ -74,7 +74,7 @@ async function recommendations(req: MedusaRequest, res: MedusaResponse) {
         }
         version = run.version
         if (ids.length) {
-          strategy = placement === "home" ? "hm_purchase_popularity" : "hm_metadata_similarity"
+          strategy = placement === "home" ? "hm_purchase_popularity" : rows[0].strategy
           fallbackReason = null
         }
       }
