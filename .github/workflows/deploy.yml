@@ -1,4 +1,4 @@
-name: Deploy single-VM demo
+name: Deploy EC2 fallback (manual)
 on:
   workflow_dispatch:
     inputs:
@@ -30,7 +30,7 @@ jobs:
           REVISION: ${{ github.sha }}
         run: |
           ssh -i "$RUNNER_TEMP/commerce-ssh/key" -o UserKnownHostsFile="$RUNNER_TEMP/commerce-ssh/known_hosts" -o StrictHostKeyChecking=yes "$DEPLOY_USER@$DEPLOY_HOST" \
-            "cd /srv/commerce && git diff --quiet && git diff --cached --quiet && git fetch origin $REVISION && git checkout --detach $REVISION && docker compose -f docker-compose.yml -f deploy/compose.prod.yml build backend storefront && docker compose -f docker-compose.yml -f deploy/compose.prod.yml run --rm -w /app/apps/backend backend npx medusa db:migrate && docker compose -f docker-compose.yml -f deploy/compose.prod.yml --profile app up -d && docker compose -f docker-compose.yml -f deploy/compose.prod.yml ps"
+            "cd /srv/commerce && git diff --quiet && git diff --cached --quiet && git fetch origin $REVISION && git checkout --detach $REVISION && docker compose -f docker-compose.yml -f deploy/compose.prod.yml build backend storefront && docker compose -f docker-compose.yml -f deploy/compose.prod.yml run --rm migrate && docker compose -f docker-compose.yml -f deploy/compose.prod.yml --profile app up -d --wait --wait-timeout 240 && docker compose -f docker-compose.yml -f deploy/compose.prod.yml ps"
       - name: Readiness gate
         env:
           API_DOMAIN: ${{ secrets.API_DOMAIN }}

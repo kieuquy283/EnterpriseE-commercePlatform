@@ -1,5 +1,28 @@
+x-backend-environment: &backend-environment
+  DATABASE_URL: postgresql://commerce:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}@postgres:5432/commerce?sslmode=disable
+  JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET}
+  COOKIE_SECRET: ${COOKIE_SECRET:?Set COOKIE_SECRET}
+
 services:
+  postgres:
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+
+  redis:
+    restart: unless-stopped
+
+  migrate:
+    environment:
+      <<: *backend-environment
+
+  worker:
+    restart: unless-stopped
+    environment:
+      <<: *backend-environment
+
   caddy:
+    restart: unless-stopped
     profiles: ["app"]
     image: caddy:2-alpine
     environment:
@@ -10,16 +33,27 @@ services:
       - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
       - caddy-config:/config
-    depends_on: [backend, storefront]
+    depends_on:
+      backend: { condition: service_healthy }
+      storefront: { condition: service_healthy }
 
   backend:
+    restart: unless-stopped
     environment:
+      <<: *backend-environment
       STORE_CORS: https://${STORE_DOMAIN:?Set STORE_DOMAIN}
       ADMIN_CORS: https://${API_DOMAIN:?Set API_DOMAIN}
       AUTH_CORS: https://${STORE_DOMAIN:?Set STORE_DOMAIN},https://${API_DOMAIN:?Set API_DOMAIN}
       ALLOW_INSECURE_LOCAL_SESSION_COOKIE: "false"
 
   storefront:
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 10
     build:
       args:
         NEXT_PUBLIC_MEDUSA_BACKEND_URL: https://${API_DOMAIN:?Set API_DOMAIN}
