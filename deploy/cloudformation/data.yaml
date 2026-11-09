@@ -1,0 +1,730 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Commerce data: private Single-AZ PostgreSQL, retained Redis host and private S3 images delivered through
+  the backend image proxy.'
+Metadata:
+  AWSToolsMetrics:
+    AWSAgentToolkit: aws-cloudformation@3
+  com.aws.cloudformation.Context:
+    must:
+    - Deploy only in ap-southeast-2
+    - No NAT gateways; public application ENIs have ALB-only ingress
+    ref:
+    - README.md
+Parameters:
+  FoundationStack:
+    Type: String
+    Default: commerce-foundation
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9-]*'
+  DatabaseClass:
+    Type: String
+    Default: db.t4g.micro
+    AllowedValues:
+    - db.t4g.micro
+    - db.t4g.small
+  RedisAmi:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-arm64
+  AlertEmail:
+    Type: String
+    AllowedPattern: '[^@\s]+@[^@\s]+\.[^@\s]+'
+Resources:
+  DatabaseSecret:
+    Type: AWS::SecretsManager::Secret
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Never store database credentials in templates or parameter files
+        must: []
+    Properties:
+      Description: Generated PostgreSQL application credentials
+      GenerateSecretString:
+        SecretStringTemplate: '{"username":"commerce"}'
+        GenerateStringKey: password
+        PasswordLength: 40
+        ExcludePunctuation: true
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+  JwtSecret:
+    Type: AWS::SecretsManager::Secret
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Stable signing material survives application hibernation
+        must: []
+    Properties:
+      GenerateSecretString:
+        PasswordLength: 64
+        ExcludePunctuation: true
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+  CookieSecret:
+    Type: AWS::SecretsManager::Secret
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Stable signing material survives application hibernation
+        must: []
+    Properties:
+      GenerateSecretString:
+        PasswordLength: 64
+        ExcludePunctuation: true
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+  DatabaseSubnets:
+    Type: AWS::RDS::DBSubnetGroup
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: RDS requires a subnet group; database is Single-AZ to conserve credits
+        must: []
+    Properties:
+      DBSubnetGroupDescription: Private database subnets in two AZs
+      SubnetIds:
+      - Fn::ImportValue:
+          Fn::Sub: ${FoundationStack}-DatabaseSubnet1
+      - Fn::ImportValue:
+          Fn::Sub: ${FoundationStack}-DatabaseSubnet2
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+  Database:
+    Type: AWS::RDS::DBInstance
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Managed PostgreSQL; pause saves compute but not storage and RDS restarts after seven days
+        must:
+        - Do not replace or delete without a verified backup and explicit approval
+        - Keep certificate verification enabled in application clients
+    Properties:
+      Engine: postgres
+      EngineVersion: '16.15'
+      DBInstanceClass:
+        Ref: DatabaseClass
+      DBName: commerce
+      AllocatedStorage: '20'
+      StorageType: gp3
+      StorageEncrypted: true
+      PubliclyAccessible: false
+      MultiAZ: false
+      MasterUsername:
+        Fn::Sub: '{{resolve:secretsmanager:${DatabaseSecret}:SecretString:username}}'
+      MasterUserPassword:
+        Fn::Sub: '{{resolve:secretsmanager:${DatabaseSecret}:SecretString:password}}'
+      DBSubnetGroupName:
+        Ref: DatabaseSubnets
+      VPCSecurityGroups:
+      - Fn::ImportValue:
+          Fn::Sub: ${FoundationStack}-DatabaseGroup
+      BackupRetentionPeriod: 1
+      DeletionProtection: true
+      CopyTagsToSnapshot: true
+      AutoMinorVersionUpgrade: true
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+      EngineLifecycleSupport: open-source-rds-extended-support-disabled
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+  DatabaseSecretAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Attach endpoint metadata without exposing the password
+        must: []
+    Properties:
+      SecretId:
+        Ref: DatabaseSecret
+      TargetId:
+        Ref: Database
+      TargetType: AWS::RDS::DBInstance
+  RedisRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Session Manager management without SSH keys or inbound SSH
+        must: []
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: ec2.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+      - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore
+  RedisProfile:
+    Type: AWS::IAM::InstanceProfile
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Attach SSM permissions to Redis host
+        must: []
+    Properties:
+      Roles:
+      - Ref: RedisRole
+  Redis:
+    Type: AWS::EC2::Instance
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Single Redis host saves managed-cache costs; AOF on retained root EBS survives stop/start
+        must:
+        - No public Redis or SSH ingress
+        - 'Avoid host replacement: retained old disk requires manual recovery'
+        - Do not evict workflow, event or locking data
+    Properties:
+      ImageId:
+        Ref: RedisAmi
+      InstanceType: t4g.micro
+      CreditSpecification:
+        CPUCredits: standard
+      IamInstanceProfile:
+        Ref: RedisProfile
+      MetadataOptions:
+        HttpTokens: required
+        HttpEndpoint: enabled
+      NetworkInterfaces:
+      - DeviceIndex: '0'
+        AssociatePublicIpAddress: true
+        SubnetId:
+          Fn::ImportValue:
+            Fn::Sub: ${FoundationStack}-PublicSubnet1
+        GroupSet:
+        - Fn::ImportValue:
+            Fn::Sub: ${FoundationStack}-RedisGroup
+      BlockDeviceMappings:
+      - DeviceName: /dev/xvda
+        Ebs:
+          VolumeSize: 8
+          VolumeType: gp3
+          Encrypted: true
+          DeleteOnTermination: false
+      UserData:
+        Fn::Base64: |
+          #!/bin/bash
+          set -euo pipefail
+          dnf install -y docker
+          systemctl enable --now docker
+          install -d -m 700 /var/lib/commerce-redis
+          docker run -d --name commerce-redis --restart unless-stopped --log-opt max-size=10m --log-opt max-file=2 -p 6379:6379 -v /var/lib/commerce-redis:/data redis:7-alpine redis-server --appendonly yes --maxmemory 384mb --maxmemory-policy noeviction
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+  ImagesBucket:
+    Type: AWS::S3::Bucket
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Private product-image storage; application task role reads through the backend proxy
+        must:
+        - Never grant public bucket access
+        - Use a separate bucket for private customer documents
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: BucketOwnerEnforced
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+        - Id: BoundOldVersions
+          Status: Enabled
+          NoncurrentVersionExpiration:
+            NoncurrentDays: 7
+          AbortIncompleteMultipartUpload:
+            DaysAfterInitiation: 1
+      CorsConfiguration:
+        CorsRules:
+        - AllowedHeaders:
+          - '*'
+          AllowedMethods:
+          - GET
+          - HEAD
+          - PUT
+          AllowedOrigins:
+          - https://*
+          MaxAge: 300
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+  ImagesPolicy:
+    Type: AWS::S3::BucketPolicy
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Application task IAM policy grants access; bucket policy denies non-TLS access
+        must: []
+    Properties:
+      Bucket:
+        Ref: ImagesBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Sid: RequireTLS
+          Effect: Deny
+          Principal: '*'
+          Action: s3:*
+          Resource:
+          - Fn::GetAtt:
+            - ImagesBucket
+            - Arn
+          - Fn::Sub: ${ImagesBucket.Arn}/*
+          Condition:
+            Bool:
+              aws:SecureTransport: 'false'
+  Lease:
+    Type: AWS::SSM::Parameter
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Lifecycle script renews this lease before starting; expired or absent leases stop compute
+        must: []
+    Properties:
+      Type: String
+      Value: '0'
+      Description: Unix UTC shutdown deadline; 0 means paused
+      Tags:
+        Project: commerce-demo
+  DataWatchdogLogs:
+    Type: AWS::Logs::LogGroup
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Bound shutdown watchdog log retention
+        must: []
+    Properties:
+      RetentionInDays: 7
+  DataWatchdogRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Persist stop-only permissions independently of the app stack
+        must: []
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+      - PolicyName: StopDataCompute
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - ssm:GetParameter
+            Resource:
+              Fn::Sub: arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${Lease}
+          - Effect: Allow
+            Action:
+            - rds:StopDBInstance
+            Resource:
+              Fn::Sub: arn:${AWS::Partition}:rds:${AWS::Region}:${AWS::AccountId}:db:${Database}
+          - Effect: Allow
+            Action:
+            - ec2:StopInstances
+            Resource:
+              Fn::Sub: arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:instance/${Redis}
+          - Effect: Allow
+            Action:
+            - rds:DescribeDBInstances
+            - ec2:DescribeInstances
+            Resource: '*'
+          - Effect: Allow
+            Action:
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource:
+              Fn::GetAtt:
+              - DataWatchdogLogs
+              - Arn
+          - Effect: Allow
+            Action:
+            - sqs:SendMessage
+            Resource:
+              Fn::GetAtt:
+              - WatchdogDeadLetters
+              - Arn
+  DataWatchdog:
+    Type: AWS::Lambda::Function
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Stop data compute after lease expiry, including automatic seven-day RDS restarts
+        must: []
+    Properties:
+      Runtime: python3.13
+      Handler: index.handler
+      Role:
+        Fn::GetAtt:
+        - DataWatchdogRole
+        - Arn
+      Timeout: 60
+      MemorySize: 128
+      LoggingConfig:
+        LogGroup:
+          Ref: DataWatchdogLogs
+      Environment:
+        Variables:
+          LEASE:
+            Ref: Lease
+          DATABASE:
+            Ref: Database
+          REDIS:
+            Ref: Redis
+      Code:
+        ZipFile: |
+          import boto3
+          from botocore.config import Config
+          import os
+          import time
+
+          CONFIG = Config(connect_timeout=2, read_timeout=3, retries={"total_max_attempts": 2, "mode": "standard"})
+
+          def handler(event, context):
+              errors = []
+              try:
+                  value = boto3.client("ssm", config=CONFIG).get_parameter(Name=os.environ["LEASE"])["Parameter"]["Value"]
+                  deadline = int(value)
+              except Exception as exc:
+                  errors.append("Lease unavailable: " + str(exc))
+                  deadline = 0
+              if deadline > int(time.time()):
+                  return {"state": "leased"}
+              try:
+                  rds = boto3.client("rds", config=CONFIG)
+                  db = rds.describe_db_instances(DBInstanceIdentifier=os.environ["DATABASE"])["DBInstances"][0]
+                  if db["DBInstanceStatus"] == "available":
+                      rds.stop_db_instance(DBInstanceIdentifier=os.environ["DATABASE"])
+              except Exception as exc:
+                  errors.append("RDS shutdown: " + str(exc))
+              try:
+                  ec2 = boto3.client("ec2", config=CONFIG)
+                  instance = ec2.describe_instances(InstanceIds=[os.environ["REDIS"]])["Reservations"][0]["Instances"][0]
+                  if instance["State"]["Name"] == "running":
+                      ec2.stop_instances(InstanceIds=[os.environ["REDIS"]])
+              except Exception as exc:
+                  errors.append("Redis shutdown: " + str(exc))
+              if errors:
+                  raise RuntimeError("; ".join(errors))
+              return {"state": "data-compute-stopped"}
+      DeadLetterConfig:
+        TargetArn:
+          Fn::GetAtt:
+          - WatchdogDeadLetters
+          - Arn
+  DataWatchdogSchedule:
+    Type: AWS::Events::Rule
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Remain active during application hibernation
+        must: []
+    Properties:
+      ScheduleExpression: rate(5 minutes)
+      State: ENABLED
+      Targets:
+      - Id: stop-data
+        Arn:
+          Fn::GetAtt:
+          - DataWatchdog
+          - Arn
+  DataWatchdogPermission:
+    Type: AWS::Lambda::Permission
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Only this schedule can invoke the data watchdog
+        must: []
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: DataWatchdog
+      Principal: events.amazonaws.com
+      SourceArn:
+        Fn::GetAtt:
+        - DataWatchdogSchedule
+        - Arn
+  DataWatchdogFailure:
+    Type: AWS::CloudWatch::Alarm
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Make shutdown failures visible; configure notification actions before deployment
+        must: []
+    Properties:
+      AlarmDescription: Data shutdown failed; RDS may restart and keep consuming credit
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+      - Name: FunctionName
+        Value:
+          Ref: DataWatchdog
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+      - Ref: AlertTopic
+  AlertTopic:
+    Type: AWS::SNS::Topic
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Watchdog alarms notify the operator after email subscription confirmation
+        must: []
+    Properties:
+      KmsMasterKeyId:
+        Ref: AlarmKey
+  AlertSubscription:
+    Type: AWS::SNS::Subscription
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Confirm the email subscription before relying on shutdown failure notifications
+        must: []
+    Properties:
+      TopicArn:
+        Ref: AlertTopic
+      Protocol: email
+      Endpoint:
+        Ref: AlertEmail
+  CreditBudget:
+    Type: AWS::Budgets::Budget
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Project-wide gross-cost email alerts at 5, 10 and 15 USD monthly; credits must not hide usage
+        must:
+        - Alerts are delayed and do not impose a spending cap
+    Properties:
+      Budget:
+        BudgetName:
+          Fn::Sub: ${AWS::StackName}-monthly
+        BudgetType: COST
+        TimeUnit: MONTHLY
+        BudgetLimit:
+          Amount: 15
+          Unit: USD
+        CostTypes:
+          IncludeCredit: false
+          IncludeRefund: false
+      NotificationsWithSubscribers:
+      - Notification:
+          NotificationType: ACTUAL
+          ComparisonOperator: GREATER_THAN
+          Threshold: 5
+          ThresholdType: ABSOLUTE_VALUE
+        Subscribers:
+        - SubscriptionType: EMAIL
+          Address:
+            Ref: AlertEmail
+      - Notification:
+          NotificationType: ACTUAL
+          ComparisonOperator: GREATER_THAN
+          Threshold: 10
+          ThresholdType: ABSOLUTE_VALUE
+        Subscribers:
+        - SubscriptionType: EMAIL
+          Address:
+            Ref: AlertEmail
+      - Notification:
+          NotificationType: ACTUAL
+          ComparisonOperator: GREATER_THAN
+          Threshold: 15
+          ThresholdType: ABSOLUTE_VALUE
+        Subscribers:
+        - SubscriptionType: EMAIL
+          Address:
+            Ref: AlertEmail
+  AlarmKey:
+    Type: AWS::KMS::Key
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Customer key permits CloudWatch to publish encrypted SNS alarms; approximately one dollar per month
+        must: []
+    Properties:
+      Description: SNS alarm encryption with explicit CloudWatch publisher access
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: '2012-10-17'
+        Statement:
+        - Sid: OwnerAdministration
+          Effect: Allow
+          Principal:
+            AWS:
+              Fn::Sub: arn:${AWS::Partition}:iam::${AWS::AccountId}:root
+          Action: kms:*
+          Resource: '*'
+        - Sid: CloudWatchAlarmEncryption
+          Effect: Allow
+          Principal:
+            Service: cloudwatch.amazonaws.com
+          Action:
+          - kms:Decrypt
+          - kms:GenerateDataKey*
+          Resource: '*'
+          Condition:
+            StringEquals:
+              aws:SourceAccount:
+                Ref: AWS::AccountId
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+  AlertPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Only this project CloudWatch alarms may publish
+        must: []
+    Properties:
+      Topics:
+      - Ref: AlertTopic
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: cloudwatch.amazonaws.com
+          Action: sns:Publish
+          Resource:
+            Ref: AlertTopic
+          Condition:
+            StringEquals:
+              aws:SourceAccount:
+                Ref: AWS::AccountId
+            ArnLike:
+              aws:SourceArn:
+                Fn::Sub: arn:${AWS::Partition}:cloudwatch:${AWS::Region}:${AWS::AccountId}:alarm:*
+  WatchdogDeadLetters:
+    Type: AWS::SQS::Queue
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Keep failed scheduled shutdown invocations for fourteen days
+        must: []
+    Properties:
+      SqsManagedSseEnabled: true
+      MessageRetentionPeriod: 1209600
+Outputs:
+  DatabaseSecret:
+    Description: Persistent application dependency
+    Value:
+      Ref: DatabaseSecret
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-DatabaseSecret
+  JwtSecret:
+    Description: Persistent application dependency
+    Value:
+      Ref: JwtSecret
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-JwtSecret
+  CookieSecret:
+    Description: Persistent application dependency
+    Value:
+      Ref: CookieSecret
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-CookieSecret
+  ImagesBucket:
+    Description: Persistent application dependency
+    Value:
+      Ref: ImagesBucket
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-ImagesBucket
+  DatabaseId:
+    Description: Identifier for lifecycle operations
+    Value:
+      Ref: Database
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-DatabaseId
+  DatabaseHost:
+    Description: Private database hostname
+    Value:
+      Fn::GetAtt:
+      - Database
+      - Endpoint.Address
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-DatabaseHost
+  RedisId:
+    Description: Identifier for lifecycle operations
+    Value:
+      Ref: Redis
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-RedisId
+  ImagesBucketArn:
+    Description: Object policy scope
+    Value:
+      Fn::GetAtt:
+      - ImagesBucket
+      - Arn
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-ImagesBucketArn
+  RedisHost:
+    Description: Redis private IP; refresh app stack after any host replacement
+    Value:
+      Fn::GetAtt:
+      - Redis
+      - PrivateIp
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-RedisHost
+  Lease:
+    Description: Shared UTC session deadline; zero means paused
+    Value:
+      Ref: Lease
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-Lease
+  AlertTopicArn:
+    Description: Shutdown failure notification topic
+    Value:
+      Ref: AlertTopic
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-AlertTopicArn
+  DataWatchdog:
+    Description: Invoke to stop expired data compute
+    Value:
+      Ref: DataWatchdog
+  WatchdogDeadLettersArn:
+    Description: Shared shutdown dead-letter queue
+    Value:
+      Fn::GetAtt:
+      - WatchdogDeadLetters
+      - Arn
+    Export:
+      Name:
+        Fn::Sub: ${AWS::StackName}-WatchdogDeadLettersArn

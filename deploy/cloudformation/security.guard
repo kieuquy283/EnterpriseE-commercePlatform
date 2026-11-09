@@ -1,0 +1,54 @@
+let buckets = Resources.*[ Type == 'AWS::S3::Bucket' ]
+let databases = Resources.*[ Type == 'AWS::RDS::DBInstance' ]
+let hosts = Resources.*[ Type == 'AWS::EC2::Instance' ]
+
+rule private_encrypted_buckets when %buckets !empty {
+  %buckets {
+    DeletionPolicy == 'Retain'
+    UpdateReplacePolicy == 'Retain'
+    Properties.PublicAccessBlockConfiguration {
+      BlockPublicAcls == true
+      IgnorePublicAcls == true
+      BlockPublicPolicy == true
+      RestrictPublicBuckets == true
+    }
+    Properties.BucketEncryption.ServerSideEncryptionConfiguration[*].ServerSideEncryptionByDefault.SSEAlgorithm IN ['AES256', 'aws:kms']
+    Properties.VersioningConfiguration.Status == 'Enabled'
+  }
+}
+
+rule private_retained_database when %databases !empty {
+  %databases {
+    DeletionPolicy == 'Retain'
+    UpdateReplacePolicy == 'Retain'
+    Properties.StorageEncrypted == true
+    Properties.PubliclyAccessible == false
+    Properties.DeletionProtection == true
+    Properties.MultiAZ == false
+  }
+}
+
+rule host_security when %hosts !empty {
+  %hosts {
+    Properties.MetadataOptions.HttpTokens == 'required'
+    Properties.BlockDeviceMappings[*].Ebs.Encrypted == true
+    Properties.CreditSpecification.CPUCredits == 'standard'
+  }
+}
+
+rule no_unapproved_fixed_cost_services {
+  Resources.*.Type != 'AWS::EC2::NatGateway'
+  Resources.*.Type != 'AWS::EKS::Cluster'
+}
+
+let ingress = Resources.*[ Type == 'AWS::EC2::SecurityGroupIngress' ]
+rule public_ingress_is_web_only when %ingress !empty {
+  %ingress {
+    when Properties.CidrIp exists {
+      when Properties.CidrIp == '0.0.0.0/0' {
+        Properties.FromPort IN [80, 443]
+        Properties.ToPort IN [80, 443]
+      }
+    }
+  }
+}

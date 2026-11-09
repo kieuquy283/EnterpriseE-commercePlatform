@@ -8,6 +8,31 @@ permissions:
   contents: read
 
 jobs:
+  cloudformation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m pip install cfn-lint==1.58.0
+      - name: Install pinned AWS Guard binary
+        run: |
+          curl -fsSL https://github.com/aws-cloudformation/cloudformation-guard/releases/download/3.2.1/cfn-guard-v3-x86_64-linux-latest.tar.gz -o "$RUNNER_TEMP/guard.tar.gz"
+          echo "8c66efb19c63e6c2bf26b9a41bbcf2f85baa8a937b01d350940194faaf64cf1d  $RUNNER_TEMP/guard.tar.gz" | sha256sum --check
+          mkdir -p "$RUNNER_TEMP/guard"
+          tar -xzf "$RUNNER_TEMP/guard.tar.gz" -C "$RUNNER_TEMP/guard"
+          echo "$RUNNER_TEMP/guard/cfn-guard-v3-x86_64-linux-latest" >> "$GITHUB_PATH"
+      - run: cfn-lint --regions ap-southeast-2 --template deploy/cloudformation/foundation.yaml deploy/cloudformation/data.yaml deploy/cloudformation/app.yaml deploy/cloudformation/retained-guard.yaml
+      - run: cfn-guard validate --rules deploy/cloudformation/security.guard --data deploy/cloudformation/foundation.yaml deploy/cloudformation/data.yaml deploy/cloudformation/app.yaml deploy/cloudformation/retained-guard.yaml --output-format json
+      - run: python -m unittest discover -s deploy/cloudformation/tests -v
+      - run: python -m py_compile deploy/cloudformation/manage.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.22.0"
+      - run: node --check deploy/cloudformation/runtime/backend-entrypoint.cjs
+
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 30
