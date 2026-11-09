@@ -1,5 +1,6 @@
 # YÊU CẦU PHẦN MỀM
 
+> Cập nhật cloud ngày 09/11/2026: baseline đã chọn là ALB/ACM + ECS Fargate (storefront/API/worker), private RDS, Redis trên EC2 và private S3 qua backend proxy. Single-EC2/Compose là rehearsal/fallback, không còn là đích cloud chính. Xem [ADR](architecture/adr/0001-aws-cloud-stack.md), [runbook](../deploy/RUNBOOK.md) và [14 public checks](report/aws-fargate-deployment-2026-11-08.md). Các mục tiêu chưa có bằng chứng vẫn giữ trạng thái chưa nghiệm thu.
 ## 1. Giới thiệu và phạm vi
 
 ### 1.1 Mục đích
@@ -340,7 +341,7 @@ Quy tắc cần tuân theo: Chỉ dùng ảnh có quyền sử dụng và đư�
 
 Cách kiểm tra: Tải ảnh thử trên môi trường cloud thử nghiệm và xem ảnh nhỏ hiển thị đúng.
 
-**Trạng thái:** Mới hoàn thành một phần  |  **Tuần:** 9  |  **Nguồn hoặc việc cần kiểm tra:** S3 optional config, chưa có run evidence
+**Trạng thái:** Mới hoàn thành một phần  |  **Tuần:** 9  |  **Nguồn hoặc việc cần kiểm tra:** Private S3/IAM upload-read và public backend proxy đã qua checks ngày 09/11; browser thumbnail và quyền ảnh H&M còn cần xác minh
 
 #### FR-INT-03  [S]  Tìm kiếm, lọc và sắp xếp đáp ứng việc xem hàng; có kế hoạch nếu sau này dùng công cụ tìm kiếm riêng.
 
@@ -366,7 +367,7 @@ Quy tắc cần tuân theo: Không đưa mật khẩu/khóa vào Git và phải 
 
 Cách kiểm tra: Đưa một bản đã duyệt lên môi trường thử nghiệm, kiểm tra ứng dụng còn hoạt động và đặt hàng từ đầu đến cuối.
 
-**Trạng thái:** Mới hoàn thành một phần  |  **Tuần:** 10  |  **Nguồn hoặc việc cần kiểm tra:** deploy.yml + RUNBOOK; no cloud evidence
+**Trạng thái:** Mới hoàn thành một phần  |  **Tuần:** 10  |  **Nguồn hoặc việc cần kiểm tra:** CloudFormation/Fargate + runbook; 14 public checks ngày 09/11; browser checkout và rollback còn thiếu
 
 #### FR-OPS-03  [M]  Nhóm diễn tập đưa phiên bản cũ trở lại và sao lưu, khôi phục dữ liệu.
 
@@ -382,7 +383,7 @@ Quy tắc cần tuân theo: Nhật ký không chứa mật khẩu, khóa hoặc 
 
 Cách kiểm tra: Tạo lỗi thử nghiệm, lưu ảnh bảng số liệu và cảnh báo đã xuất hiện.
 
-**Trạng thái:** Chưa đáp ứng  |  **Tuần:** 11  |  **Nguồn hoặc việc cần kiểm tra:** Docker logs configured, metrics gap
+**Trạng thái:** Mới hoàn thành một phần  |  **Tuần:** 11  |  **Nguồn hoặc việc cần kiểm tra:** CloudWatch logs/dashboard/alarms và watchdog đã triển khai; SNS email còn chờ xác nhận, chưa có incident/load drill
 
 ### 3.12 Gợi ý sản phẩm (tùy chọn)
 
@@ -400,7 +401,7 @@ Quy tắc cần tuân theo: Chỉ gợi ý sản phẩm đang bán, có giá và
 
 Cách kiểm tra: Kiểm thử API và website; đo chất lượng gợi ý trên dữ liệu chuẩn bị trước và thời gian trả kết quả.
 
-**Trạng thái:** Chưa đáp ứng  |  **Tuần:** 13+  |  **Nguồn hoặc việc cần kiểm tra:** Không có online rec API ở baseline
+**Trạng thái:** Mới hoàn thành một phần  |  **Tuần:** 13+  |  **Nguồn hoặc việc cần kiểm tra:** main 389e855 có API/modules/UI với feature flags; private validation không phải public promotion, cloud giữ flags tắt
 
 ## 4. Quy tắc bán hàng (BR)
 
@@ -466,9 +467,9 @@ Email, địa chỉ và số điện thoại của khách là dữ liệu cá nh
 | API-05 | Nhân viên → quản trị | `/app` và Medusa Admin API | Chỉ tài khoản có quyền mới vào được. |
 | INT-01 | Medusa ↔ PostgreSQL 16 | Kết nối qua `DATABASE_URL` | Bảo vệ dữ liệu, kiểm soát thay đổi cấu trúc, sao lưu và số kết nối. |
 | INT-02 | Medusa/tiến trình nền ↔ Redis 7 | Kết nối qua `REDIS_URL` | Kiểm tra dữ liệu lưu tạm cập nhật, việc nền thử lại và xử lý khi Redis lỗi. |
-| INT-03 | Ảnh ↔ nơi lưu tương thích S3 | Medusa dùng phần lưu tệp nếu được cấu hình | Kiểm tra quyền dùng ảnh, quyền truy cập và HTTPS. |
+| INT-03 | Ảnh ↔ private S3/backend proxy | Medusa file module dùng ECS task role; URL public-image prefix đi qua API | Kiểm tra quyền dùng ảnh, quyền truy cập và HTTPS. |
 | INT-04 | Việc gửi thông báo dự kiến | Tiến trình nền → dịch vụ email thử nghiệm | Ghi kết quả gửi, giới hạn gửi lại và tránh gửi trùng. |
-| OPS-01 | Quy trình triển khai → cloud thử nghiệm | GitHub Actions → máy chủ chạy Caddy/Compose | Biết phiên bản đã đưa lên, giữ bí mật khóa, kiểm tra ứng dụng và có cách quay lại. |
+| OPS-01 | Quy trình triển khai → cloud thử nghiệm | GitHub OIDC image publishing → ECR; operator review/apply CloudFormation → Fargate | Biết phiên bản đã đưa lên, giữ bí mật khóa, kiểm tra ứng dụng và có cách quay lại. |
 
 ### 6.1 Cách báo lỗi khi các phần giao tiếp
 
@@ -548,7 +549,7 @@ Tình trạng và bằng chứng hiện có: Mới kiểm một phần; cần r�
 
 Cách kiểm tra: Thử truy cập HTTPS và rà các cổng mở trên máy chủ cloud.
 
-Tình trạng và bằng chứng hiện có: Đã có cấu hình Caddy và cổng nội bộ; chưa kiểm chứng trên cloud.  |  Tuần dự kiến: 10–11
+Tình trạng và bằng chứng hiện có: AWS đã xác minh HTTPS/redirect tại ALB/ACM, RDS private, Redis/RDS ingress giới hạn và unsigned S3 bị từ chối; xem báo cáo ngày 09/11.  |  Tuần dự kiến: 10–11
 
 #### NFR-SEC-03  [M]  Không lưu mật khẩu và khóa bí mật trong Git hoặc nhật ký công khai.
 
@@ -600,13 +601,13 @@ Tình trạng và bằng chứng hiện có: Bài kiểm tra CI và API đã ch�
 
 Cách kiểm tra: Lưu nhật ký triển khai, mã bản phát hành và kết quả thử quay lại, khôi phục.
 
-Tình trạng và bằng chứng hiện có: Có quy trình và hướng dẫn; chưa diễn tập triển khai.  |  Tuần dự kiến: 10,13
+Tình trạng và bằng chứng hiện có: Đã có immutable image refs, migrations và public AWS smoke evidence; chưa diễn tập release rollback hoặc restore.  |  Tuần dự kiến: 10,13
 
 #### NFR-OPS-03  [S]  Triển khai hoặc khởi động lại ứng dụng không được xóa dữ liệu bán hàng.
 
 Cách kiểm tra: Xem hướng dẫn vận hành, khởi động lại ứng dụng rồi kiểm tra dữ liệu còn nguyên.
 
-Tình trạng và bằng chứng hiện có: Compose có nơi lưu dữ liệu lâu dài; chưa có báo cáo khôi phục.  |  Tuần dự kiến: 10–12
+Tình trạng và bằng chứng hiện có: RDS/bucket/secrets được retain/import không thay thế; catalog còn sau restart và không reseed. Chưa diễn tập restore hoặc kiểm toàn bộ dữ liệu đơn hàng.  |  Tuần dự kiến: 10–12
 
 ### 7.6 Giữ dữ liệu chính xác
 
@@ -628,7 +629,7 @@ Tình trạng và bằng chứng hiện có: Mới hoàn thành một phần.  |
 
 Cách kiểm tra: Ghi chi phí từng dịch vụ và đối chiếu với ngân sách, lượng truy cập.
 
-Tình trạng và bằng chứng hiện có: Chưa chốt ngân sách hoặc có báo cáo chi phí.  |  Tuần dự kiến: 10,12
+Tình trạng và bằng chứng hiện có: Đã có cost models, session lease và budget email alerts; chưa xác minh đầy đủ chi phí thực trả hoặc chứng minh hard spending cap.  |  Tuần dự kiến: 10,12
 
 ### 7.8 Kiểm tra chất lượng và đối chiếu yêu cầu
 
@@ -733,7 +734,7 @@ Khi đổi một yêu cầu, nhóm cần ghi mã thay đổi, lý do, ảnh hư�
 
 **[SRC-06]** https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/apps/backend/integration-tests/http/checkout-order.spec.ts *— HTTP integration tests, payment simulator success/failure.*
 
-**[SRC-07]** https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/deploy/RUNBOOK.md *— Kiến trúc single-VM và RPO/RTO mục tiêu, chưa có recovery drill.*
+**[SRC-07]** https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/deploy/RUNBOOK.md *— Runbook AWS Fargate; fallback EC2 riêng; RPO/RTO và restore drill chưa được chứng minh.*
 
 **[SRC-08]** https://github.com/kieuquy283/EnterpriseE-commercePlatform/actions/runs/41313753319 *— CI success tại main, 01/11/2026.*
 

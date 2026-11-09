@@ -1,0 +1,9 @@
+{
+  "command_id": "e867d72f-2f31-43d7-95af-d263d325b08a",
+  "instance_id": "i-011c2a03120ae1614",
+  "status": "Success",
+  "response_code": 0,
+  "source_sha256": "515dc788818abe2f50879652d561d4334e2f7aec00ab86f0b1d392d6b8460b50",
+  "base_commit": "f4845ba",
+  "source_note": "base commit plus uncommitted local deployment changes"
+}

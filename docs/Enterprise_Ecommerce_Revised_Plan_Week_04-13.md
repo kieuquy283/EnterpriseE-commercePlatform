@@ -1,5 +1,6 @@
 # KẾ HOẠCH TRIỂN KHAI ENTERPRISE E-COMMERCE PLATFORM — BẢN ĐIỀU CHỈNH
 
+> Cập nhật cloud ngày 09/11/2026: baseline đã chọn là ALB/ACM + ECS Fargate (storefront/API/worker), private RDS, Redis trên EC2 và private S3 qua backend proxy. Single-EC2/Compose là rehearsal/fallback, không còn là đích cloud chính. Xem [ADR](architecture/adr/0001-aws-cloud-stack.md), [runbook](../deploy/RUNBOOK.md) và [14 public checks](report/aws-fargate-deployment-2026-11-08.md). Các mục tiêu chưa có bằng chứng vẫn giữ trạng thái chưa nghiệm thu.
 ---
 
 ## 1. Tóm tắt điều chỉnh và đánh giá kế hoạch gốc
@@ -41,7 +42,7 @@ Kế hoạch gốc tổ chức hợp lý theo chuỗi **Architecture → Busines
 | H&M | `scripts/hm/prepare.py`, `build-popularity-candidates.py`, `import-hm-catalog.ts`; README ghi nhận import 500/1.874 | Pilot documented; chưa xác minh DB hiện tại và chưa đạt 5k/10k |
 | Docs nền | `docs/01_Project_Definition.md`, `02_Project_Scope_and_Assumptions.md`, `03_Software_Requirements_Specification.md` đã có trên `main` | Có bản thảo; chưa có stakeholder approval/RTM đóng |
 | CI | GitHub Actions CI và API tests có các lần thành công; API tests cho `main` `5c96a11` thành công tại lúc audit | VERIFIED theo workflow; trạng thái của CI run mới nhất cần kiểm lại khi chốt baseline |
-| CD/Cloud | `.github/workflows/deploy.yml`, Caddy, Compose production, runbook | CONFIGURED; **chưa có evidence deploy cloud thành công** |
+| CD/Cloud | CloudFormation, ALB/ACM, Fargate/RDS, private S3 proxy, runbook; `aws-images.yml` | **VERIFIED smoke AWS: 14 public checks**; GitHub publishing/rollback/restore chưa được thử |
 | Observability/Recovery | Logs/health và kế hoạch backup/restore có trong runbook | PARTIAL/GAP; thiếu dashboard, alerts, restore drill |
 | Load | `load/catalog.js` 30 RPS, `load/checkout.js` 3 RPS | Kịch bản được viết; **chưa có benchmark report** |
 
@@ -60,8 +61,8 @@ Kế hoạch gốc tổ chức hợp lý theo chuỗi **Architecture → Busines
 | **6** | Cart, Checkout & Order Creation | Luồng chính có test | E2E browser, transaction boundary, error cases | Full purchase flow pass |
 | **7** | Payment, Idempotency & Inventory Consistency | Simulator và inventory sample có evidence | Duplicate/retry, concurrency, payment-state ADR | Không duplicate order/oversell trong test xác định |
 | **8** | Async Processing, Notification & Order Tracking | Redis/Worker có, notification thiếu | Subscriber, sandbox email, retry/dedupe, tracking | Order không phụ thuộc thành công của email |
-| **9** | Cache, Search & Object Storage Integration | Redis/search v1 có, S3 optional | Cache tests, search ADR, image/media proof, H&M catalog có điều kiện | Read path và media có evidence |
-| **10** | Cloud Deployment & CI/CD | CI pass; CD/runbook chưa chạy cloud | Deploy staging HTTPS, migration, release/rollback rehearsal | Cloud E2E và deploy evidence |
+| **9** | Cache, Search & Object Storage Integration | Redis/search v1 có, private S3 proxy đã qua public smoke | Cache tests, search ADR, image/media proof, H&M catalog có điều kiện | Read path và media có evidence |
+| **10** | Cloud Deployment & CI/CD | AWS smoke đã có; GitHub publishing/rollback còn thiếu | Deploy staging HTTPS, migration, release/rollback rehearsal | Cloud E2E và deploy evidence |
 | **11** | Security & Observability | Cơ chế nền có, metrics thiếu | Access review, logs/IDs, dashboard/alerts | Security + monitoring evidence |
 | **12** | NFR, Load Testing, Reliability & FinOps | Có k6 scripts, chưa có kết quả | Benchmark, fault/recovery, backup/restore, cost | NFR matrix có số đo và giới hạn |
 | **13** | Hardening, Final Evidence & Demo Preparation | Chưa đóng | Freeze, regression, reports, demo rehearsal | Submission package có traceability |
@@ -171,12 +172,12 @@ Kế hoạch gốc tổ chức hợp lý theo chuỗi **Architecture → Busines
 
 **Mục tiêu:** Chốt giải pháp read-heavy catalog/media và chứng minh có thể vận hành trong giới hạn tài nguyên.
 
-**Đã có:** Redis provider của Medusa, keyword search qua Store API, S3 File Provider cấu hình tùy chọn; chưa có search index sync/object storage production được kiểm chứng.
+**Đã có:** Redis provider của Medusa, keyword search qua Store API và private S3/IAM backend proxy đã qua upload/read và public HTTP checks ngày 09/11. Chưa có search index sync, media browser flow hoặc cache-correctness benchmark đầy đủ.
 
 **Công việc tiếp theo:**
 - **P0** Đo/query catalog trên dữ liệu đại diện; xác định dữ liệu/cache path thực tế. Viết cache key/TTL/invalidation/fallback strategy; test cache hit/miss và thay đổi giá/stock/product visibility.
 - **P0** Ra **Search ADR**: giữ Medusa keyword query nếu đáp ứng workload, hoặc chỉ dùng search service khi có yêu cầu search nâng cao và công sức index/rebuild/sync được biện minh. **Không bắt buộc khởi động lại Meilisearch cũ chỉ để có thêm service.**
-- **P0** Chốt media policy: product image URL/thumbnail hợp lệ, source/license rõ ràng, không lưu ảnh blob trong transaction DB. Nếu rubric yêu cầu object storage, tích hợp và kiểm chứng một S3-compatible bucket; nếu không, tài liệu hóa quyết định, placeholder và giới hạn.
+- **P0** Chốt media policy: product image URL/thumbnail hợp lệ, source/license rõ ràng, không lưu ảnh blob trong transaction DB. Private S3 và backend proxy đã được chọn; kiểm tiếp media UI, private/public boundary và quyền sử dụng ảnh, không tự thêm CDN hoặc chuyển bucket thành public.
 - **P1** Hoàn thiện category/filter/sort và test search empty/error/invalidation.
 - **P1** Cập nhật Architecture v2 và benchmark catalog 500 vs 5k; theo dõi PostgreSQL pool vì đã từng có `53300` trong môi trường local.
 - **P2 — H&M/Recommendation:** Nếu đã xác nhận quyền và import đủ, chạy ETL interactions (pseudonymize customer), split theo thời gian, tạo **Popularity Baseline** và `article_id → variant/product ID` mapping; **chưa gọi đây là online recommendation**. Có thể tiếp tục 10k khi 5k qua gate.
@@ -191,15 +192,15 @@ Kế hoạch gốc tổ chức hợp lý theo chuỗi **Architecture → Busines
 
 **Mục tiêu:** Chuyển hệ thống đã có từ môi trường local lên staging cloud có thể demo/kiểm chứng.
 
-**Đã có:** Dockerfiles, Compose/production override, Caddy, migration path, CI, manual GitHub Actions deploy và runbook. Chưa có bằng chứng deployment workflow chạy với cloud host.
+**Đã có:** CloudFormation và runbook AWS đã triển khai ALB/ACM, ba Fargate service, RDS, Redis EC2 và private S3 proxy; 14/14 public checks ngày 09/11. EC2/Compose là rehearsal trước đó. CI và AWS image workflow đã cấu hình nhưng GitHub publishing chưa được live report thực thi.
 
 **Công việc tiếp theo:**
-- **P0** Chọn cloud provider/VM profile theo budget và rubric; dựng **ít nhất một staging environment** với HTTPS, domain và tách secrets, PostgreSQL/Redis không public.
+- **P0** Duy trì môi trường AWS đã chọn và ghi rõ giới hạn Single-AZ RDS/Redis một host; giữ HTTPS, secrets tách biệt và DB/Redis không public. Không đổi lại single-VM như baseline.
 - **P0** Chạy migration/release từ reviewed commit, seed chỉ khi cần; giữ database volume và backup, **không dùng lệnh xóa volume để sửa lỗi**.
 - **P0** Kết nối GitHub Actions deployment hoặc vận hành runbook release có log, artifact commit/image, readiness gate và approval phù hợp.
 - **P0** Cloud E2E `browse → cart → checkout → order`, negative payment, kiểm tra DB/Redis/worker và health/readiness.
 - **P0** Tập rollback code/config sang image/commit cũ tương thích migration; backup trước thay đổi schema.
-- **P1** Quyết định **managed PostgreSQL** dựa trên yêu cầu môn học/cost: nếu bắt buộc thì dùng; nếu không, single-VM DB là giới hạn demo cần nêu rõ, không tự gọi HA/managed.
+- **P1** **Managed PostgreSQL đã chọn: RDS Single-AZ.** Cần backup/restore drill và đo tải; managed không đồng nghĩa HA.
 - **P1** Viết Cloud Architecture Diagram, cost estimate, environment/secrets runbook.
 - **P2 — Recommendation:** Chỉ publish demo H&M catalog/candidates lên staging sau khi đã rõ quyền sử dụng ảnh/dataset; nếu chưa, dùng demo assets hợp pháp và tiếp tục offline.
 
@@ -271,7 +272,7 @@ Kế hoạch gốc tổ chức hợp lý theo chuỗi **Architecture → Busines
 
 **Output:** Final Report, Slides, Final Architecture/ERD/ADR, Requirement Traceability Matrix, Test/NFR/Security/FinOps Evidence, Runbook, Demo Script, Submission Checklist.
 
-**Exit gate:** Mỗi requirement Must-have có status và evidence hoặc accepted gap được ghi nhận; demo staging có thể chạy lại; nhóm giải thích được giới hạn single-VM, COD chưa thu tiền và Recommendation chưa hoàn thành (nếu có).
+**Exit gate:** Mỗi requirement Must-have có status và evidence hoặc accepted gap được ghi nhận; demo staging có thể chạy lại; nhóm giải thích được giới hạn Single-AZ RDS/Redis một host, COD chưa thu tiền và Recommendation chưa hoàn thành (nếu có).
 
 **Owner:** Toàn nhóm; Tech Lead/BA chốt hồ sơ nộp.
 
@@ -345,7 +346,7 @@ Theo kế hoạch học phần, thứ tự tuần giữ nguyên. Về kỹ thu�
 | Notification | Một luồng order confirmation email sandbox có retry/dedupe là đủ MVP |
 | Search | Giữ Medusa keyword search nếu đáp ứng; Meilisearch cần ADR + tests mới thêm |
 | Storage | S3-compatible nếu yêu cầu media/giảng viên; dùng demo assets có quyền |
-| Cloud | Một staging VM + Compose/Caddy và backup là phương án tối thiểu; managed services nếu rubric/budget cần |
+| Cloud | ALB/ACM + ba Fargate service + RDS + Redis EC2 + private S3 proxy là baseline; EC2/Compose chỉ là fallback |
 | Monitoring | Một dashboard đủ metrics chính + alert test; không cần xây platform observability quá lớn |
 | Recommendation | Offline baseline + optional PDP/home UI sau khi core ổn định; không dùng GPU/LLM mặc định |
 

@@ -1,0 +1,21 @@
+{
+  "gitCommit": "389e8556a7421f308f8f3fe9b57566e4b3002a42",
+  "releaseTag": "main-389e855-20261109-896fcad1",
+  "images": {
+    "BackendImage": "695496430984.dkr.ecr.ap-southeast-2.amazonaws.com/commerce-foundation-backendrepository-5whzaxxdofo6@sha256:c3e1df7437167b9efe1c57ee1493b74881e588e5e0367b3bd228d25577ceb1c4",
+    "StorefrontImage": "695496430984.dkr.ecr.ap-southeast-2.amazonaws.com/commerce-foundation-storefrontrepository-tvt82ngmbqnk@sha256:2f3749fd757dd5d341ef395a672671b07ce3002f62539b010bcb1a7d405552d7"
+  },
+  "previousImages": {
+    "BackendImage": "695496430984.dkr.ecr.ap-southeast-2.amazonaws.com/commerce-foundation-backendrepository-5whzaxxdofo6@sha256:ed6f80dcbad1b94d1653bdc850e4a787eda9e98f3a4391d5363bf57e0623e55f",
+    "StorefrontImage": "695496430984.dkr.ecr.ap-southeast-2.amazonaws.com/commerce-foundation-storefrontrepository-tvt82ngmbqnk@sha256:47d9ad93d8102e0cee50af8cc2130391723a868f7ecb7f1add515a08bf9acb95"
+  },
+  "backup": {
+    "snapshotId": "commerce-pre-main389e855-20261109-023101",
+    "databaseId": "commerce-data-database-eitsolwlw0cz",
+    "status": "available"
+  },
+  "validation": {
+    "backendUnitTests": 65,
+    "backendHttpIntegrationTests": 12
+  }
+}

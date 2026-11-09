@@ -1,0 +1,47 @@
+{
+  "connection": "TLS verified via ALB override pending public DNS cutover",
+  "target": "commer-LoadB-LHsjuX6kf2rT-784109190.ap-southeast-2.elb.amazonaws.com",
+  "probe": {
+    "id": "public-images/deployment-probe-01M6XV6QS3DVNM4KCP2R43M678.png",
+    "url": "https://api.135791112.xyz/product-images/public-images/deployment-probe-01M6XV6QS3DVNM4KCP2R43M678.png",
+    "bytes": 68,
+    "sha256": "6b1048f8a6d40bac0b2954c18fefa40c4ea7a96120fc2e54b7317c0e43c2bbec"
+  },
+  "checks": [
+    {
+      "check": "api_https_health",
+      "status": 200,
+      "bytes": 2
+    },
+    {
+      "check": "catalog_existing_data",
+      "status": 200,
+      "bytes": 5793
+    },
+    {
+      "check": "image_without_api_key",
+      "status": 200,
+      "bytes": 68
+    },
+    {
+      "check": "private_prefix_blocked",
+      "status": 404,
+      "bytes": 48
+    },
+    {
+      "check": "svg_blocked",
+      "status": 404,
+      "bytes": 48
+    },
+    {
+      "check": "missing_image",
+      "status": 404,
+      "bytes": 29
+    },
+    {
+      "check": "direct_s3_access_blocked",
+      "status": 403,
+      "bytes": 243
+    }
+  ]
+}

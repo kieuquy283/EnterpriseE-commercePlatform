@@ -1,5 +1,6 @@
 # PHẠM VI DỰ ÁN VÀ CÁC GIẢ ĐỊNH
 
+> Cập nhật cloud ngày 09/11/2026: baseline đã chọn là ALB/ACM + ECS Fargate (storefront/API/worker), private RDS, Redis trên EC2 và private S3 qua backend proxy. Single-EC2/Compose là rehearsal/fallback, không còn là đích cloud chính. Xem [ADR](architecture/adr/0001-aws-cloud-stack.md), [runbook](../deploy/RUNBOOK.md) và [14 public checks](report/aws-fargate-deployment-2026-11-08.md). Các mục tiêu chưa có bằng chứng vẫn giữ trạng thái chưa nghiệm thu.
 
 ## 1. Mục đích và cách đọc tài liệu
 
@@ -31,8 +32,8 @@ Tài liệu PS-02 nêu rõ những gì phiên bản đầu tiên của đồ án
 | M-07 | Tồn kho chính xác | Số hàng còn và số hàng đã giữ cho đơn phải đúng khi đặt hoặc hủy đơn. | Có kết quả thử trên máy cá nhân; chưa thử nhiều đơn cùng lúc. |
 | M-08 | Theo dõi đơn | Khách xem danh sách, chi tiết và trạng thái đơn; nhân viên xử lý đơn theo quyền. | Đã có danh sách/chi tiết; cần kiểm tra đầy đủ các trạng thái. |
 | M-09 | Thông báo | Gửi email sau khi tạo đơn; lỗi email không làm hỏng đơn; có giới hạn số lần gửi lại. | Đã có hạ tầng xử lý nền, chưa có chức năng thông báo của dự án. |
-| M-10 | Tốc độ tìm/xem hàng và ảnh | Có cách lưu tạm dữ liệu để tải nhanh, tìm sản phẩm và lưu ảnh hợp pháp; cập nhật dữ liệu kịp thời. | Redis đã cấu hình, S3 là tùy chọn; chưa đủ bằng chứng kiểm thử. |
-| M-11 | Triển khai cloud | Môi trường thử nghiệm dùng HTTPS; tự động kiểm tra mã nguồn, có cách cập nhật và quay lại phiên bản trước. | Kiểm tra mã nguồn đã chạy; triển khai cloud chưa xác minh. |
+| M-10 | Tốc độ tìm/xem hàng và ảnh | Có cách lưu tạm dữ liệu để tải nhanh, tìm sản phẩm và lưu ảnh hợp pháp; cập nhật dữ liệu kịp thời. | Redis đã cấu hình; private S3 proxy đã có upload/read và public HTTP evidence; cache correctness, media UI và quyền ảnh còn cần kiểm. |
+| M-11 | Triển khai cloud | Môi trường thử nghiệm dùng HTTPS; tự động kiểm tra mã nguồn, có cách cập nhật và quay lại phiên bản trước. | AWS Fargate đã qua 14 public checks; browser checkout, restore và rollback vẫn cần bằng chứng riêng. |
 | M-12 | Bảo mật và vận hành | Kiểm tra quyền, bảo vệ thông tin bí mật, ghi lỗi và cảnh báo khi có sự cố. | Mới hoàn thành một phần. |
 | M-13 | Đo tốc độ và khôi phục | Kiểm thử lượng truy cập, sao lưu và khôi phục dữ liệu, ghi chi phí. | Có kịch bản và hướng dẫn; chưa có báo cáo kết quả đầy đủ. |
 
@@ -146,7 +147,7 @@ Khi bản mới gặp lỗi, nhóm cần có cách đưa mã nguồn và cấu h
 
 | **Đã xác nhận qua source/evidence** | **Cần làm tiếp** |
 | --- | --- |
-| Có Medusa, website và Docker Compose; các bài kiểm tra CI/API gần nhất đã chạy thành công. | Cần triển khai cloud thử nghiệm, theo dõi số liệu và thử khôi phục. |
+| Có Medusa, website, local Compose và AWS deployment với 14 public checks ngày 09/11. | Cần browser checkout, đo tải, release rollback và restore; GitHub image publishing chưa được live report thực thi. |
 | Công cụ mô phỏng thanh toán thành công/thất bại đã có trên `main`, cùng bài kiểm thử đặt hàng cơ bản. | Cần thử bấm đặt hàng lặp và nhiều khách mua hàng cuối cùng cùng lúc. |
 | Redis và tiến trình nền đã được cấu hình. | Cần viết chức năng gửi thông báo và kiểm tra gửi lại khi lỗi. |
 | README ghi nhận đã nhập thử 500 sản phẩm H&M với 1.874 phiên bản. | Chưa nhập nhiều hơn trước khi kiểm chất lượng, quyền sử dụng và tài nguyên máy. |
@@ -166,7 +167,7 @@ Khi bản mới gặp lỗi, nhóm cần có cách đưa mã nguồn và cấu h
 
 **[SRC-06]** https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/apps/backend/integration-tests/http/checkout-order.spec.ts *— HTTP integration tests, payment simulator success/failure.*
 
-**[SRC-07]** https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/deploy/RUNBOOK.md *— Kiến trúc single-VM và RPO/RTO mục tiêu, chưa có recovery drill.*
+**[SRC-07]** https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/deploy/RUNBOOK.md *— Runbook AWS Fargate; fallback EC2 riêng; RPO/RTO và restore drill chưa được chứng minh.*
 
 **[SRC-08]** https://github.com/kieuquy283/EnterpriseE-commercePlatform/actions/runs/41313753319 *— CI success tại main, 01/11/2026.*
 

@@ -1,5 +1,6 @@
 # ĐỊNH NGHĨA DỰ ÁN
 
+> Cập nhật cloud ngày 09/11/2026: baseline đã chọn là ALB/ACM + ECS Fargate (storefront/API/worker), private RDS, Redis trên EC2 và private S3 qua backend proxy. Single-EC2/Compose là rehearsal/fallback, không còn là đích cloud chính. Xem [ADR](architecture/adr/0001-aws-cloud-stack.md), [runbook](../deploy/RUNBOOK.md) và [14 public checks](report/aws-fargate-deployment-2026-11-08.md). Các mục tiêu chưa có bằng chứng vẫn giữ trạng thái chưa nghiệm thu.
 
 ## 1. Tóm tắt điều hành
 
@@ -54,7 +55,7 @@ Xây dựng phiên bản bán hàng đầu tiên có thể trình diễn và ki�
 | OBJ-04 | Gửi thông báo sau khi đã tạo đơn; lỗi email không hủy đơn và số lần gửi lại có giới hạn. | Redis/tiến trình nền đã cấu hình; chưa có chức năng thông báo hoàn chỉnh. |
 | OBJ-05 | Khi thử 30 yêu cầu xem sản phẩm mỗi giây trong 10 phút, 95% phản hồi dưới 600 ms và dưới 1% bị lỗi. | Có kịch bản và mức mục tiêu; chưa có báo cáo đo thực tế. |
 | OBJ-06 | Khi thử 3 yêu cầu đặt hàng mỗi giây trong 5 phút, 95% bước cuối phản hồi dưới 1.500 ms và dưới 1% bị lỗi. | Có kịch bản và mức mục tiêu; chưa có kết quả đo tải. |
-| OBJ-07 | Môi trường cloud thử nghiệm dùng HTTPS; có kết quả triển khai, theo dõi lỗi và diễn tập quay lại bản cũ. | Kiểm tra mã nguồn đã chạy; chưa có bằng chứng triển khai cloud thành công. |
+| OBJ-07 | Môi trường cloud thử nghiệm dùng HTTPS; có kết quả triển khai, theo dõi lỗi và diễn tập quay lại bản cũ. | AWS Fargate đã qua 14 public checks ngày 09/11; restore, rollback và đo tải vẫn chưa được nghiệm thu. |
 | OBJ-08 | Thử sao lưu/khôi phục: mục tiêu mất không quá 60 phút dữ liệu và khôi phục trong 120 phút. | Mới có mục tiêu trong hướng dẫn; chưa diễn tập. |
 
 Lưu ý: Nhóm phải chốt mức thời gian hoạt động mong muốn và ngân sách sau khi đo thử và chọn nơi thuê máy chủ. Với một máy chủ, không thể hứa hệ thống luôn hoạt động khi máy hỏng. Mục tiêu thời gian hoạt động chỉ áp dụng cho môi trường demo/thử nghiệm và phải ghi rõ cách đo.
@@ -118,9 +119,9 @@ Bảng trên là phạm vi nhóm dự định thực hiện theo học phần, k
 | --- | --- |
 | Khu vực bán hàng | Chỉ Việt Nam, giá bằng VND, một kênh bán và một kho mẫu; chưa cần bán ở nhiều quốc gia. |
 | Lượng truy cập thử nghiệm | Mục tiêu thử 30 yêu cầu xem sản phẩm/giây và 3 yêu cầu đặt hàng/giây bằng k6. Đây là mức để kiểm thử, không phải dự báo khách thật. |
-| Nơi chạy hệ thống | Kế hoạch ban đầu là một máy chủ cloud dùng Docker Compose và Caddy. Chỉ cân nhắc dịch vụ cơ sở dữ liệu do nhà cung cấp quản lý sau khi chốt chi phí. |
+| Nơi chạy hệ thống | ALB/ACM và ba ECS Fargate service; RDS PostgreSQL Single-AZ, Redis EC2, private S3 proxy, CloudWatch và CloudFormation. EC2/Compose/Caddy là fallback đã thử ngày 06/11. |
 | Thanh toán | COD là trả tiền khi nhận hàng; công cụ mô phỏng chỉ dùng ngoài môi trường thật và không thu tiền. |
-| Dữ liệu và ảnh | PostgreSQL lưu dữ liệu mua hàng; Redis hỗ trợ tăng tốc và xử lý nền. Cần quyết định nơi lưu ảnh sản phẩm hợp pháp. |
+| Dữ liệu và ảnh | PostgreSQL lưu dữ liệu mua hàng; Redis hỗ trợ tăng tốc và xử lý nền. Ảnh sản phẩm dùng private S3 và backend proxy; quyền sử dụng ảnh/dữ liệu H&M vẫn cần xác nhận riêng. |
 | Quyền riêng tư | Không đưa mật khẩu bí mật, mã đăng nhập, dữ liệu cá nhân hay dữ liệu H&M gốc lên Git. |
 | Nhân lực | Nhóm dự kiến 5–7 sinh viên; cần phân công theo thời gian thực tế của từng người. |
 
@@ -132,7 +133,7 @@ Bảng trên là phạm vi nhóm dự định thực hiện theo học phần, k
 | R-02 | PostgreSQL từng hết chỗ cho các kết nối trên máy cá nhân (cao). | Theo dõi số kết nối, giới hạn công việc nhập dữ liệu chạy cùng lúc. |
 | R-03 | Dịch vụ gửi thông báo lỗi (trung bình). | Gửi lại có giới hạn ở bước xử lý nền; lỗi email không hủy đơn. |
 | R-04 | Một máy chủ hỏng có thể làm hệ thống ngừng hoặc mất dữ liệu (cao). | Sao lưu, diễn tập khôi phục và ghi rõ thời gian, lượng dữ liệu có thể mất. |
-| R-05 | Chưa có kết quả đo và triển khai cloud thực tế để trình bày (cao). | Chạy thử trên cloud, lưu báo cáo k6, ảnh màn hình và nhật ký. |
+| R-05 | Đã có smoke cloud, nhưng chưa có kết quả tải, scaling và restore để trình bày (cao). | Chạy thử trên cloud, lưu báo cáo k6, ảnh màn hình và nhật ký. |
 | R-06 | Làm gợi ý/tìm kiếm nâng cao quá sớm khiến phần mua hàng chính chậm tiến độ (trung bình). | Chỉ mở rộng sau khi hoàn thành việc bắt buộc. |
 | R-07 | Chưa xác nhận quyền công khai dữ liệu và ảnh H&M (cao). | Kiểm tra điều khoản; dùng ảnh thay thế có quyền sử dụng. |
 
@@ -171,7 +172,7 @@ Mỗi thay đổi phạm vi cần ghi mã, lý do, ảnh hưởng tới người
 
 **[SRC-06]** https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/apps/backend/integration-tests/http/checkout-order.spec.ts *— HTTP integration tests, payment simulator success/failure.*
 
-**[SRC-07]** https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/deploy/RUNBOOK.md *— Kiến trúc single-VM và RPO/RTO mục tiêu, chưa có recovery drill.*
+**[SRC-07]** https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/deploy/RUNBOOK.md *— Runbook AWS Fargate; fallback EC2 riêng; RPO/RTO và restore drill chưa được chứng minh.*
 
 **[SRC-08]** https://github.com/kieuquy283/EnterpriseE-commercePlatform/actions/runs/41313753319 *— CI success tại main, 01/11/2026.*
 

@@ -1,0 +1,95 @@
+{
+  "timestamp_utc": "2026-11-06T13:34:39.755113+00:00",
+  "checks": [
+    {
+      "name": "135791112.xyz_tls",
+      "status": "PASS",
+      "protocol": "TLSv1.3",
+      "issuer": [
+        [
+          [
+            "countryName",
+            "US"
+          ]
+        ],
+        [
+          [
+            "organizationName",
+            "Let's Encrypt"
+          ]
+        ],
+        [
+          [
+            "commonName",
+            "YE2"
+          ]
+        ]
+      ],
+      "not_after": "Feb  4 12:33:10 2027 GMT"
+    },
+    {
+      "name": "135791112.xyz_http_redirect",
+      "status": "PASS",
+      "http_status": 308,
+      "location": "https://135791112.xyz/health"
+    },
+    {
+      "name": "api.135791112.xyz_tls",
+      "status": "PASS",
+      "protocol": "TLSv1.3",
+      "issuer": [
+        [
+          [
+            "countryName",
+            "US"
+          ]
+        ],
+        [
+          [
+            "organizationName",
+            "Let's Encrypt"
+          ]
+        ],
+        [
+          [
+            "commonName",
+            "YE2"
+          ]
+        ]
+      ],
+      "not_after": "Feb  4 12:33:11 2027 GMT"
+    },
+    {
+      "name": "api.135791112.xyz_http_redirect",
+      "status": "PASS",
+      "http_status": 308,
+      "location": "https://api.135791112.xyz/health"
+    },
+    {
+      "name": "external_rendered_catalog",
+      "status": "PASS",
+      "http_status": 200,
+      "seed_product_present": true
+    },
+    {
+      "name": "external_port_8000",
+      "status": "PASS",
+      "reachable": false
+    },
+    {
+      "name": "external_port_9000",
+      "status": "PASS",
+      "reachable": false
+    },
+    {
+      "name": "external_port_5432",
+      "status": "PASS",
+      "reachable": false
+    },
+    {
+      "name": "external_port_6379",
+      "status": "PASS",
+      "reachable": false
+    }
+  ]
+}

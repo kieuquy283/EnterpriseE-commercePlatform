@@ -1,0 +1,10 @@
+{
+  "CommandId": "bcde2611-5b4e-41fe-8eb4-4e4973a42737",
+  "InstanceId": "i-011c2a03120ae1614",
+  "Status": "Success",
+  "ResponseCode": 0,
+  "ExecutionStartDateTime": "2026-11-06T13:27:12.437Z",
+  "ExecutionEndDateTime": "2026-11-06T13:31:37.437Z",
+  "ExecutionElapsedTime": "PT4M25.768S",
+  "StandardOutputContent": "/tmp/commerce-source.tar.gz: OK\nPreserving the existing private deployment environment\nBuilding backend; log: /var/log/commerce-backend-build.log\nRunning migrations\nSeeding demo data\nBuilding storefront; log: /var/log/commerce-storefront-build.log\nNAME                    IMAGE                    COMMAND                  SERVICE      CREATED          STATUS                    PORTS\ncommerce-backend-1      commerce-backend:local   \"docker-entrypoint.s\u2026\"   backend      2 minutes ago    Up 2 minutes (healthy)    127.0.0.1:9000->9000/tcp\ncommerce-caddy-1        caddy:2-alpine           \"caddy run --config \u2026\"   caddy        23 seconds ago   Up Less than a second     0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp, 443/udp, 2019/tcp\ncommerce-postgres-1     postgres:16-alpine       \"docker-entrypoint.s\u2026\"   postgres     8 minutes ago    Up 8 minutes (healthy)    127.0.0.1:5432->5432/tcp\ncommerce-redis-1        redis:7-alpine           \"docker-entrypoint.s\u2026\"   redis        8 minutes ago    Up 8 minutes (healthy)    127.0.0.1:6379->6379/tcp\ncommerce-storefront-1   commerce-storefront      \"docker-entrypoint.s\u2026\"   storefront   23 seconds ago   Up 11 seconds (healthy)   127.0.0.1:8000->8000/tcp\ncommerce-worker-1       commerce-backend:local   \"docker-entrypoint.s\u2026\"   worker       2 minutes ago    Up 2 minutes              9000/tcp\nDeployment commands completed; HTTPS and checkout verification remain required\n"
+}

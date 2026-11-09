@@ -1,0 +1,96 @@
+{
+  "timestamp_utc": "2026-11-09T02:00:08.339551+00:00",
+  "stacks": {
+    "foundation": "CREATE_COMPLETE",
+    "data": "UPDATE_COMPLETE",
+    "app": "UPDATE_COMPLETE"
+  },
+  "images": {
+    "BackendImage": "695496430984.dkr.ecr.ap-southeast-2.amazonaws.com/commerce-foundation-backendrepository-5whzaxxdofo6@sha256:ed6f80dcbad1b94d1653bdc850e4a787eda9e98f3a4391d5363bf57e0623e55f",
+    "StorefrontImage": "695496430984.dkr.ecr.ap-southeast-2.amazonaws.com/commerce-foundation-storefrontrepository-tvt82ngmbqnk@sha256:47d9ad93d8102e0cee50af8cc2130391723a868f7ecb7f1add515a08bf9acb95"
+  },
+  "compute_lease_deadline_utc": "2026-11-09T05:48:55+00:00",
+  "services": [
+    {
+      "serviceName": "commerce-app-ApiService-Q4FiCPlJ9hjq",
+      "desiredCount": 1,
+      "runningCount": 1,
+      "pendingCount": 0,
+      "taskDefinition": "arn:aws:ecs:ap-southeast-2:695496430984:task-definition/commerce-app-ApiTask-nrq9VfoEJpsI:1"
+    },
+    {
+      "serviceName": "commerce-app-StorefrontService-4OGao2XKyvbg",
+      "desiredCount": 1,
+      "runningCount": 1,
+      "pendingCount": 0,
+      "taskDefinition": "arn:aws:ecs:ap-southeast-2:695496430984:task-definition/commerce-app-StorefrontTask-xtBhl12IzMrq:1"
+    },
+    {
+      "serviceName": "commerce-app-WorkerService-ewcqlBD3WwpS",
+      "desiredCount": 1,
+      "runningCount": 1,
+      "pendingCount": 0,
+      "taskDefinition": "arn:aws:ecs:ap-southeast-2:695496430984:task-definition/commerce-app-WorkerTask-IGfi5fBi0S8V:1"
+    }
+  ],
+  "database": {
+    "DBInstanceIdentifier": "commerce-data-database-eitsolwlw0cz",
+    "DBInstanceStatus": "available",
+    "Engine": "postgres",
+    "EngineVersion": "16.15",
+    "PubliclyAccessible": false,
+    "MultiAZ": false,
+    "DeletionProtection": true
+  },
+  "redis": {
+    "id": "i-06718b6c94bc8857a",
+    "state": "running",
+    "type": "t4g.micro"
+  },
+  "ec2_demo": {
+    "id": "i-011c2a03120ae1614",
+    "state": "stopped",
+    "type": "m7i-flex.large"
+  },
+  "targets": {
+    "ApiTarget": [
+      "healthy"
+    ],
+    "StorefrontTarget": [
+      "healthy"
+    ]
+  },
+  "watchdogs": {
+    "data": "leased",
+    "app": "leased"
+  },
+  "dns": {
+    "135791112.xyz": [
+      {
+        "type": 1,
+        "data": "13.238.42.47"
+      },
+      {
+        "type": 1,
+        "data": "13.237.221.47"
+      }
+    ],
+    "api.135791112.xyz": [
+      {
+        "type": 5,
+        "data": "commer-loadb-lhsjux6kf2rt-784109190.ap-southeast-2.elb.amazonaws.com."
+      },
+      {
+        "type": 1,
+        "data": "13.237.221.47"
+      },
+      {
+        "type": 1,
+        "data": "13.238.42.47"
+      }
+    ]
+  },
+  "alert_email_confirmed": false,
+  "load_balancer_dns": "commer-LoadB-LHsjuX6kf2rT-784109190.ap-southeast-2.elb.amazonaws.com",
+  "one_off_tasks_running": 0
+}

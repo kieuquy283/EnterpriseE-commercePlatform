@@ -1,5 +1,6 @@
-# Kế hoạch rebuild nền tảng E-commerce bằng Medusa v2
+# Lịch sử kế hoạch và các cập nhật MVP
 
+> Baseline cloud hiện hành (09/11/2026): [ADR AWS](docs/architecture/adr/0001-aws-cloud-stack.md), [runbook Fargate](deploy/RUNBOOK.md) và [bằng chứng triển khai](docs/report/aws-fargate-deployment-2026-11-08.md). Các audit/phase và mức ngân sách dưới đây là lịch sử hoặc mục tiêu tại thời điểm viết; không dùng các lựa chọn VM/Fastify/Prisma cũ như mô tả stack hiện hành. EC2/Compose là fallback; cloud chính dùng ALB/ACM, Fargate, RDS, Redis EC2 và private S3 proxy.
 Trạng thái: **đang triển khai trên nhánh `Medusa`**. Phạm vi là một MVP có luồng mua hàng hoàn chỉnh, vận hành được trên cloud và đo được chất lượng. Medusa v2 là nguồn dữ liệu và logic chuẩn cho commerce; không fork hoặc sửa Medusa core. Xem README để biết cách chạy và các cổng kiểm chứng còn thiếu.
 
 ## 1. Audit repository hiện tại
