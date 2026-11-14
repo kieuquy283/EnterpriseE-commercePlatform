@@ -1,0 +1,31 @@
+{
+  "name": "presentation",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Reusable web presentation engine and report decks.",
+  "scripts": {
+    "dev": "vite --port 5173",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview --port 4173",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test src/engine/*.test.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "mermaid": "12.3.0",
+    "motion": "^14.13.0",
+    "react": "19.0.5",
+    "react-dom": "19.0.5"
+  },
+  "devDependencies": {
+    "@types/react": "19.0.5",
+    "@types/react-dom": "19.0.5",
+    "@vitejs/plugin-react": "5.2.0",
+    "typescript": "5.9.3",
+    "vite": "7.3.7"
+  },
+  "engines": {
+    "node": ">=22.22.0"
+  }
+}

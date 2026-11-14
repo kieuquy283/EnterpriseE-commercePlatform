@@ -21,3 +21,6 @@ data/hm
 **/test-results
 **/playwright-report
 deploy/cloudformation/settings.json
+
+# Presentation and other generated build artifacts
+**/dist

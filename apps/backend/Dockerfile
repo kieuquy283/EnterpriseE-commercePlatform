@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY apps/backend/package.json apps/backend/package.json
 COPY apps/storefront/package.json apps/storefront/package.json
+COPY presentation/package.json presentation/package.json
 RUN npm ci --no-audit --no-fund
 COPY . .
 RUN npm run build --workspace=@dtc/backend

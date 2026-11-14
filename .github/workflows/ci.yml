@@ -8,6 +8,19 @@ permissions:
   contents: read
 
 jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.22.0"
+      - run: npm run docs:check
+      - run: npm ci --workspace=presentation --include-workspace-root=false --ignore-scripts --no-audit --no-fund
+      - run: npm run presentation:test
+      - run: npm run presentation:build
+
   cloudformation:
     runs-on: ubuntu-latest
     timeout-minutes: 10

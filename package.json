@@ -17,7 +17,12 @@
     "backend:check:inventory-order": "npm run check:inventory-order --workspace @dtc/backend --",
     "backend:dev": "turbo dev --filter=@dtc/backend",
     "storefront:dev": "turbo dev --filter=@dtc/storefront",
-    "test:e2e": "turbo test:e2e"
+    "test:e2e": "turbo test:e2e",
+    "docs:check": "node scripts/check-docs.mjs",
+    "todo": "node scripts/list-todos.mjs",
+    "presentation:dev": "npm run dev --workspace=presentation",
+    "presentation:build": "npm run build --workspace=presentation",
+    "presentation:test": "npm run test --workspace=presentation"
   },
   "pnpm": {
     "overrides": {
@@ -38,7 +43,8 @@
   },
   "workspaces": [
     "apps/**",
-    "!apps/backend/.medusa/**"
+    "!apps/backend/.medusa/**",
+    "presentation"
   ],
   "overrides": {
     "eslint": {
