@@ -1,0 +1,36 @@
+{
+  "observed_at_utc": "2026-11-06T13:39:23.235800+00:00",
+  "source": "AWS Price List API queried 2026-11-06; public IPv4 from AWS VPC pricing page",
+  "rates_usd": {
+    "instance_hour": 0.1197,
+    "gp3_gib_month": 0.096,
+    "public_ipv4_hour": 0.005
+  },
+  "assumptions": {
+    "hours_per_month": 730,
+    "disk_gib": 30,
+    "public_ipv4_count": 1,
+    "maximum_session_hours": 4
+  },
+  "four_hour_baseline_usd": 0.5145808219178083,
+  "disk_retained_full_month_usd": 2.88,
+  "observed_running_hours": 0.31673216666666665,
+  "observed_baseline_estimate_usd": 0.04074607466278539,
+  "billed_cost": null,
+  "billing_check": {
+    "tag": "Project=commerce-ec2-demo",
+    "period_start": "2026-11-06",
+    "period_end_exclusive": "2026-11-07",
+    "amount_returned_usd": "0",
+    "estimated": true,
+    "interpretation": "Not proof of zero cost. New tag activation/coverage and billing lag prevent reliable session attribution."
+  },
+  "exclusions": [
+    "tax",
+    "data transfer",
+    "S3 staging requests/storage",
+    "snapshots",
+    "prior retained resources"
+  ],
+  "shutdown_deadline_utc": "2026-11-06T17:16:39Z"
+}

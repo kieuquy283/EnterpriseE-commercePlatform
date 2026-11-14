@@ -1,0 +1,111 @@
+{
+  "timestamp_utc": "2026-11-06T13:39:23.235800+00:00",
+  "instance": {
+    "Id": "i-011c2a03120ae1614",
+    "Type": "m7i-flex.large",
+    "State": "running",
+    "LaunchTime": "2026-11-06T13:20:23+00:00",
+    "PublicIp": "13.54.50.248",
+    "Vpc": "vpc-0da56b70d4f23b362",
+    "Subnet": "subnet-0810640f958a662bb",
+    "Metadata": {
+      "State": "applied",
+      "HttpTokens": "required",
+      "HttpPutResponseHopLimit": 2,
+      "HttpEndpoint": "enabled",
+      "HttpProtocolIpv6": "disabled",
+      "InstanceMetadataTags": "disabled"
+    },
+    "SecurityGroups": [
+      {
+        "GroupId": "sg-07a47d1635c94f6e1",
+        "GroupName": "commerce-ec2-demo-SecurityGroup-N15lKgzFVrif"
+      }
+    ],
+    "Disks": [
+      {
+        "DeviceName": "/dev/xvda",
+        "Ebs": {
+          "AttachTime": "2026-11-06T13:20:24+00:00",
+          "DeleteOnTermination": false,
+          "Status": "attached",
+          "VolumeId": "vol-04aa8d0e623026911",
+          "EbsCardIndex": 0
+        }
+      }
+    ]
+  },
+  "root_volume": {
+    "Id": "vol-04aa8d0e623026911",
+    "SizeGiB": 30,
+    "Type": "gp3",
+    "Encrypted": true,
+    "State": "in-use",
+    "Tags": [
+      {
+        "Key": "Name",
+        "Value": "commerce-ec2-demo-data"
+      },
+      {
+        "Key": "Project",
+        "Value": "commerce-ec2-demo"
+      }
+    ]
+  },
+  "security_group": {
+    "Id": "sg-07a47d1635c94f6e1",
+    "Ingress": [
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 80,
+        "ToPort": 80,
+        "UserIdGroupPairs": [],
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "PrefixListIds": []
+      },
+      {
+        "IpProtocol": "tcp",
+        "FromPort": 443,
+        "ToPort": 443,
+        "UserIdGroupPairs": [],
+        "IpRanges": [
+          {
+            "CidrIp": "0.0.0.0/0"
+          }
+        ],
+        "Ipv6Ranges": [],
+        "PrefixListIds": []
+      }
+    ]
+  },
+  "stacks": [
+    {
+      "Name": "commerce-ec2-demo",
+      "Status": "CREATE_COMPLETE"
+    },
+    {
+      "Name": "commerce-retained-guard",
+      "Status": "UPDATE_COMPLETE"
+    },
+    {
+      "Name": "commerce-data",
+      "Status": "ROLLBACK_FAILED"
+    },
+    {
+      "Name": "commerce-foundation",
+      "Status": "CREATE_COMPLETE"
+    }
+  ],
+  "retained_databases": [
+    {
+      "Id": "commerce-data-database-eitsolwlw0cz",
+      "Status": "stopped"
+    }
+  ],
+  "staging_objects_remaining": 0
+}

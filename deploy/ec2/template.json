@@ -1,0 +1,296 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Approved single-EC2 Docker Compose rehearsal in Sydney",
+  "Parameters": {
+    "VpcId": {
+      "Type": "AWS::EC2::VPC::Id"
+    },
+    "SubnetId": {
+      "Type": "AWS::EC2::Subnet::Id"
+    },
+    "ImageId": {
+      "Type": "AWS::EC2::Image::Id"
+    },
+    "SessionDeadline": {
+      "Type": "String",
+      "Description": "Absolute UTC deadline: YYYY-MM-DD HH:MM:SS UTC"
+    },
+    "InstanceType": {
+      "Type": "String",
+      "Default": "m7i-flex.large",
+      "AllowedValues": [
+        "m7i-flex.large",
+        "c7i-flex.large",
+        "t3.small",
+        "t3.medium"
+      ]
+    }
+  },
+  "Resources": {
+    "SourceBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "IgnorePublicAcls": true,
+          "BlockPublicPolicy": true,
+          "RestrictPublicBuckets": true
+        },
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        },
+        "LifecycleConfiguration": {
+          "Rules": [
+            {
+              "Id": "ExpireSource",
+              "Status": "Enabled",
+              "ExpirationInDays": 1
+            }
+          ]
+        }
+      }
+    },
+    "SourceBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "SourceBucket"
+        },
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Deny",
+              "Principal": "*",
+              "Action": "s3:*",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "SourceBucket",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Sub": "${SourceBucket.Arn}/*"
+                }
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "Role": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+        ],
+        "Policies": [
+          {
+            "PolicyName": "ReadDeploymentArchive",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": "s3:GetObject",
+                  "Resource": {
+                    "Fn::Sub": "${SourceBucket.Arn}/source.tar.gz"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "Profile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "Properties": {
+        "Roles": [
+          {
+            "Ref": "Role"
+          }
+        ]
+      }
+    },
+    "SecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "HTTPS demo with SSM administration and no SSH ingress",
+        "VpcId": {
+          "Ref": "VpcId"
+        },
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 80,
+            "ToPort": 80,
+            "CidrIp": "0.0.0.0/0"
+          },
+          {
+            "IpProtocol": "tcp",
+            "FromPort": 443,
+            "ToPort": 443,
+            "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
+    "Instance": {
+      "Type": "AWS::EC2::Instance",
+      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Retain",
+      "Properties": {
+        "ImageId": {
+          "Ref": "ImageId"
+        },
+        "InstanceType": {
+          "Ref": "InstanceType"
+        },
+        "CreditSpecification": {
+          "Fn::If": [
+            "UsesCpuCredits",
+            {
+              "CPUCredits": "standard"
+            },
+            {
+              "Ref": "AWS::NoValue"
+            }
+          ]
+        },
+        "IamInstanceProfile": {
+          "Ref": "Profile"
+        },
+        "InstanceInitiatedShutdownBehavior": "stop",
+        "MetadataOptions": {
+          "HttpTokens": "required",
+          "HttpEndpoint": "enabled"
+        },
+        "NetworkInterfaces": [
+          {
+            "DeviceIndex": "0",
+            "AssociatePublicIpAddress": true,
+            "SubnetId": {
+              "Ref": "SubnetId"
+            },
+            "GroupSet": [
+              {
+                "Ref": "SecurityGroup"
+              }
+            ]
+          }
+        ],
+        "BlockDeviceMappings": [
+          {
+            "DeviceName": "/dev/xvda",
+            "Ebs": {
+              "VolumeSize": 30,
+              "VolumeType": "gp3",
+              "Encrypted": true,
+              "DeleteOnTermination": false
+            }
+          }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash\nset -euo pipefail\numask 077\n\n# Stop the instance at the approved absolute UTC deadline, including after reboot.\ncat > /etc/systemd/system/commerce-session-stop.service <<'EOF'\n[Unit]\nDescription=Stop the approved commerce demonstration session\n[Service]\nType=oneshot\nExecStart=/usr/sbin/shutdown -h now\nEOF\ncat > /etc/systemd/system/commerce-session-stop.timer <<EOF\n[Unit]\nDescription=Four-hour commerce demonstration limit\n[Timer]\nOnCalendar=",
+                {
+                  "Ref": "SessionDeadline"
+                },
+                "\nPersistent=true\nUnit=commerce-session-stop.service\n[Install]\nWantedBy=timers.target\nEOF\nsystemctl daemon-reload\nsystemctl enable --now commerce-session-stop.timer\n\ndnf install -y docker git python3\nsystemctl enable --now docker amazon-ssm-agent\ninstall -d /usr/local/lib/docker/cli-plugins\ncd /usr/local/lib/docker/cli-plugins\ncurl --fail --location --retry 3 https://github.com/docker/compose/releases/download/v5.6.0/docker-compose-linux-x86_64 -o docker-compose-linux-x86_64\ncurl --fail --location --retry 3 https://github.com/docker/compose/releases/download/v5.6.0/docker-compose-linux-x86_64.sha256 -o docker-compose.sha256\nsha256sum --check docker-compose.sha256\ninstall -m 755 docker-compose-linux-x86_64 docker-compose\nrm docker-compose-linux-x86_64 docker-compose.sha256\ncurl --fail --location --retry 3 https://github.com/docker/buildx/releases/download/v0.38.2/buildx-v0.38.2.linux-amd64 -o buildx-v0.38.2.linux-amd64\ncurl --fail --location --retry 3 https://github.com/docker/buildx/releases/download/v0.38.2/checksums.txt -o buildx-checksums.txt\ngrep ' \\*buildx-v0.38.2.linux-amd64$' buildx-checksums.txt | sha256sum --check\ninstall -m 755 buildx-v0.38.2.linux-amd64 docker-buildx\nrm buildx-v0.38.2.linux-amd64 buildx-checksums.txt\n\n# Swap provides headroom for Node build processes.\nfallocate -l 4G /swapfile\nchmod 600 /swapfile\nmkswap /swapfile\nswapon /swapfile\nprintf '/swapfile none swap sw 0 0\\n' >> /etc/fstab\ninstall -d -m 700 /srv/commerce\ndocker compose version\ntouch /var/lib/commerce-bootstrap-ready\n"
+              ]
+            ]
+          }
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "commerce-ec2-demo"
+          },
+          {
+            "Key": "Project",
+            "Value": "commerce-ec2-demo"
+          },
+          {
+            "Key": "Purpose",
+            "Value": "approved-four-hour-rehearsal"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "InstanceId": {
+      "Value": {
+        "Ref": "Instance"
+      }
+    },
+    "PublicIp": {
+      "Value": {
+        "Fn::GetAtt": [
+          "Instance",
+          "PublicIp"
+        ]
+      }
+    },
+    "SourceBucket": {
+      "Value": {
+        "Ref": "SourceBucket"
+      }
+    },
+    "SessionDeadline": {
+      "Value": {
+        "Ref": "SessionDeadline"
+      }
+    }
+  },
+  "Conditions": {
+    "UsesCpuCredits": {
+      "Fn::Or": [
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "InstanceType"
+            },
+            "t3.small"
+          ]
+        },
+        {
+          "Fn::Equals": [
+            {
+              "Ref": "InstanceType"
+            },
+            "t3.medium"
+          ]
+        }
+      ]
+    }
+  }
+}

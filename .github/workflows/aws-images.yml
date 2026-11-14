@@ -1,0 +1,106 @@
+name: Publish AWS demo images
+
+on:
+  workflow_dispatch:
+    inputs:
+      images:
+        description: Build backend first; build storefront after seeding
+        type: choice
+        options: [backend, storefront, both]
+        default: backend
+      api_url:
+        description: Confirmed HTTPS API URL for the storefront build
+        type: string
+      publishable_key:
+        description: Browser-visible Medusa publishable key, required for storefront
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: aws-demo-images
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: aws-demo
+    timeout-minutes: 30
+    env:
+      AWS_REGION: ap-southeast-2
+      FOUNDATION_STACK: ${{ vars.AWS_FOUNDATION_STACK || 'commerce-foundation' }}
+      API_URL: ${{ inputs.api_url }}
+      PUBLISHABLE_KEY: ${{ inputs.publishable_key }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check storefront build inputs
+        if: inputs.images != 'backend'
+        run: |
+          [[ "$API_URL" == https://* ]] || { echo 'An HTTPS API URL is required'; exit 1; }
+          [[ "$PUBLISHABLE_KEY" == pk_* && "$PUBLISHABLE_KEY" != pk_bootstrap ]] || { echo 'Seed and retrieve the publishable key first'; exit 1; }
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_IMAGE_PUBLISH_ROLE_ARN }}
+          aws-region: ap-southeast-2
+      - uses: aws-actions/amazon-ecr-login@v2
+      - uses: docker/setup-buildx-action@v3
+      - name: Resolve repositories
+        id: repos
+        run: |
+          aws cloudformation describe-stacks --stack-name "$FOUNDATION_STACK" --query 'Stacks[0].Outputs' --output json > "$RUNNER_TEMP/outputs.json"
+          python3 - <<'PY'
+          import json, os
+          outputs = {o['OutputKey']: o['OutputValue'] for o in json.load(open(os.environ['RUNNER_TEMP'] + '/outputs.json'))}
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as target:
+              target.write('backend=' + outputs['BackendRepositoryUri'] + '\n')
+              target.write('storefront=' + outputs['StorefrontRepositoryUri'] + '\n')
+          PY
+      - name: Publish backend
+        if: inputs.images != 'storefront'
+        id: backend
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/backend/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.repos.outputs.backend }}:${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Publish storefront
+        if: inputs.images != 'backend'
+        id: storefront
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/storefront/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.repos.outputs.storefront }}:${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          build-args: |
+            NEXT_PUBLIC_MEDUSA_BACKEND_URL=${{ inputs.api_url }}
+            NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=${{ inputs.publishable_key }}
+      - name: Record immutable release references
+        env:
+          BACKEND_REPO: ${{ steps.repos.outputs.backend }}
+          STOREFRONT_REPO: ${{ steps.repos.outputs.storefront }}
+          BACKEND_DIGEST: ${{ steps.backend.outputs.digest }}
+          STOREFRONT_DIGEST: ${{ steps.storefront.outputs.digest }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          refs = {}
+          for name in ['BACKEND', 'STOREFRONT']:
+              digest = os.environ[name + '_DIGEST']
+              if digest:
+                  refs[name.title() + 'Image'] = os.environ[name + '_REPO'] + '@' + digest
+          with open('aws-release.json', 'w') as target:
+              json.dump(refs, target, indent=2)
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as target:
+              target.write('Images published. Review aws-release.json, update local deployment settings, then plan/apply the app change set. This role cannot deploy infrastructure.\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aws-release
+          path: aws-release.json
+          retention-days: 7

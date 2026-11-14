@@ -6,10 +6,10 @@
 | --- | --- |
 | `apps/backend/` | Cấu hình và chạy Medusa API/Admin; seed dữ liệu commerce, API routes và các phần mở rộng Medusa. Chịu trách nhiệm logic và dữ liệu commerce. |
 | `apps/storefront/` | Giao diện Next.js cho khách hàng; gọi Medusa Store API bằng JS SDK và publishable key. Chịu trách nhiệm trang sản phẩm, tài khoản, giỏ hàng và checkout. |
-| `deploy/` | Compose override, Caddyfile và runbook cho bản demo triển khai trên một VM. Deployment cloud chưa được kiểm chứng thực tế theo runbook. |
+| `deploy/` | Runbook chính và CloudFormation cho ALB/Fargate/RDS/Redis EC2/private S3 proxy; EC2/Compose/Caddy được giữ riêng làm fallback. Bản AWS đã có 14 public checks ngày 09/11/2026. |
 | `load/` | Kịch bản k6 cho catalog và checkout; dùng để kiểm tra tải khi có môi trường phù hợp. |
 | `scripts/` | Tiện ích PowerShell cho môi trường local và smoke test checkout. |
-| `.github/workflows/` | `ci.yml` kiểm tra lint, typecheck, build và Docker images; `deploy.yml` là workflow triển khai thủ công cho staging/production qua SSH. |
+| `.github/workflows/` | `ci.yml` kiểm tra code và CloudFormation; `aws-images.yml` publish ECR qua OIDC (chưa được live report thực thi); `deploy.yml` chỉ là workflow SSH cho EC2 fallback. |
 
 Luồng phụ thuộc chính: **Storefront → Medusa Backend → PostgreSQL / Redis**. Storefront gọi Store API; backend lưu dữ liệu commerce trong PostgreSQL và dùng Redis theo cấu hình Medusa cho cache, event bus, workflow và locking. Compose local khởi động PostgreSQL/Redis mặc định; backend, worker và storefront nằm trong profile `app`.
 

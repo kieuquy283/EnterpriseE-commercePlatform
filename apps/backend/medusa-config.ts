@@ -3,10 +3,14 @@ import { defineConfig, loadEnv } from "@medusajs/framework/utils"
 loadEnv(process.env.NODE_ENV || "development", process.cwd())
 
 const redisUrl = process.env.REDIS_URL
+const s3AuthenticationMethod =
+  process.env.S3_AUTHENTICATION_METHOD === "s3-iam-role"
+    ? "s3-iam-role"
+    : "access-key"
 const s3Configured = Boolean(
   process.env.S3_BUCKET &&
-    process.env.S3_ACCESS_KEY_ID &&
-    process.env.S3_SECRET_ACCESS_KEY &&
+    (s3AuthenticationMethod === "s3-iam-role" ||
+      (process.env.S3_ACCESS_KEY_ID && process.env.S3_SECRET_ACCESS_KEY)) &&
     process.env.S3_FILE_URL
 )
 const hmImageTestBackendUrl = process.env.HM_IMAGE_TEST_BACKEND_URL
@@ -103,9 +107,19 @@ module.exports = defineConfig({
                   id: "s3",
                   options: {
                     file_url: process.env.S3_FILE_URL,
+                    ...(process.env.S3_PUBLIC_IMAGE_PROXY === "true"
+                      ? { prefix: "public-images/" }
+                      : {}),
+                    authentication_method: s3AuthenticationMethod,
+                    ...(process.env.S3_DISABLE_ACL === "true"
+                      ? { acl: false }
+                      : {}),
                     access_key_id: process.env.S3_ACCESS_KEY_ID,
                     secret_access_key: process.env.S3_SECRET_ACCESS_KEY,
-                    region: process.env.S3_REGION || "us-east-1",
+                    region:
+                      process.env.S3_REGION ||
+                      process.env.AWS_REGION ||
+                      "ap-southeast-2",
                     bucket: process.env.S3_BUCKET,
                     endpoint: process.env.S3_ENDPOINT,
                     additional_client_config: {

@@ -1,0 +1,73 @@
+{
+  "capturedAt": "2026-11-09T03:12:26.209025+00:00",
+  "stacks": {
+    "foundation": "CREATE_COMPLETE",
+    "data": "UPDATE_COMPLETE",
+    "app": "UPDATE_COMPLETE"
+  },
+  "services": [
+    {
+      "serviceName": "commerce-app-WorkerService-ewcqlBD3WwpS",
+      "desiredCount": 1,
+      "runningCount": 1,
+      "pendingCount": 0,
+      "taskDefinition": "arn:aws:ecs:ap-southeast-2:695496430984:task-definition/commerce-app-WorkerTask-BabHhEqGK4Y9:1"
+    },
+    {
+      "serviceName": "commerce-app-StorefrontService-4OGao2XKyvbg",
+      "desiredCount": 1,
+      "runningCount": 1,
+      "pendingCount": 0,
+      "taskDefinition": "arn:aws:ecs:ap-southeast-2:695496430984:task-definition/commerce-app-StorefrontTask-0gXDsq7cT9X2:1"
+    },
+    {
+      "serviceName": "commerce-app-ApiService-Q4FiCPlJ9hjq",
+      "desiredCount": 1,
+      "runningCount": 1,
+      "pendingCount": 0,
+      "taskDefinition": "arn:aws:ecs:ap-southeast-2:695496430984:task-definition/commerce-app-ApiTask-t6GUDSHmsUTE:1"
+    }
+  ],
+  "tasks": [
+    {
+      "taskArn": "arn:aws:ecs:ap-southeast-2:695496430984:task/commerce-app-Cluster-1ViOB9Rc6vbI/02bdd9addecc448fa7dbe48d3d28c414",
+      "group": "service:commerce-app-ApiService-Q4FiCPlJ9hjq",
+      "startedBy": "ecs-svc/6596415716248301042",
+      "containers": [
+        {
+          "name": "api",
+          "image": "695496430984.dkr.ecr.ap-southeast-2.amazonaws.com/commerce-foundation-backendrepository-5whzaxxdofo6@sha256:c3e1df7437167b9efe1c57ee1493b74881e588e5e0367b3bd228d25577ceb1c4",
+          "imageDigest": "sha256:c3e1df7437167b9efe1c57ee1493b74881e588e5e0367b3bd228d25577ceb1c4",
+          "lastStatus": "RUNNING"
+        }
+      ]
+    },
+    {
+      "taskArn": "arn:aws:ecs:ap-southeast-2:695496430984:task/commerce-app-Cluster-1ViOB9Rc6vbI/affc16df00e748d58c5abaa881b54f7b",
+      "group": "service:commerce-app-WorkerService-ewcqlBD3WwpS",
+      "startedBy": "ecs-svc/7233421272446764960",
+      "containers": [
+        {
+          "name": "worker",
+          "image": "695496430984.dkr.ecr.ap-southeast-2.amazonaws.com/commerce-foundation-backendrepository-5whzaxxdofo6@sha256:c3e1df7437167b9efe1c57ee1493b74881e588e5e0367b3bd228d25577ceb1c4",
+          "imageDigest": "sha256:c3e1df7437167b9efe1c57ee1493b74881e588e5e0367b3bd228d25577ceb1c4",
+          "lastStatus": "RUNNING"
+        }
+      ]
+    },
+    {
+      "taskArn": "arn:aws:ecs:ap-southeast-2:695496430984:task/commerce-app-Cluster-1ViOB9Rc6vbI/b50a4345ae874c67b797fcad241743d0",
+      "group": "service:commerce-app-StorefrontService-4OGao2XKyvbg",
+      "startedBy": "ecs-svc/5284409714370714095",
+      "containers": [
+        {
+          "name": "storefront",
+          "image": "695496430984.dkr.ecr.ap-southeast-2.amazonaws.com/commerce-foundation-storefrontrepository-tvt82ngmbqnk@sha256:2f3749fd757dd5d341ef395a672671b07ce3002f62539b010bcb1a7d405552d7",
+          "imageDigest": "sha256:2f3749fd757dd5d341ef395a672671b07ce3002f62539b010bcb1a7d405552d7",
+          "lastStatus": "RUNNING"
+        }
+      ]
+    }
+  ],
+  "leaseEpoch": 1794206320
+}

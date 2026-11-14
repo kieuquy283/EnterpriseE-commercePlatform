@@ -1,0 +1,121 @@
+{
+  "timestamp_utc": "2026-11-06T13:36:34.447193+00:00",
+  "services": [
+    {
+      "Service": "backend",
+      "State": "running",
+      "Health": "healthy",
+      "Image": "commerce-backend:local",
+      "Publishers": [
+        {
+          "URL": "127.0.0.1",
+          "TargetPort": 9000,
+          "PublishedPort": 9000,
+          "Protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "Service": "caddy",
+      "State": "running",
+      "Health": "",
+      "Image": "caddy:2-alpine",
+      "Publishers": [
+        {
+          "URL": "0.0.0.0",
+          "TargetPort": 80,
+          "PublishedPort": 80,
+          "Protocol": "tcp"
+        },
+        {
+          "URL": "::",
+          "TargetPort": 80,
+          "PublishedPort": 80,
+          "Protocol": "tcp"
+        },
+        {
+          "URL": "0.0.0.0",
+          "TargetPort": 443,
+          "PublishedPort": 443,
+          "Protocol": "tcp"
+        },
+        {
+          "URL": "::",
+          "TargetPort": 443,
+          "PublishedPort": 443,
+          "Protocol": "tcp"
+        },
+        {
+          "URL": "",
+          "TargetPort": 443,
+          "PublishedPort": 0,
+          "Protocol": "udp"
+        },
+        {
+          "URL": "",
+          "TargetPort": 2019,
+          "PublishedPort": 0,
+          "Protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "Service": "postgres",
+      "State": "running",
+      "Health": "healthy",
+      "Image": "postgres:16-alpine",
+      "Publishers": [
+        {
+          "URL": "127.0.0.1",
+          "TargetPort": 5432,
+          "PublishedPort": 5432,
+          "Protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "Service": "redis",
+      "State": "running",
+      "Health": "healthy",
+      "Image": "redis:7-alpine",
+      "Publishers": [
+        {
+          "URL": "127.0.0.1",
+          "TargetPort": 6379,
+          "PublishedPort": 6379,
+          "Protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "Service": "storefront",
+      "State": "running",
+      "Health": "healthy",
+      "Image": "commerce-storefront",
+      "Publishers": [
+        {
+          "URL": "127.0.0.1",
+          "TargetPort": 8000,
+          "PublishedPort": 8000,
+          "Protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "Service": "worker",
+      "State": "running",
+      "Health": "",
+      "Image": "commerce-backend:local",
+      "Publishers": [
+        {
+          "URL": "",
+          "TargetPort": 9000,
+          "PublishedPort": 0,
+          "Protocol": "tcp"
+        }
+      ]
+    }
+  ],
+  "env_file_mode": "0o600",
+  "shutdown_timer": "NEXT                        LEFT          LAST PASSED UNIT                        ACTIVATES\nFri 2026-11-06 17:16:39 UTC 3h 40min left -    -      commerce-session-stop.timer commerce-session-stop.service\n\n1 timers listed.\n"
+}

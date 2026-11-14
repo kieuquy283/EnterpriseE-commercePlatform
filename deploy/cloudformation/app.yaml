@@ -1,0 +1,1179 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Commerce application: independently deployed Fargate storefront, Medusa API and worker, bounded scaling
+  and scheduled compute shutdown.'
+Metadata:
+  AWSToolsMetrics:
+    AWSAgentToolkit: aws-cloudformation@3
+  com.aws.cloudformation.Context:
+    must:
+    - Deploy only in ap-southeast-2
+    - No NAT gateways; public application ENIs have ALB-only ingress
+    ref:
+    - README.md
+Parameters:
+  FoundationStack:
+    Type: String
+    Default: commerce-foundation
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9-]*'
+  DataStack:
+    Type: String
+    Default: commerce-data
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9-]*'
+  StoreDomain:
+    Type: String
+    AllowedPattern: '[a-z0-9][a-z0-9.-]+\.[a-z]{2,}'
+  ApiDomain:
+    Type: String
+    AllowedPattern: '[a-z0-9][a-z0-9.-]+\.[a-z]{2,}'
+  CertificateArn:
+    Type: String
+    AllowedPattern: arn:aws:acm:ap-southeast-2:[0-9]{12}:certificate/.+
+  BackendImage:
+    Type: String
+    AllowedPattern: '[0-9]{12}\.dkr\.ecr\.ap-southeast-2\.amazonaws\.com/.+'
+  StorefrontImage:
+    Type: String
+    AllowedPattern: '[0-9]{12}\.dkr\.ecr\.ap-southeast-2\.amazonaws\.com/.+'
+  PublishableKey:
+    Type: String
+    Default: pk_bootstrap
+    AllowedPattern: pk_.+
+  StorefrontEnabled:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+    - 'true'
+    - 'false'
+  Running:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+    - 'true'
+    - 'false'
+  HostedZoneId:
+    Type: String
+    Default: ''
+Resources:
+  Cluster:
+    Type: AWS::ECS::Cluster
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Disable paid Container Insights initially; standard ECS metrics suffice
+        must: []
+    Properties:
+      ClusterSettings:
+      - Name: containerInsights
+        Value: disabled
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+  ExecutionRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: ECS agent pulls images and injects only the three application secrets
+        must: []
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+          Action: sts:AssumeRole
+      ManagedPolicyArns:
+      - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+      - PolicyName: ReadInjectedSecrets
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - secretsmanager:GetSecretValue
+            Resource:
+            - Fn::ImportValue:
+                Fn::Sub: ${DataStack}-DatabaseSecret
+            - Fn::ImportValue:
+                Fn::Sub: ${DataStack}-JwtSecret
+            - Fn::ImportValue:
+                Fn::Sub: ${DataStack}-CookieSecret
+  BackendRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Default AWS credentials chain uses the ECS role; no static S3 keys
+        must: []
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+      - PolicyName: ProductImages
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - s3:ListBucket
+            Resource:
+              Fn::ImportValue:
+                Fn::Sub: ${DataStack}-ImagesBucketArn
+          - Effect: Allow
+            Action:
+            - s3:GetObject
+            - s3:PutObject
+            - s3:DeleteObject
+            Resource:
+              Fn::Join:
+              - ''
+              - - Fn::ImportValue:
+                    Fn::Sub: ${DataStack}-ImagesBucketArn
+                - /*
+  StorefrontRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Storefront receives no S3 or secrets API permissions
+        must: []
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: ecs-tasks.amazonaws.com
+          Action: sts:AssumeRole
+  ApiLogs:
+    Type: AWS::Logs::LogGroup
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Short-lived logs for the student credit budget
+        must: []
+    Properties:
+      RetentionInDays: 7
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+  WorkerLogs:
+    Type: AWS::Logs::LogGroup
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Short-lived logs for the student credit budget
+        must: []
+    Properties:
+      RetentionInDays: 7
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+  StorefrontLogs:
+    Type: AWS::Logs::LogGroup
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Short-lived logs for the student credit budget
+        must: []
+    Properties:
+      RetentionInDays: 7
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+  ApiTask:
+    Type: AWS::ECS::TaskDefinition
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Independent service sizing; backend image also executes migrations
+        must:
+        - Use immutable image references; migrations must finish before services start
+    Properties:
+      Cpu: '1024'
+      Memory: '2048'
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+      RuntimePlatform:
+        CpuArchitecture: X86_64
+        OperatingSystemFamily: LINUX
+      ExecutionRoleArn:
+        Fn::GetAtt:
+        - ExecutionRole
+        - Arn
+      TaskRoleArn:
+        Fn::GetAtt:
+        - BackendRole
+        - Arn
+      ContainerDefinitions:
+      - Name: api
+        Image:
+          Ref: BackendImage
+        Essential: true
+        StopTimeout: 60
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: ApiLogs
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: api
+        Environment:
+        - Name: NODE_ENV
+          Value: production
+        - Name: LOG_LEVEL
+          Value: info
+        - Name: DB_HOST
+          Value:
+            Fn::ImportValue:
+              Fn::Sub: ${DataStack}-DatabaseHost
+        - Name: DB_NAME
+          Value: commerce
+        - Name: DB_USER
+          Value: commerce
+        - Name: PGSSLMODE
+          Value: verify-full
+        - Name: REDIS_URL
+          Value:
+            Fn::Join:
+            - ''
+            - - redis://
+              - Fn::ImportValue:
+                  Fn::Sub: ${DataStack}-RedisHost
+              - :6379
+        - Name: STORE_CORS
+          Value:
+            Fn::Sub: https://${StoreDomain}
+        - Name: ADMIN_CORS
+          Value:
+            Fn::Sub: https://${ApiDomain}
+        - Name: AUTH_CORS
+          Value:
+            Fn::Sub: https://${StoreDomain},https://${ApiDomain}
+        - Name: S3_BUCKET
+          Value:
+            Fn::ImportValue:
+              Fn::Sub: ${DataStack}-ImagesBucket
+        - Name: S3_FILE_URL
+          Value:
+            Fn::Sub: https://${ApiDomain}/product-images
+        - Name: S3_PUBLIC_IMAGE_PROXY
+          Value: 'true'
+        - Name: S3_REGION
+          Value:
+            Ref: AWS::Region
+        - Name: S3_AUTHENTICATION_METHOD
+          Value: s3-iam-role
+        - Name: S3_DISABLE_ACL
+          Value: 'true'
+        - Name: WORKER_MODE
+          Value: server
+        - Name: ADMIN_DISABLED
+          Value: 'false'
+        Secrets:
+        - Name: DB_PASSWORD
+          ValueFrom:
+            Fn::Join:
+            - ''
+            - - Fn::ImportValue:
+                  Fn::Sub: ${DataStack}-DatabaseSecret
+              - ':password::'
+        - Name: JWT_SECRET
+          ValueFrom:
+            Fn::ImportValue:
+              Fn::Sub: ${DataStack}-JwtSecret
+        - Name: COOKIE_SECRET
+          ValueFrom:
+            Fn::ImportValue:
+              Fn::Sub: ${DataStack}-CookieSecret
+        EntryPoint:
+        - node
+        - /app/deploy/cloudformation/runtime/backend-entrypoint.cjs
+        PortMappings:
+        - ContainerPort: 9000
+          Protocol: tcp
+        HealthCheck:
+          Command:
+          - CMD
+          - node
+          - -e
+          - fetch('http://127.0.0.1:9000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))
+          Interval: 30
+          Timeout: 10
+          Retries: 3
+          StartPeriod: 120
+        WorkingDirectory: /app/apps/backend/.medusa/server
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+  WorkerTask:
+    Type: AWS::ECS::TaskDefinition
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Independent service sizing; backend image also executes migrations
+        must:
+        - Use immutable image references; migrations must finish before services start
+    Properties:
+      Cpu: '512'
+      Memory: '2048'
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+      RuntimePlatform:
+        CpuArchitecture: X86_64
+        OperatingSystemFamily: LINUX
+      ExecutionRoleArn:
+        Fn::GetAtt:
+        - ExecutionRole
+        - Arn
+      TaskRoleArn:
+        Fn::GetAtt:
+        - BackendRole
+        - Arn
+      ContainerDefinitions:
+      - Name: worker
+        Image:
+          Ref: BackendImage
+        Essential: true
+        StopTimeout: 60
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: WorkerLogs
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: worker
+        Environment:
+        - Name: NODE_ENV
+          Value: production
+        - Name: LOG_LEVEL
+          Value: info
+        - Name: DB_HOST
+          Value:
+            Fn::ImportValue:
+              Fn::Sub: ${DataStack}-DatabaseHost
+        - Name: DB_NAME
+          Value: commerce
+        - Name: DB_USER
+          Value: commerce
+        - Name: PGSSLMODE
+          Value: verify-full
+        - Name: REDIS_URL
+          Value:
+            Fn::Join:
+            - ''
+            - - redis://
+              - Fn::ImportValue:
+                  Fn::Sub: ${DataStack}-RedisHost
+              - :6379
+        - Name: STORE_CORS
+          Value:
+            Fn::Sub: https://${StoreDomain}
+        - Name: ADMIN_CORS
+          Value:
+            Fn::Sub: https://${ApiDomain}
+        - Name: AUTH_CORS
+          Value:
+            Fn::Sub: https://${StoreDomain},https://${ApiDomain}
+        - Name: S3_BUCKET
+          Value:
+            Fn::ImportValue:
+              Fn::Sub: ${DataStack}-ImagesBucket
+        - Name: S3_FILE_URL
+          Value:
+            Fn::Sub: https://${ApiDomain}/product-images
+        - Name: S3_PUBLIC_IMAGE_PROXY
+          Value: 'true'
+        - Name: S3_REGION
+          Value:
+            Ref: AWS::Region
+        - Name: S3_AUTHENTICATION_METHOD
+          Value: s3-iam-role
+        - Name: S3_DISABLE_ACL
+          Value: 'true'
+        - Name: WORKER_MODE
+          Value: worker
+        - Name: ADMIN_DISABLED
+          Value: 'true'
+        Secrets:
+        - Name: DB_PASSWORD
+          ValueFrom:
+            Fn::Join:
+            - ''
+            - - Fn::ImportValue:
+                  Fn::Sub: ${DataStack}-DatabaseSecret
+              - ':password::'
+        - Name: JWT_SECRET
+          ValueFrom:
+            Fn::ImportValue:
+              Fn::Sub: ${DataStack}-JwtSecret
+        - Name: COOKIE_SECRET
+          ValueFrom:
+            Fn::ImportValue:
+              Fn::Sub: ${DataStack}-CookieSecret
+        EntryPoint:
+        - node
+        - /app/deploy/cloudformation/runtime/backend-entrypoint.cjs
+        WorkingDirectory: /app/apps/backend/.medusa/server
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+  StorefrontTask:
+    Type: AWS::ECS::TaskDefinition
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Independent service sizing; backend image also executes migrations
+        must:
+        - Use immutable image references; migrations must finish before services start
+    Properties:
+      Cpu: '512'
+      Memory: '1024'
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+      - FARGATE
+      RuntimePlatform:
+        CpuArchitecture: X86_64
+        OperatingSystemFamily: LINUX
+      ExecutionRoleArn:
+        Fn::GetAtt:
+        - ExecutionRole
+        - Arn
+      TaskRoleArn:
+        Fn::GetAtt:
+        - StorefrontRole
+        - Arn
+      ContainerDefinitions:
+      - Name: storefront
+        Image:
+          Ref: StorefrontImage
+        Essential: true
+        StopTimeout: 60
+        LogConfiguration:
+          LogDriver: awslogs
+          Options:
+            awslogs-group:
+              Ref: StorefrontLogs
+            awslogs-region:
+              Ref: AWS::Region
+            awslogs-stream-prefix: storefront
+        Environment:
+        - Name: NODE_ENV
+          Value: production
+        - Name: MEDUSA_BACKEND_URL
+          Value:
+            Fn::Sub: https://${ApiDomain}
+        - Name: NEXT_PUBLIC_MEDUSA_BACKEND_URL
+          Value:
+            Fn::Sub: https://${ApiDomain}
+        - Name: NEXT_PUBLIC_BASE_URL
+          Value:
+            Fn::Sub: https://${StoreDomain}
+        - Name: NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+          Value:
+            Ref: PublishableKey
+        - Name: MEDUSA_CLOUD_S3_HOSTNAME
+          Value:
+            Ref: ApiDomain
+        - Name: MEDUSA_CLOUD_S3_PATHNAME
+          Value: /product-images/**
+        PortMappings:
+        - ContainerPort: 8000
+          Protocol: tcp
+        HealthCheck:
+          Command:
+          - CMD
+          - node
+          - -e
+          - fetch('http://127.0.0.1:8000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))
+          Interval: 30
+          Timeout: 10
+          Retries: 3
+          StartPeriod: 120
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Single ALB for both hostnames; charges persist during pause, delete app stack to hibernate
+        must: []
+    Properties:
+      Type: application
+      Scheme: internet-facing
+      Subnets:
+      - Fn::ImportValue:
+          Fn::Sub: ${FoundationStack}-PublicSubnet1
+      - Fn::ImportValue:
+          Fn::Sub: ${FoundationStack}-PublicSubnet2
+      SecurityGroups:
+      - Fn::ImportValue:
+          Fn::Sub: ${FoundationStack}-AlbGroup
+      LoadBalancerAttributes:
+      - Key: idle_timeout.timeout_seconds
+        Value: '60'
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+  HttpListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Force HTTPS
+        must: []
+    Properties:
+      LoadBalancerArn:
+        Ref: LoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+      - Type: redirect
+        RedirectConfig:
+          Protocol: HTTPS
+          Port: '443'
+          StatusCode: HTTP_301
+  HttpsListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Certificate must cover both confirmed domain names
+        must: []
+    Properties:
+      LoadBalancerArn:
+        Ref: LoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      SslPolicy: ELBSecurityPolicy-TLS13-1-2-2021-06
+      Certificates:
+      - CertificateArn:
+          Ref: CertificateArn
+      DefaultActions:
+      - Type: fixed-response
+        FixedResponseConfig:
+          StatusCode: '404'
+          ContentType: text/plain
+          MessageBody: Unknown hostname
+  ApiTarget:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Route to healthy Fargate ENIs
+        must: []
+    Properties:
+      VpcId:
+        Fn::ImportValue:
+          Fn::Sub: ${FoundationStack}-Vpc
+      TargetType: ip
+      Port: 9000
+      Protocol: HTTP
+      HealthCheckPath: /health
+      Matcher:
+        HttpCode: 200-399
+      TargetGroupAttributes:
+      - Key: deregistration_delay.timeout_seconds
+        Value: '30'
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+  ApiRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Hostname routing prevents accidental default access
+        must: []
+    Properties:
+      ListenerArn:
+        Ref: HttpsListener
+      Priority: 1
+      Conditions:
+      - Field: host-header
+        Values:
+        - Ref: ApiDomain
+      Actions:
+      - Type: forward
+        TargetGroupArn:
+          Ref: ApiTarget
+  StorefrontTarget:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Route to healthy Fargate ENIs
+        must: []
+    Properties:
+      VpcId:
+        Fn::ImportValue:
+          Fn::Sub: ${FoundationStack}-Vpc
+      TargetType: ip
+      Port: 8000
+      Protocol: HTTP
+      HealthCheckPath: /health
+      Matcher:
+        HttpCode: 200-399
+      TargetGroupAttributes:
+      - Key: deregistration_delay.timeout_seconds
+        Value: '30'
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+  StorefrontRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Hostname routing prevents accidental default access
+        must: []
+    Properties:
+      ListenerArn:
+        Ref: HttpsListener
+      Priority: 2
+      Conditions:
+      - Field: host-header
+        Values:
+        - Ref: StoreDomain
+      Actions:
+      - Type: forward
+        TargetGroupArn:
+          Ref: StorefrontTarget
+  ApiService:
+    Type: AWS::ECS::Service
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Start at zero for migrations; rolling deployments can temporarily run extra tasks
+        must: []
+    Properties:
+      Cluster:
+        Ref: Cluster
+      TaskDefinition:
+        Ref: ApiTask
+      LaunchType: FARGATE
+      PlatformVersion: 1.4.0
+      DesiredCount:
+        Fn::If:
+        - IsRunning
+        - 1
+        - 0
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          Subnets:
+          - Fn::ImportValue:
+              Fn::Sub: ${FoundationStack}-PublicSubnet1
+          - Fn::ImportValue:
+              Fn::Sub: ${FoundationStack}-PublicSubnet2
+          SecurityGroups:
+          - Fn::ImportValue:
+              Fn::Sub: ${FoundationStack}-AppGroup
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+        DeploymentCircuitBreaker:
+          Enable: true
+          Rollback: true
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+      HealthCheckGracePeriodSeconds: 180
+      LoadBalancers:
+      - ContainerName: api
+        ContainerPort: 9000
+        TargetGroupArn:
+          Ref: ApiTarget
+    DependsOn:
+    - ApiRule
+  StorefrontService:
+    Type: AWS::ECS::Service
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Start at zero for migrations; rolling deployments can temporarily run extra tasks
+        must: []
+    Properties:
+      Cluster:
+        Ref: Cluster
+      TaskDefinition:
+        Ref: StorefrontTask
+      LaunchType: FARGATE
+      PlatformVersion: 1.4.0
+      DesiredCount:
+        Fn::If:
+        - StorefrontRunning
+        - 1
+        - 0
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          Subnets:
+          - Fn::ImportValue:
+              Fn::Sub: ${FoundationStack}-PublicSubnet1
+          - Fn::ImportValue:
+              Fn::Sub: ${FoundationStack}-PublicSubnet2
+          SecurityGroups:
+          - Fn::ImportValue:
+              Fn::Sub: ${FoundationStack}-AppGroup
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+        DeploymentCircuitBreaker:
+          Enable: true
+          Rollback: true
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+      HealthCheckGracePeriodSeconds: 180
+      LoadBalancers:
+      - ContainerName: storefront
+        ContainerPort: 8000
+        TargetGroupArn:
+          Ref: StorefrontTarget
+    DependsOn:
+    - StorefrontRule
+  WorkerService:
+    Type: AWS::ECS::Service
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Start at zero for migrations; rolling deployments can temporarily run extra tasks
+        must: []
+    Properties:
+      Cluster:
+        Ref: Cluster
+      TaskDefinition:
+        Ref: WorkerTask
+      LaunchType: FARGATE
+      PlatformVersion: 1.4.0
+      DesiredCount:
+        Fn::If:
+        - IsRunning
+        - 1
+        - 0
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: ENABLED
+          Subnets:
+          - Fn::ImportValue:
+              Fn::Sub: ${FoundationStack}-PublicSubnet1
+          - Fn::ImportValue:
+              Fn::Sub: ${FoundationStack}-PublicSubnet2
+          SecurityGroups:
+          - Fn::ImportValue:
+              Fn::Sub: ${FoundationStack}-AppGroup
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+        DeploymentCircuitBreaker:
+          Enable: true
+          Rollback: true
+      Tags:
+      - Key: Project
+        Value: commerce-demo
+      - Key: ManagedBy
+        Value: CloudFormation
+    DependsOn:
+    - ExecutionRole
+    - BackendRole
+  ApiScalingTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Cap desired API replicas at two; pause suspends all scaling sources
+        must: []
+    Properties:
+      ServiceNamespace: ecs
+      ScalableDimension: ecs:service:DesiredCount
+      ResourceId:
+        Fn::Sub: service/${Cluster}/${ApiService.Name}
+      MinCapacity:
+        Fn::If:
+        - IsRunning
+        - 1
+        - 0
+      MaxCapacity:
+        Fn::If:
+        - IsRunning
+        - 2
+        - 0
+      SuspendedState:
+        DynamicScalingInSuspended:
+          Fn::If:
+          - IsRunning
+          - false
+          - true
+        DynamicScalingOutSuspended:
+          Fn::If:
+          - IsRunning
+          - false
+          - true
+        ScheduledScalingSuspended:
+          Fn::If:
+          - IsRunning
+          - false
+          - true
+  ApiScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: CPU target for bounded scaling demonstration
+        must: []
+    Properties:
+      PolicyName:
+        Fn::Sub: ${AWS::StackName}-api-cpu
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId:
+        Ref: ApiScalingTarget
+      TargetTrackingScalingPolicyConfiguration:
+        PredefinedMetricSpecification:
+          PredefinedMetricType: ECSServiceAverageCPUUtilization
+        TargetValue: 60
+        ScaleInCooldown: 180
+        ScaleOutCooldown: 60
+  WatchdogRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: May stop only this environment; cannot create or delete data
+        must: []
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+      - PolicyName: StopOnlyThisDemo
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - ssm:GetParameter
+            Resource:
+              Fn::Join:
+              - ''
+              - - Fn::Sub: arn:${AWS::Partition}:ssm:${AWS::Region}:${AWS::AccountId}:parameter/
+                - Fn::ImportValue:
+                    Fn::Sub: ${DataStack}-Lease
+          - Effect: Allow
+            Action:
+            - ecs:UpdateService
+            Resource:
+            - Ref: ApiService
+            - Ref: StorefrontService
+            - Ref: WorkerService
+          - Effect: Allow
+            Action:
+            - ecs:ListTasks
+            - ecs:StopTask
+            Resource: '*'
+            Condition:
+              ArnEquals:
+                ecs:cluster:
+                  Fn::GetAtt:
+                  - Cluster
+                  - Arn
+          - Effect: Allow
+            Action:
+            - application-autoscaling:RegisterScalableTarget
+            Resource: '*'
+            Condition:
+              StringEquals:
+                application-autoscaling:service-namespace: ecs
+          - Effect: Allow
+            Action:
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource:
+              Fn::GetAtt:
+              - WatchdogLogs
+              - Arn
+          - Effect: Allow
+            Action:
+            - sqs:SendMessage
+            Resource:
+              Fn::ImportValue:
+                Fn::Sub: ${DataStack}-WatchdogDeadLettersArn
+  WatchdogLogs:
+    Type: AWS::Logs::LogGroup
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Bound watchdog log retention
+        must: []
+    Properties:
+      RetentionInDays: 7
+  Watchdog:
+    Type: AWS::Lambda::Function
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Stop service scaling and owned one-off tasks after lease expiry; residual charges remain
+        must:
+        - Limit task listing and stopping to this cluster and commerce-operation owner
+    Properties:
+      Runtime: python3.13
+      Handler: index.handler
+      Role:
+        Fn::GetAtt:
+        - WatchdogRole
+        - Arn
+      Timeout: 60
+      MemorySize: 128
+      LoggingConfig:
+        LogGroup:
+          Ref: WatchdogLogs
+      Environment:
+        Variables:
+          LEASE:
+            Fn::ImportValue:
+              Fn::Sub: ${DataStack}-Lease
+          CLUSTER:
+            Ref: Cluster
+          SCALING_ID:
+            Fn::Sub: service/${Cluster}/${ApiService.Name}
+          SERVICES:
+            Fn::Join:
+            - ','
+            - - Ref: ApiService
+              - Ref: StorefrontService
+              - Ref: WorkerService
+      Code:
+        ZipFile: |
+          import boto3
+          from botocore.config import Config
+          import os
+          import time
+
+          CONFIG = Config(connect_timeout=2, read_timeout=3, retries={"total_max_attempts": 2, "mode": "standard"})
+
+          def handler(event, context):
+              errors = []
+              try:
+                  value = boto3.client("ssm", config=CONFIG).get_parameter(Name=os.environ["LEASE"])["Parameter"]["Value"]
+                  deadline = int(value)
+              except Exception as exc:
+                  errors.append("Lease unavailable: " + str(exc))
+                  deadline = 0
+              if deadline > int(time.time()):
+                  return {"state": "leased"}
+              def attempt(fn, **kwargs):
+                  try:
+                      fn(**kwargs)
+                  except Exception as exc:
+                      errors.append(str(exc))
+              autoscaling = boto3.client("application-autoscaling", config=CONFIG)
+              attempt(autoscaling.register_scalable_target, ServiceNamespace="ecs", ResourceId=os.environ["SCALING_ID"], ScalableDimension="ecs:service:DesiredCount", MinCapacity=0, MaxCapacity=0, SuspendedState={"DynamicScalingInSuspended": True, "DynamicScalingOutSuspended": True, "ScheduledScalingSuspended": True})
+              ecs = boto3.client("ecs", config=CONFIG)
+              for service in os.environ["SERVICES"].split(","):
+                  attempt(ecs.update_service, cluster=os.environ["CLUSTER"], service=service, desiredCount=0)
+              try:
+                  pages = ecs.get_paginator("list_tasks").paginate(cluster=os.environ["CLUSTER"], startedBy="commerce-operation")
+                  for page in pages:
+                      for task in page.get("taskArns", []):
+                          attempt(ecs.stop_task, cluster=os.environ["CLUSTER"], task=task, reason="Demo session expired")
+              except Exception as exc:
+                  errors.append("One-off task shutdown: " + str(exc))
+              if errors:
+                  raise RuntimeError("; ".join(errors))
+              return {"state": "app-compute-stopped"}
+      DeadLetterConfig:
+        TargetArn:
+          Fn::ImportValue:
+            Fn::Sub: ${DataStack}-WatchdogDeadLettersArn
+  WatchdogSchedule:
+    Type: AWS::Events::Rule
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Continue enforcing stop while the application stack exists
+        must: []
+    Properties:
+      ScheduleExpression: rate(5 minutes)
+      State: ENABLED
+      Targets:
+      - Id: stop-expired-demo
+        Arn:
+          Fn::GetAtt:
+          - Watchdog
+          - Arn
+  WatchdogPermission:
+    Type: AWS::Lambda::Permission
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Restrict invocation to this schedule
+        must: []
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: Watchdog
+      Principal: events.amazonaws.com
+      SourceArn:
+        Fn::GetAtt:
+        - WatchdogSchedule
+        - Arn
+  WatchdogFailure:
+    Type: AWS::CloudWatch::Alarm
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Visible failure alarm; connect an SNS email subscription before deployment
+        must: []
+    Properties:
+      AlarmDescription: Shutdown watchdog failed; investigate immediately
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+      - Name: FunctionName
+        Value:
+          Ref: Watchdog
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+      - Fn::ImportValue:
+          Fn::Sub: ${DataStack}-AlertTopicArn
+  Dashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Show latency, errors and service utilization without paid detailed telemetry
+        must: []
+    Properties:
+      DashboardName:
+        Fn::Sub: ${AWS::StackName}-demo
+      DashboardBody:
+        Fn::Sub: '{"widgets": [{"type": "metric", "x": 0, "y": 0, "width": 12, "height": 6, "properties": {"title":
+          "API CPU and memory", "region": "${AWS::Region}", "metrics": [["AWS/ECS", "CPUUtilization", "ClusterName",
+          "${Cluster}", "ServiceName", "${ApiService.Name}"], ["AWS/ECS", "MemoryUtilization", "ClusterName", "${Cluster}",
+          "ServiceName", "${ApiService.Name}"]], "period": 60, "stat": "Average"}}, {"type": "metric", "x": 12,
+          "y": 0, "width": 12, "height": 6, "properties": {"title": "ALB latency and target errors", "region": "${AWS::Region}",
+          "metrics": [["AWS/ApplicationELB", "TargetResponseTime", "LoadBalancer", "${LoadBalancer.LoadBalancerFullName}",
+          {"stat": "p95"}], ["AWS/ApplicationELB", "HTTPCode_Target_5XX_Count", "LoadBalancer", "${LoadBalancer.LoadBalancerFullName}",
+          {"stat": "Sum", "yAxis": "right"}]], "period": 60}}]}'
+  StoreDns:
+    Type: AWS::Route53::RecordSet
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Optional Route 53 aliases follow load balancer recreation; external DNS needs CNAME updates
+        must: []
+    Properties:
+      HostedZoneId:
+        Ref: HostedZoneId
+      Name:
+        Ref: StoreDomain
+      Type: A
+      AliasTarget:
+        DNSName:
+          Fn::GetAtt:
+          - LoadBalancer
+          - DNSName
+        HostedZoneId:
+          Fn::GetAtt:
+          - LoadBalancer
+          - CanonicalHostedZoneID
+        EvaluateTargetHealth: true
+    Condition: HasHostedZone
+  ApiDns:
+    Type: AWS::Route53::RecordSet
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Optional Route 53 aliases follow load balancer recreation; external DNS needs CNAME updates
+        must: []
+    Properties:
+      HostedZoneId:
+        Ref: HostedZoneId
+      Name:
+        Ref: ApiDomain
+      Type: A
+      AliasTarget:
+        DNSName:
+          Fn::GetAtt:
+          - LoadBalancer
+          - DNSName
+        HostedZoneId:
+          Fn::GetAtt:
+          - LoadBalancer
+          - CanonicalHostedZoneID
+        EvaluateTargetHealth: true
+    Condition: HasHostedZone
+Outputs:
+  ImageUrl:
+    Description: Public product image base URL served by the backend proxy
+    Value:
+      Fn::Sub: https://${ApiDomain}/product-images
+  Cluster:
+    Description: Lifecycle and release automation input
+    Value:
+      Ref: Cluster
+  ApiService:
+    Description: Lifecycle and release automation input
+    Value:
+      Ref: ApiService
+  StorefrontService:
+    Description: Lifecycle and release automation input
+    Value:
+      Ref: StorefrontService
+  WorkerService:
+    Description: Lifecycle and release automation input
+    Value:
+      Ref: WorkerService
+  ApiTask:
+    Description: Lifecycle and release automation input
+    Value:
+      Ref: ApiTask
+  Watchdog:
+    Description: Lifecycle and release automation input
+    Value:
+      Ref: Watchdog
+  LoadBalancerDns:
+    Description: Point both DNS names here; changes when app stack is recreated
+    Value:
+      Fn::GetAtt:
+      - LoadBalancer
+      - DNSName
+  LoadBalancerZone:
+    Description: Route 53 alias target zone
+    Value:
+      Fn::GetAtt:
+      - LoadBalancer
+      - CanonicalHostedZoneID
+Conditions:
+  IsRunning:
+    Fn::Equals:
+    - Ref: Running
+    - 'true'
+  StorefrontRunning:
+    Fn::And:
+    - Fn::Equals:
+      - Ref: Running
+      - 'true'
+    - Fn::Equals:
+      - Ref: StorefrontEnabled
+      - 'true'
+  HasHostedZone:
+    Fn::Not:
+    - Fn::Equals:
+      - Ref: HostedZoneId
+      - ''

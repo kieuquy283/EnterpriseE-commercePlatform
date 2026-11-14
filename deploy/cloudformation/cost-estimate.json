@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-27",
+  "region": "ap-southeast-2",
+  "currency": "USD",
+  "rates": {
+    "fargateVcpuHour": "0.04856",
+    "fargateGiBHour": "0.00532",
+    "rdsInstanceHour": "0.025",
+    "redisInstanceHour": "0.0106",
+    "albHour": "0.0252",
+    "albLcuHour": "0.008",
+    "ipv4Hour": "0.005",
+    "rdsGiBMonth": "0.138",
+    "ebsGiBMonth": "0.096",
+    "secretMonth": "0.40",
+    "kmsKeyMonth": "1.00"
+  },
+  "assumptions": {
+    "hoursPerMonth": 730,
+    "publicIpv4Addresses": 6,
+    "apiTasks": 1,
+    "storefrontTasks": 1,
+    "workerTasks": 1,
+    "lcuExample": 1
+  },
+  "computed": {
+    "baselineHourBeforeLcu": "0.21452",
+    "baselineHourWithOneLcu": "0.22252",
+    "retainedFixedMonth": "5.728",
+    "fortyHoursPlusRetainedMonth": "14.62880",
+    "alwaysRunningMonthBeforeVariableExtras": "168.16760",
+    "pausedMonthWithAlbBeforeVariableExtras": "31.4240"
+  },
+  "excludes": [
+    "S3 and ECR storage and requests",
+    "Internet transfer (including backend-proxied images)",
+    "inter-AZ transfer",
+    "CloudWatch logs, alarms, dashboard",
+    "Lambda, EventBridge, SSM, SNS and SQS requests",
+    "RDS excess CPU credits and backup storage",
+    "deployment overlap, migration tasks and scale-out",
+    "DNS hosted zone or domain charges",
+    "tax"
+  ],
+  "sources": [
+    "AWS Price List API GetProducts, retrieved 2026-10-27",
+    "https://aws.amazon.com/vpc/pricing/",
+    "https://aws.amazon.com/kms/pricing/"
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "timestamp_utc": "2026-11-06T13:33:32.316683+00:00",
+  "scope": "read-only smoke; checkout and recovery not exercised",
+  "results": [
+    {
+      "check": "api_https_health",
+      "status": "PASS"
+    },
+    {
+      "check": "storefront_https_health",
+      "status": "PASS"
+    },
+    {
+      "check": "regions_with_publishable_key",
+      "status": "PASS"
+    },
+    {
+      "check": "seeded_product_catalog",
+      "status": "PASS"
+    },
+    {
+      "check": "rendered_storefront",
+      "status": "PASS"
+    },
+    {
+      "check": "postgres_query",
+      "status": "PASS"
+    },
+    {
+      "check": "redis_ping",
+      "status": "PASS"
+    },
+    {
+      "check": "backend_to_postgres_tcp",
+      "status": "PASS"
+    },
+    {
+      "check": "backend_to_redis_tcp",
+      "status": "PASS"
+    },
+    {
+      "check": "worker_to_postgres_tcp",
+      "status": "PASS"
+    },
+    {
+      "check": "worker_to_redis_tcp",
+      "status": "PASS"
+    },
+    {
+      "check": "storefront_to_backend_catalog",
+      "status": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "taskArn": "arn:aws:ecs:ap-southeast-2:695496430984:task/commerce-app-Cluster-1ViOB9Rc6vbI/0c5a6d2dc82a41aa9b6ab9c508696727",
+  "exitCode": 0,
+  "moduleMigrationLog": [
+    "MODULE: recommendation",
+    "  \u25cf Migrating Migration20261103195231",
+    "  \u2714 Migrated Migration20261103195231",
+    "MODULE: personalization",
+    "  \u25cf Migrating Migration20261107144837",
+    "  \u2714 Migrated Migration20261107144837",
+    "  \u25cf Migrating Migration20261107150232",
+    "  \u2714 Migrated Migration20261107150232",
+    "  \u25cf Migrating Migration20261107151743",
+    "  \u2714 Migrated Migration20261107151743"
+  ]
+}

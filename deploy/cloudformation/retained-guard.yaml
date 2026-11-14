@@ -1,0 +1,126 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Retained database guard with an optional bounded recovery window.
+Resources:
+  DataWatchdogLogs:
+    Type: AWS::Logs::LogGroup
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Bound shutdown watchdog log retention
+        must: []
+    Properties:
+      RetentionInDays: 7
+  DataWatchdogRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Persist stop-only permissions independently of the app stack
+        must: []
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+      - PolicyName: StopDataCompute
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - rds:StopDBInstance
+            Resource:
+              Fn::Sub: arn:${AWS::Partition}:rds:${AWS::Region}:${AWS::AccountId}:db:${DatabaseId}
+          - Effect: Allow
+            Action:
+            - rds:DescribeDBInstances
+            Resource: '*'
+          - Effect: Allow
+            Action:
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Resource:
+              Fn::GetAtt:
+              - DataWatchdogLogs
+              - Arn
+  DataWatchdog:
+    Type: AWS::Lambda::Function
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Keep the retained database stopped while deployment is blocked; remove
+          guard before intentional startup
+        must: []
+    Properties:
+      Runtime: python3.13
+      Handler: index.handler
+      Role:
+        Fn::GetAtt:
+        - DataWatchdogRole
+        - Arn
+      Timeout: 60
+      MemorySize: 128
+      LoggingConfig:
+        LogGroup:
+          Ref: DataWatchdogLogs
+      Environment:
+        Variables:
+          DATABASE:
+            Ref: DatabaseId
+          RECOVERY_DEADLINE:
+            Ref: RecoveryDeadline
+      Code:
+        ZipFile: |
+          import boto3, os, time
+          from botocore.config import Config
+
+          def handler(event, context):
+              if int(os.environ.get("RECOVERY_DEADLINE", "0")) > int(time.time()):
+                  return {"state": "recovery-window"}
+              rds = boto3.client("rds", config=Config(connect_timeout=2, read_timeout=3, retries={"total_max_attempts": 2}))
+              db = rds.describe_db_instances(DBInstanceIdentifier=os.environ["DATABASE"])["DBInstances"][0]
+              if db["DBInstanceStatus"] == "available":
+                  rds.stop_db_instance(DBInstanceIdentifier=os.environ["DATABASE"])
+                  return {"state": "stop-requested"}
+              return {"state": db["DBInstanceStatus"]}
+  DataWatchdogSchedule:
+    Type: AWS::Events::Rule
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Remain active during application hibernation
+        must: []
+    Properties:
+      ScheduleExpression: rate(5 minutes)
+      State: ENABLED
+      Targets:
+      - Id: stop-data
+        Arn:
+          Fn::GetAtt:
+          - DataWatchdog
+          - Arn
+  DataWatchdogPermission:
+    Type: AWS::Lambda::Permission
+    Metadata:
+      com.aws.cloudformation.Context:
+        why: Only this schedule can invoke the data watchdog
+        must: []
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Ref: DataWatchdog
+      Principal: events.amazonaws.com
+      SourceArn:
+        Fn::GetAtt:
+        - DataWatchdogSchedule
+        - Arn
+Parameters:
+  RecoveryDeadline:
+    Type: String
+    Default: '0'
+    AllowedPattern: '[0-9]{1,12}'
+    Description: Unix UTC deadline for intentional recovery startup; 0 keeps the database stopped
+  DatabaseId:
+    Type: String
+    Description: Retained database to keep stopped while deployment is blocked
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9-]*'

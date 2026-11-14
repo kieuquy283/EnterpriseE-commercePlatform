@@ -1,0 +1,42 @@
+{
+  "resources": [
+    {
+      "LogicalResourceId": "AlarmKey",
+      "PhysicalResourceId": "561e549c-4d14-4e82-b6aa-5a453767051a",
+      "ResourceType": "AWS::KMS::Key"
+    },
+    {
+      "LogicalResourceId": "CookieSecret",
+      "PhysicalResourceId": "arn:aws:secretsmanager:ap-southeast-2:695496430984:secret:CookieSecret-7Y2XT8uEBbIl-jwhTFk",
+      "ResourceType": "AWS::SecretsManager::Secret"
+    },
+    {
+      "LogicalResourceId": "Database",
+      "PhysicalResourceId": "commerce-data-database-eitsolwlw0cz",
+      "ResourceType": "AWS::RDS::DBInstance"
+    },
+    {
+      "LogicalResourceId": "DatabaseSecret",
+      "PhysicalResourceId": "arn:aws:secretsmanager:ap-southeast-2:695496430984:secret:DatabaseSecret-6fLAd2ffMJs7-tRIjkZ",
+      "ResourceType": "AWS::SecretsManager::Secret"
+    },
+    {
+      "LogicalResourceId": "DatabaseSubnets",
+      "PhysicalResourceId": "commerce-data-databasesubnets-tyqqngnwyvbp",
+      "ResourceType": "AWS::RDS::DBSubnetGroup"
+    },
+    {
+      "LogicalResourceId": "ImagesBucket",
+      "PhysicalResourceId": "commerce-data-imagesbucket-9mhlumnloodf",
+      "ResourceType": "AWS::S3::Bucket"
+    },
+    {
+      "LogicalResourceId": "JwtSecret",
+      "PhysicalResourceId": "arn:aws:secretsmanager:ap-southeast-2:695496430984:secret:JwtSecret-lQKoJSWYFmQF-JTWo80",
+      "ResourceType": "AWS::SecretsManager::Secret"
+    }
+  ],
+  "importChangeSet": "recover-running-20261108",
+  "driftAfterImport": "IN_SYNC",
+  "driftedResourceCount": 0
+}

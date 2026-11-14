@@ -8,7 +8,15 @@
 - Thanh toán dùng provider có sẵn `pp_system_default`, được hiển thị như **thanh toán khi nhận hàng (COD)**. Đặt hàng thành công không đồng nghĩa đã thu tiền.
 - Medusa Admin quản lý sản phẩm, tồn kho, đơn hàng và fulfillment. Seed tạo vùng Vietnam/VND, kho, kênh bán, phương thức giao hàng và ba sản phẩm mẫu.
 
-MVP hiện **chưa có** cổng thanh toán thật, payment simulator, thông báo tự động, search engine riêng, báo cáo tùy chỉnh hoặc custom Medusa module. Tìm kiếm hiện dùng Store API của Medusa. Xem [PLAN.md](PLAN.md) để biết các hạng mục mở rộng.
+Payment simulator đã có trong mã nguồn và chỉ được bật ngoài production. MVP hiện **chưa có** cổng thanh toán thật, thông báo tự động, search engine riêng hoặc báo cáo tùy chỉnh. Tìm kiếm hiện dùng Store API của Medusa. Xem [kế hoạch học phần](docs/Enterprise_Ecommerce_Revised_Plan_Week_04-13.md) cho các hạng mục còn lại; [PLAN.md](PLAN.md) giữ lịch sử thiết kế.
+
+Recommendation và personalization modules/API đã được đưa vào `main` tại `389e855`. Đây là code có feature flags; cloud deployment giữ mặc định tắt và không import H&M artifacts. Xem [đặc tả](docs/recommendation/spec.md), [quyết định quyền dữ liệu](docs/recommendation/dataset-rights-decision.md) và [V2 freeze](docs/recommendation/personalization/v2-freeze.md) trước khi bật hoặc publish dữ liệu.
+
+## Cloud deployment hiện tại
+
+Cloud baseline của học phần là **ALB/ACM, ba ECS Fargate service (storefront/API/worker), private RDS PostgreSQL, Redis trên EC2, private S3 qua backend image proxy, CloudWatch và CloudFormation** tại `ap-southeast-2`. Bản triển khai ngày 09/11/2026 đã qua **14/14 public checks**; đây là bằng chứng tại thời điểm kiểm tra, không phải cam kết hệ thống luôn chạy vì demo có lease shutdown.
+
+Xem [quyết định kiến trúc](docs/architecture/adr/0001-aws-cloud-stack.md), [runbook chính](deploy/RUNBOOK.md), [hướng dẫn CloudFormation](deploy/cloudformation/README.md) và [báo cáo AWS](docs/report/aws-fargate-deployment-2026-11-08.md). Bản [EC2/Compose ngày 06/11](docs/report/aws-ec2-deployment-2026-11-06.md) được giữ làm rehearsal/fallback; Compose dưới đây dành cho local. CloudFront không còn trong stack chính. Browser checkout, tải/autoscaling, restore và GitHub publishing chưa được live report kiểm chứng.
 
 ## Yêu cầu
 
@@ -162,10 +170,10 @@ apps/backend/       Medusa config, seed và API/Admin của Medusa
 apps/storefront/    Next.js storefront dùng Medusa JS SDK
 scripts/            Tiện ích PowerShell và smoke checkout
 load/               Kịch bản k6 cho môi trường staging
-deploy/             Ví dụ triển khai một VM với Compose/Caddy và runbook
+deploy/             CloudFormation/Fargate và runbook chính; EC2/Compose là fallback
 ```
 
-`docker-compose.yml` chạy PostgreSQL/Redis tại máy local và có profile `app` cho backend, worker, storefront và migration. Compose tự chạy migration trước backend/worker; seed và publishable key cần thiết lập lần đầu theo hướng dẫn bên dưới. Backend Docker, migration, PostgreSQL/Redis và health check đã được kiểm tra local. Xem [deploy/RUNBOOK.md](deploy/RUNBOOK.md) cho triển khai cloud. S3 chỉ là tùy chọn qua file provider có sẵn của Medusa; MVP local không cần object storage hay search engine riêng.
+`docker-compose.yml` chạy PostgreSQL/Redis tại máy local và có profile `app` cho backend, worker, storefront và migration. Compose tự chạy migration trước backend/worker; seed và publishable key cần thiết lập lần đầu theo hướng dẫn bên dưới. Backend Docker, migration, PostgreSQL/Redis và health check đã được kiểm tra local. Xem [deploy/RUNBOOK.md](deploy/RUNBOOK.md) cho triển khai cloud. S3 private và backend proxy đã dùng trong cloud stack; local vẫn không bắt buộc object storage hay search engine riêng.
 
 ## Chạy toàn bộ bằng Docker Compose
 
@@ -196,6 +204,6 @@ curl --fail http://localhost:9000/health
 
 URL PostgreSQL nội bộ dùng `sslmode=disable` vì container database này không cấu hình TLS. Backend và worker chỉ khởi động sau khi PostgreSQL/Redis healthy và service `migrate` hoàn tất. Migration cũng được chạy khi khởi động stack; seed và tạo admin là thao tác chủ động cho database mới. Container dùng cấu hình production, không có hot reload. Dùng `npm run backend:dev` nếu cần phát triển trực tiếp trên máy.
 
-Log Medusa đi ra stdout/stderr; `LOG_LEVEL` trong `.env` được truyền vào tiến trình container (mặc định `info`). Docker lưu log JSON, xoay vòng tối đa 3 file × 10 MB cho mỗi service lâu dài. `/health` là liveness của API; healthcheck riêng của PostgreSQL và Redis kiểm tra hạ tầng, không thay thế giám sát workflow của worker. `docker compose stop` giữ dữ liệu; `docker compose down` cũng giữ named volumes nếu không thêm `-v`.
+Compose local dùng `restart: "no"`, nên khởi động lại bằng lệnh chủ động; EC2 fallback override dùng `unless-stopped` cho các service lâu dài. Log Medusa đi ra stdout/stderr; `LOG_LEVEL` trong `.env` được truyền vào tiến trình container (mặc định `info`). Docker lưu log JSON, xoay vòng tối đa 3 file × 10 MB cho mỗi service lâu dài. `/health` là liveness của API; healthcheck riêng của PostgreSQL và Redis kiểm tra hạ tầng, không thay thế giám sát workflow của worker. `docker compose stop` giữ dữ liệu; `docker compose down` cũng giữ named volumes nếu không thêm `-v`.
 
-CI chạy lint, typecheck, build hai ứng dụng và HTTP integration test với PostgreSQL/Redis riêng. `npm test` tại root thực thi test backend qua Turbo. Để chạy test local, cung cấp `DB_HOST=localhost` (test runner dùng SSL với hostname khác), `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD` cho PostgreSQL test có quyền tạo database, cùng `REDIS_URL` trỏ tới Redis dành riêng cho test; không dùng database/Redis production.
+CI chạy lint, typecheck, build hai ứng dụng, HTTP integration test với PostgreSQL/Redis riêng và kiểm tra CloudFormation. AWS image workflow publish ECR qua OIDC; apply/start hạ tầng là thao tác review riêng theo runbook. `npm test` tại root thực thi test backend qua Turbo. Để chạy test local, cung cấp `DB_HOST=localhost` (test runner dùng SSL với hostname khác), `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD` cho PostgreSQL test có quyền tạo database, cùng `REDIS_URL` trỏ tới Redis dành riêng cho test; không dùng database/Redis production.

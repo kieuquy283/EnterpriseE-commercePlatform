@@ -1,0 +1,23 @@
+{
+  "profile": "aws-project",
+  "region": "ap-southeast-2",
+  "stackPrefix": "commerce",
+  "sessionHours": 4,
+  "foundationParameters": {
+    "StoreDomain": "135791112.xyz",
+    "ApiDomain": "api.135791112.xyz"
+  },
+  "dataParameters": {
+    "AlertEmail": "operator@example.com",
+    "DatabaseClass": "db.t4g.micro"
+  },
+  "appParameters": {
+    "StoreDomain": "135791112.xyz",
+    "ApiDomain": "api.135791112.xyz",
+    "CertificateArn": "REPLACE_WITH_SYDNEY_ACM_CERTIFICATE_ARN",
+    "BackendImage": "REPLACE_WITH_IMMUTABLE_ECR_BACKEND_IMAGE",
+    "StorefrontImage": "REPLACE_WITH_IMMUTABLE_ECR_IMAGE",
+    "PublishableKey": "pk_bootstrap",
+    "StorefrontEnabled": "false"
+  }
+}
