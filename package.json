@@ -3,7 +3,7 @@
   "private": true,
   "packageManager": "npm@11.12.1",
   "engines": {
-    "node": ">=22.22.0"
+    "node": "24.22.1"
   },
   "scripts": {
     "dev": "turbo dev",
@@ -22,7 +22,12 @@
     "todo": "node scripts/list-todos.mjs",
     "presentation:dev": "npm run dev --workspace=presentation",
     "presentation:build": "npm run build --workspace=presentation",
-    "presentation:test": "npm run test --workspace=presentation"
+    "presentation:test": "npm run test --workspace=presentation",
+    "format:check": "oxfmt --check --config .oxfmtrc.json .oxfmtrc.json lint-staged.config.mjs",
+    "hooks:install": "husky",
+    "hooks:verify": "lint-staged --hide-unstaged --concurrent false",
+    "prepare": "node -e \"if (process.env.NODE_ENV !== 'production' && process.env.CI !== 'true' && require('node:fs').existsSync('.git')) import('husky').then(({default: husky}) => husky())\"",
+    "format": "oxfmt --write --config .oxfmtrc.json"
   },
   "pnpm": {
     "overrides": {
@@ -35,8 +40,10 @@
     "@medusajs/eslint-plugin": "2.21.2",
     "ajv": "^8.13.0",
     "eslint": "^9.39.4",
+    "husky": "9.1.7",
     "jiti": "^2.7.0",
-    "prettier": "^3.2.5",
+    "lint-staged": "16.4.0",
+    "oxfmt": "0.78.0",
     "react": "^19.0.5",
     "react-dom": "^19.0.5",
     "turbo": "^2.0.14"

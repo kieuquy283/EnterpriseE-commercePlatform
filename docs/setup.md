@@ -1,6 +1,6 @@
 # Local development setup
 
-This guide starts a developer environment, not the AWS demo. Read the [specification](README.md) and [contribution rules](../CONTRIBUTING.md). Node >=22.22.0, npm 11 and Docker Compose v2 are required. The root packageManager/lockfile are authoritative. On Windows use equivalent PowerShell commands; the optional `scripts/use-d-drive.ps1` only adjusts developer cache paths.
+This guide starts a developer environment, not the AWS demo. Read the [specification](README.md) and [contribution rules](../CONTRIBUTING.md). Node 24.22.1 LTS, npm 11 and Docker Compose v2 are required. The root packageManager/lockfile are authoritative. The exact runtime is recorded in `.nvmrc` and `.node-version`, package engines, CI and Docker. Run `nvm install && nvm use` (or the equivalent in your version manager) before installing dependencies. Upgrade the pin deliberately with the same verification gates. On Windows use equivalent PowerShell commands; the optional `scripts/use-d-drive.ps1` only adjusts developer cache paths.
 
 ## 1. Install and configure
 

@@ -27,15 +27,15 @@ The chosen backend pattern is a **modular monolith**, deployed as separate Medus
 
 ## Repository
 
-| Location | Responsibility |
-| --- | --- |
-| `apps/backend` | Medusa core/config, custom modules/workflows/API, Admin extensions |
-| `apps/storefront` | Customer Next.js app and Playwright journeys |
-| `deploy` | CloudFormation, lifecycle tooling and fallback runbooks |
-| `load` | k6 catalog, checkout and recommendation scenarios |
-| `scripts/hm` | Restricted offline recommendation research/data tooling |
-| `docs/spec` | Current business-to-test specification |
-| `docs/report`, `docs/erd` | Dated evidence and schema/fixture references |
-| `presentation` | Shared report engine and independently versioned decks |
+| Location                  | Responsibility                                                     |
+| ------------------------- | ------------------------------------------------------------------ |
+| `apps/backend`            | Medusa core/config, custom modules/workflows/API, Admin extensions |
+| `apps/storefront`         | Customer Next.js app and Playwright journeys                       |
+| `deploy`                  | CloudFormation, lifecycle tooling and fallback runbooks            |
+| `load`                    | k6 catalog, checkout and recommendation scenarios                  |
+| `scripts/hm`              | Restricted offline recommendation research/data tooling            |
+| `docs/spec`               | Current business-to-test specification                             |
+| `docs/report`, `docs/erd` | Dated evidence and schema/fixture references                       |
+| `presentation`            | Shared report engine and independently versioned decks             |
 
-Use Node >=22.22.0 and the root npm package manager/lockfile. `npm ci` installs the workspaces. Local services and environment setup are documented in [setup](docs/setup.md). No credentials belong in source or presentation assets.
+Use Node 24.22.1 LTS and the root npm package manager/lockfile. `npm ci` installs the workspaces. Local services and environment setup are documented in [setup](docs/setup.md). No credentials belong in source or presentation assets.

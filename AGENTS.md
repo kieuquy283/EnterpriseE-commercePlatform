@@ -21,7 +21,7 @@ DAYMARK is a shared, production-oriented clothing-commerce MVP with product sugg
 
 ## Repository and commands
 
-Node >=22.22.0; root `packageManager` currently selects npm 11.12.1. Check it before installing. Use npm and the root lockfile; never introduce another manager/lockfile. Applications are in `apps/backend` and `apps/storefront`; report tooling lives in `presentation`. Read the applicable scoped AGENTS.md below before working in an area, including when starting from the repository root.
+Node 24.22.1 LTS; root `packageManager` currently selects npm 11.12.1. Check it before installing. Use npm and the root lockfile; never introduce another manager/lockfile. Applications are in `apps/backend` and `apps/storefront`; report tooling lives in `presentation`. Read the applicable scoped AGENTS.md below before working in an area, including when starting from the repository root.
 
 ```sh
 npm ci
