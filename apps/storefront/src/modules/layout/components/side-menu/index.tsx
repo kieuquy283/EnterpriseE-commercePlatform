@@ -103,7 +103,7 @@ const SideMenu = ({ regions }: SideMenuProps) => {
                         />
                       </div>
                       <Text className="flex justify-between txt-compact-small">
-                        © {new Date().getFullYear()} Medusa Store. All rights
+                        © {new Date().getFullYear()} DAYMARK. All rights
                         reserved.
                       </Text>
                     </div>

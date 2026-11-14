@@ -1,3 +1,4 @@
+import BrandLogo from "@modules/common/components/brand-logo"
 import { Suspense } from "react"
 
 import { listRegions } from "@lib/data/regions"
@@ -26,7 +27,7 @@ export default async function Nav() {
               className="txt-compact-xlarge-plus hover:text-ui-fg-base uppercase"
               data-testid="nav-store-link"
             >
-              Medusa Store
+              <BrandLogo />
             </LocalizedClientLink>
           </div>
 
