@@ -1,3 +1,5 @@
+> Reference status (14 November 2026): specialist/research documentation. Current DAYMARK scope, requirements and acceptance authority are in [../../README.md](../../README.md). Historical measurements and data-rights restrictions remain in force.
+
 # Private H&M image pipeline runbook
 
 The `qukiuthin` Kaggle CLI credential was refreshed on 2026-11-06. A competition file listing and selective image requests now work. Keep `data/hm/` private and avoid public hosting. The import commands below target only the isolated `recommendation_test` DB, not the main `commerce` DB.

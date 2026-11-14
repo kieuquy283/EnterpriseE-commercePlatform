@@ -1,42 +1,55 @@
-# Contributing
+# Contributing to DAYMARK
 
-## Chạy local
+This is a shared codebase. Start with [the canonical spec](docs/README.md), [local setup](docs/setup.md) and [AGENTS.md](AGENTS.md). Requirements and workflows apply to humans and coding agents; branch protection/CI must enforce selected checks separately—AGENTS alone cannot enforce team behavior.
 
-Cần Node.js >= 22.22.0, npm 11, Docker Engine/Desktop và Docker Compose v2. Chạy từ thư mục gốc repo (PowerShell):
+## A small, traceable change
 
-```powershell
-. .\scripts\use-d-drive.ps1 # Windows: đặt cache/tệp tạm trên ổ D
-npm ci
-Copy-Item .env.example .env
-Copy-Item apps/backend/.env.template apps/backend/.env
+1. Read the requirement/flow, related code/TODOs and relevant `git log` bodies. Check for concurrent work and preserve unrelated edits.
+2. Identify one outcome and its acceptance test. For a new boundary/provider/schema, document the decision and ask the responsible reviewer before implementing an unapproved structural change.
+3. Work on `feat/`, `fix/`, `refactor/`, `docs/`, `test/` or `chore/` topic branch; prefer a vertical business slice over disconnected infrastructure changes.
+4. Update the contract/spec when behavior changes. Add focused tests and record what could not be tested. Do not represent planned features as implemented.
+5. Open a focused PR with requirement/flow IDs, before/after behavior, validation, risks and unresolved TODOs. A reviewer can request a smaller PR or a clarified decision.
+6. Merge only with task/user authorization and required checks/reviews. Do not force-push shared main. Preserve published migration/data compatibility unless an explicitly reviewed migration plan says otherwise.
+
+## TODOs
+
+Use `TODO(kind): specific action — context; requirement/issue` for unfinished work near the relevant code. Kinds: impl, refactor, dup, shared, design, test, perf, security, ops. Example:
+
+```ts
+// TODO(test): Reconcile final-size stock under concurrent checkout — FR-06.
 ```
 
-Đặt cùng mật khẩu PostgreSQL trong `.env` và `DATABASE_URL` của `apps/backend/.env`; cấu hình `JWT_SECRET`, `COOKIE_SECRET` và CORS theo môi trường local. Sau đó chạy `docker compose up -d postgres redis`. Khi PostgreSQL/Redis đã healthy, khởi tạo database mới:
+Use `npm run todo`. Keep multi-step work in [the delivery backlog](docs/spec/07-delivery.md) or an issue; do not flood files with vague annotations. Remove resolved TODOs and mention them in the commit body.
 
-```powershell
-Set-Location apps/backend
-npx medusa db:migrate
-npm run seed
-npx medusa user -e admin@example.com -p '<mat-khau-manh>'
-Set-Location ../..
+## Commits
+
+Conventional subject, imperative and <=72 characters: `type(scope): description`. Types: feat, fix, refactor, docs, test, perf, chore, ci. Scopes should identify the affected area. One logical change per commit; the generated root lockfile travels with the dependency change that caused it.
+
+Nontrivial bodies explain:
+
+```text
+What: visible behavior and main implementation changes.
+Why: requirement/flow, decision and alternatives that mattered.
+Follow-ups: remaining TODOs, compatibility or operating limits.
+Validated: exact checks/results, plus anything not run.
 ```
 
-Chạy `npm run backend:dev` và `npm run storefront:dev` ở hai terminal. Lấy publishable key **Storefront** tại `http://localhost:9000/app`, rồi tạo `apps/storefront/.env.local` với `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY`, `NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000`, `MEDUSA_BACKEND_URL=http://localhost:9000` và `NEXT_PUBLIC_BASE_URL=http://localhost:8000`. Khởi động lại storefront sau khi đặt key; truy cập `http://localhost:8000/vn/store`. Xem [README.md](README.md) nếu cần hướng dẫn chi tiết.
+Do not fabricate testing or reviewer approval. An automated code agent commits/pushes only when its task authorizes that action.
 
-## Branch, commit và PR
+## Validation by scope
 
-- Đặt tên branch theo `feat/`, `fix/`, `chore/`, `docs/` hoặc `test/`, kèm mô tả ngắn bằng kebab-case; ví dụ `fix/checkout-address`.
-- Dùng commit dạng `type(scope): mô tả ngắn`, với `type` tương ứng các tiền tố trên; ví dụ `fix(storefront): validate checkout address`.
-- PR nên tập trung vào một thay đổi, nêu lý do, phạm vi ảnh hưởng, cách kiểm tra và cập nhật tài liệu/mẫu env khi cần. Dùng [PR template](.github/PULL_REQUEST_TEMPLATE.md). Giữ `main` luôn buildable.
-- Không commit `.env`, `.env.local` hoặc secret. Không sửa trực tiếp `package-lock.json`; để npm cập nhật lockfile khi đổi dependency.
+| Change | Required evidence |
+| --- | --- |
+| Docs/report content | `npm run docs:check`; inspect target/implemented/verified language and teacher coverage |
+| Presentation engine/content | Build/type check, route/navigation tests and print/overflow review where available |
+| Backend policy/workflow | Backend lint/types plus relevant unit/HTTP/integration assertions |
+| Storefront journey | Storefront lint/types/build plus relevant Playwright journey |
+| Schema | Generated new migration, disposable fresh/upgrade checks; never rewrite applied migrations |
+| Infra/release | CloudFormation lint/Guard and lifecycle tests; reviewed change set, budget and explicit deployment authorization |
+| Commerce correctness/performance | Isolated fixtures, repeat/contended operations, reconciled records and named metrics |
 
-## Checklist trước merge
+Use npm/root lockfile only. No generated output, credentials, private `.env`, deployment settings or raw customer records in Git. Do not run write/load tests against shared data merely to satisfy a checklist. App changes follow scoped AGENTS. Read [operations](docs/spec/06-operations.md) before live work.
 
-```powershell
-npm run lint
-npm run typecheck
-npm run build
-docker compose config --quiet
-```
+## Ownership and review
 
-Build storefront cần `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` hợp lệ (CI dùng key placeholder cho bước build). Nếu thay đổi flow commerce, chạy thử luồng trên storefront hoặc đặt `$env:PUBLISHABLE_KEY="<publishable-key-Storefront>"` rồi chạy `.\scripts\smoke-checkout.ps1 -RegisterCustomer` với backend local. Script tạo khách hàng/đơn hàng thật trong database đang kết nối. Kiểm tra tương thích giữa storefront, backend và dữ liệu khi sửa API, schema hoặc cấu hình.
+Record a responsible reviewer/operator per issue or release, not one permanent sole owner. Customer-facing business changes require business-flow review; architecture/integration changes require boundary/contract review; data/cloud actions require migration/cost/recovery review. Existing Medusa functionality must be verified in the chosen configuration before it is marked accepted. Suggested future CI enforcement: docs/contracts, isolated business E2E and required infrastructure checks; this document does not claim repository protection settings have been changed.

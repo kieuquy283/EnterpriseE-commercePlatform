@@ -6,7 +6,7 @@
 
 Trang chi tiết hiện gợi ý sản phẩm dựa trên mô tả, loại và màu. V2 đề xuất dùng thêm hình ảnh để nhận biết các sản phẩm trông giống nhau, đồng thời dùng độ phổ biến ở mức nhẹ. Việc so sánh ảnh và xếp hạng được làm trước trên máy xử lý dữ liệu. Khi khách mở trang, Medusa kiểm tra lại sản phẩm nào đang bán được và giá hiện hành; website chỉ hiển thị tối đa 6 món. Nếu ảnh hoặc chức năng gợi ý gặp lỗi, trang mua hàng vẫn hoạt động.
 
-Đây là phần mở rộng tùy chọn theo [Scope](../../02_Project_Scope_and_Assumptions.md) và [SRS](../../03_Software_Requirements_Specification.md). Chưa có bằng chứng Hybrid tốt hơn baseline. Đánh giá người thật, quyền công khai ảnh/dữ liệu và hiệu năng PDP là ba cổng nghiệm thu chưa đạt.
+Đây là phần mở rộng tùy chọn theo [Scope](../../spec/01-business.md) và [SRS](../../spec/05-testing.md). Chưa có bằng chứng Hybrid tốt hơn baseline. Đánh giá người thật, quyền công khai ảnh/dữ liệu và hiệu năng PDP là ba cổng nghiệm thu chưa đạt.
 
 ## 2. Audit hiện trạng và Evidence Matrix
 

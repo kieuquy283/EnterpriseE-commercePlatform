@@ -1,3 +1,5 @@
+> Reference status (14 November 2026): specialist/research documentation. Current DAYMARK scope, requirements and acceptance authority are in [../README.md](../README.md). Historical measurements and data-rights restrictions remain in force.
+
 # Chạy Recommendation MVP trong môi trường private
 
 MVP đã có Popular Products ở Home và Similar Products ở PDP. Medusa vẫn quyết định sản phẩm được bán, giá theo region/channel, inventory/backorder và checkout. Giao dịch H&M chỉ tạo điểm xếp hạng offline; không tạo Orders. Không có cá nhân hóa theo customer, LLM hoặc training trong HTTP request.

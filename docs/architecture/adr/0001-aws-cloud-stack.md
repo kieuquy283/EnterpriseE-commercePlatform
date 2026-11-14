@@ -1,3 +1,5 @@
+> Historical deployment ADR. Current DAYMARK component patterns and decisions are in [the canonical architecture](../../spec/03-architecture.md); dated decisions below preserve their original context.
+
 # ADR: AWS cloud deployment for the course
 
 - Status: accepted on November 8, 2026; publicly verified on November 9.
@@ -34,5 +36,5 @@ The [November 8–9 AWS report](../../report/aws-fargate-deployment-2026-11-08.m
 
 - [Canonical runbook](../../../deploy/RUNBOOK.md)
 - [Detailed CloudFormation guide](../../../deploy/cloudformation/README.md)
-- [System architecture](../cloud-system-architecture.md)
+- [System architecture](../../spec/03-architecture.md)
 - [EC2 fallback runbook](../../../deploy/ec2/RUNBOOK.md)

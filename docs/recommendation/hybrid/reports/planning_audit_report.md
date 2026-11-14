@@ -42,6 +42,6 @@
 
 ## Tài liệu được tạo và self-review
 
-[README](../README.md) · [plan](../plan.md) · [spec](../spec.md) · [00](../phase_00_repository_baseline.md) · [01](../phase_01_simple_baseline_evaluation.md) · [02](../phase_02_image_data_readiness.md) · [03](../phase_03_visual_embeddings.md) · [04](../phase_04_hybrid_ranking_evaluation.md) · [05](../phase_05_medusa_publishing_api.md) · [06](../phase_06_pdp_integration.md) · [07](../phase_07_system_testing_release.md) · [08 optional](../phase_08_session_tracking_optional.md) · báo cáo này: **13 Markdown files**.
+[README](../README.md) · [plan](../plan.md) · [spec](../spec.md) · [00](../../../spec/07-delivery.md) · [01](../../../spec/07-delivery.md) · [02](../../../spec/07-delivery.md) · [03](../../../spec/07-delivery.md) · [04](../../../spec/07-delivery.md) · [05](../../../spec/07-delivery.md) · [06](../../../spec/07-delivery.md) · [07](../../../spec/07-delivery.md) · [08 optional](../../../spec/07-delivery.md) · báo cáo này: **13 Markdown files**.
 
 Self-review checklist: mỗi phase có dependency, P0/P1/P2 tasks, inputs/outputs, files, Given/When/Then, PASS/BLOCKED, rollback, owner/estimate và report **proposed**; spec có stable IDs + traceability; plan tách online/offline, source vs proposal, risks, rights, critical path. Links được kiểm ở bước cuối của lượt audit; nếu tool báo link lỗi sẽ sửa trước khi kết thúc. Không có implementation report/test PASS mới. **Recommended first implementation task:** Phase 00, sau đó 01 và 02 có thể chạy song song; chặn Phase 04 publish nếu thiếu human/quality gate.

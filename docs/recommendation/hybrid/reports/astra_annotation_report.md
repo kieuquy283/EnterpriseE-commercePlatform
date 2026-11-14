@@ -24,4 +24,4 @@ Artifact private: `data/hm/processed/evaluation/v1-frozen-balanced-20261107/astr
 
 Nhãn này là **AI-judged proxy**, không phải hai reviewer độc lập, human ground truth hoặc human approval. Không điền `human_review=APPROVED` vào manifest Hybrid từ kết quả này. Vì packet chỉ chứa top6 v1, không tính nDCG v1 như một phép so công bằng với v2 trên cùng pooled judgment set. Khi có v2 artifact thật, dùng cùng sample manifest để thêm các v2-only targets vào packet mù; giữ nhãn cặp cũ sau khi kiểm checksum và chấm thêm cặp mới. Sau đó cần người thật audit một mẫu, ưu tiên 33 cặp confidence medium và các cặp v1/v2 bất đồng trước khi đưa ra kết luận chất lượng. Không suy CTR/conversion từ nhãn này.
 
-Không có DB write, model training, candidate publish, commit, push hay public upload trong lượt gán nhãn. [Kế hoạch và rubric](../astra-annotation-plan.md) lưu riêng trong docs.
+Không có DB write, model training, candidate publish, commit, push hay public upload trong lượt gán nhãn. [Kế hoạch và rubric](../../../spec/07-delivery.md) lưu riêng trong docs.

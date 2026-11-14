@@ -1,3 +1,5 @@
+> Operational reference: current DAYMARK scope and architecture authority are in [the canonical specification](../../docs/README.md). This guide preserves executable deployment procedures and dated recovery context; it does not prove current uptime or acceptance of the new requirements.
+
 # AWS commerce demo
 
 CloudFormation implementation of the approved course-project architecture. All regional resources use **ap-southeast-2**. The deployment profile is **aws-project**. This directory does not imply that any AWS resources have been created.
