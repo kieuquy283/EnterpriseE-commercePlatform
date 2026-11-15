@@ -39,3 +39,21 @@ Các `BP-05/OBJ-08/BREQ-REL-001` liên kết yêu cầu vận hành `FR-OPS-01..
 | UC-08 | Yêu cầu vận hành P3/P4, AT-08 | Triển khai/khôi phục không phải một trong 9 UC sản phẩm |
 
 **Kiểm tra độ phủ:** 9/9 UC học phần có actor, goal/journey, FR và AT đề xuất; chưa có kết quả thử hoặc phê duyệt. Quyền, khách vãng lai, tồn khi hủy, giá đổi và báo cáo còn OPEN tại [sổ nguồn](../00-project/source-and-assumption-register.md). Cổng R8 chỉ hoàn thành ở mức bản nháp; QA và chủ nghiệp vụ phải rà nội dung trước khi khóa baseline.
+
+## Liên kết với High-Level Design logic
+
+[HLD-01..10 và Component Catalog](../06-architecture/logical-architecture.md) là góc nhìn kiến trúc **Provisional**; IF chi tiết ở [hợp đồng giao diện](../06-architecture/api-and-interface-contracts.md). Cột này nối yêu cầu đã có, không tạo thêm FR mới.
+
+| UC học phần | HLD giải thích ranh giới/luồng | IF chính và kiểm tra |
+|---|---|---|
+| P1-UC01 | HLD-01/02/03/09 | IF-IDENT-001, IF-ACCESS-001; AT-04/09/10 |
+| P1-UC02 | HLD-02/03/04/07 | IF-CAT-001/002, IF-PRICE-001, IF-MEDIA-001; AT-11 |
+| P1-UC03 | HLD-02/03/05 | IF-CART-001; AT-12 |
+| P1-UC04 | HLD-03/04/05/10 | IF-CHK-001/002, IF-ORD-001; AT-01/03/13/15 |
+| P1-UC05 | HLD-05/08/10 | IF-PAY-001; AT-02/14 |
+| P1-UC06 | HLD-03/04/05 | IF-INV-001; AT-15/16 |
+| P1-UC07 | HLD-03/04/09 | IF-ORD-001, IF-FUL-001; AT-04/17 |
+| P1-UC08 | HLD-06/08/10 | IF-NOT-001, EVT-ORD-001; AT-05 |
+| P1-UC09 | HLD-01/02/03/09 | IF-ADMIN-001, IF-REPORT-001; AT-10/18 |
+
+NFR-PERF-01/02 và WL-CAT/CHK-001 → HLD-05/07; NFR-REL-01..05 → HLD-04/05/06/10; NFR-SEC-01..05 → HLD-01/08/09; NFR-OBS-01..03 → HLD-10; QAS-COST/MOD-001 → HLD-02/03/11. HLD status không thay trạng thái phê duyệt của requirement hay kết quả AT.

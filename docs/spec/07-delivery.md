@@ -1,5 +1,7 @@
 # Delivery gates and implementation order
 
+Authority update — 15 November 2026: the [business-first specification](../README.md#primary-business-first-specification) takes precedence for business scope and policy. This file maps that intent to DAYMARK implementation and retains earlier proposals where not yet reconciled. See the [crosswalk and held decisions](../reference/spec-consolidation.md); open policies are not approved merely because code exists.
+
 This is the shared backlog for the DAYMARK reset, not a claim that missing features are complete. Align each task/PR with a requirement from [business](01-business.md), a [flow](02-flows.md), and [acceptance evidence](05-testing.md). Named owners/dates belong in the team's issue tracker; no individual owns the whole codebase.
 
 ## Teacher lifecycle and deliverables

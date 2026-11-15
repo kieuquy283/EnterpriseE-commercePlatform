@@ -7,7 +7,7 @@ These references support the [current specification](../README.md); they are not
 - [9 November latest-main AWS release](../report/aws-redeployment-main389e855-2026-11-09.md): migrations, image digests and 18 public checks; no claimed campaign/restore/staff acceptance.
 - [Initial Fargate deployment](../report/aws-fargate-deployment-2026-11-08.md) and [EC2 rehearsal](../report/aws-ec2-deployment-2026-11-06.md): retain their dated limits, including API checkout versus browser acceptance.
 - [Evidence directory](../report/evidence/): sanitized immutable run outputs, including inventory snapshots.
-- [Schema survey](../erd/medusa-erd-v2-schema-survey.md) and [seed fixture guide](../erd/seed-sample-guide.md): implementation support, not the DAYMARK business definition.
+- Historical schema survey, seed fixtures and inventory-order evidence were removed from the tracked tree by upstream commits `0ca7a55`/`08dc1bf`. They remain retrievable in Git history before those commits; no current acceptance claim should depend on a removed artifact.
 - [Prior AWS decision](../architecture/adr/0001-aws-cloud-stack.md): full stack primary and EC2 fallback; current patterns/decisions live in 03-architecture.
 
 ## Product-suggestion research

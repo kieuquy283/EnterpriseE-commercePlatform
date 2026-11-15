@@ -1,5 +1,7 @@
 # Data ownership and API contracts
 
+Authority update — 15 November 2026: the [business-first specification](../README.md#primary-business-first-specification) takes precedence for business scope and policy. This file maps that intent to DAYMARK implementation and retains earlier proposals where not yet reconciled. See the [crosswalk and held decisions](../reference/spec-consolidation.md); open policies are not approved merely because code exists.
+
 This document supports [business requirements](01-business.md), [end-to-end flows](02-flows.md) and the [component architecture](03-architecture.md). Contracts below are target rules for implementation and testing, not a new set of duplicate commerce endpoints.
 
 ## 1. Ownership and storage

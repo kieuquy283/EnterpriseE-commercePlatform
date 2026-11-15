@@ -1,8 +1,8 @@
 # DAYMARK engineering specification
 
-DAYMARK is a Vietnamese everyday-clothing ecommerce MVP with product suggestions. This is the authoritative reading path for the documentation reset dated 14 November 2026, aligned with the supplied teacher rubric. It describes what to build and how to accept it; historical tests remain dated evidence.
+DAYMARK is a Vietnamese everyday-clothing ecommerce MVP with product suggestions. Business requirements are now governed by the business-first documents listed below, following the team consolidation decision of 15 November 2026. The earlier compact specification remains an implementation mapping and engineering reference. It describes what to build and how to accept it; historical tests remain dated evidence.
 
-## Read in order
+## Engineering implementation mapping
 
 1. [Business, users, scope and requirements](spec/01-business.md)
 2. [End-to-end business flows and failure paths](spec/02-flows.md)
@@ -20,7 +20,9 @@ Supporting material: [teacher acceptance brief](reference/teacher-brief.md), [da
 
 ## Authority and status
 
-- `docs/spec/`: current agreed design baseline. Targets are requirements, not measurements. A material change needs a reason and a decision entry.
+- `00-project/` through `05-data/`: primary business scope, actors, requirements, traceability and logical data definitions. Their Draft/Open labels remain; prioritizing these documents does not invent policy approval.
+- `06-architecture/`: primary logical architecture proposal. Its technology-neutral boundaries do not replace the current runtime automatically.
+- `docs/spec/`: existing DAYMARK implementation mapping and engineering targets. Business conflicts defer to the business-first specification. Technical decisions and availability measurement conflicts remain held for explicit review in [consolidation](reference/spec-consolidation.md). Targets are not measured results.
 - Executable code/templates: actual implementation, which may still have documented gaps from the target design.
 - `docs/report/`, `docs/erd/`, recommendation reports/evidence: historical observations, schema/fixture artifacts or restricted research. Preserve their source revision/date and do not treat them as a second roadmap.
 - `docs/recommendation/`: specialist implementation/research references, subject to the dataset-rights decision and feature gates. Current scope is defined here, not by old phase plans.
@@ -44,9 +46,9 @@ The old generic project-definition/SRS/week plans and superseded architecture na
 
 First implement and demonstrate one complete business journey; then measure and improve it. Do not add microservices, a new search engine or generative AI merely to enlarge the diagram.
 
-## Supporting business-first drafts
+## Primary business-first specification
 
-The following draft documents from `main` are preserved for team review. They are supporting proposals, not a replacement for the canonical specification above. Conflicting proposals need an explicit specification decision before implementation.
+Read these documents first for business scope and acceptance intent. They take precedence over conflicting business statements in `docs/spec/`. Draft policies remain open; implemented behavior is recorded separately. Framework, AWS and database changes require the explicit review described in [consolidation](reference/spec-consolidation.md).
 
 | Giai đoạn | Tài liệu hiện có | Trạng thái |
 |---|---|---|
@@ -56,7 +58,7 @@ The following draft documents from `main` are preserved for team review. They ar
 | 03 Yêu cầu | [SRS](03-requirements/SRS.md), [use case và AT](03-requirements/use-case-specifications.md), [tình huống chất lượng](03-requirements/quality-attribute-scenarios.md), [truy vết](03-requirements/requirements-traceability.md) | Bản nháp; mục tiêu chất lượng chưa đo/chưa duyệt |
 | 04 Tải công việc | [Phân tích tải](04-workload/workload-analysis.md) | Bản nháp; giả định và mục tiêu thử |
 | 05 Dữ liệu | [Mô hình miền](05-data/domain-model.md), [từ điển](05-data/data-dictionary.md), [quyền sở hữu và nhất quán](05-data/data-ownership-and-consistency.md) | Bản nháp logic; chính sách dữ liệu còn mở |
-| 06 Kiến trúc | [Thành phần logic](06-architecture/logical-architecture.md), [hợp đồng giao diện](06-architecture/api-and-interface-contracts.md), [tích hợp](06-architecture/integration-design.md), [ADR](06-architecture/adr/ADR-001-application-boundary-style.md) | Bản nháp; 3 ADR đề xuất, chưa phê duyệt |
+| 06 Kiến trúc | [10 sơ đồ HLD và kiến trúc logic](06-architecture/logical-architecture.md), [hợp đồng giao diện](06-architecture/api-and-interface-contracts.md), [tích hợp](06-architecture/integration-design.md), [ADR](06-architecture/adr/ADR-001-application-boundary-style.md) | Provisional; 10/10 hình đã render, chờ review và 3 ADR chưa phê duyệt |
 | 07 Đánh giá công nghệ | So sánh công nghệ và kiến trúc vật lý | Dự kiến |
 
 

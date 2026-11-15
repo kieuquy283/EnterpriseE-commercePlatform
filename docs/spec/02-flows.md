@@ -1,5 +1,7 @@
 # DAYMARK — end-to-end business flows
 
+Authority update — 15 November 2026: the [business-first specification](../README.md#primary-business-first-specification) takes precedence for business scope and policy. This file maps that intent to DAYMARK implementation and retains earlier proposals where not yet reconciled. See the [crosswalk and held decisions](../reference/spec-consolidation.md); open policies are not approved merely because code exists.
+
 This is the acceptance flow contract for [FR-01–FR-09](01-business.md#functional-requirements-and-flow-ownership). It specifies required behavior, not a claim that every path exists today. Medusa's actual state transitions, transaction boundaries and reservation timing must be verified against the installed version. Diagrams below use business concepts rather than undocumented enum values.
 
 ## Whole-business journey

@@ -102,6 +102,7 @@ Các mục sau được ghi ngày **2026-11-15**, trạng thái **Open**, chưa 
 | OPEN-DATA-005 | Một hay nhiều vị trí tồn/giao trong MVP | Vận hành |
 | OPEN-DATA-006 | Độ trễ chấp nhận được, trigger vô hiệu hóa cache/search | Chủ sản phẩm và QA |
 | OPEN-ARCH-001 | Kiểu cấu trúc và ranh giới nhất quán logic trong ADR-001..003 | Chủ dự án, kiến trúc và chủ dữ liệu |
+| OPEN-ARCH-002 | Bảo đảm kết quả đơn đã nhận tạo việc thông báo bền, retry/dedupe và đối soát event mất; tác động HLD-06 | Kiến trúc, vận hành và QA |
 | OPEN-TECH-DB | So sánh PostgreSQL/NoSQL, chọn database và ADR ở phase 07 | Kiến trúc, vận hành và chủ dữ liệu |
 
 ## Ranh giới với triển khai hiện tại

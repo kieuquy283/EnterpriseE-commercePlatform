@@ -38,3 +38,4 @@ deploy/cloudformation/settings.json
 /docs/PLAN_WORKLOAD_PHASE.md
 /docs/PLAN_DATA_PHASE.md
 /docs/PLAN_LOGICAL_ARCHITECTURE_PHASE.md
+/docs/PLAN_TECH_AGNOSTIC_HIGH_LEVEL_ARCHITECTURE.md

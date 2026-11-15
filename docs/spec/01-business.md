@@ -1,5 +1,7 @@
 # DAYMARK — business specification
 
+Authority update — 15 November 2026: the [business-first specification](../README.md#primary-business-first-specification) takes precedence for business scope and policy. This file maps that intent to DAYMARK implementation and retains earlier proposals where not yet reconciled. See the [crosswalk and held decisions](../reference/spec-consolidation.md); open policies are not approved merely because code exists.
+
 Status: chosen product direction for the next implementation stage, dated 14 November 2026. This specification defines the intended MVP; it does not certify that every requirement is implemented. Acceptance evidence belongs in [testing](05-testing.md). The project is an educational production-oriented MVP, not a complete enterprise retailer.
 
 ## Business problem and value
@@ -21,9 +23,9 @@ The primary business outcome is one complete, observable journey: **stock receip
 | Inventory | One warehouse stock location; staff record receipts and adjustments; no supplier procurement or warehouse automation |
 | Delivery | Staff-operated fulfillment and manual external-carrier handoff; tracking information recorded when available; no live carrier booking integration |
 | Payment | COD for the public demo; existing simulator only in isolated non-production acceptance tests; no real card collection |
-| Suggestions | Non-personalized similar/popular sellable products first; consent-based personalization remains gated until separately accepted |
-| Promotions | One bounded campaign scenario with explicit validity and inventory rules; no marketplace, loyalty or flash-sale platform |
-| Returns | Staff-assisted cancellation and a documented return/refund exception procedure; no self-service exchange portal |
+| Suggestions | Optional/COULD under FR-REC-01/02; existing similar/popular and personalization code remains gated. Selecting it for release requires evaluation and explicit scope acceptance |
+| Promotions | SHOULD/pending business policy; existing bounded campaign proposal is not a mandatory acceptance commitment |
+| Returns | Exchanges/returns remain optional and policy-open; existing staff exception procedure is a proposal, not an approved promise |
 
 Workload, availability, recovery and budget targets are defined in [testing](05-testing.md) and [operations](06-operations.md), not inferred from product count. The target assortment is a fixture requirement, not current seed content. The inspected seed creates three generic products without product images. It does not create the first administrator.
 
@@ -65,7 +67,7 @@ Roles describe required responsibilities. Fine-grained staff authorization is an
 | FR-08 | Send customer confirmation asynchronously with bounded retry and duplicate protection | BR-04, BR-06 | [FLOW-08](02-flows.md#flow-08--customer-notification): success, provider outage and repeated event |
 | FR-09 | Administer catalog/orders/stock and produce basic operational reports | BR-03, BR-05, BR-06 | [FLOW-09](02-flows.md#flow-09--administration-and-reporting): access control, totals reconciliation and operator actions |
 
-All nine use cases are core acceptance scope. Suggestions are the chosen advanced feature, not an AI shopping assistant. Suggested items can be deterministic; no generative AI dependency or token-cost claim is required for the initial version.
+All nine use cases are core acceptance scope. Suggestions are optional advanced scope under the prioritized SRS; the earlier selection is retained as an implementation proposal, not a core release gate. There is no committed AI shopping assistant. Suggested items can be deterministic; no generative AI dependency or token-cost claim is required for the initial version.
 
 ## Business rules
 
