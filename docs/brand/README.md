@@ -1,47 +1,37 @@
-# DAYMARK approved project branding
+<a id="approval--15-november-2026"></a>
+# Nhận diện thương hiệu DAYMARK
 
-## Approval — 15 November 2026
+<img src="daymark-swallow.svg" width="120" alt="Biểu tượng chim én DAYMARK" />
 
-**Status: Approved by the project requester.** The user explicitly approved DAYMARK branding on 15 November 2026. This supersedes the earlier provisional/palette-only status.
+**DAYMARK — Made for the everyday.**
 
-The approved project identity is DAYMARK, the **Made for the everyday.** tagline, the swallow SVG/wordmark, the ivory/charcoal/muted olive palette and the current modern editorial storefront design system documented in [storefront design](../design-system/README.md). Earlier monogram/ginkgo concepts remain archived explorations, not alternative official marks.
+DAYMARK là thương hiệu thời trang mặc hằng ngày dành cho người trẻ tại Việt Nam. Trang phục linh hoạt cho việc học, công việc và những khoảng thời gian ngoài giờ; hình ảnh hiện đại, gọn gàng và gần gũi.
 
-This records the requester's branding decision. It does not claim a teammate-wide sign-off, approval of the generic business drafts or resolution of open business policies. It does not authorize a deployment. Future material branding changes should update this decision record.
+## Logo
 
-## Historical exploration and provenance
+Logo kết hợp biểu tượng chim én và chữ **DAYMARK** viết hoa. Chim én thể hiện sự chuyển động trong nhịp sống hằng ngày.
 
-Initial generated concept, 14 November 2026. [Concept board](daymark-concept-v1.png) explores an uppercase wordmark, olive day-mark detail, DM monogram, ivory/charcoal applications and apparel labels. This is a proposal for review, not a production vector master or a trademark-clearance claim. The shown people/garments are generated concept imagery, not actual products or brand ambassadors.
+- [Logo SVG](daymark-swallow.svg): dùng cho giao diện, tài liệu và các vị trí cần thay đổi kích thước.
+- [Logo PNG nền trong suốt](daymark-swallow.png): dùng khi định dạng đầu ra không hỗ trợ SVG.
+- Giữ nguyên tỷ lệ, hướng và hình dáng của biểu tượng. Không kéo giãn, thêm hiệu ứng hoặc ghép thành biểu tượng khác.
+- Đặt logo trên nền đơn giản, đủ tương phản; căn giữa theo chiều dọc khi ghép với chữ DAYMARK.
 
-Generated with the built-in imagegen tool. No existing brand or logo reference was supplied. The project copy is preserved here; use this as direction, then create consistent standalone transparent/vector assets after the identity is selected. It does not change the live storefront.
+## Màu sắc
 
-## Generation prompt
+| Màu | Vai trò |
+| --- | --- |
+| Trắng ngà | Nền chủ đạo, tạo không gian thoáng và làm nổi bật trang phục |
+| Than đậm | Chữ, logo, đường nét và thao tác chính |
+| Ô liu dịu | Điểm nhấn và các vùng phân cấp nội dung |
 
-Use case: logo-brand. Create a polished initial visual identity concept board for DAYMARK, a contemporary Vietnamese everyday clothing label for young adults. Positioning: versatile understated clothing for study, work and weekends, relaxed clean silhouettes. Original brand, do not imitate existing fashion brands. Exact main text: "DAYMARK" (D A Y M A R K); exact small tagline "Made for the everyday." Design a distinctive, elegant uppercase sans-serif wordmark with subtly customized letterforms and a compact DM monogram or simple original horizon/day-mark symbol. Show one coherent identity, not many unrelated options. Editorial brand sheet on warm ivory, charcoal ink with muted olive accent: generous whitespace, large primary wordmark at top, small standalone mark, black-on-ivory and ivory-on-charcoal label applications, one tasteful realistic woven garment label closeup and hangtag on natural cotton fabric. Restrained contemporary apparel art direction, precise typography, premium yet approachable, flat vector-friendly logo forms, no gradients, no shopping carts, no stock clothing icons, no invented extra text, no watermark. This is an exploratory concept board, not trademark certification.
+Giá trị màu dùng trong giao diện được quản lý tại `apps/storefront/src/styles/globals.css` và mô tả trong [hệ thống thiết kế](../design-system/README.md). Dùng các biến màu chung thay vì tạo thêm bảng màu riêng cho từng trang.
 
-## Ginkgo emblem exploration
+## Chữ và bố cục
 
-[Second concept](daymark-ginkgo-v2.png): a standalone ginkgo-leaf emblem, repeated in charcoal, olive and reversed ivory. Generated using built-in imagegen; not a final production vector asset.
+Inter là phông chữ dùng chung của cửa hàng. Tiêu đề lớn, khoảng trắng rộng, đường kẻ mảnh và bố cục thiên về hình ảnh sản phẩm tạo nên phong cách biên tập hiện đại. Nút, ô nhập, bộ chọn và trạng thái tương tác tuân theo cùng một [hệ thống thành phần](../design-system/README.md#primitives).
 
-Prompt: Use case: logo-brand. Create a new original standalone emblem concept for DAYMARK, a contemporary understated everyday clothing brand in Vietnam. Primary symbol: a single elegant ginkgo leaf, simplified into a bold distinctive silhouette with a short stem and one subtle central notch. Explore a clever minimal negative-space detail suggesting a rising day or a fold of fabric, but keep the leaf readable and avoid forcing letters into it. This should feel like a recognizable clothing-brand emblem suitable for tiny chest embroidery, woven garment labels, hangtags and favicon. Single-color flat vector-style shapes, impeccable balance, simple enough to reproduce at 16px or embroider; no gradients, shading, thin botanical vein networks, circular badges, mountain logos, photorealism or stock eco-brand styling. Premium contemporary apparel character, natural but urban, confident not decorative. Landscape concept sheet on warm ivory: one large charcoal emblem prominently centered in the left two-thirds; in the right third show a small muted olive version, a reversed ivory emblem on a charcoal square, and the emblem above the exact wordmark 'DAYMARK'. Keep text only DAYMARK, no tagline or other text. One coherent emblem design repeated consistently, not different logo alternatives. Generous negative space and precise editorial layout. Do not imitate existing brand marks. Logo exploration, not a trademark-clearance claim.
+## Hình ảnh và nội dung
 
-## Swallow emblem exploration
+Ưu tiên ảnh trang phục rõ ràng, màu trung tính và bối cảnh đời thường. Không dùng ảnh có nhãn hiệu bên thứ ba làm sản phẩm DAYMARK. Ảnh minh họa phải được phân biệt với ảnh chính xác của sản phẩm, màu hoặc biến thể đang bán.
 
-[Third concept](daymark-swallow-v3.png): a standalone geometric swallow in flight. Generated with built-in imagegen; still an exploratory bitmap, not a cleared/final vector mark.
-
-Prompt: Use case: logo-brand. New original emblem exploration for DAYMARK, an understated contemporary everyday clothing label for young adults in Vietnam. Create a compact abstract swallow bird in flight as the standalone brand symbol. Bold balanced geometric silhouette, subtly folded wings, short forked tail, minimal negative space, confident horizontal movement. Sophisticated and calm, neither aggressive sportswear nor a cute cartoon. Design readable as tiny single-color chest embroidery and a woven label. Aim for a fresh distinctive mark; avoid familiar athletic swooshes, airline logos, eagle crests, circular badges and generic bird clipart. Flat clean vector-like solid shapes, no gradients, outlines, feather details or three-dimensional rendering. Show one consistent emblem in an editorial landscape concept board: large charcoal mark at left on warm ivory; at right a smaller muted olive version, an ivory version in a charcoal square, and the same bird above exact text 'DAYMARK' in a restrained uppercase sans-serif wordmark. Plenty of negative space, precise optical spacing. Only text DAYMARK, no other wording. No photographic mockups. This is an exploratory new direction, not a revision of a leaf and not a trademark-clearance claim.
-
-## Earlier identity decision (superseded)
-
-The requester selected the swallow direction on 14 November 2026; the current branding approval is recorded above. [Standalone transparent symbol](daymark-swallow.png) is the current raster master, copied unchanged to storefront/presentation public brand directories. Charcoal/ivory with muted olive remains the visual direction; exact color/vector master cleanup can follow without changing the approved bird concept. The wordmark is DAYMARK and the tagline is **Made for the everyday.**
-
-Meaning: the swallow represents everyday movement—clothing that goes with you through study, work and life in the city. This is the chosen brand narrative, not a historical or cultural-symbolism claim. Earlier monogram/ginkgo boards remain exploration references and must not appear as competing official marks.
-
-Standalone generation used built-in imagegen with the approved swallow board as edit reference. Prompt: Extract only the large charcoal swallow bird emblem from the supplied DAYMARK concept board as a single standalone logo on a truly transparent background. Preserve the exact approved silhouette, proportions, direction (flying right), pointed wings, head and forked tail. Solid uniform charcoal #242722, perfectly clean flat edges, centered with modest transparent padding, high resolution. Remove all text, ivory background, layout panels, repeated variants and shadows. Do not redesign or add details. Output one emblem only, genuine alpha transparency.
-
-## Application
-
-Use the swallow with the plain DAYMARK wordmark; avoid splitting the name into unrelated visual treatments. Presentation typography uses Inter Variable via the Fontsource package, with soft ivory/olive light and charcoal text inspired by the supplied presentation reference. Existing storefront brand surfaces use the same emblem; this is not a wholesale customer-UI redesign or a live release.
-
-## Vector master
-
-[Traced SVG swallow](daymark-swallow.svg) is the preferred UI logo. It was vectorized from the approved transparent image alpha silhouette using VTracer spline tracing; the viewBox is tightly cropped (923 × 853), with one charcoal path. No new emblem was invented. Presentation and storefront use unchanged copies of this SVG; PNG remains useful for raster-only social metadata. Optical cleanup for physical embroidery is a separate production task.
+Giọng văn ngắn gọn, tự nhiên và hữu ích. Nêu rõ thông tin về trang phục, giá, lựa chọn và đơn hàng; tránh lời quảng cáo phóng đại hoặc cam kết chưa được kiểm chứng. Giữ nguyên tên **DAYMARK** và khẩu hiệu **Made for the everyday.**

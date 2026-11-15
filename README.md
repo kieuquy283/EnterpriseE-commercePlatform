@@ -1,41 +1,55 @@
 # DAYMARK
 
-<img src="docs/brand/daymark-swallow.svg" width="120" alt="DAYMARK swallow" />
+<img src="docs/brand/daymark-swallow.svg" width="120" alt="Biểu tượng chim én DAYMARK" />
 
-**Made for the everyday.** A production-oriented clothing ecommerce MVP for a fictional Vietnamese brand, built with Next.js, Medusa, PostgreSQL and Redis, with product suggestions as the advanced feature.
+**Made for the everyday.** DAYMARK là dự án thương mại điện tử hướng đến vận hành thực tế cho một thương hiệu quần áo thường ngày giả định tại Việt Nam. Dự án kết nối hành trình mua sắm của khách hàng và vận hành cửa hàng: nhập kho, công bố sản phẩm, khám phá, thanh toán, xử lý đơn, theo dõi giao hàng và đối soát giao nhận/thanh toán.
 
-The business journey is **stock receipt → catalog → shopping → payment/order → fulfillment → status/notification → manual delivery and COD reconciliation**. The goal is one complete, measured and defensible flow, not a full enterprise retailer.
+<a id="architecture"></a>
 
-## Start here
+## Kiến trúc
 
-- [Authoritative specification and teacher coverage](docs/README.md)
-- [Business vision and requirements](docs/spec/01-business.md)
-- [Flows, including warehouse/staff operations](docs/spec/02-flows.md)
-- [Architecture and decisions](docs/spec/03-architecture.md)
-- [NFRs and acceptance tests](docs/spec/05-testing.md)
-- [What to implement first](docs/spec/07-delivery.md)
-- [Local setup](docs/setup.md), [contributing](CONTRIBUTING.md), [agent rules](AGENTS.md)
-- [Reusable presentations and reports](presentation/README.md)
+Ứng dụng khách hàng dùng Next.js. Medusa sở hữu các năng lực thương mại trong một modular monolith, với hai vai trò chạy API/Admin và worker. PostgreSQL lưu dữ liệu giao dịch, Redis hỗ trợ điều phối và bộ nhớ đệm, S3 lưu nội dung đa phương tiện. Gợi ý sản phẩm là năng lực khám phá tùy chọn, có yêu cầu riêng về đánh giá và quyền sử dụng dữ liệu.
 
-## Implementation baseline
+[Tài liệu kỹ thuật](docs/technical/README.md) giải thích ranh giới triển khai, lưu trữ, triển khai AWS, kiểm thử và quy trình vận hành. [Đặc tả nghiệp vụ](docs/README.md#primary-business-first-specification) xác định người dùng, yêu cầu, chính sách và luồng logic độc lập với lựa chọn công nghệ.
 
-This documentation reset defines DAYMARK's target; the customer app now uses the approved swallow/name on its brand surfaces but is not yet fully seeded for that target. Existing commerce uses Medusa 2.21.2 with a Next.js 15 storefront. The current commerce seed contains three generic products without images. First-admin onboarding, a complete staff fulfillment demonstration and customer notifications remain acceptance work. Recommendation/personalization code exists behind feature gates; no research dataset is implicitly approved for public release.
+<a id="getting-started"></a>
 
-The branding and scope changes are source changes only; this stage does not deploy the storefront or restart AWS.
+## Bắt đầu sử dụng
 
-The chosen backend pattern is a **modular monolith**, deployed as separate Medusa API/admin and worker processes. Full AWS uses ALB/ACM, ECS Fargate, private RDS PostgreSQL, Redis EC2 and private S3 through a backend image proxy in ap-southeast-2. EC2/Compose is a fallback. Dated [9 November release evidence](docs/report/aws-redeployment-main389e855-2026-11-09.md) records 18 public checks; it does not guarantee current availability, capacity or acceptance of the new scope.
+Làm theo [hướng dẫn thiết lập cục bộ](docs/setup.md) để chọn phiên bản Node được ghim, cài các npm workspace, cấu hình dịch vụ cục bộ và chuẩn bị ứng dụng. Phiên bản môi trường chạy và trình quản lý gói được quy định trong các tệp phiên bản và manifest của kho mã.
 
-## Repository
+```sh
+npm ci
+npm run backend:dev
+# Trong terminal khác:
+npm run storefront:dev
+```
 
-| Location                  | Responsibility                                                     |
-| ------------------------- | ------------------------------------------------------------------ |
-| `apps/backend`            | Medusa core/config, custom modules/workflows/API, Admin extensions |
-| `apps/storefront`         | Customer Next.js app and Playwright journeys                       |
-| `deploy`                  | CloudFormation, lifecycle tooling and fallback runbooks            |
-| `load`                    | k6 catalog, checkout and recommendation scenarios                  |
-| `scripts/hm`              | Restricted offline recommendation research/data tooling            |
-| `docs/spec`               | Current business-to-test specification                             |
-| `docs/report`, `docs/erd` | Dated evidence and schema/fixture references                       |
-| `presentation`            | Shared report engine and independently versioned decks             |
+Thiết lập cơ sở dữ liệu, nhập danh mục có chủ đích và tạo tài khoản quản trị là các bước vận hành riêng trong hướng dẫn thiết lập. Giữ thông tin xác thực trong cấu hình môi trường riêng tư.
 
-Use Node 24.22.1 LTS and the root npm package manager/lockfile. `npm ci` installs the workspaces. Local services and environment setup are documented in [setup](docs/setup.md). No credentials belong in source or presentation assets.
+<a id="documentation"></a>
+
+## Tài liệu
+
+- [Mục lục tài liệu](docs/README.md)
+- [Yêu cầu nghiệp vụ và thiết kế logic](docs/README.md#primary-business-first-specification)
+- [Thiết kế kỹ thuật và vận hành](docs/technical/README.md)
+- [Nhận diện thương hiệu](docs/brand/README.md) và [hệ thống thiết kế storefront](docs/design-system/README.md)
+- [Bộ dữ liệu danh mục và quy trình nhập](docs/catalog/DATASET.md)
+- [Quy ước đóng góp và kiểm chứng](CONTRIBUTING.md)
+- [Hướng dẫn cho agent](AGENTS.md)
+- [Công cụ trình bày và báo cáo](presentation/README.md)
+
+<a id="repository"></a>
+
+## Cấu trúc kho mã
+
+| Vị trí            | Trách nhiệm                                                      |
+| ----------------- | ---------------------------------------------------------------- |
+| `apps/backend`    | Cấu hình Medusa, module, workflow, API và phần mở rộng Admin     |
+| `apps/storefront` | Ứng dụng khách hàng và kiểm thử nghiệm thu trên trình duyệt      |
+| `deploy`          | Hạ tầng, công cụ quản lý vòng đời và hướng dẫn triển khai        |
+| `load`            | Kịch bản tải và hiệu năng                                        |
+| `scripts`         | Tiện ích kho mã và công cụ dữ liệu ngoại tuyến                   |
+| `docs`            | Đặc tả nghiệp vụ, hướng dẫn kỹ thuật và bằng chứng có ngày tháng |
+| `presentation`    | Công cụ trình bày dùng chung và các bộ trang báo cáo             |

@@ -1,62 +1,68 @@
-# Teacher acceptance brief — Project 1
+<a id="teacher-acceptance-brief--project-1"></a>
+# Yêu cầu nghiệm thu của giảng viên — Dự án 1
 
-Source: teacher expectations supplied directly by the project team on 14 November 2026. This is the acceptance input, not a report of achieved results. The [specification](../README.md) maps it to implementation/testing gates.
+Nguồn: kỳ vọng giảng viên do nhóm dự án cung cấp trực tiếp ngày 14 tháng 11 năm 2026. Đây là đầu vào nghiệm thu, không phải kết quả đã đạt. [Đặc tả](../README.md) ánh xạ sang cổng triển khai/kiểm thử.
 
-## Common expectations
+<a id="common-expectations"></a>
+## Kỳ vọng chung
 
-Production-oriented MVP; clear architecture and defensible trade-offs; real cloud deployment with CI/CD, security, observability and cost awareness; justified cloud/provider/technology choices. A complete enterprise product, dozens of microservices, every possible feature, unevaluated complex AI and copied large-company architecture are not expected.
+MVP hướng vận hành thực tế; kiến trúc rõ và đánh đổi giải thích được; triển khai cloud thật có CI/CD, bảo mật, quan sát và ý thức chi phí; lý giải lựa chọn cloud/provider/công nghệ. Không yêu cầu sản phẩm doanh nghiệp hoàn chỉnh, hàng chục microservice, mọi tính năng, AI phức tạp chưa đánh giá hoặc sao chép kiến trúc công ty lớn.
 
-## Business and functional scope
+<a id="business-and-functional-scope"></a>
+## Phạm vi nghiệp vụ và chức năng
 
-Cloud commerce supporting the full customer buying journey. Core users: Customer, Store/Operations Staff and Administrator. Advanced feature: product recommendations OR AI shopping assistant; DAYMARK selects product recommendations.
+Thương mại cloud hỗ trợ toàn hành trình mua. Người dùng cốt lõi: khách hàng, nhân viên cửa hàng/vận hành, quản trị viên. Tính năng nâng cao: gợi ý sản phẩm HOẶC trợ lý mua sắm AI; DAYMARK chọn gợi ý sản phẩm.
 
-Required use cases:
+Ca sử dụng bắt buộc:
 
-1. Registration/login.
-2. Product catalog and search.
-3. Shopping cart.
-4. Checkout and order creation.
-5. Payment simulation/integration.
-6. Inventory update.
-7. Order status tracking.
-8. Customer notification.
-9. Basic administration/reporting.
+1. Đăng ký/đăng nhập.
+2. Danh mục và tìm kiếm sản phẩm.
+3. Giỏ hàng.
+4. Checkout và tạo đơn.
+5. Mô phỏng/tích hợp thanh toán.
+6. Cập nhật tồn kho.
+7. Theo dõi trạng thái đơn.
+8. Thông báo khách hàng.
+9. Quản trị/báo cáo cơ bản.
 
-## Engineering requirements
+<a id="engineering-requirements"></a>
+## Yêu cầu kỹ thuật
 
-Workload: read-heavy product browsing, transactional checkout, promotion traffic peaks.
+Tải: duyệt sản phẩm thiên về đọc, checkout giao dịch và đỉnh khuyến mãi.
 
-Architecture: transactional order database, product search, hot-data cache, object storage for media, asynchronous notification and payment idempotency.
+Kiến trúc: cơ sở dữ liệu đơn giao dịch, tìm kiếm sản phẩm, cache dữ liệu nóng, lưu đối tượng cho nội dung đa phương tiện, thông báo bất đồng bộ và idempotency thanh toán.
 
-Define numeric targets: peak RPS/concurrent users, p95 API latency, availability, recovery objectives and monthly cloud budget. The teacher supplies categories, not actual numbers; DAYMARK's numbers are explicitly project targets to test.
+Xác định mục tiêu số: RPS/người dùng đồng thời đỉnh, p95 API, độ sẵn sàng, mục tiêu khôi phục, ngân sách cloud tháng. Giảng viên cung cấp nhóm chỉ tiêu, không cho số cụ thể; số của DAYMARK là mục tiêu dự án cần kiểm thử.
 
-Required demonstrations: simulated peak scaling, safe duplicate payment/order handling, CI/CD deployment, monitoring dashboard, architecture and ADRs.
+Cần trình diễn: tăng giảm theo tải đỉnh mô phỏng, xử lý trùng thanh toán/đơn an toàn, triển khai CI/CD, dashboard giám sát, kiến trúc và ADR.
 
-## Shared lifecycle deliverables
+<a id="shared-lifecycle-deliverables"></a>
+## Sản phẩm bàn giao theo vòng đời
 
-| Phase | Deliverables |
+| Giai đoạn | Sản phẩm |
 | --- | --- |
-| P1 Business & Architecture | Problem statement, stakeholders, functional requirements, numeric NFRs, workload analysis, initial cloud architecture |
-| P2 App, Data & Integration | Component architecture, API design, data model/ownership, sync vs async and integration architecture |
-| P3 Security & DevOps | Threat model, IAM/access control, CI/CD, containers, IaC and deploy/rollback strategy |
-| P4 Production Engineering | Load/performance, reliability/failure scenarios, dashboard, SLI/SLO, capacity and cost analysis |
-| P5 AI Engineering, if any | AI architecture, evaluation dataset/metrics, security/guardrails, latency and token-cost analysis |
+| P1 Nghiệp vụ và kiến trúc | Vấn đề, bên liên quan, yêu cầu chức năng, NFR số, phân tích tải, kiến trúc cloud ban đầu |
+| P2 Ứng dụng, dữ liệu và tích hợp | Kiến trúc thành phần, API, mô hình/quyền sở hữu dữ liệu, đồng bộ/bất đồng bộ và tích hợp |
+| P3 Bảo mật và DevOps | Mô hình đe dọa, IAM/truy cập, CI/CD, container, IaC, chiến lược triển khai/quay lui |
+| P4 Kỹ thuật vận hành thực tế | Tải/hiệu năng, độ tin cậy/kịch bản lỗi, dashboard, SLI/SLO, năng lực và chi phí |
+| P5 Kỹ thuật AI nếu có | Kiến trúc AI, dữ liệu/chỉ số đánh giá, bảo mật/rào chắn, độ trễ và phí token |
 
-For non-LLM recommendations: describe algorithm/data architecture, quality/eligibility evaluation and latency/resource cost; token cost is explicitly N/A. Introducing a generative assistant would require new safety/evaluation/cost requirements.
+Với gợi ý không LLM: mô tả thuật toán/kiến trúc dữ liệu, đánh giá chất lượng/điều kiện hợp lệ và độ trễ/chi phí tài nguyên; phí token ghi N/A. Thêm trợ lý sinh nội dung cần yêu cầu an toàn/đánh giá/chi phí mới.
 
-## Architecture-defense questions
+<a id="architecture-defense-questions"></a>
+## Câu hỏi bảo vệ kiến trúc
 
-1. What business problem is solved?
-2. What workload assumptions are made?
-3. What measurable NFRs apply?
-4. Why this architecture?
-5. Why this database/storage model?
-6. What happens at 5x or 10x load?
-7. What happens when a dependency fails?
-8. How are deployment and rollback performed?
-9. How are data/access protected?
-10. How is health known?
-11. What does it cost?
-12. If AI is used, what are quality, safety and cost?
+1. Giải quyết vấn đề nghiệp vụ gì?
+2. Giả định tải nào?
+3. NFR đo được nào áp dụng?
+4. Vì sao chọn kiến trúc này?
+5. Vì sao chọn mô hình cơ sở dữ liệu/lưu trữ này?
+6. Điều gì xảy ra ở tải 5x hoặc 10x?
+7. Khi phụ thuộc lỗi thì sao?
+8. Triển khai/quay lui thế nào?
+9. Bảo vệ dữ liệu/truy cập ra sao?
+10. Biết hệ thống khỏe bằng cách nào?
+11. Chi phí bao nhiêu?
+12. Nếu dùng AI, chất lượng, an toàn và chi phí thế nào?
 
-One complete end-to-end flow, real cloud, meaningful decisions, measurable requirements, failure handling, security, automated deployment, observability and cost awareness are required. Build less; design, implement, measure and defend it well.
+Cần một luồng xuyên suốt hoàn chỉnh, cloud thật, quyết định có ý nghĩa, yêu cầu đo được, xử lý lỗi, bảo mật, triển khai tự động, khả năng quan sát và ý thức chi phí. Xây ít hơn nhưng thiết kế, triển khai, đo và bảo vệ tốt.

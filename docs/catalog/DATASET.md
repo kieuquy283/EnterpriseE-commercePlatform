@@ -1,26 +1,28 @@
-# DAYMARK catalog fixture and importer
+<a id="daymark-catalog-fixture-and-importer"></a>
+# Dữ liệu mẫu danh mục DAYMARK và công cụ nhập
 
-The fixture implements the catalog-input part of FR-02/FLOW-02 and initial inventory for FR-06. It is a fictional class/demo assortment, not evidence of manufactured stock or a completed staff fulfillment flow.
+Bộ dữ liệu thực hiện phần đầu vào danh mục của FR-02/FLOW-02 và tồn đầu kỳ cho FR-06. Đây là danh mục giả định phục vụ học tập/minh họa, không chứng minh hàng đã sản xuất hoặc luồng nhân viên xử lý giao hàng hoàn chỉnh.
 
-| Item | Implemented |
+| Hạng mục | Nội dung |
 | --- | --- |
-| Source | `apps/backend/src/scripts/daymark-catalog/fixture.ts` |
-| Products / variants | 30 / 230 unique size-colour SKUs |
-| Collections | Daily Essentials, Workday, Off Hours |
-| Categories | Áo thun, Áo sơ mi, Quần, Áo khoác, Đồ dệt kim, Túi xách |
-| Market | Vietnam / VND; whole đồng amounts written through Medusa |
-| Opening inventory | 2,554 units across 230 variants at the bootstrapped default warehouse |
-| Identity | Stable `dm-*` handles, `DM-*` SKUs and `daymark_dataset=daymark-catalog` ownership metadata |
-| Copy | English product/collection names with Vietnamese product descriptions and category/colour labels |
-| Product photographs | 30 product-specific representative clothing photos mapped to 30 fixture handles; they are demo imagery, not photos of DAYMARK-manufactured SKUs |
+| Nguồn | `apps/backend/src/scripts/daymark-catalog/fixture.ts` |
+| Sản phẩm / biến thể | 30 / 230 SKU kích cỡ–màu duy nhất |
+| Bộ sưu tập | Daily Essentials, Workday, Off Hours |
+| Danh mục | Áo thun, Áo sơ mi, Quần, Áo khoác, Đồ dệt kim, Túi xách |
+| Thị trường | Việt Nam / VND; số tiền nguyên đồng ghi qua Medusa |
+| Tồn đầu kỳ | 2.554 đơn vị trên 230 biến thể tại kho mặc định đã khởi tạo |
+| Định danh | Handle `dm-*`, SKU `DM-*` ổn định và metadata sở hữu `daymark_dataset=daymark-catalog` |
+| Nội dung | Tên sản phẩm/bộ sưu tập tiếng Anh; mô tả sản phẩm, nhãn danh mục/màu tiếng Việt |
+| Ảnh sản phẩm | 30 ảnh quần áo đại diện ánh xạ đến 30 handle; là ảnh minh họa, không phải ảnh SKU do DAYMARK sản xuất |
 
-Thirty product photos and four existing editorial photographs are retained under `apps/backend/assets/daymark-catalog`. The storefront uses four selected catalog photographs for the two landing hero images and Workday and Daily Essentials covers, plus editorial photos for other brand sections. Product photos are mapped to one fixture handle each; they illustrate the garment category and DAYMARK palette, not a verified physical SKU or every size and colour option. No H&M/research assets are used.
+Ba mươi ảnh sản phẩm và bốn ảnh biên tập nằm trong `apps/backend/assets/daymark-catalog`. Storefront dùng bốn ảnh danh mục được chọn cho hai ảnh hero và bìa Workday, Daily Essentials; các phần thương hiệu khác dùng ảnh biên tập. Mỗi ảnh sản phẩm gắn với một handle, minh họa loại trang phục và bảng màu DAYMARK, không xác thực SKU vật lý hoặc mọi tùy chọn kích cỡ/màu. Không dùng tài sản H&M/nghiên cứu.
 
-## Separate bootstrap and import
+<a id="separate-bootstrap-and-import"></a>
+## Tách khởi tạo thương mại và nhập danh mục
 
-`seed-commerce.ts` remains the existing bootstrap (region, channel/key, warehouse, shipping and its three legacy products). It is separate from this importer and is not automatically invoked. No administrator/default password is created. The importer reads the Vietnam region, default sales channel/location and default shipping profile, and refuses missing prerequisites. It does not certify shipping/provider/staff configuration merely from these reads.
+`seed-commerce.ts` khởi tạo vùng, kênh/khóa, kho, vận chuyển và ba sản phẩm cũ. Script này độc lập với công cụ nhập và không tự chạy. Không tạo tài khoản quản trị/mật khẩu mặc định. Công cụ nhập đọc vùng Việt Nam, kênh bán/địa điểm mặc định và hồ sơ vận chuyển mặc định; từ chối nếu thiếu điều kiện. Chỉ đọc được các mục này không chứng nhận cấu hình vận chuyển/provider/nhân viên.
 
-Do not run either script against AWS or a shared database. Local disposable services were used for the recorded checks. The bootstrap's legacy products remain untouched.
+Không chạy hai script trên AWS hoặc cơ sở dữ liệu dùng chung. Dùng dịch vụ cục bộ có thể bỏ đi. Các sản phẩm cũ của bước khởi tạo được giữ nguyên.
 
 ```sh
 # From the repository root; DATABASE_URL must already target a disposable local database.
@@ -31,24 +33,26 @@ DAYMARK_CATALOG_WRITE=1 DAYMARK_CATALOG_ENVIRONMENT=local-disposable \
   npm run seed:daymark-catalog --workspace=@dtc/backend -- --apply
 ```
 
-The package script supplies Medusa's `--` separator. The importer consumes the following script arguments, defaults to dry-run and rejects production mode, unknown/ambiguous mode flags, missing/malformed/non-PostgreSQL connection URLs and remote hosts. Apply additionally requires both opt-ins shown above. The legacy remote-override variable is ineffective. Database credentials are never included in its report.
+Script package cung cấp dấu phân cách `--` của Medusa. Công cụ nhập nhận các đối số bên dưới, mặc định dry-run và từ chối production, cờ chế độ không rõ/không hợp lệ, URL kết nối thiếu/sai/không phải PostgreSQL và máy chủ từ xa. Apply cần cả hai biến cho phép ở trên. Biến ghi đè từ xa cũ không có hiệu lực. Báo cáo không chứa thông tin xác thực cơ sở dữ liệu.
 
-Optional `--images none|manifest|demo` defaults to `none`. `manifest` accepts exact-product mappings. `demo` attaches the representative fixture images only when `NODE_ENV=test`, `DAYMARK_LOCAL_IMAGE_BACKEND_URL` is a loopback URL, and no S3 provider is configured. `DAYMARK_CATALOG_ASSET_DIR` can point at a local fixture directory. File sizes, checksums and product mappings are validated before writes. Representative photos are never treated as exact merchandise images.
+Tùy chọn `--images none|manifest|demo` mặc định `none`. `manifest` nhận ánh xạ ảnh đúng sản phẩm. `demo` chỉ gắn ảnh đại diện khi `NODE_ENV=test`, `DAYMARK_LOCAL_IMAGE_BACKEND_URL` là URL loopback và không cấu hình S3 provider. `DAYMARK_CATALOG_ASSET_DIR` có thể trỏ đến thư mục dữ liệu mẫu cục bộ. Kiểm tra kích thước tệp, checksum và ánh xạ sản phẩm trước khi ghi. Không coi ảnh đại diện là ảnh hàng hóa chính xác.
 
-## Ownership, repeatability and stock preservation
+<a id="ownership-repeatability-and-stock-preservation"></a>
+## Quyền sở hữu, chạy lặp và bảo toàn tồn kho
 
-The pure planner prints inserted/updated/skipped/conflict counts and changes. Apply refuses blockers, then uses supported Medusa workflows and query.graph; there is no SQL or direct database client.
+Bộ lập kế hoạch thuần in số lượng thêm/cập nhật/bỏ qua/xung đột và thay đổi. Apply từ chối điều kiện chặn, rồi dùng workflow Medusa được hỗ trợ và query.graph; không dùng SQL hoặc client cơ sở dữ liệu trực tiếp.
 
-An existing matching handle without DAYMARK ownership metadata is a conflict. Cross-product SKU collisions and orphan inventory-SKU collisions block writes. Option-set mismatches require manual reconciliation. No product, order, customer, variant or unrelated category association is deleted. Additional variants, categories, other currencies, tier/rule prices and existing media are preserved.
+Handle đã có nhưng thiếu metadata sở hữu DAYMARK là xung đột. SKU trùng giữa sản phẩm hoặc SKU tồn kho mồ côi chặn ghi. Bộ tùy chọn không khớp cần đối soát thủ công. Không xóa sản phẩm, đơn, khách hàng, biến thể hoặc liên kết danh mục không liên quan. Giữ biến thể bổ sung, danh mục, tiền tệ khác, giá theo bậc/quy tắc và nội dung đa phương tiện hiện có.
 
-Opening inventory is initialized only for missing levels; **existing levels are never reset**, including quantities changed by purchases, reservations or staff adjustments. Catalog re-import is not a restocking operation. Apply re-reads current inventory before creating missing levels and checks remaining work from a fresh snapshot. An incomplete apply fails explicitly and is recoverable by a reviewed re-run; the whole multi-workflow import is not claimed to be one atomic transaction or safe for concurrent importer processes.
+Chỉ khởi tạo tồn đầu kỳ khi chưa có mức tồn; **không đặt lại mức tồn đã có**, kể cả số lượng đã đổi do mua hàng, giữ chỗ hoặc điều chỉnh của nhân viên. Nhập lại danh mục không phải nhập thêm hàng. Apply đọc lại tồn hiện tại trước khi tạo mức còn thiếu và kiểm tra việc còn lại từ ảnh chụp dữ liệu mới. Apply chưa hoàn tất phải báo lỗi rõ, có thể phục hồi bằng lần chạy lại được đánh giá; không khẳng định toàn bộ chuỗi workflow là một giao dịch nguyên tử hoặc an toàn khi nhiều tiến trình nhập chạy đồng thời.
 
-## Media delivery
+<a id="media-delivery"></a>
+## Phân phối nội dung đa phương tiện
 
-Media uses the configured Medusa file provider. The explicit local demo mode uses Medusa's local file provider and loopback URL only. In S3 proxy mode `S3_FILE_URL` must target `https://<backend>/product-images`, while the existing provider prefixes keys with `public-images/`. The importer validates returned URLs against the configured provider boundary and refuses direct bucket/nested-key URLs. No cloud asset upload is part of the class preview.
+Nội dung đi qua file provider Medusa được cấu hình. Chế độ demo cục bộ tường minh chỉ dùng local file provider và URL loopback. Trong chế độ proxy S3, `S3_FILE_URL` phải trỏ `https://<backend>/product-images`, còn provider thêm tiền tố khóa `public-images/`. Công cụ nhập kiểm tra URL trả về theo ranh giới provider đã cấu hình và từ chối URL bucket trực tiếp/khóa lồng. Xem thử học tập không bao gồm tải tài sản lên cloud.
 
-## Evidence and remaining limits
+## Kiểm chứng quy trình nhập
 
-See [storefront/catalog validation](../design-system/VALIDATION.md) for exact commands and outcomes. The disposable PostgreSQL/Redis run created 30 products, 230 variants and stock levels, then a separate apply skipped them all. The image-mode dry-run planned 30 uploads; the first apply updated only product media and uploaded all 30 photos. The second image apply skipped all 30 media records and uploaded none. Both applies reported no pending work; existing inventory, customer and order aggregates were unchanged. These are local results, not shared-store or cloud results.
+Kiểm thử trên PostgreSQL/Redis dùng riêng: chạy kiểm tra trước, áp dụng bộ dữ liệu, rồi áp dụng lại. Lần chạy lại không được tạo sản phẩm, biến thể hoặc ảnh trùng. Đối chiếu số lượng tồn, khách hàng và đơn hàng trước/sau để xác nhận dữ liệu có sẵn được giữ nguyên. Thử thêm trường hợp trùng SKU, sai quyền sở hữu, thiếu điều kiện khởi tạo và tệp ảnh sai checksum.
 
-Photos of exact manufactured items and each variant, measured garment sizing, live notification delivery, staff operations and a current production journey remain separate gaps. The importer does not manufacture evidence for them.
+Ảnh minh họa không thay cho ảnh chính xác của từng sản phẩm hoặc biến thể. Kiểm thử nhập dữ liệu không chứng minh quy trình thông báo, xử lý đơn của nhân viên hoặc vận hành cloud. Kết quả từng lần chạy thuộc CI hoặc báo cáo nghiệm thu tương ứng.

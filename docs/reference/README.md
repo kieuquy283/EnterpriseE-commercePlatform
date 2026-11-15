@@ -1,22 +1,25 @@
-# Evidence and specialist references
+<a id="evidence-and-specialist-references"></a>
+# Bằng chứng và tham chiếu chuyên sâu
 
-These references support the [current specification](../README.md); they are not parallel product roadmaps. Their dates, environments and research permissions remain in force. Nothing here establishes current AWS uptime.
+Các tài liệu này hỗ trợ [đặc tả hiện hành](../README.md), không phải lộ trình sản phẩm song song. Ngày tháng, môi trường và quyền nghiên cứu của chúng vẫn có hiệu lực. Không tài liệu nào ở đây chứng minh thời gian hoạt động AWS hiện tại.
 
-## Historical engineering evidence
+<a id="historical-engineering-evidence"></a>
+## Bằng chứng kỹ thuật lịch sử
 
-- [9 November latest-main AWS release](../report/aws-redeployment-main389e855-2026-11-09.md): migrations, image digests and 18 public checks; no claimed campaign/restore/staff acceptance.
-- [Initial Fargate deployment](../report/aws-fargate-deployment-2026-11-08.md) and [EC2 rehearsal](../report/aws-ec2-deployment-2026-11-06.md): retain their dated limits, including API checkout versus browser acceptance.
-- [Evidence directory](../report/evidence/): sanitized immutable run outputs, including inventory snapshots.
-- Historical schema survey, seed fixtures and inventory-order evidence were removed from the tracked tree by upstream commits `0ca7a55`/`08dc1bf`. They remain retrievable in Git history before those commits; no current acceptance claim should depend on a removed artifact.
-- [Prior AWS decision](../architecture/adr/0001-aws-cloud-stack.md): full stack primary and EC2 fallback; current patterns/decisions live in 03-architecture.
+- [Phát hành AWS từ main ngày 9 tháng 11](../report/aws-redeployment-main389e855-2026-11-09.md): migration, digest ảnh và 18 kiểm tra công khai; không khẳng định đã nghiệm thu chiến dịch tải, khôi phục hay nhân viên vận hành.
+- [Triển khai Fargate ban đầu](../report/aws-fargate-deployment-2026-11-08.md) và [diễn tập EC2](../report/aws-ec2-deployment-2026-11-06.md): giữ giới hạn theo ngày, bao gồm phân biệt checkout qua API với nghiệm thu trình duyệt.
+- [Thư mục bằng chứng](../report/evidence/): đầu ra đã làm sạch, bất biến của các lần chạy, gồm ảnh chụp tồn kho.
+- [Quyết định AWS](../architecture/adr/0001-aws-cloud-stack.md): nền tảng đầy đủ là chính, EC2 dự phòng; mẫu và quyết định hiện hành ở tài liệu kiến trúc kỹ thuật.
 
-## Product-suggestion research
+<a id="product-suggestion-research"></a>
+## Nghiên cứu gợi ý sản phẩm
 
-- [Dataset-rights decision](../recommendation/dataset-rights-decision.md): preserve private/public use boundaries.
-- [Recommendation technical reference](../recommendation/spec.md), [personalization reference](../recommendation/personalization/spec.md), [hybrid reference](../recommendation/hybrid/spec.md) and [image reference](../recommendation/images/spec.md): installed feature behavior, research/evaluation history and specialist procedures.
-- Their reports/evidence are retained for provenance. Old phase plans have been removed as competing roadmaps; relevant future work must be adopted explicitly into the canonical delivery backlog.
-- Offline files under ignored `data/hm/` remain local research data. They are not seeded orders and are not a public DAYMARK image/catalog source by default.
+- [Quyết định quyền sử dụng dữ liệu](../recommendation/dataset-rights-decision.md): giữ ranh giới sử dụng riêng tư/công khai.
+- [Tham chiếu gợi ý](../recommendation/spec.md), [cá nhân hóa](../recommendation/personalization/spec.md), [hybrid](../recommendation/hybrid/spec.md) và [ảnh](../recommendation/images/spec.md): hành vi tính năng, lịch sử nghiên cứu/đánh giá và quy trình chuyên sâu.
+- Báo cáo/bằng chứng nghiên cứu lưu nguồn gốc và kết quả. Công việc tương lai chỉ thuộc phạm vi thực hiện khi được đưa rõ ràng vào danh sách công việc chính thức.
+- Tệp ngoại tuyến trong `data/hm/` bị ignore là dữ liệu nghiên cứu cục bộ; không phải đơn hàng seed hoặc nguồn ảnh/danh mục DAYMARK công khai mặc định.
 
-## Reference policy
+<a id="reference-policy"></a>
+## Quy tắc sử dụng tham chiếu
 
-Do not rewrite a historical PASS as acceptance for a new revision. Add a new dated run. Do not delete fixtures/evidence consumed by scripts merely to simplify navigation. Revisit data/IP/privacy permissions before publishing artifacts or presentation screenshots. The [consolidation record](documentation-reset.md) explains removals and replacement destinations.
+Không viết lại một PASS lịch sử thành nghiệm thu phiên bản mới; thêm lần chạy mới có ngày tháng. Không xóa dữ liệu mẫu/bằng chứng được script sử dụng chỉ để đơn giản hóa điều hướng. Rà lại quyền dữ liệu, sở hữu trí tuệ và riêng tư trước khi công bố artifact hoặc ảnh chụp trình bày.

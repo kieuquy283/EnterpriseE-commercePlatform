@@ -1,99 +1,107 @@
-# Operations, security and delivery
+<a id="operations-security-and-delivery"></a>
+# Vận hành, bảo mật và phát hành
 
-Status: target operating contract, 14 November 2026. Historical AWS results are evidence for their recorded revision/time only. This stage changes documentation/presentation, not live infrastructure. See [architecture](03-architecture.md), [acceptance tests](05-testing.md), and the executable [deployment runbook](../../deploy/RUNBOOK.md).
+Đây là hợp đồng vận hành mục tiêu. Kết quả AWS lịch sử chỉ là bằng chứng cho phiên bản/thời điểm đã ghi. Xem [kiến trúc](03-architecture.md), [nghiệm thu](05-testing.md) và [hướng dẫn triển khai thực thi](../../deploy/RUNBOOK.md).
 
-## Owners and environment boundary
+<a id="owners-and-environment-boundary"></a>
+## Trách nhiệm và ranh giới môi trường
 
-| Role | Responsibility | Access boundary |
+| Vai trò | Trách nhiệm | Ranh giới truy cập |
 | --- | --- | --- |
-| Customer | Browse, purchase, track own orders | Store API with customer context; never Admin API |
-| Operations staff | Catalog, stock, order/fulfillment handling | Authenticated Medusa Admin; demonstrate effective permissions before claiming fine-grained RBAC |
-| Administrator | Staff onboarding, configuration, operational reporting | Explicit staff identity; no shared seeded password |
-| Release operator | Review artifacts, deploy, verify, roll back | Approved GitHub environment and scoped AWS operator access |
-| Data/recommendation maintainer | Prepare permitted artifacts, validate and publish | No automatic public promotion of restricted research data |
+| Khách hàng | Duyệt, mua, theo dõi đơn riêng | Store API với bối cảnh khách; không Admin API |
+| Nhân viên vận hành | Danh mục, tồn, đơn/xử lý giao | Medusa Admin có xác thực; chứng minh quyền thực trước tuyên bố RBAC chi tiết |
+| Quản trị viên | Cấp tài khoản nhân viên, cấu hình, báo cáo vận hành | Danh tính nhân viên rõ; không mật khẩu seed dùng chung |
+| Người phát hành | Đánh giá artifact, triển khai, kiểm chứng, quay lui | GitHub environment được duyệt và quyền vận hành AWS giới hạn |
+| Người duy trì dữ liệu/gợi ý | Chuẩn bị artifact có quyền, kiểm tra và công bố | Không tự chuyển dữ liệu nghiên cứu hạn chế sang công khai |
 
-Named team members/rotation are assigned per release issue, not permanently embedded in this spec. A student may hold multiple roles but the actions and evidence stay separate. Local, disposable test and AWS demo databases must be identified before commands that create customers, carts, orders or inventory changes.
+Chỉ định người/luân phiên theo issue phát hành, không gắn vĩnh viễn vào đặc tả. Một sinh viên có thể giữ nhiều vai trò nhưng thao tác/bằng chứng riêng. Phải xác định DB cục bộ, thử dùng riêng và demo AWS trước lệnh tạo khách, giỏ, đơn hoặc đổi tồn.
 
-## Threat model and controls
+<a id="threat-model-and-controls"></a>
+## Mô hình đe dọa và kiểm soát
 
-| Threat | Boundary/control | Acceptance evidence |
+| Đe dọa | Ranh giới/kiểm soát | Bằng chứng nghiệm thu |
 | --- | --- | --- |
-| Customer reads another customer's order | Server-side actor authorization; negative object-access tests | Customer A/B HTTP tests, including modified IDs |
-| Forged discount, price, customer or stock value | Authoritative Medusa workflows, validated DTO allowlists, identity from auth context | Tampering and insufficient-stock tests |
-| Duplicate checkout/payment callback | Stable operation identity; durable idempotent outcome; verify installed provider semantics | Concurrent retry and timeout tests; one order/payment effect |
-| Abusive login/search/recommendation traffic | Bounded inputs, proposed rate/concurrency limits and dependency timeouts | Negative tests and peak failure behavior; controls not all implemented |
-| Public exposure of secrets or private assets | Secrets Manager/task IAM roles; private bucket; public-image prefix allowlist; sanitized logs | IAM/storage checks; denied direct S3/private paths |
-| Stale or cross-customer cache response | Context-specific keys, private no-store responses, explicit freshness policy | Two identities/regions and invalidation tests |
-| Research data or malicious image publication | Permission/provenance gate; image format boundary; no H&M bulk public upload | Rights review and fixture/invalid-file checks |
-| Deployment or migration corrupts data | Reviewed change sets, backups, forward-compatible migrations, isolated restore drill | Artifact references and drill results |
+| Khách đọc đơn khách khác | Phân quyền tác nhân server; thử truy cập đối tượng phủ định | HTTP khách A/B, kể cả sửa ID |
+| Giả giá, giảm giá, khách hoặc tồn | Workflow Medusa có thẩm quyền, danh sách DTO cho phép đã kiểm tra, danh tính từ auth | Thử sửa dữ liệu và thiếu tồn |
+| Trùng checkout/callback thanh toán | Định danh thao tác ổn định; kết quả idempotent bền; xác minh ngữ nghĩa provider | Thử đồng thời/timeout; một hiệu ứng đơn/thanh toán |
+| Lạm dụng đăng nhập/tìm/gợi ý | Đầu vào giới hạn, giới hạn tốc độ/đồng thời đề xuất và timeout phụ thuộc | Ca phủ định và hành vi lỗi tải đỉnh; chưa triển khai đủ kiểm soát |
+| Lộ bí mật/tài sản riêng | Secrets Manager/IAM task role; bucket riêng; allowlist tiền tố ảnh công khai; log làm sạch | Kiểm IAM/lưu trữ; từ chối S3 trực tiếp/đường dẫn riêng |
+| Cache cũ hoặc chéo khách | Khóa theo bối cảnh, phản hồi riêng no-store, chính sách độ mới rõ | Thử hai danh tính/vùng và vô hiệu hóa |
+| Công bố dữ liệu nghiên cứu/ảnh độc hại | Cổng quyền/nguồn gốc; giới hạn định dạng; không tải H&M hàng loạt công khai | Rà quyền và thử mẫu/tệp sai |
+| Triển khai/migration hỏng dữ liệu | Change set được rà, sao lưu, migration tương thích về trước, diễn tập khôi phục cô lập | Tham chiếu artifact và kết quả diễn tập |
 
-No card data is stored by DAYMARK. The initial payment mode is COD; order creation does not mean cash has been collected. A non-production simulator must support success/failure/retry demonstrations. Carrier booking and COD reconciliation are manual business procedures initially, with actor/time/reference recorded; no simulated update is presented as a real courier confirmation.
+DAYMARK không lưu dữ liệu thẻ. Ban đầu COD; tạo đơn không nghĩa đã thu tiền. Bộ mô phỏng ngoài production phải hỗ trợ thành công/thất bại/thử lại. Đặt vận chuyển và đối soát COD ban đầu thủ công, ghi tác nhân/thời gian/tham chiếu; không trình bày cập nhật mô phỏng như xác nhận chuyển phát thật.
 
+<a id="iam-and-network-responsibilities"></a>
+## Trách nhiệm IAM và mạng
 
-## IAM and network responsibilities
+ECS execution role lấy ảnh, ghi log và đọc ba bí mật ứng dụng được inject. Task role API/worker chỉ truy cập bucket ảnh cấu hình cho thao tác S3 ứng dụng; chính sách hiện phủ đối tượng bucket nên giới hạn tiền tố công khai là ranh giới công bố HTTP ứng dụng, không là ranh giới IAM riêng. Không đặt tài liệu riêng trong bucket/provider đó. Task role storefront không có quyền API S3/Secrets Manager.
 
-The current ECS execution role pulls images/writes logs and retrieves three injected application secrets. API/worker task roles access only the configured image bucket for application S3 operations; the current policy covers the bucket objects, so the public-prefix restriction is an HTTP application publication boundary, not a separate IAM isolation boundary. Never place private documents in that bucket/provider. Storefront task role has no S3 or Secrets Manager API grants.
+Role công bố GitHub OIDC gắn environment aws-demo của kho mã và các ECR repository; có thể công bố ảnh/đọc đầu ra foundation, không triển khai hạ tầng hoặc đọc bí mật ứng dụng. Tự động triển khai cần release role và chính sách environment được đánh giá riêng; không âm thầm mở quyền role công bố. Role watchdog vận hành riêng, được rà phạm vi stop/describe. Truy cập AWS của con người theo trải nghiệm dự án quản lý, không tự tạo IAM user nhân viên thủ công.
 
-The GitHub OIDC publishing role is bound to the repository's aws-demo environment and ECR repositories; it can publish images/read foundation outputs, not deploy infrastructure or read application secrets. Automated deployment needs a separately reviewed release role and environment policy; do not silently broaden the publishing role. Operational watchdog roles are separate and reviewed for their stop/describe scopes. Human AWS project access follows the managed project experience, not manually created staff IAM users.
+ALB nhận HTTPS/chuyển hướng HTTP công khai; inbound ứng dụng chỉ từ security group ALB. Inbound DB/Redis chỉ từ nhóm ứng dụng; RDS không công khai. Danh tính nghiệp vụ storefront/Admin khác IAM role AWS. Fargate task hiện có kết nối ra công khai: đánh đổi demo giới hạn, không khẳng định mọi compute ở subnet riêng. Rà egress/phụ thuộc trước phát hành thương mại công khai.
 
-ALB accepts HTTPS/public HTTP redirect; application inbound is limited to the ALB security group. Database and Redis inbound are limited to the application group; RDS is not public. Storefront/Admin business identities are distinct from AWS IAM roles. The existing Fargate tasks have public outbound connectivity: this is a scoped demo trade-off, not a claim that all compute is in private subnets. Review egress and dependency access before a public commercial launch.
+<a id="cicd-target-and-current-gap"></a>
+## Mục tiêu CI/CD và khoảng trống
 
-## CI/CD target and current gap
+CI kiểm thử/lint/kiểu/build ứng dụng và CloudFormation. Workflow OIDC công bố ảnh; thực thi phát hành đủ nền tảng do người vận hành điều khiển. Chưa chứng minh pipeline phát hành tự động đầy đủ.
 
-Existing CI checks application tests/lint/types/builds and CloudFormation. Existing OIDC workflow publishes images; existing full-stack release execution is operator-driven. This is not yet a demonstrated fully automated release pipeline.
+Pipeline mục tiêu:
 
-Target pipeline:
+1. PR: tài liệu/hợp đồng, lint, unit/tích hợp, đường đi trình duyệt cốt lõi cô lập, build container và kiểm hạ tầng.
+2. Main/tag được bảo vệ: build ảnh bất biến, công bố digest ECR bằng OIDC giới hạn hẹp.
+3. Môi trường demo được duyệt: kiểm cấu hình/lease, rà thay đổi hạ tầng/trạng thái sao lưu, migration, phát hành đúng digest.
+4. Cổng kiểm: API/storefront sẵn sàng, đơn xuyên suốt cô lập và kiểm thông báo worker; ghi phiên bản, digest, môi trường, UTC và kết quả.
+5. Nếu lỗi: ngừng đưa tiếp; phục hồi digest ứng dụng tương thích hoặc theo quy trình dữ liệu. Không drop/seed lại production để quay lui.
 
-1. PR: docs/contracts, lint, unit/integration tests, isolated browser critical path, container build and infrastructure validation.
-2. Protected main/tag: build immutable images and publish ECR digests using narrowly scoped OIDC credentials.
-3. Approved demo environment: validate settings and lease, review infrastructure changes/backup status, migrate, release exact image digests.
-4. Gate: API/storefront readiness plus an isolated end-to-end order and worker notification check; record revision, digest, environment, UTC time and result.
-5. On failure: stop promotion; restore compatible application digests or follow the data recovery procedure. Never drop/reseed production data as rollback.
+Duyệt environment là ranh giới phát hành có chủ đích; chính thực thi đã duyệt phải tự động và lặp lại được. Helper hiện rút task trước migration/khởi động nên bảo trì có kế hoạch ngắt lưu lượng. Không hứa không gián đoạn. Triển khai pipeline và thực thi thành công là hai cổng riêng.
 
-Environment approval is an intentional release boundary; the approved execution itself must be automated and reproducible. The current helper drains tasks before migration/start, so planned maintenance interrupts traffic. Do not promise zero downtime. A pipeline implementation and successful execution are separate delivery gates.
+<a id="observability-and-slo"></a>
+## Khả năng quan sát và SLO
 
-## Observability and SLO
-
-| Signal | Interpretation and response |
+| Tín hiệu | Diễn giải và phản ứng |
 | --- | --- |
-| Successful scheduled availability probes / total scheduled probes | Availability SLI per NFR-AVAIL-01; request success rate is a separate signal |
-| p95 response time, errors and achieved RPS | Measure at named boundary; API metrics cannot establish browser LCP |
-| Orders/payment effects/reservations reconciliation | Correctness SLI; an HTTP 200 is insufficient |
-| ALB unhealthy targets/5xx, ECS task count/CPU/memory | Detect saturation, failed releases and actual scaling |
-| RDS connections/CPU/free memory/storage latency | Find database ceiling before increasing application replicas |
-| Redis health/memory and worker failures | Identify coordination/background dependency failures |
-| Notification attempts, retries, terminal failures, queue age | Prove async work finishes; custom business telemetry remains to implement |
-| Recommendation fallback/error rate, eligibility and latency | Keep optional suggestions from obscuring commerce failures |
+| Probe sẵn sàng theo lịch thành công / tổng probe theo lịch | SLI theo NFR-AVAIL-01; tỷ lệ yêu cầu thành công là tín hiệu riêng |
+| p95, lỗi và RPS đạt được | Đo tại ranh giới có tên; số đo API không xác lập LCP trình duyệt |
+| Đối soát đơn/hiệu ứng thanh toán/giữ tồn | SLI đúng đắn; HTTP 200 không đủ |
+| Target ALB lỗi/5xx, số task/CPU/bộ nhớ ECS | Phát hiện bão hòa, phát hành lỗi và tăng giảm thực |
+| Kết nối/CPU/bộ nhớ trống/độ trễ lưu trữ RDS | Tìm trần DB trước tăng bản sao ứng dụng |
+| Sức khỏe/bộ nhớ Redis và lỗi worker | Nhận diện lỗi phụ thuộc điều phối/nền |
+| Lượt thông báo, thử lại, lỗi cuối, tuổi hàng đợi | Chứng minh việc nền hoàn tất; còn cần telemetry nghiệp vụ tùy chỉnh |
+| Tỷ lệ dự phòng/lỗi, hợp lệ và độ trễ gợi ý | Không để gợi ý tùy chọn che lỗi thương mại |
 
-Target availability is 99.5% within explicitly scheduled service windows. Declare each window beforehand; include unplanned outages and maintenance within it. Lease shutdown outside windows is excluded but must not be hidden from users. This is not a measured 24/7 production SLA. Define black-box sampling interval, treatment of no traffic and short-window rounding in each test plan; synthetic health and business journey probes complement request metrics.
+Mục tiêu sẵn sàng 99,5% trong cửa sổ dịch vụ được lên lịch rõ. Công bố trước từng cửa sổ; tính cả gián đoạn bất ngờ và bảo trì trong đó. Tắt lease ngoài cửa sổ bị loại nhưng không được giấu người dùng. Không là SLA production 24/7 đã đo. Mỗi kế hoạch thử xác định chu kỳ lấy mẫu hộp đen, xử lý không lưu lượng và làm tròn cửa sổ ngắn; probe sức khỏe/hành trình tổng hợp bổ sung số đo yêu cầu.
 
-Every write flow should carry a correlation identifier into sanitized application/worker logs. No credentials, addresses, tokens or raw provider errors in public responses. Dashboards/alarms exist in IaC; business telemetry and proven alert delivery remain acceptance work. A pending SNS email subscription is not an operational alert channel.
+Mỗi luồng ghi nên mang correlation ID vào log ứng dụng/worker làm sạch. Phản hồi công khai không chứa thông tin xác thực, địa chỉ, token hoặc lỗi provider thô. Có dashboard/alarm trong IaC; telemetry nghiệp vụ và chứng minh nhận cảnh báo còn cần nghiệm thu. Đăng ký email SNS đang chờ không là kênh cảnh báo vận hành.
 
-## Failure and recovery playbook
+<a id="failure-and-recovery-playbook"></a>
+## Quy trình lỗi và khôi phục
 
-| Failure | Expected business behavior | Exercise |
+| Lỗi | Hành vi nghiệp vụ mong đợi | Diễn tập |
 | --- | --- | --- |
-| Email unavailable | Confirmed order remains; bounded retry and visible terminal failure | Inject provider failure and reconcile delivery attempts |
-| Recommendation unavailable | Hide suggestions/use verified catalog fallback; cart/checkout independent | Disable dependency while purchasing |
-| PostgreSQL unavailable | No false order success; actionable failure, reconcile ambiguous retries | Isolated interruption, recover and retry same operation |
-| Redis unavailable | Do not assume every workflow still works; determine which writes/locks/events fail and preserve correctness | Isolated failure with catalog/checkout/worker probes |
-| API task dies | ALB routes to healthy targets if another exists; one-task baseline may interrupt service | Kill isolated task, measure recovery |
-| Stock depleted during campaign | Reject/reconcile unavailable purchase, no negative sellable stock | Last-unit contention test |
-| Bad release | Roll back compatible application digest, retain data and audit trail | Rehearse previous release with schema compatibility |
-| Database loss/corruption | Restore backup to a NEW isolated database, validate then plan controlled cutover | Measure RPO <=60 min and RTO <=120 min targets |
+| Email không khả dụng | Giữ đơn xác nhận; thử lại giới hạn và lỗi cuối nhìn thấy | Tiêm lỗi provider, đối soát lần gửi |
+| Gợi ý không khả dụng | Ẩn/dự phòng danh mục xác minh; giỏ/checkout độc lập | Tắt phụ thuộc khi mua |
+| PostgreSQL không khả dụng | Không báo đơn thành công giả; lỗi có hướng xử lý, đối soát thử lại chưa rõ | Ngắt cô lập, khôi phục, thử lại cùng thao tác |
+| Redis không khả dụng | Không giả mọi workflow vẫn chạy; xác định ghi/khóa/sự kiện lỗi, giữ tính đúng | Lỗi cô lập với probe danh mục/checkout/worker |
+| Task API chết | ALB chuyển target khỏe nếu còn task khác; nền một task có thể gián đoạn | Dừng task cô lập, đo phục hồi |
+| Hết tồn trong chiến dịch | Từ chối/đối soát mua không khả dụng, không âm tồn bán được | Cạnh tranh đơn vị cuối |
+| Phát hành lỗi | Quay digest ứng dụng tương thích, giữ dữ liệu và dấu vết | Diễn tập bản trước với tương thích schema |
+| Mất/hỏng DB | Khôi phục sao lưu sang DB cô lập MỚI, kiểm tra rồi lập chuyển đổi có kiểm soát | Đo mục tiêu RPO <=60 phút, RTO <=120 phút |
 
-Recovery objectives remain targets until the restore drill succeeds. Database backups do not back up S3 media; preserve bucket versioning and test exact-object recovery separately. Single-AZ RDS and one Redis host are accepted MVP failure points, not high availability claims.
+Mục tiêu khôi phục chỉ là mục tiêu đến khi diễn tập đạt. Sao lưu DB không sao lưu ảnh S3; giữ versioning bucket và thử khôi phục đúng đối tượng riêng. RDS Single-AZ và một máy Redis là điểm lỗi MVP chấp nhận được, không khẳng định sẵn sàng cao.
 
-## Capacity and cost contract
+<a id="capacity-and-cost-contract"></a>
+## Hợp đồng năng lực và chi phí
 
-Provisional design ceiling: USD100 per month for scheduled demo operation, pending team/project-owner budget approval. It is not authorization to spend or a verified forecast. Track gross cost, not just remaining promotional credits. Record service-hours, retained storage, ALB uptime, public IPv4, requests/transfer, logs, snapshots and deployment overlap.
+Trần thiết kế tạm tính USD100/tháng cho demo theo lịch, chờ nhóm/chủ dự án duyệt ngân sách. Không là quyền chi hoặc dự báo xác minh. Theo dõi tổng chi, không chỉ tín dụng khuyến mãi còn lại. Ghi giờ dịch vụ, lưu trữ giữ lại, uptime ALB, IPv4 công khai, yêu cầu/truyền, log, snapshot và chồng lấn triển khai.
 
-The [historical cost model](../../deploy/cloudformation/cost-estimate.json) estimates about USD168/month for always-on operation before variable extras using October rates. It is explicitly stale and cannot justify a current monthly bill. Scheduled compute can fit a smaller budget only with actual lifecycle/cost validation. Refresh rates and billing in the selected Region before provisioning; if the forecast exceeds the ceiling, reduce scheduled hours or request a scoped budget decision. Do not silently shrink acceptance tests or claim 24/7 availability.
+[Mô hình chi phí lịch sử](../../deploy/cloudformation/cost-estimate.json) ước khoảng USD168/tháng nếu luôn chạy, chưa gồm biến phí, theo giá tháng 10. Mô hình đã cũ, không giải thích hóa đơn tháng hiện tại. Lập lịch compute chỉ có thể vừa ngân sách thấp hơn khi kiểm chứng vòng đời/chi phí thực. Cập nhật giá/hóa đơn vùng chọn trước cấp tài nguyên; nếu vượt trần, giảm giờ hoặc yêu cầu quyết định ngân sách giới hạn. Không âm thầm thu nhỏ nghiệm thu hoặc khẳng định sẵn sàng 24/7.
 
-The API currently caps at two tasks; storefront/worker have fixed capacity. At 5x load measure all tiers before raising limits. At 10x load find the saturation point and controlled rejection/recovery behavior. Cache/media delivery, database pool capacity and storefront replication are explicit decision points; no new Redis read replicas/CDN/search service by default. Core commerce consistency remains the priority.
+API giới hạn hai task; storefront/worker cố định. Ở tải 5x đo mọi tầng trước nâng giới hạn. Ở 10x tìm điểm bão hòa và từ chối/khôi phục có kiểm soát. Cache/ảnh, connection pool DB và bản sao storefront là điểm quyết định rõ; không mặc định thêm Redis read replica/CDN/tìm kiếm riêng. Ưu tiên nhất quán lõi thương mại.
 
-## Runbook and evidence discipline
+<a id="runbook-and-evidence-discipline"></a>
+## Kỷ luật hướng dẫn vận hành và bằng chứng
 
-Use [deploy/RUNBOOK.md](../../deploy/RUNBOOK.md) and [CloudFormation guide](../../deploy/cloudformation/README.md) for exact commands. Regional resources stay in ap-southeast-2, profile aws-project. Respect private settings, existing resources and finite demo leases. Pause retains a billable ALB; hibernate removes the app stack, not retained storage. Never delete foundation/data as ordinary cleanup.
+Dùng [deploy/RUNBOOK.md](../../deploy/RUNBOOK.md), [hướng dẫn CloudFormation](../../deploy/cloudformation/README.md) cho lệnh chính xác. Tài nguyên vùng ở ap-southeast-2, profile aws-project. Tôn trọng cấu hình riêng, tài nguyên có sẵn và lease demo hữu hạn. Pause giữ ALB tính phí; hibernate bỏ app stack, không bỏ lưu trữ giữ lại. Không xóa foundation/dữ liệu như dọn dẹp thường lệ.
 
-Store sanitized runs under `docs/report/evidence/<run-id>/`: source revision, environment/configuration (no secrets), dataset version, script command, raw results, thresholds, reconciliation, costs and conclusions. Keep dated evidence immutable; new spec does not turn previous tests into new acceptance. Do not call the system healthy from liveness endpoints alone.
+Lưu lần chạy làm sạch ở `docs/report/evidence/<run-id>/`: phiên bản nguồn, môi trường/cấu hình không bí mật, phiên bản dữ liệu, lệnh, kết quả thô, ngưỡng, đối soát, chi phí và kết luận. Giữ bằng chứng theo ngày bất biến; đặc tả mới không biến thử cũ thành nghiệm thu mới. Không gọi hệ thống khỏe chỉ từ endpoint liveness.

@@ -1,108 +1,118 @@
-# DAYMARK — business specification
+<a id="daymark--business-specification"></a>
+# DAYMARK — đặc tả nghiệp vụ trong triển khai
 
-Authority update — 15 November 2026: the [business-first specification](../README.md#primary-business-first-specification) takes precedence for business scope and policy. This file maps that intent to DAYMARK implementation and retains earlier proposals where not yet reconciled. See the [crosswalk and held decisions](../reference/spec-consolidation.md); open policies are not approved merely because code exists.
+[Đặc tả lấy nghiệp vụ làm gốc](../README.md#primary-business-first-specification) được ưu tiên về phạm vi và chính sách. Tài liệu này ánh xạ ý định đó sang triển khai DAYMARK và giữ các đề xuất chưa được đối chiếu thống nhất. Xem [ánh xạ và quyết định còn mở](../technical/requirements-mapping.md); mã nguồn có sẵn không phê duyệt chính sách còn mở.
 
-Status: chosen product direction for the next implementation stage, dated 14 November 2026. This specification defines the intended MVP; it does not certify that every requirement is implemented. Acceptance evidence belongs in [testing](05-testing.md). The project is an educational production-oriented MVP, not a complete enterprise retailer.
+Đặc tả xác định MVP dự kiến, không chứng nhận mọi yêu cầu đã triển khai. Bằng chứng nghiệm thu thuộc [kiểm thử](05-testing.md). Dự án là MVP giáo dục hướng đến vận hành thực tế, không phải nhà bán lẻ doanh nghiệp hoàn chỉnh.
 
-## Business problem and value
+<a id="business-problem-and-value"></a>
+## Vấn đề nghiệp vụ và giá trị
 
-DAYMARK is a fictional Vietnamese direct-to-consumer clothing brand for young adults moving between study, work and everyday city life. Its proposition is versatile everyday clothing with consistent fit, clear product information and dependable ordering. Brand line: **Made for the everyday.** DAYMARK branding, including the swallow/wordmark, ivory/charcoal/muted olive palette and current storefront design direction, was approved by the project requester on 15 November 2026. This does not imply approval of unresolved business policies. See [brand assets](../brand/README.md). The brand name and assets are project identity, not a claim of trademark or domain clearance.
+DAYMARK là thương hiệu quần áo bán trực tiếp tới người tiêu dùng giả định tại Việt Nam, dành cho người trẻ chuyển giữa học tập, công việc và đời sống đô thị. Giá trị đề xuất là quần áo thường ngày linh hoạt, phom nhất quán, thông tin rõ ràng và đặt hàng đáng tin cậy. Khẩu hiệu: **Made for the everyday.** Người yêu cầu dự án đã duyệt thương hiệu DAYMARK, biểu tượng chim én/wordmark, bảng màu ngà/than/ô liu trầm và hướng thiết kế storefront ngày 15 tháng 11 năm 2026. Điều này không phê duyệt chính sách nghiệp vụ chưa giải quyết. Xem [tài sản thương hiệu](../brand/README.md). Tên và tài sản là nhận diện dự án, không khẳng định đã kiểm tra quyền nhãn hiệu hoặc tên miền.
 
-Customers need to find clothing that fits their style and size, understand the final price and availability, place an order once, and know what happens afterward. Store staff need one authoritative catalog, stock and order record. Administrators need controlled access, repeatable releases and evidence that the service remains correct under promotion traffic and dependency failures.
+Khách hàng cần tìm quần áo đúng phong cách/kích cỡ, hiểu giá cuối và khả năng cung ứng, đặt hàng một lần và biết diễn biến sau đó. Nhân viên cần danh mục, tồn kho và đơn hàng có một nguồn thẩm quyền. Quản trị viên cần truy cập có kiểm soát, phát hành lặp lại được và bằng chứng dịch vụ vẫn đúng khi có tải khuyến mãi hoặc lỗi phụ thuộc.
 
-The primary business outcome is one complete, observable journey: **stock receipt → product publication → discovery → checkout → order → fulfillment → delivery/COD reconciliation**. Product suggestions support discovery; they never become a prerequisite for buying.
+Kết quả chính là hành trình hoàn chỉnh, quan sát được: **nhập kho → công bố sản phẩm → khám phá → checkout → đơn hàng → xử lý giao hàng → đối soát giao nhận/COD**. Gợi ý hỗ trợ khám phá, không phải điều kiện mua hàng.
 
-## Scope and operating assumptions
+<a id="scope-and-operating-assumptions"></a>
+## Phạm vi và giả định vận hành
 
-| Decision | MVP boundary |
+| Quyết định | Ranh giới MVP |
 | --- | --- |
-| Market | Vietnam, VND; one fictional seller and one online sales channel |
-| Customer | Adults buying everyday clothing; guest discovery and authenticated account journeys |
-| Assortment | Target 24–36 clothing products across tees, shirts, trousers and light layers, with size/color variants; bags/caps optional |
-| Collections | Daily Essentials, Workday and Off Hours |
-| Inventory | One warehouse stock location; staff record receipts and adjustments; no supplier procurement or warehouse automation |
-| Delivery | Staff-operated fulfillment and manual external-carrier handoff; tracking information recorded when available; no live carrier booking integration |
-| Payment | COD for the public demo; existing simulator only in isolated non-production acceptance tests; no real card collection |
-| Suggestions | Optional/COULD under FR-REC-01/02; existing similar/popular and personalization code remains gated. Selecting it for release requires evaluation and explicit scope acceptance |
-| Promotions | SHOULD/pending business policy; existing bounded campaign proposal is not a mandatory acceptance commitment |
-| Returns | Exchanges/returns remain optional and policy-open; existing staff exception procedure is a proposal, not an approved promise |
+| Thị trường | Việt Nam, VND; một người bán giả định và một kênh trực tuyến |
+| Khách hàng | Người lớn mua quần áo thường ngày; khám phá không cần đăng nhập và hành trình tài khoản có xác thực |
+| Danh mục | Mục tiêu 24–36 sản phẩm áo thun, sơ mi, quần và áo khoác nhẹ, có biến thể kích cỡ/màu; túi/mũ tùy chọn |
+| Bộ sưu tập | Daily Essentials, Workday và Off Hours |
+| Kho | Một địa điểm kho; nhân viên ghi nhập/điều chỉnh; không mua hàng nhà cung cấp hay tự động hóa kho |
+| Giao hàng | Nhân viên xử lý và bàn giao đơn vị vận chuyển bên ngoài thủ công; ghi mã theo dõi khi có; không tích hợp đặt vận chuyển trực tiếp |
+| Thanh toán | COD cho demo công khai; bộ mô phỏng chỉ dùng trong nghiệm thu cô lập ngoài production; không thu thẻ thật |
+| Gợi ý | Tùy chọn/COULD theo FR-REC-01/02; mã similar/popular và cá nhân hóa vẫn có cổng bật. Phát hành cần đánh giá và chấp nhận phạm vi rõ ràng |
+| Khuyến mãi | SHOULD/chờ chính sách; đề xuất chiến dịch giới hạn có sẵn không phải cam kết nghiệm thu bắt buộc |
+| Đổi trả | Tùy chọn, chính sách còn mở; quy trình ngoại lệ của nhân viên là đề xuất, chưa phải lời hứa được duyệt |
 
-Workload, availability, recovery and budget targets are defined in [testing](05-testing.md) and [operations](06-operations.md), not inferred from product count. The target assortment is a fixture requirement, not current seed content. The inspected seed creates three generic products without product images. It does not create the first administrator.
+Mục tiêu tải, độ sẵn sàng, khôi phục và ngân sách nằm ở [kiểm thử](05-testing.md), [vận hành](06-operations.md); không suy từ số sản phẩm. Danh mục mục tiêu là yêu cầu dữ liệu mẫu, không mô tả dữ liệu seed hiện tại. Seed thương mại tạo ba sản phẩm chung không ảnh và không tạo quản trị viên đầu tiên.
 
-## Users, stakeholders and permissions
+<a id="users-stakeholders-and-permissions"></a>
+## Người dùng, bên liên quan và quyền
 
-| Actor | Business responsibility | Access boundary |
+| Tác nhân | Trách nhiệm nghiệp vụ | Ranh giới truy cập |
 | --- | --- | --- |
-| Customer | Discover products, manage own cart/account, place orders and view own status | Public catalog; authenticated personal records; never another customer's data |
-| Store / Operations Staff | Maintain catalog/prices, receive stock, review orders, fulfill parcels and reconcile manual delivery/COD evidence | Authenticated Medusa Admin; only required functions and customer data |
-| Administrator | Provision staff access, configure providers, approve releases, monitor service and manage recovery | Separate staff identity from customer identity; infrastructure privileges are not customer/Admin session privileges |
-| External carrier | Physically transport parcels and return delivery/COD evidence | Manual business handoff in MVP; no application credentials |
-| Project team / reviewer | Implement, measure and defend requirements | Synthetic test fixtures and scrubbed evidence; no production secrets or customer exports |
+| Khách hàng | Khám phá, quản lý giỏ/tài khoản, đặt hàng và xem trạng thái riêng | Danh mục công khai; bản ghi cá nhân có xác thực; không truy cập dữ liệu khách khác |
+| Nhân viên cửa hàng/vận hành | Duy trì danh mục/giá, nhận kho, rà đơn, đóng/giao kiện và đối soát giao nhận/COD | Medusa Admin có xác thực; chỉ chức năng và dữ liệu khách cần thiết |
+| Quản trị viên | Cấp quyền nhân viên, cấu hình provider, duyệt phát hành, giám sát và khôi phục | Danh tính nhân viên riêng với khách; đặc quyền hạ tầng khác phiên khách/Admin |
+| Đơn vị vận chuyển | Vận chuyển vật lý, trả bằng chứng giao hàng/COD | Bàn giao nghiệp vụ thủ công trong MVP; không có thông tin đăng nhập ứng dụng |
+| Nhóm dự án/người đánh giá | Triển khai, đo và bảo vệ yêu cầu | Dữ liệu tổng hợp và bằng chứng làm sạch; không bí mật production hoặc xuất dữ liệu khách |
 
-Roles describe required responsibilities. Fine-grained staff authorization is an acceptance item: the presence of a Medusa login screen does not prove a configured permission model. If the installed Admin cannot enforce a required separation, document the verified limitation and restrict the demo to approved operators rather than inventing unsupported roles.
+Vai trò mô tả trách nhiệm cần có. Phân quyền nhân viên chi tiết là mục nghiệm thu: có màn hình đăng nhập Medusa không chứng minh mô hình quyền đã cấu hình. Nếu Admin đã cài không thực thi được phân tách cần thiết, ghi giới hạn đã kiểm chứng và giới hạn demo cho người vận hành được duyệt; không tự đặt vai trò không được hỗ trợ.
 
-## Business requirements
+<a id="business-requirements"></a>
+## Yêu cầu nghiệp vụ
 
-| ID | Required outcome | Success evidence |
+| ID | Kết quả bắt buộc | Bằng chứng thành công |
 | --- | --- | --- |
-| BR-01 | Customers can choose a specific sellable clothing variant with trustworthy information | Catalog images, size/color, price and availability verified against the chosen fixtures |
-| BR-02 | A purchase produces one consistent order, payment record and inventory outcome | End-to-end checkout plus retry and contention reconciliation |
-| BR-03 | Staff can move an order from receipt through fulfillment and explain delivery/payment status | Recorded Admin journey and manual carrier/COD handoff |
-| BR-04 | Customers can see their order progress and receive an asynchronous confirmation | Account status and delivered test notification; provider failure does not remove the order |
-| BR-05 | A promotion remains usable within a measured workload and fails predictably beyond it | Load, spike and recovery evidence with business invariants |
-| BR-06 | Operators can deploy, secure, observe and recover the cloud service within declared limits | CI/CD, access tests, dashboard, rollback/restore and cost records |
-| BR-07 | Suggestions improve product discovery without compromising commerce correctness or privacy | Relevant permitted candidates, eligibility checks, fallback and evaluation results |
+| BR-01 | Khách chọn biến thể quần áo bán được với thông tin tin cậy | Đối chiếu ảnh, kích cỡ/màu, giá và khả năng cung ứng với dữ liệu mẫu |
+| BR-02 | Mua hàng tạo một kết quả đơn, thanh toán và tồn kho nhất quán | Checkout xuyên suốt, đối soát thử lại và cạnh tranh |
+| BR-03 | Nhân viên đưa đơn từ tiếp nhận đến giao và giải thích trạng thái giao/thanh toán | Hành trình Admin được ghi nhận và bàn giao vận chuyển/COD thủ công |
+| BR-04 | Khách xem tiến độ và nhận xác nhận bất đồng bộ | Trạng thái tài khoản và thông báo thử đã gửi đến; lỗi provider không xóa đơn |
+| BR-05 | Khuyến mãi dùng được trong tải đã đo và lỗi có thể dự đoán ngoài mức đó | Bằng chứng tải, tăng đột biến và khôi phục cùng bất biến nghiệp vụ |
+| BR-06 | Vận hành triển khai, bảo vệ, quan sát và khôi phục trong giới hạn công bố | CI/CD, kiểm tra truy cập, dashboard, quay lui/khôi phục và chi phí |
+| BR-07 | Gợi ý cải thiện khám phá, giữ tính đúng thương mại và riêng tư | Ứng viên được phép, kiểm tra hợp lệ, dự phòng và đánh giá |
 
-## Functional requirements and flow ownership
+<a id="functional-requirements-and-flow-ownership"></a>
+## Yêu cầu chức năng và luồng phụ trách
 
-| ID | Requirement | Business link | Flow and acceptance boundary |
+| ID | Yêu cầu | Liên kết nghiệp vụ | Luồng và ranh giới nghiệm thu |
 | --- | --- | --- | --- |
-| FR-01 | Register, sign in/out and access an owned customer account | BR-02, BR-06 | [FLOW-01](02-flows.md#flow-01--registration-and-login): valid/invalid credentials, session and cross-customer access |
-| FR-02 | Browse collections, search products and select variants | BR-01, BR-07 | [FLOW-02](02-flows.md#flow-02--catalog-search-and-suggestions): correct full-result filtering/pagination, media and unavailable-product exclusion |
-| FR-03 | Create and maintain a cart with correct variant quantities and authoritative totals | BR-02 | [FLOW-03](02-flows.md#flow-03--shopping-cart): quantity/update/remove, unavailable stock and price refresh |
-| FR-04 | Validate checkout and create one recoverable order outcome | BR-02 | [FLOW-04](02-flows.md#flow-04--checkout-and-order-creation): address/shipping validation, timeout/retry and concurrent completion |
-| FR-05 | Represent COD and test payment success/failure without duplicate payment/order effects | BR-02 | [FLOW-05](02-flows.md#flow-05--payment-and-duplicate-handling): simulator isolated from production, replay and reconciliation |
-| FR-06 | Receive, adjust, reserve, fulfill and release stock at the single warehouse | BR-01, BR-02, BR-03 | [FLOW-06](02-flows.md#flow-06--warehouse-and-inventory): stock contention, cancellation and adjustment audit |
-| FR-07 | Expose accurate order/fulfillment/payment progress and operate manual shipment tracking | BR-03, BR-04 | [FLOW-07](02-flows.md#flow-07--fulfillment-and-order-status): Admin processing and customer ownership checks |
-| FR-08 | Send customer confirmation asynchronously with bounded retry and duplicate protection | BR-04, BR-06 | [FLOW-08](02-flows.md#flow-08--customer-notification): success, provider outage and repeated event |
-| FR-09 | Administer catalog/orders/stock and produce basic operational reports | BR-03, BR-05, BR-06 | [FLOW-09](02-flows.md#flow-09--administration-and-reporting): access control, totals reconciliation and operator actions |
+| FR-01 | Đăng ký, đăng nhập/xuất và truy cập tài khoản sở hữu | BR-02, BR-06 | [FLOW-01](02-flows.md#flow-01--registration-and-login): thông tin đúng/sai, phiên và truy cập chéo khách |
+| FR-02 | Duyệt bộ sưu tập, tìm sản phẩm và chọn biến thể | BR-01, BR-07 | [FLOW-02](02-flows.md#flow-02--catalog-search-and-suggestions): lọc/phân trang toàn kết quả đúng, ảnh và loại sản phẩm không hợp lệ |
+| FR-03 | Tạo/duy trì giỏ đúng số lượng biến thể và tổng tiền có thẩm quyền | BR-02 | [FLOW-03](02-flows.md#flow-03--shopping-cart): đổi số lượng/xóa, thiếu tồn và cập nhật giá |
+| FR-04 | Kiểm tra checkout và tạo một kết quả đơn có thể phục hồi | BR-02 | [FLOW-04](02-flows.md#flow-04--checkout-and-order-creation): địa chỉ/vận chuyển, timeout/thử lại và hoàn tất đồng thời |
+| FR-05 | Biểu diễn COD và thanh toán thử thành công/thất bại không lặp hiệu ứng | BR-02 | [FLOW-05](02-flows.md#flow-05--payment-and-duplicate-handling): cô lập bộ mô phỏng khỏi production, phát lại và đối soát |
+| FR-06 | Nhập, điều chỉnh, giữ chỗ, xuất giao và giải phóng tồn tại một kho | BR-01, BR-02, BR-03 | [FLOW-06](02-flows.md#flow-06--warehouse-and-inventory): cạnh tranh tồn, hủy và truy vết điều chỉnh |
+| FR-07 | Hiển thị đúng tiến độ đơn/giao/thanh toán và theo dõi vận chuyển thủ công | BR-03, BR-04 | [FLOW-07](02-flows.md#flow-07--fulfillment-and-order-status): xử lý Admin và quyền sở hữu khách |
+| FR-08 | Gửi xác nhận bất đồng bộ, thử lại giới hạn và chống trùng | BR-04, BR-06 | [FLOW-08](02-flows.md#flow-08--customer-notification): thành công, provider gián đoạn và sự kiện lặp |
+| FR-09 | Quản trị danh mục/đơn/tồn và báo cáo vận hành cơ bản | BR-03, BR-05, BR-06 | [FLOW-09](02-flows.md#flow-09--administration-and-reporting): truy cập, đối soát tổng và thao tác vận hành |
 
-All nine use cases are core acceptance scope. Suggestions are optional advanced scope under the prioritized SRS; the earlier selection is retained as an implementation proposal, not a core release gate. There is no committed AI shopping assistant. Suggested items can be deterministic; no generative AI dependency or token-cost claim is required for the initial version.
+Cả chín ca sử dụng thuộc phạm vi nghiệm thu cốt lõi. Gợi ý là phạm vi nâng cao tùy chọn theo SRS ưu tiên; lựa chọn triển khai không biến nó thành cổng phát hành cốt lõi. Không cam kết trợ lý mua sắm AI. Gợi ý có thể xác định bằng quy tắc; phiên bản đầu không cần AI sinh nội dung hoặc tuyên bố chi phí token.
 
-## Business rules
+<a id="business-rules"></a>
+## Quy tắc nghiệp vụ
 
-| ID | Rule |
+| ID | Quy tắc |
 | --- | --- |
-| RULE-01 | A purchasable unit is an identified variant/SKU, not only a product title. Size/color stock must reconcile to the chosen warehouse. |
-| RULE-02 | Medusa is authoritative for price, promotion eligibility, shipping, order and inventory decisions. Browser totals are provisional. VND amounts use the installed Medusa convention, verified by tests. |
-| RULE-03 | Price/promotion/availability are revalidated before order completion. An expired discount or changed price must not silently create a different purchase; show the reconciled result and require the appropriate customer confirmation. |
-| RULE-04 | Backorders are disabled for the acceptance clothing fixtures. Successful purchases may not exceed sellable stock. Define and test the actual reservation/decrement/release timing of the installed Medusa workflows. |
-| RULE-05 | A completion retry for the same logical purchase must resolve to its existing outcome or an explicit recoverable conflict; it must not create a second charge/order. A fresh cart is a different purchase. |
-| RULE-06 | COD order placement is not cash collection. Payment, order, fulfillment and physical-delivery states are distinct. Mark collection only after authorized staff verify collection evidence. |
-| RULE-07 | Cancellation before shipment releases applicable reservations through supported commerce operations. Shipped orders use the documented exception/return procedure; do not manufacture a cancellation by directly changing database rows. |
-| RULE-08 | Returned items are restocked only after staff inspect and accept their condition. Any refund/reconciliation is distinct from stock adjustment; record the disposition and reason. |
-| RULE-09 | Notifications and suggestions must not be required to commit a valid order. A notification failure must remain retryable and visible to operations. |
-| RULE-10 | Suggestions show only permitted, visible, priced and currently eligible products. The recommendation artifact never overrides native commerce validation. |
-| RULE-11 | Customer identity comes from verified server authentication. Staff identities are separate; no public admin registration, shared default password or secret in source. |
-| RULE-12 | Images must be owned/licensed or purpose-created. Private customer documents are never uploaded to the public image prefix. H&M research artifacts require their existing release/privacy gates before public use. |
+| RULE-01 | Đơn vị mua được là biến thể/SKU xác định, không chỉ tên sản phẩm. Tồn kích cỡ/màu phải đối soát với kho đã chọn. |
+| RULE-02 | Medusa có thẩm quyền về giá, khuyến mãi, vận chuyển, đơn và tồn. Tổng trên trình duyệt là tạm tính. Số tiền VND theo quy ước Medusa đã cài và được kiểm thử. |
+| RULE-03 | Kiểm tra lại giá/khuyến mãi/khả năng cung ứng trước hoàn tất. Giảm giá hết hạn hoặc giá đổi không được âm thầm tạo giao dịch khác; hiển thị kết quả đối soát và yêu cầu khách xác nhận phù hợp. |
+| RULE-04 | Tắt bán vượt tồn cho dữ liệu quần áo nghiệm thu. Mua thành công không vượt tồn bán được. Xác định và kiểm thử thời điểm giữ/trừ/giải phóng thực tế của workflow Medusa. |
+| RULE-05 | Thử hoàn tất lại cùng giao dịch logic phải về kết quả cũ hoặc xung đột rõ có thể phục hồi; không tạo thu tiền/đơn thứ hai. Giỏ mới là giao dịch khác. |
+| RULE-06 | Đặt COD không phải thu tiền. Trạng thái thanh toán, đơn, xử lý giao và giao vật lý riêng biệt. Chỉ ghi thu khi nhân viên có quyền xác minh bằng chứng. |
+| RULE-07 | Hủy trước giao giải phóng giữ chỗ phù hợp qua thao tác thương mại được hỗ trợ. Đơn đã giao đi theo quy trình ngoại lệ/đổi trả; không sửa hàng cơ sở dữ liệu trực tiếp để giả hủy. |
+| RULE-08 | Chỉ nhập lại hàng trả sau khi nhân viên kiểm tra/chấp nhận tình trạng. Hoàn tiền/đối soát riêng với điều chỉnh kho; ghi cách xử lý và lý do. |
+| RULE-09 | Thông báo và gợi ý không phải điều kiện chốt đơn hợp lệ. Lỗi thông báo phải thử lại được và hiển thị cho vận hành. |
+| RULE-10 | Gợi ý chỉ chứa sản phẩm được phép, hiển thị được, có giá và hiện hợp lệ. Artifact gợi ý không ghi đè kiểm tra thương mại gốc. |
+| RULE-11 | Danh tính khách từ xác thực server đã kiểm chứng. Danh tính nhân viên riêng; không đăng ký admin công khai, mật khẩu mặc định dùng chung hoặc bí mật trong mã. |
+| RULE-12 | Ảnh phải có quyền sở hữu/giấy phép hoặc được tạo có chủ đích. Không tải tài liệu riêng lên tiền tố ảnh công khai. Artifact nghiên cứu H&M phải qua cổng phát hành/riêng tư trước dùng công khai. |
 
-## Boundaries deliberately excluded
+<a id="boundaries-deliberately-excluded"></a>
+## Ngoài phạm vi có chủ đích
 
-Multi-vendor marketplace, multi-warehouse allocation, procurement/ERP, POS synchronization, automated courier integration, real-card processing, loyalty, self-service exchanges, international tax and generative shopping chat are outside this MVP. These are conscious boundaries; required core flows above cannot be deferred merely because they are inconvenient.
+Sàn đa người bán, phân bổ đa kho, mua hàng/ERP, đồng bộ POS, tích hợp vận chuyển tự động, thẻ thật, khách hàng thân thiết, đổi trả tự phục vụ, thuế quốc tế và chat mua sắm sinh nội dung nằm ngoài MVP. Không được trì hoãn luồng cốt lõi chỉ vì khó thực hiện.
 
-## Implementation versus acceptance
+<a id="implementation-versus-acceptance"></a>
+## Triển khai và nghiệm thu
 
-| Area | Inspected baseline | What the next stage must establish |
+| Lĩnh vực | Nền tảng đã khảo sát | Điều phải chứng minh |
 | --- | --- | --- |
-| Commerce | Next.js calls Medusa for account, catalog, cart and checkout | Complete DAYMARK fixtures and a current browser-to-Admin journey |
-| Admin/warehouse | Medusa core and seeded location/stock are present | First admin provisioning, permitted staff operations and fulfillment/COD reconciliation evidence |
-| Payment | COD label and non-production simulator exist | Duplicate/retry and failure invariants in the selected environment |
-| Suggestions | Custom modules/APIs and offline tooling exist; deployed flags previously disabled | Safe DAYMARK candidate input, evaluation and explicit activation gate |
-| Notifications | No configured customer-email provider established by this specification | Asynchronous confirmation implementation and provider-failure demonstration |
-| Cloud | Dated full-stack deployment evidence exists | Current release/deployment state must be checked; historical success is not uptime or capacity proof |
+| Thương mại | Next.js gọi Medusa cho tài khoản, danh mục, giỏ và checkout | Dữ liệu DAYMARK đầy đủ và hành trình trình duyệt đến Admin trên phiên bản cần nghiệm thu |
+| Admin/kho | Có Medusa core và địa điểm/tồn seed | Cấp admin đầu, thao tác nhân viên hợp lệ và đối soát giao/COD |
+| Thanh toán | Có nhãn COD và bộ mô phỏng ngoài production | Bất biến thử lại/trùng và thất bại trong môi trường chọn |
+| Gợi ý | Có module/API tùy chỉnh và công cụ ngoại tuyến; cờ triển khai từng tắt | Đầu vào DAYMARK an toàn, đánh giá và cổng bật rõ |
+| Thông báo | Đặc tả chưa xác lập provider email khách đã cấu hình | Triển khai xác nhận bất đồng bộ và chứng minh lỗi provider |
+| Cloud | Có bằng chứng triển khai đủ nền tảng theo ngày | Kiểm tra phiên bản/trạng thái triển khai; lịch sử thành công không chứng minh uptime/năng lực |
 
-The implementation order and definition of done are linked from the documentation index. Component responsibilities live in [architecture](03-architecture.md); storage and contracts live in [data/API](04-data-api.md). Changes to these business boundaries require a reviewed specification update and corresponding acceptance tests.
+Trình tự triển khai và định nghĩa hoàn thành ở mục lục tài liệu. Trách nhiệm thành phần ở [kiến trúc](03-architecture.md); lưu trữ/hợp đồng ở [dữ liệu/API](04-data-api.md). Đổi các ranh giới nghiệp vụ cần cập nhật đặc tả được đánh giá và kiểm thử nghiệm thu tương ứng.
 
-## Basic operational reports
+<a id="basic-operational-reports"></a>
+## Báo cáo vận hành cơ bản
 
-FR-09 must show a date-bounded order count/value by status, pending fulfillment workload and low-stock variants against a declared threshold. Use Vietnam business timezone and label the interval. Reconcile totals to synthetic fixture orders, including cancellations/returns. COD order value is not collected revenue: report collected amounts separately only when verified collection evidence exists. Medusa Admin screens or a small export can satisfy the MVP; no analytics warehouse or custom BI service is required.
+FR-09 phải có số lượng/giá trị đơn theo trạng thái trong khoảng ngày, khối lượng chờ xử lý và biến thể tồn thấp so ngưỡng công bố. Dùng múi giờ nghiệp vụ Việt Nam, ghi rõ khoảng thời gian. Đối soát tổng với đơn tổng hợp, kể cả hủy/trả. Giá trị đơn COD không phải doanh thu đã thu: chỉ báo số đã thu riêng khi có bằng chứng xác minh. Màn hình Medusa Admin hoặc bản xuất nhỏ có thể đáp ứng MVP; không yêu cầu kho phân tích hoặc dịch vụ BI riêng.

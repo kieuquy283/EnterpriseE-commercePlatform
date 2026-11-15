@@ -1,92 +1,101 @@
-# Acceptance, workload and measurable NFRs
+<a id="acceptance-workload-and-measurable-nfrs"></a>
+# Nghiệm thu, tải và NFR đo được
 
-This is the acceptance contract for DAYMARK, not a report of achieved capacity. [Business](01-business.md), [flows](02-flows.md), [architecture](03-architecture.md), [data/API](04-data-api.md) and [operations](06-operations.md) define what the tests exercise. All new targets require evidence before their status becomes accepted.
+Đây là hợp đồng nghiệm thu DAYMARK, không phải báo cáo năng lực đã đạt. [Nghiệp vụ](01-business.md), [luồng](02-flows.md), [kiến trúc](03-architecture.md), [dữ liệu/API](04-data-api.md) và [vận hành](06-operations.md) xác định nội dung kiểm thử. Mọi mục tiêu mới cần bằng chứng trước khi được chấp nhận.
 
-## 1. Workload assumptions
+<a id="1-workload-assumptions"></a>
+## 1. Giả định tải
 
-One Vietnam/VND clothing store, one warehouse, 24–36 launch products with size/color variants, COD and manually operated carrier handoff. Most sessions browse; a small fraction mutate carts or complete orders. No measured real business traffic is available.
+Một cửa hàng quần áo Việt Nam/VND, một kho, 24–36 sản phẩm ra mắt có biến thể kích cỡ/màu, COD và bàn giao vận chuyển thủ công. Đa số phiên duyệt; ít phiên đổi giỏ hoặc hoàn tất đơn. Chưa có số đo lưu lượng nghiệp vụ thật.
 
-Use **request arrival rate** for API capacity and **journeys per second** for checkout. A checkout journey contains several HTTP requests, so three journeys/sec is not three total HTTP requests/sec. VUs are load-generator execution capacity, not an interchangeable business user count.
+Dùng **tốc độ yêu cầu đến** cho năng lực API và **hành trình mỗi giây** cho checkout. Một hành trình có nhiều yêu cầu HTTP nên ba hành trình/giây không phải ba yêu cầu HTTP/giây. VU là năng lực thực thi của bộ tạo tải, không thể thay trực tiếp cho số người dùng nghiệp vụ.
 
-Baseline: 30 public catalog/product read requests/sec for ten minutes. Transaction test: three checkout journeys/sec for five minutes using dedicated stock and synthetic customers. Campaign model: 90% browsing, 8% cart work, 2% checkout by business action, calibrated so actual endpoint RPS is reported. Define think time and session lengths before translating results into concurrent-user claims. A provisional 100 active-session campaign scenario is a test input, not a supported-user guarantee.
+Mức nền: 30 yêu cầu đọc danh mục/sản phẩm công khai mỗi giây trong mười phút. Thử giao dịch: ba hành trình checkout/giây trong năm phút, dùng tồn riêng và khách tổng hợp. Mô hình chiến dịch: 90% duyệt, 8% giỏ, 2% checkout theo hành động nghiệp vụ; hiệu chỉnh để báo RPS endpoint thực. Xác định thời gian suy nghĩ và độ dài phiên trước suy ra số người dùng đồng thời. Kịch bản tạm tính 100 phiên hoạt động là đầu vào kiểm thử, không bảo đảm số người hỗ trợ.
 
-### Fixture sizes and request boundaries
+<a id="fixture-sizes-and-request-boundaries"></a>
+### Cỡ dữ liệu mẫu và ranh giới yêu cầu
 
-Use three distinct named fixtures: 24–36 products for the business demo; at least 120 matching synthetic products for full-catalog pagination/sort correctness; and a declared 1,000-product synthetic catalog with size/color variants for the initial capacity experiment. Larger-data stress is exploratory. These are target test fixtures, not existing seed counts or claimed real inventory. Version them, use permitted reusable image fixtures and reconcile unique SKUs/stock.
+Dùng ba bộ mẫu có tên riêng: 24–36 sản phẩm cho demo nghiệp vụ; ít nhất 120 sản phẩm tổng hợp khớp để thử phân trang/sắp xếp toàn danh mục; danh mục tổng hợp 1.000 sản phẩm có biến thể kích cỡ/màu cho thử năng lực đầu. Stress dữ liệu lớn hơn là thăm dò. Đây là mục tiêu dữ liệu thử, không phải số seed có sẵn hoặc tồn thật. Gắn phiên bản, dùng ảnh mẫu có quyền tái sử dụng và đối soát SKU/tồn duy nhất.
 
-The 30/150 RPS browsing targets count catalog/detail/search/filter API calls, not every HTTP request emitted by a page. Report storefront page requests, image-proxy RPS and transferred bytes separately, with a declared images-per-page and warm/cold cache scenario. Otherwise a read-heavy campaign could pass the catalog test while media saturates the same API tasks. Browser journey timing is a separate measure from API p95.
+Mục tiêu duyệt 30/150 RPS đếm API danh mục/chi tiết/tìm/lọc, không đếm mọi HTTP trang phát ra. Báo riêng yêu cầu trang storefront, RPS proxy ảnh và byte truyền; công bố số ảnh/trang và kịch bản cache nóng/lạnh. Nếu không, chiến dịch đọc nhiều có thể đạt thử danh mục trong khi ảnh làm nghẽn cùng API task. Thời gian hành trình trình duyệt là số đo khác p95 API.
 
-## 2. NFR targets and how to measure them
+<a id="2-nfr-targets-and-how-to-measure-them"></a>
+## 2. Mục tiêu NFR và cách đo
 
-| ID | Target / scope | Measurement and pass rule | Initial status |
+| ID | Mục tiêu / phạm vi | Cách đo và điều kiện đạt | Trạng thái ban đầu |
 | --- | --- | --- | --- |
-| NFR-PERF-01 | 30 browsing requests/sec, 10 min; p95 API duration <600 ms; failures <1% | k6 arrival-rate suite over catalog, detail, search and filter with declared warm/cold cache state; no dropped iterations; business checks threshold >99% | Target, not verified on current full AWS release |
-| NFR-PERF-02 | 3 checkout journeys/sec, 5 min; cart-completion p95 <1,500 ms; unexpected failures <1% | k6 tagged completion metric plus completed-journey count; reconcile orders, payment effects and stock; deliberate out-of-stock responses classified separately | Existing script needs stronger business thresholds and reconciliation |
-| NFR-PEAK-01 | Promotion step from 30 to 150 browsing RPS (5x), hold 5 min, then 30 RPS for 5 min | No dropped iterations, unexpected failures <1%, peak p95 <1,200 ms; return to baseline p95 <600 ms within 5 min after load falls. Record task-count change, timestamp, DB connections and any pre-scaling | Target; may require capacity changes and approved cost |
-| NFR-REL-01 | One business effect per repeated payment/order operation; no overselling in defined concurrent cases | 20 simultaneous attempts against final five units plus duplicate/retry cases; reconcile exact IDs/reservations/fulfilled counts; zero duplicate effects and zero negative sellable stock | Must be demonstrated; not inferred from framework choice |
-| NFR-AVAIL-01 | 99.5% successful availability probes during declared demo service windows | External 1-min probes cover storefront, API and a lightweight catalog dependency read. Numerator/denominator and observation period published; unexpected outages count | Target, not a 24x7 SLA; lease shutdown outside declared windows excluded explicitly |
-| NFR-RECOVERY-01 | RPO ≤60 min; RTO ≤120 min | Isolated restore drill with known checkpoint and timestamps, validate catalog/order references and controlled reopening. Snapshot existence alone is insufficient | Proposed, unverified |
-| NFR-SEC-01 | No unauthorized customer/order reads, no public DB/Redis or unsigned private S3 reads | Negative HTTP tests plus IaC/network review; credentials excluded from Git/logs; simulator absent in production | Partial historical evidence; revalidate per release |
-| NFR-OBS-01 | Detect injected API/dependency failure within 5 min during service window | Probe/dashboard/alarm captures failure and notification reaches confirmed operator; correlate test request/order to logs where implemented | Target; dashboard resources exist, notification receipt unverified |
-| NFR-NOTIFY-01 | Normal confirmation delivery within 60 sec for ≥95% of test orders; retry is bounded and observable | Test inbox/provider adapter records delivery and dedupe key; outage/retry test cannot alter committed order | Missing implementation; four-attempt policy defined in data/API contract |
-| NFR-COST-01 | Provisional USD100/month planning ceiling | Region-specific scenario model with running hours, stopped storage, ALB, RDS, ECS, Redis, logs, transfer and backup; compare estimate with delayed actual billing | Planning target, not permission to spend or a verified bill |
-| NFR-REC-01 | Optional suggestions p95 <800 ms at 30 RPS; failure does not block purchase | Separate k6 suite, fallback/timeout tests and commerce regression; offline quality comparison before activation | Private code/evidence exists; cloud feature remains disabled |
+| NFR-PERF-01 | 30 yêu cầu duyệt/giây, 10 phút; p95 API <600 ms; lỗi <1% | Bộ k6 arrival-rate cho danh mục, chi tiết, tìm và lọc; công bố cache nóng/lạnh; không dropped iterations; ngưỡng kiểm tra nghiệp vụ >99% | Mục tiêu, chưa kiểm chứng bản AWS đầy đủ cần nghiệm thu |
+| NFR-PERF-02 | 3 hành trình checkout/giây, 5 phút; p95 hoàn tất giỏ <1.500 ms; lỗi ngoài dự kiến <1% | Chỉ số hoàn tất gắn nhãn k6 và số hành trình hoàn tất; đối soát đơn, hiệu ứng thanh toán, tồn; phân loại riêng hết tồn có chủ đích | Script cần ngưỡng nghiệp vụ và đối soát mạnh hơn |
+| NFR-PEAK-01 | Tăng 30 lên 150 RPS duyệt (5x), giữ 5 phút, rồi 30 RPS trong 5 phút | Không dropped iterations, lỗi ngoài dự kiến <1%, p95 đỉnh <1.200 ms; về p95 nền <600 ms trong 5 phút sau giảm tải. Ghi đổi số task, thời gian, kết nối DB và tăng trước nếu có | Mục tiêu; có thể cần đổi năng lực và duyệt chi phí |
+| NFR-REL-01 | Một hiệu ứng nghiệp vụ cho thao tác thanh toán/đơn lặp; không bán vượt tồn trong ca đồng thời đã định | 20 lần thử đồng thời với năm đơn vị cuối và ca trùng/thử lại; đối soát ID/giữ chỗ/lượng xuất giao chính xác; không hiệu ứng trùng, không âm tồn bán được | Phải chứng minh, không suy từ framework |
+| NFR-AVAIL-01 | 99,5% probe sẵn sàng thành công trong cửa sổ demo công bố | Probe ngoài mỗi phút cho storefront, API và đọc danh mục nhẹ qua phụ thuộc. Công bố tử/mẫu và kỳ quan sát; tính gián đoạn ngoài dự kiến | Mục tiêu, không SLA 24x7; loại tắt lease ngoài cửa sổ một cách rõ ràng |
+| NFR-RECOVERY-01 | RPO ≤60 phút; RTO ≤120 phút | Diễn tập khôi phục cô lập có checkpoint và thời gian, kiểm tham chiếu danh mục/đơn, mở lại có kiểm soát. Chỉ có snapshot không đủ | Đề xuất, chưa kiểm chứng |
+| NFR-SEC-01 | Không đọc khách/đơn trái quyền, không DB/Redis công khai hoặc đọc S3 riêng không ký | HTTP phủ định cùng rà IaC/mạng; không thông tin xác thực trong Git/log; không mô phỏng production | Có bằng chứng lịch sử một phần; kiểm lại mỗi phát hành |
+| NFR-OBS-01 | Phát hiện lỗi API/phụ thuộc được tiêm trong 5 phút thuộc cửa sổ dịch vụ | Probe/dashboard/alarm ghi lỗi và thông báo tới người vận hành xác nhận; liên kết yêu cầu/đơn thử với log nơi đã triển khai | Mục tiêu; có tài nguyên dashboard, chưa kiểm chứng nhận thông báo |
+| NFR-NOTIFY-01 | Xác nhận bình thường đến trong 60 giây cho ≥95% đơn thử; thử lại giới hạn, quan sát được | Hộp thư thử/adapter ghi giao và khóa chống trùng; thử gián đoạn/thử lại không đổi đơn đã chốt | Thiếu triển khai; chính sách bốn lần ở hợp đồng dữ liệu/API |
+| NFR-COST-01 | Trần lập kế hoạch tạm tính USD100/tháng | Mô hình theo vùng gồm giờ chạy, lưu trữ khi dừng, ALB, RDS, ECS, Redis, log, truyền và sao lưu; so ước tính với hóa đơn thực có độ trễ | Mục tiêu kế hoạch, không quyền chi hoặc hóa đơn xác minh |
+| NFR-REC-01 | Gợi ý tùy chọn p95 <800 ms ở 30 RPS; lỗi không chặn mua | Bộ k6 riêng, thử dự phòng/timeout và hồi quy thương mại; so chất lượng ngoại tuyến trước bật | Có mã/bằng chứng riêng; tính năng cloud còn tắt |
 
-Cost and availability targets apply to an explicitly bounded operating schedule. A full month of the present services may exceed the provisional ceiling. If the model exceeds it, reduce schedule/capacity or obtain an owner-approved budget before running; do not silently weaken acceptance or count free credits as zero cost. Targets are project hypotheses to measure, not external industry benchmarks.
+Chi phí/độ sẵn sàng áp dụng lịch vận hành giới hạn rõ. Chạy cả tháng các dịch vụ có thể vượt trần tạm tính. Nếu mô hình vượt, giảm lịch/năng lực hoặc có ngân sách chủ sở hữu duyệt trước chạy; không âm thầm giảm nghiệm thu hay coi tín dụng miễn phí là chi phí bằng không. Mục tiêu là giả thuyết dự án cần đo, không là chuẩn ngành bên ngoài.
 
-## 3. Functional traceability
+<a id="3-functional-traceability"></a>
+## 3. Truy vết chức năng
 
-| Requirement / flow | Minimum acceptance scenario | Test layer | Evidence required |
+| Yêu cầu / luồng | Kịch bản tối thiểu | Lớp kiểm thử | Bằng chứng cần |
 | --- | --- | --- | --- |
-| FR-01 / FLOW-01 | Register, sign in/out, access own profile; reject another customer's protected data | Backend HTTP + Playwright | Synthetic identities, assertions and trace; verification policy recorded |
-| FR-02 / FLOW-02 | Browse collection, search/filter by clothing choices, inspect valid price/size/photo; paginate beyond 100 matches | Contract/integration + Playwright | Whole-catalog count/order checks, unavailable/private-product negatives |
-| FR-03 / FLOW-03 | Add/update/remove variants; invalid quantity and unavailable stock handled | Unit/HTTP + Playwright | Cart state and server-calculated totals |
-| FR-04 / FLOW-04 | Address → shipping → completion → customer confirmation → same order in Admin | Backend integration + Playwright + staff checklist | One traceable order, variant, reservation and fulfillment reference |
-| FR-05 / FLOW-05 | Isolated simulator success/failure; production COD semantics; timeout and concurrent duplicate submit | Integration + controlled k6 | Exact order/payment effects; no real charge; no simulator in production |
-| FR-06 / FLOW-06 | Staff receives stock, customer reserves, cancellation releases appropriately, pick/pack/fulfillment updates correctly | Integration + Admin checklist | Before/after levels and reservation reconciliation; test installed lifecycle |
-| FR-07 / FLOW-07 | Customer sees permitted order progress; staff records carrier handoff, delivery/COD reconciliation or failed delivery | Playwright + staff acceptance | Actual supported state mapping and handoff records, no invented carrier automation |
-| FR-08 / FLOW-08 | Confirmation after commit; duplicate event and email outage; recovery/retry | Unit fake provider + integration + test inbox | Delivery/dedupe records, bounded attempts, committed order unchanged |
-| FR-09 / FLOW-09 | Staff edits product/stock/order; Admin creates access and views basic order/stock reporting | Admin checklist + API authorization tests | Demonstrated role policy, report totals reconciled to fixture orders |
-| REC-01 | Similar/featured suggestions exclude invisible/unavailable items; no consent for behavioral tracking means no personalized data use | Unit/HTTP + Playwright + offline evaluation | Candidate version, permissioned dataset, quality metrics and fallback behavior |
+| FR-01 / FLOW-01 | Đăng ký/nhập/xuất, hồ sơ riêng; từ chối dữ liệu bảo vệ của khách khác | HTTP backend + Playwright | Danh tính tổng hợp, assertion, trace; ghi chính sách xác minh |
+| FR-02 / FLOW-02 | Duyệt, tìm/lọc quần áo, giá/kích cỡ/ảnh hợp lệ; phân trang hơn 100 kết quả | Hợp đồng/tích hợp + Playwright | Đếm/thứ tự toàn danh mục, ca phủ định sản phẩm không khả dụng/riêng |
+| FR-03 / FLOW-03 | Thêm/đổi/xóa biến thể; xử lý số lượng sai/thiếu tồn | Unit/HTTP + Playwright | Trạng thái giỏ và tổng do server tính |
+| FR-04 / FLOW-04 | Địa chỉ → vận chuyển → hoàn tất → xác nhận khách → cùng đơn ở Admin | Tích hợp backend + Playwright + kiểm tra nhân viên | Một đơn, biến thể, giữ chỗ và tham chiếu fulfillment truy vết được |
+| FR-05 / FLOW-05 | Mô phỏng cô lập thành công/thất bại; COD production; timeout và gửi trùng đồng thời | Tích hợp + k6 có kiểm soát | Hiệu ứng đơn/thanh toán chính xác; không thu thật; không mô phỏng production |
+| FR-06 / FLOW-06 | Nhân viên nhận tồn, khách giữ, hủy giải phóng phù hợp, lấy/đóng/fulfillment đúng | Tích hợp + kiểm tra Admin | Mức tồn trước/sau và đối soát giữ chỗ; thử vòng đời đã cài |
+| FR-07 / FLOW-07 | Khách thấy tiến độ được phép; nhân viên ghi bàn giao, giao/COD hoặc giao thất bại | Playwright + nghiệm thu nhân viên | Ánh xạ trạng thái thực hỗ trợ và bản ghi bàn giao; không bịa tự động vận chuyển |
+| FR-08 / FLOW-08 | Xác nhận sau chốt; trùng sự kiện/email gián đoạn; khôi phục/thử lại | Unit provider giả + tích hợp + hộp thư thử | Bản ghi giao/chống trùng, lượt giới hạn, đơn không đổi |
+| FR-09 / FLOW-09 | Nhân viên sửa sản phẩm/tồn/đơn; Admin cấp truy cập, xem báo cáo đơn/tồn | Kiểm tra Admin + thử phân quyền API | Chính sách vai trò chứng minh được, tổng báo cáo đối soát mẫu |
+| REC-01 | Gợi ý tương tự/nổi bật loại không thấy/không khả dụng; không dùng dữ liệu cá nhân hóa nếu chưa đồng ý theo dõi | Unit/HTTP + Playwright + đánh giá ngoại tuyến | Phiên bản ứng viên, dữ liệu có quyền, chất lượng và dự phòng |
 
-Built-in Medusa capability is not acceptance evidence by itself. Manual staff tests are legitimate for this MVP when repeatable, witnessed and recorded. Automated admin browser coverage can follow after the stable flow is proven.
+Năng lực Medusa có sẵn tự nó không là nghiệm thu. Thử nhân viên thủ công hợp lệ nếu lặp lại được, có người chứng kiến và ghi nhận. Tự động hóa trình duyệt Admin có thể bổ sung sau khi luồng ổn định được chứng minh.
 
-## 4. Tool responsibilities
+<a id="4-tool-responsibilities"></a>
+## 4. Trách nhiệm công cụ
 
-- **Unit/Jest:** deterministic ranking, projection, consent and idempotency policies; no assertions that merely mirror implementation details.
-- **Backend HTTP/integration:** installed Medusa workflows, auth boundaries, database constraints, transaction outcomes, provider failures and schema upgrades on disposable PostgreSQL.
-- **Playwright:** customer shopping/account journeys and visual action outcomes. Capture trace/screenshots on failure; assert persisted business results, not just page navigation.
-- **k6:** throughput, p95 latency, concurrency contention, mixed promotion and overload recovery. Set thresholds on business `checks` and `dropped_iterations`, not only HTTP timing.
-- **CloudWatch/ALB/ECS/RDS/Redis metrics:** explain bottleneck and scaling behavior during the same UTC test window.
-- **IaC/operations checks:** cfn-lint, Guard, management/shutdown tests, deployment/rollback, alarm receipt and isolated restore drill.
+- **Unit/Jest:** chính sách xếp hạng, chiếu dữ liệu, đồng ý và idempotency xác định; không assertion chỉ sao chép chi tiết triển khai.
+- **HTTP/tích hợp backend:** workflow Medusa đã cài, ranh giới auth, ràng buộc DB, kết quả giao dịch, lỗi provider, nâng schema trên PostgreSQL dùng riêng.
+- **Playwright:** hành trình mua/tài khoản và kết quả thao tác trực quan. Giữ trace/ảnh khi lỗi; kiểm kết quả nghiệp vụ đã lưu, không chỉ điều hướng.
+- **k6:** thông lượng, p95, cạnh tranh, khuyến mãi hỗn hợp và khôi phục quá tải. Đặt ngưỡng `checks` nghiệp vụ và `dropped_iterations`, không chỉ thời gian HTTP.
+- **CloudWatch/ALB/ECS/RDS/Redis:** giải thích nghẽn/tăng giảm trong cùng cửa sổ UTC.
+- **IaC/vận hành:** cfn-lint, Guard, thử quản lý/tắt, triển khai/quay lui, nhận cảnh báo và diễn tập khôi phục cô lập.
 
-Existing `load/catalog.js`, `load/checkout.js` and `load/recommendations.js` are starting points. The current catalog script reads one endpoint shape. Checkout has an order-created check but no business-check threshold; add that and reconciliation before treating green k6 output as business success. Playwright tests exist, but the inspected main CI does not execute them. These are delivery tasks, not changes made by this documentation stage.
+`load/catalog.js`, `load/checkout.js`, `load/recommendations.js` là điểm bắt đầu. Script danh mục đọc một hình dạng endpoint. Checkout có kiểm tra tạo đơn nhưng thiếu ngưỡng kiểm tra nghiệp vụ; cần bổ sung cùng đối soát trước coi k6 xanh là thành công nghiệp vụ. Có Playwright nhưng CI main được khảo sát chưa chạy chúng. Đây là công việc triển khai, không được thực hiện chỉ bằng cập nhật tài liệu.
 
-## 5. Execution sequence and fixture safety
+<a id="5-execution-sequence-and-fixture-safety"></a>
+## 5. Trình tự và an toàn dữ liệu mẫu
 
-1. Record environment, release/image digests, configuration excluding secrets, dataset count, cache state, API task bounds, database/Redis sizes, load-generator location and expected cost/runtime.
-2. Use isolated/disposable services for integration and writes. A cloud write test requires explicit designated synthetic data, known starting stock and a bounded run; never silently run load against customer orders.
-3. Smoke at one iteration; assert a real authoritative result. Stop if dependencies, key, stock or shipping/payment setup is wrong.
-4. Run baseline browsing and transaction suites separately to establish a reproducible reference. Then run mixed campaign, 5x spike and recovery. Do not run a 10x stress experiment until the smaller run is understood and spend/runtime are bounded.
-5. For autoscaling, show observed one-to-two API task transition under CPU-bound load. If bottleneck is elsewhere and no transition occurs, report that fact; pre-scaling is not automatic-scale evidence.
-6. Reconcile synthetic orders, payment effects, reservations and stock. Delete only test-owned disposable artifacts according to the fixture cleanup procedure; preserve evidence and never drop shared databases.
-7. Run explicit failures: email outage, worker restart, API task restart, Redis interruption and isolated DB restore. A failed data dependency may legitimately make checkout unavailable; it must not corrupt commerce state or claim false success.
-8. Publish result: PASS/FAIL/NOT RUN per requirement, raw output, observed bottleneck, recovery timeline, cost estimate/actual distinction and follow-up owner.
+1. Ghi môi trường, digest phiên bản/ảnh, cấu hình không bí mật, số dữ liệu mẫu, cache, giới hạn task API, cỡ DB/Redis, vị trí bộ tạo tải và chi phí/thời gian dự kiến.
+2. Dùng dịch vụ cô lập/có thể bỏ cho tích hợp và ghi. Thử ghi cloud cần dữ liệu tổng hợp chỉ định rõ, tồn đầu biết trước và lần chạy giới hạn; không âm thầm tải lên đơn khách.
+3. Smoke một vòng; kiểm kết quả có thẩm quyền thật. Dừng nếu phụ thuộc, khóa, tồn hoặc cấu hình vận chuyển/thanh toán sai.
+4. Chạy bộ duyệt nền và giao dịch riêng để có tham chiếu lặp lại. Sau đó chiến dịch hỗn hợp, đỉnh 5x và khôi phục. Chưa thử 10x khi chưa hiểu lần nhỏ và chưa giới hạn chi phí/thời gian.
+5. Với autoscaling, cho thấy API từ một lên hai task khi tải nghẽn CPU. Nếu nghẽn nơi khác và không tăng, báo đúng; tăng trước không chứng minh tự tăng.
+6. Đối soát đơn tổng hợp, hiệu ứng thanh toán, giữ chỗ và tồn. Chỉ xóa artifact thử thuộc sở hữu, có thể bỏ theo quy trình mẫu; giữ bằng chứng, không drop DB dùng chung.
+7. Tiêm lỗi rõ: email gián đoạn, worker/API khởi động lại, Redis gián đoạn, khôi phục DB cô lập. Phụ thuộc dữ liệu lỗi có thể làm checkout không khả dụng nhưng không được hỏng trạng thái hoặc báo thành công giả.
+8. Công bố PASS/FAIL/NOT RUN từng yêu cầu, đầu ra thô, nghẽn quan sát, dòng thời gian phục hồi, phân biệt ước tính/thực chi và người phụ trách tiếp.
 
-At 10x (300 browsing RPS), measure the breaking point and recovery; there is no initial promise of serving that traffic successfully. Stop conditions include sustained unexpected error >5% for one minute, database connection exhaustion, data-integrity assertion failure or the approved time/cost limit. Record the stop rather than deleting an inconvenient result.
+Ở 10x (300 RPS duyệt), đo điểm gãy và khôi phục; không hứa phục vụ thành công. Dừng khi lỗi ngoài dự kiến >5% kéo dài một phút, cạn kết nối DB, assertion toàn vẹn thất bại hoặc hết thời gian/chi phí duyệt. Ghi việc dừng, không xóa kết quả bất lợi.
 
-## 6. Evidence and release gates
+<a id="6-evidence-and-release-gates"></a>
+## 6. Bằng chứng và cổng phát hành
 
-Historical 9 November evidence records 65 backend unit tests, 12 HTTP integration tests, migration success, matching running images and 18 public checks. These do not prove present uptime, full browser checkout, staff fulfillment, campaign capacity, restore objectives or new DAYMARK content. Existing private recommendation reports do not authorize public dataset/image use.
+Bằng chứng ngày 9 tháng 11 ghi 65 unit backend, 12 tích hợp HTTP, migration đạt, ảnh chạy khớp và 18 kiểm tra công khai. Không chứng minh uptime hiện tại, checkout trình duyệt đầy đủ, nhân viên giao hàng, năng lực chiến dịch, mục tiêu khôi phục hay nội dung DAYMARK mới. Báo cáo gợi ý riêng không cấp quyền dùng dữ liệu/ảnh công khai.
 
-A new evidence bundle needs: run ID/date, commit and image digests, linked requirement IDs, setup/fixture manifest, tool/config version, raw metrics, assertions, sanitized traces, inventory/order reconciliation, dashboard capture, cost/runtime and reviewer conclusion. Store dated evidence separately from this specification; never overwrite an old successful or failed run with a new result.
+Gói bằng chứng mới cần ID/ngày chạy, commit/digest ảnh, ID yêu cầu, manifest thiết lập/mẫu, phiên bản công cụ/cấu hình, số đo thô, assertion, trace làm sạch, đối soát tồn/đơn, ảnh dashboard, chi phí/thời gian và kết luận người đánh giá. Lưu riêng theo ngày; không ghi đè lần cũ đạt hoặc lỗi bằng kết quả mới.
 
-Release acceptance requires FR-01..09 to pass, security negatives, safe duplicate handling, a complete cloud business journey, CI/CD deployment, dashboard/alarm evidence and baseline/peak/recovery results. An unresolved core blocker keeps release acceptance blocked; a clearly labeled partial demonstration is not fulfillment of the required scope. REC-01 is advanced scope: deploy disabled until data rights, quality, safety and latency gates pass. Deterministic offline recommendations have no LLM token cost; if an AI assistant is introduced later, define evaluation, prompt/data security and token-cost budgets first.
+Nghiệm thu phát hành cần FR-01..09 đạt, ca phủ định bảo mật, xử lý trùng an toàn, hành trình nghiệp vụ cloud đầy đủ, triển khai CI/CD, bằng chứng dashboard/cảnh báo và kết quả nền/đỉnh/khôi phục. Chặn cốt lõi còn mở thì chưa nghiệm thu; demo một phần gắn nhãn rõ không hoàn thành phạm vi. REC-01 nâng cao: triển khai tắt đến khi quyền dữ liệu, chất lượng, an toàn và độ trễ đạt. Gợi ý xác định ngoại tuyến không phí token LLM; nếu thêm trợ lý AI sau này, định nghĩa đánh giá, an toàn prompt/dữ liệu và ngân sách token trước.
 
-## 7. Product-suggestion quality gate
+<a id="7-product-suggestion-quality-gate"></a>
+## 7. Cổng chất lượng gợi ý
 
-Start with a deterministic baseline (featured/popular eligible items) and compare the selected similar-item strategy on a versioned, permissioned DAYMARK evaluation fixture. Target at least 20 source-product contexts spanning category, size/stock and cold-start cases; keep evaluation contexts separate from tuning where feasible. Report dataset/catalog/run hashes, label provenance and who reviewed it. Synthetic/agent labels must never be called human review.
+Bắt đầu nền xác định (sản phẩm nổi bật/phổ biến hợp lệ), so chiến lược tương tự chọn trên mẫu đánh giá DAYMARK có phiên bản/quyền. Mục tiêu ít nhất 20 ngữ cảnh sản phẩm nguồn, phủ loại hàng, kích cỡ/tồn và cold-start; tách ngữ cảnh đánh giá khỏi tinh chỉnh khi khả thi. Báo hash dữ liệu/danh mục/lượt, nguồn nhãn và người đánh giá. Không gọi nhãn tổng hợp/agent là đánh giá con người.
 
-Acceptance: 100% returned items satisfy channel/region/visibility/price eligibility, zero self/duplicate items for similar-product placement, and zero private/source-metadata leakage. Two team reviewers independently judge top-six clothing relevance with a written rubric (category/use/fit/style compatibility); target at least 80% acceptable suggestions AND no regression against the baseline on the same fixture; publish disagreement and adjudication. Retain the simpler baseline unless a more complex strategy demonstrates a measured benefit. This small review is a demo quality gate, not proof of sales uplift.
+Nghiệm thu: 100% mục trả thỏa kênh/vùng/hiển thị/giá; không tự gợi ý hoặc trùng tại vị trí sản phẩm tương tự; không lộ metadata riêng/nguồn. Hai người trong nhóm độc lập đánh giá sáu gợi ý đầu theo tiêu chí viết rõ (loại/cách dùng/phom/phong cách); mục tiêu ít nhất 80% chấp nhận được VÀ không giảm so nền trên cùng mẫu; công bố bất đồng và phân xử. Giữ nền đơn giản nếu chiến lược phức tạp chưa chứng minh lợi ích đo được. Đánh giá nhỏ là cổng chất lượng demo, không chứng minh tăng doanh số.
 
-Where held-out interaction labels exist, report Recall@6/NDCG@6 and coverage for both baseline and selected algorithm; do not invent offline purchase labels from generated orders. No online conversion improvement is claimed without a controlled experiment. Report recommendation API p95, fallback rate, artifact size/build time and incremental resource cost. For non-LLM recommendations token cost is N/A. Personalization must additionally pass consent withdrawal and stale-profile suppression before activation.
+Nếu có nhãn tương tác giữ riêng, báo Recall@6/NDCG@6 và độ phủ cho nền lẫn thuật toán chọn; không bịa nhãn mua ngoại tuyến từ đơn sinh ra. Không tuyên bố tăng chuyển đổi trực tuyến thiếu thử nghiệm có kiểm soát. Báo p95 API, tỷ lệ dự phòng, cỡ artifact/thời gian tạo và chi phí tài nguyên tăng thêm. Gợi ý không LLM có phí token N/A. Cá nhân hóa còn phải đạt thử rút đồng ý và chặn hồ sơ cũ trước bật.

@@ -1,10 +1,14 @@
-# DAYMARK presentation
+<a id="daymark-presentation"></a>
 
-One Vietnamese, eight-slide deck for **DAYMARK — Tuần 6/10**. The earlier scope review and engineering checkpoint remain in `src/reports/` as unregistered reference material; the root library lists only the current deck.
+# Công cụ trình bày DAYMARK
 
-## Run
+Thư viện trình bày dùng các bộ trang báo cáo được đăng ký trong `src/reports/registry.ts`. Các nguồn báo cáo được giữ lại nhưng không đăng ký chỉ là tài liệu tham khảo.
 
-From the repository root:
+<a id="run"></a>
+
+## Chạy
+
+Từ gốc kho mã:
 
 ```sh
 npm run presentation:dev
@@ -12,33 +16,41 @@ npm run presentation:build
 npm run presentation:test
 ```
 
-The root npm lockfile is authoritative. `presentation/` has no lockfile. Vite uses a relative base and serves the approved swallow asset from `public/brand/`.
+Lockfile npm gốc có thẩm quyền; `presentation/` không có lockfile riêng. Vite dùng base tương đối và phục vụ biểu tượng chim én đã duyệt từ `public/brand/`.
 
-## Navigation
+<a id="navigation"></a>
 
-- `#/` opens the presentation library. It never automatically opens a saved deck.
-- `#/daymark-week-6/1` opens the Week 6/10 deck directly.
-- Opening a deck and returning to the library create browser history entries; slide changes update the current entry.
-- The 16:9 canvas fills the viewport. A bottom dock with horizontal slide thumbnails appears on hover or keyboard focus at the bottom edge. There is no persistent reveal pill.
-- The dock contains only library, previous/next, slide count, 30-second play/pause and fullscreen controls.
-- Keys: `ArrowRight` / `Enter` next, `ArrowLeft` previous, `Home` / `End` first or last, `Space` play/pause. Space and Enter retain native button behavior.
-- Slide transitions and hover effects respect `prefers-reduced-motion`.
+## Điều hướng
 
-## Deck facts and sources
+- `#/` mở thư viện; không tự mở bộ trang đã lưu.
+- `#/daymark-week-6/1` mở trực tiếp báo cáo Tuần 6/10.
+- Mở báo cáo và trở về thư viện tạo mục lịch sử trình duyệt; đổi trang cập nhật mục hiện tại.
+- Khung 16:9 lấp viewport. Thanh điều khiển dưới với ảnh thu nhỏ nằm ngang hiện khi rê chuột hoặc focus bàn phím ở cạnh dưới; không có nút mở thường trực.
+- Thanh chỉ có thư viện, trước/sau, số trang, phát/dừng 30 giây và toàn màn hình.
+- Phím: `ArrowRight` / `Enter` tới, `ArrowLeft` lùi, `Home` / `End` đầu/cuối, `Space` phát/dừng. Space/Enter giữ hành vi nút gốc.
+- Chuyển trang và hover tôn trọng `prefers-reduced-motion`.
 
-The eight slides cover the everyday-clothing business problem, actors, nine required use cases, the complete stock-to-COD journey, proposed AWS/Medusa architecture, synchronous versus asynchronous responsibilities, unachieved workload targets, and the Week 6–10 implementation sequence. Test and capacity numbers are targets, not claimed results.
+<a id="deck-facts-and-sources"></a>
 
-Canonical requirements are in `docs/spec/01-business.md` through `docs/spec/07-delivery.md`. Their paths are recorded on the report and slides as source metadata. The report content includes no speaker notes or hidden explanatory panels.
+## Nội dung và nguồn báo cáo
 
-## Structure
+Báo cáo DAYMARK Tuần 6/10 có tám trang: vấn đề quần áo thường ngày, tác nhân, chín ca bắt buộc, hành trình nhập kho đến COD, kiến trúc AWS/Medusa đề xuất, trách nhiệm đồng bộ/bất đồng bộ, mục tiêu tải chưa đạt và trình tự triển khai Tuần 6–10. Số kiểm thử/năng lực là mục tiêu, không phải kết quả được khẳng định.
 
-- `src/engine/` contains library/deck routing, the full-canvas shell, thumbnail dock, reusable slide blocks and small route/playback/keyboard helpers.
-- `src/reports/registry.ts` registers only `week-06-reset/`.
-- `src/reports/daymark-scope-revamp/` and `src/reports/engineering-checkpoint/` are retained as source reference and are not in the public registry.
-- `src/styles/presentation.css` styles the library, full-screen canvas and auto-hide dock; `slide.css` styles the 16:9 report content.
+Yêu cầu chính thức ở `docs/spec/01-business.md` đến `docs/spec/07-delivery.md`. Đường dẫn được ghi làm metadata nguồn trong báo cáo/trang. Nội dung không có ghi chú diễn giả hoặc bảng giải thích ẩn.
 
-## Motion, diagrams and branding
+<a id="structure"></a>
 
-Motion 14.13.0 (matching the supplied reference) owns page transitions and per-slide choreography. Each slide selects a preset in its report data; title, card, journey, metrics and closing reveals differ. Reduced-motion preferences disable movement. Mermaid is loaded on demand for the architecture diagram, using strict security and an olive/ivory theme.
+## Cấu trúc
 
-The wordmark uses the tightly cropped traced SVG swallow. Header: brand left, section centered, week secondary at right. Static page numbering appears only in the footer. The bottom dock has no reveal pill; move to the bottom edge or focus it with the keyboard.
+- `src/engine/`: định tuyến thư viện/báo cáo, khung toàn màn hình, thanh ảnh thu nhỏ, khối trang tái sử dụng và helper định tuyến/phát/bàn phím.
+- `src/reports/registry.ts`: đăng ký `week-06-reset/`.
+- `src/reports/daymark-scope-revamp/`, `src/reports/engineering-checkpoint/`: nguồn tham khảo không thuộc đăng ký công khai.
+- `src/styles/presentation.css`: kiểu thư viện, khung toàn màn hình, thanh tự ẩn; `slide.css`: nội dung báo cáo 16:9.
+
+<a id="motion-diagrams-and-branding"></a>
+
+## Chuyển động, sơ đồ và thương hiệu
+
+Motion 14.13.0 (khớp tham chiếu được cung cấp) xử lý chuyển trang và nhịp chuyển động từng trang. Mỗi trang chọn preset trong dữ liệu báo cáo; tiêu đề, thẻ, hành trình, chỉ số và kết thúc có cách xuất hiện riêng. Giảm chuyển động tắt dịch chuyển. Mermaid tải khi cần cho sơ đồ kiến trúc, dùng bảo mật strict và chủ đề ô liu/ngà.
+
+Wordmark dùng SVG chim én đã vẽ nét và cắt sát. Đầu trang: thương hiệu trái, mục giữa, tuần phụ bên phải. Số trang tĩnh chỉ ở chân trang. Để hiện thanh dưới, đưa chuột đến cạnh dưới hoặc focus bằng bàn phím.

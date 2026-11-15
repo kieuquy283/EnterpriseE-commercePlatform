@@ -1,85 +1,99 @@
-# Contributing to DAYMARK
+<a id="contributing-to-daymark"></a>
 
-This is a shared codebase. Start with [the canonical spec](docs/README.md), [local setup](docs/setup.md) and [AGENTS.md](AGENTS.md). Requirements and workflows apply to humans and coding agents; branch protection/CI must enforce selected checks separately—AGENTS alone cannot enforce team behavior.
+# Đóng góp cho DAYMARK
 
-## A small, traceable change
+Đây là kho mã dùng chung. Bắt đầu từ [đặc tả chính thức](docs/README.md), [thiết lập cục bộ](docs/setup.md) và [AGENTS.md](AGENTS.md). Yêu cầu và quy trình áp dụng cho cả con người lẫn agent lập trình; bảo vệ nhánh và CI cần thực thi các kiểm tra được chọn. Chỉ AGENTS không thể bảo đảm hành vi của cả nhóm.
 
-1. Read the requirement/flow, related code/TODOs and relevant `git log` bodies. Check for concurrent work and preserve unrelated edits.
-2. Identify one outcome and its acceptance test. For a new boundary/provider/schema, document the decision and ask the responsible reviewer before implementing an unapproved structural change.
-3. Work on `feat/`, `fix/`, `refactor/`, `docs/`, `test/` or `chore/` topic branch; prefer a vertical business slice over disconnected infrastructure changes.
-4. Update the contract/spec when behavior changes. Add focused tests and record what could not be tested. Do not represent planned features as implemented.
-5. Open a focused PR with requirement/flow IDs, before/after behavior, validation, risks and unresolved TODOs. A reviewer can request a smaller PR or a clarified decision.
-6. Merge only with task/user authorization and required checks/reviews. Do not force-push shared main. Preserve published migration/data compatibility unless an explicitly reviewed migration plan says otherwise.
+<a id="a-small-traceable-change"></a>
 
-## TODOs
+## Thay đổi nhỏ, có thể truy vết
 
-Use `TODO(kind): specific action — context; requirement/issue` for unfinished work near the relevant code. Kinds: impl, refactor, dup, shared, design, test, perf, security, ops. Example:
+1. Đọc yêu cầu/luồng, mã nguồn/TODO liên quan và nội dung `git log`. Kiểm tra công việc đồng thời và giữ nguyên thay đổi không liên quan.
+2. Xác định một kết quả cùng kiểm thử nghiệm thu. Với ranh giới, provider hoặc schema mới, ghi quyết định và hỏi người đánh giá phụ trách trước khi thực hiện thay đổi cấu trúc chưa được phê duyệt.
+3. Dùng nhánh chủ đề `feat/`, `fix/`, `refactor/`, `docs/`, `test/` hoặc `chore/`; ưu tiên một lát cắt nghiệp vụ hoàn chỉnh.
+4. Cập nhật hợp đồng/đặc tả khi hành vi đổi. Bổ sung kiểm thử tập trung và ghi rõ phần chưa kiểm thử. Không mô tả tính năng dự kiến như đã triển khai.
+5. Mở PR tập trung, nêu mã yêu cầu/luồng, hành vi trước/sau, kiểm chứng, rủi ro và TODO còn mở. Người đánh giá có thể yêu cầu tách PR hoặc làm rõ quyết định.
+6. Chỉ hợp nhất khi nhiệm vụ/người dùng cho phép và đủ kiểm tra/đánh giá bắt buộc. Không force-push nhánh main dùng chung. Giữ tương thích migration/dữ liệu đã công bố, trừ khi có kế hoạch migration được đánh giá rõ ràng.
+
+<a id="todos"></a>
+
+## TODO
+
+Dùng `TODO(kind): hành động cụ thể — bối cảnh; yêu cầu/issue` gần phần chưa hoàn thành. Các loại: impl, refactor, dup, shared, design, test, perf, security, ops. Ví dụ:
 
 ```ts
 // TODO(test): Reconcile final-size stock under concurrent checkout — FR-06.
 ```
 
-Use `npm run todo`. Keep multi-step work in [the delivery backlog](docs/spec/07-delivery.md) or an issue; do not flood files with vague annotations. Remove resolved TODOs and mention them in the commit body.
+Dùng `npm run todo`. Giữ công việc nhiều bước trong [danh sách công việc](docs/spec/07-delivery.md) hoặc issue; tránh ghi chú mơ hồ rải rác. Xóa TODO đã giải quyết và nêu trong nội dung commit.
 
-## Commits
+<a id="commits"></a>
 
-Conventional subject, imperative and <=72 characters: `type(scope): description`. Types: feat, fix, refactor, docs, test, perf, chore, ci. Scopes should identify the affected area. One logical change per commit; the generated root lockfile travels with the dependency change that caused it.
+## Commit
 
-Nontrivial bodies explain:
+Tiêu đề theo quy ước, dùng động từ chỉ hành động và không quá 72 ký tự: `type(scope): description`. Các loại: feat, fix, refactor, docs, test, perf, chore, ci. Phạm vi chỉ khu vực bị ảnh hưởng. Mỗi commit là một thay đổi logic; lockfile gốc được sinh đi cùng thay đổi dependency gây ra nó.
 
-```text
-What: visible behavior and main implementation changes.
-Why: requirement/flow, decision and alternatives that mattered.
-Follow-ups: remaining TODOs, compatibility or operating limits.
-Validated: exact checks/results, plus anything not run.
-```
+Nội dung commit đáng kể giải thích các mục sau; giữ tên trường để thống nhất quy ước:
 
-Do not fabricate testing or reviewer approval. An automated code agent commits/pushes only when its task authorizes that action.
+- **What:** hành vi nhìn thấy được và thay đổi triển khai chính.
+- **Why:** yêu cầu/luồng, quyết định và phương án thay thế có ảnh hưởng.
+- **Follow-ups:** TODO còn lại, tương thích hoặc giới hạn vận hành.
+- **Validated:** kiểm tra/kết quả chính xác và những gì chưa chạy.
 
-## Validation by scope
+Không bịa kết quả kiểm thử hoặc phê duyệt của người đánh giá. Agent chỉ commit/push khi nhiệm vụ cho phép.
 
-| Change                           | Required evidence                                                                                                |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Docs/report content              | `npm run docs:check`; inspect target/implemented/verified language and teacher coverage                          |
-| Presentation engine/content      | Build/type check, route/navigation tests and print/overflow review where available                               |
-| Backend policy/workflow          | Backend lint/types plus relevant unit/HTTP/integration assertions                                                |
-| Storefront journey               | Storefront lint/types/build plus relevant Playwright journey                                                     |
-| Schema                           | Generated new migration, disposable fresh/upgrade checks; never rewrite applied migrations                       |
-| Infra/release                    | CloudFormation lint/Guard and lifecycle tests; reviewed change set, budget and explicit deployment authorization |
-| Commerce correctness/performance | Isolated fixtures, repeat/contended operations, reconciled records and named metrics                             |
+<a id="validation-by-scope"></a>
 
-Use npm/root lockfile only. No generated output, credentials, private `.env`, deployment settings or raw customer records in Git. Do not run write/load tests against shared data merely to satisfy a checklist. App changes follow scoped AGENTS. Read [operations](docs/spec/06-operations.md) before live work.
+## Kiểm chứng theo phạm vi
 
-## Ownership and review
+| Thay đổi                           | Bằng chứng bắt buộc                                                                                             |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Nội dung tài liệu/báo cáo          | `npm run docs:check`; rà cách phân biệt mục tiêu/đã triển khai/đã kiểm chứng và độ bao phủ yêu cầu giảng viên   |
+| Công cụ/nội dung trình bày         | Build/kiểm tra kiểu, kiểm thử tuyến/điều hướng và rà bản in/tràn nội dung nếu có                                |
+| Chính sách/workflow backend        | Lint/kiểu backend cùng kiểm thử unit/HTTP/tích hợp liên quan                                                    |
+| Hành trình storefront              | Lint/kiểu/build storefront cùng hành trình Playwright liên quan                                                 |
+| Schema                             | Migration mới được sinh, kiểm tra cài mới/nâng cấp trên dữ liệu dùng riêng; không viết lại migration đã áp dụng |
+| Hạ tầng/phát hành                  | Lint/Guard CloudFormation và kiểm thử vòng đời; change set được đánh giá, ngân sách và quyền triển khai rõ ràng |
+| Tính đúng đắn/hiệu năng thương mại | Dữ liệu mẫu cô lập, thao tác lặp/cạnh tranh, bản ghi đối soát và chỉ số có tên                                  |
 
-Record a responsible reviewer/operator per issue or release, not one permanent sole owner. Customer-facing business changes require business-flow review; architecture/integration changes require boundary/contract review; data/cloud actions require migration/cost/recovery review. Existing Medusa functionality must be verified in the chosen configuration before it is marked accepted. Suggested future CI enforcement: docs/contracts, isolated business E2E and required infrastructure checks; this document does not claim repository protection settings have been changed.
+Chỉ dùng npm và lockfile gốc. Không đưa kết quả sinh tự động, thông tin xác thực, `.env` riêng, cấu hình triển khai riêng hoặc bản ghi khách hàng thô vào Git. Không chạy kiểm thử ghi/tải trên dữ liệu dùng chung chỉ để đủ danh sách kiểm tra. Thay đổi ứng dụng tuân thủ AGENTS theo phạm vi. Đọc [vận hành](docs/spec/06-operations.md) trước thao tác trên hệ thống thật.
 
-## Review by business flow
+<a id="ownership-and-review"></a>
 
-Choose a responsible reviewer and acceptance operator in each issue/PR. These are review responsibilities, not invented GitHub usernames or exclusive directory ownership. A flow can cross both applications; its reviewer follows the complete journey.
+## Trách nhiệm và đánh giá
 
-| Flow / requirement                          | Change and review focus                                                             | Typical implementation boundary                                               |
-| ------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Account and private history / FR-01, FR-07  | Customer identity, authorization and private responses                              | Storefront data/auth actions, backend auth/customer/order APIs                |
-| Browse and discover / FR-02                 | Whole-catalog query semantics, region/channel visibility, variant and price display | Storefront product data and catalog UI, Medusa product/pricing APIs           |
-| Cart through purchase / FR-03–FR-05         | Authoritative totals, retry outcomes, payment and order reconciliation              | Storefront checkout/data, Medusa cart/payment/order workflows                 |
-| Stock and fulfillment / FR-06, FR-07, FR-09 | Staff permissions, stock accounting, physical handoff and COD collection            | Medusa Admin, inventory/fulfillment workflows and providers                   |
-| Notifications / FR-08                       | Durable intent, duplicate delivery, retries and recovery                            | Planned notification workflow/module/provider; not yet accepted               |
-| Suggestions / REC-01                        | Eligibility, public projection, consent, fallback and cache expiry                  | Recommendation/personalization modules, workflows, routes and storefront data |
-| Release and recovery / NFRs                 | Capacity, cost, migration safety, rollback and measured evidence                    | Deployment tooling and operations; separate authorization for live actions    |
+Ghi người đánh giá/vận hành phụ trách theo issue hoặc đợt phát hành, không chỉ định một chủ sở hữu duy nhất vĩnh viễn. Thay đổi nghiệp vụ hướng khách hàng cần đánh giá luồng; thay đổi kiến trúc/tích hợp cần đánh giá ranh giới/hợp đồng; thao tác dữ liệu/cloud cần đánh giá migration/chi phí/khôi phục. Chức năng Medusa có sẵn phải được kiểm chứng trong cấu hình đã chọn trước khi nghiệm thu. CI có thể thực thi tài liệu/hợp đồng, E2E nghiệp vụ cô lập và kiểm tra hạ tầng bắt buộc; tài liệu này không khẳng định cấu hình bảo vệ kho mã đã thay đổi.
 
-For cross-flow work, name the affected flow reviewers explicitly. Use [the flow contract](docs/spec/02-flows.md) for acceptance, not a passing file-level test alone.
+<a id="review-by-business-flow"></a>
 
-## Formatting, lint and commit verification
+## Đánh giá theo luồng nghiệp vụ
 
-Use Node 24.22.1 and the root npm lockfile; `packageManager` selects npm 11.12.1. pnpm migration is parked. Oxfmt 0.78.0 replaces our direct Prettier dependencies and storefront configuration. Prettier may remain transitively installed by framework tooling or Oxfmt; it is no longer a project command.
+Chọn người đánh giá và người chạy nghiệm thu cho mỗi issue/PR. Đây là trách nhiệm đánh giá, không phải tên người dùng GitHub được tự đặt hay quyền sở hữu thư mục độc quyền. Một luồng có thể đi qua cả hai ứng dụng; người đánh giá theo dõi toàn hành trình.
 
-Run `npm run format -- path/to/file` to format selected files, or `npm run format` for an explicit repository-wide rewrite. Formatting uses double quotes, two spaces, no semicolons and no import/package sorting. Existing source has a legacy formatting baseline: this change deliberately avoids a bulk rewrite. `npm run format:check` checks the adopted formatter configuration and staged-check configuration in CI; the pre-commit hook checks every staged supported source/configuration file. Run `npm run format:check -- path/to/file` for an additional explicit check. Generated builds, lockfiles, docs/evidence and datasets are excluded by `.oxfmtrc.json`.
+| Luồng / yêu cầu                              | Trọng tâm thay đổi và đánh giá                                              | Ranh giới triển khai thường gặp                                              |
+| -------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Tài khoản và lịch sử riêng / FR-01, FR-07    | Danh tính, phân quyền và phản hồi riêng tư                                  | Thao tác dữ liệu/xác thực storefront, API auth/customer/order backend        |
+| Duyệt và khám phá / FR-02                    | Truy vấn toàn danh mục, hiển thị theo vùng/kênh, biến thể và giá            | Dữ liệu/UI danh mục storefront, API product/pricing Medusa                   |
+| Giỏ hàng đến mua hàng / FR-03–FR-05          | Tổng tiền có thẩm quyền, kết quả thử lại, đối soát thanh toán và đơn        | Checkout/dữ liệu storefront, workflow cart/payment/order Medusa              |
+| Kho và xử lý giao hàng / FR-06, FR-07, FR-09 | Quyền nhân viên, hạch toán kho, bàn giao vật lý và thu COD                  | Medusa Admin, workflow/provider inventory/fulfillment                        |
+| Thông báo / FR-08                            | Ý định gửi bền vững, gửi trùng, thử lại và khôi phục                        | Workflow/module/provider thông báo dự kiến; chưa nghiệm thu                  |
+| Gợi ý / REC-01                               | Điều kiện hợp lệ, dữ liệu công khai, đồng ý, dự phòng và hết hạn bộ nhớ đệm | Module recommendation/personalization, workflow, route và dữ liệu storefront |
+| Phát hành và khôi phục / NFR                 | Năng lực, chi phí, an toàn migration, quay lui và bằng chứng đo             | Công cụ triển khai và vận hành; thao tác thật cần quyền riêng                |
 
-ESLint remains the single linter: Medusa's custom architecture checks and Next's framework/TypeScript rules have no verified complete Oxlint replacement here. Oxlint is therefore not installed or run. TypeScript and application tests remain separate checks. See the official [Oxfmt CLI](https://oxc.rs/docs/guide/usage/formatter/cli).
+Với công việc xuyên luồng, nêu rõ người đánh giá các luồng bị ảnh hưởng. Nghiệm thu theo [hợp đồng luồng](docs/spec/02-flows.md), không chỉ dựa vào một kiểm thử cấp tệp đã đạt.
 
-Husky 9.1.7 manages `.husky/pre-commit`; lint-staged 16.4.0 selects checks using `lint-staged.config.mjs`. `npm ci` installs the local hook through `prepare`; installation skips production, CI and contexts without `.git` (including Docker dependency layers). After an install with scripts disabled, run `npm run hooks:install` manually. Check `git config --get core.hooksPath` first if you use a personal hook path: Husky replaces that local setting.
+<a id="formatting-lint-and-commit-verification"></a>
 
-The hook runs `npm run hooks:verify`, using lint-staged's backup/restore handling and `--hide-unstaged` to hide tracked unstaged edits, including partially staged files. Commands are check-only; fix formatting explicitly and stage the result yourself. Nonignored untracked dependencies remain visible. See the official [lint-staged guide](https://github.com/lint-staged/lint-staged#readme) and [Husky setup](https://typicode.github.io/husky/get-started.html).
+## Định dạng, lint và kiểm chứng commit
 
-Staged supported files run Oxfmt. Docs and scoped instructions run the docs checker; backend/storefront changes run the affected application's ESLint checks. Root package/lockfile/Turbo/ESLint changes select the tooling baseline and both application lints. Presentation changes run its typecheck and engine tests. The hook never builds, seeds or accesses databases/cloud. Full type checks, integration tests and builds remain CI/PR checks. Hooks are bypassable with `git commit --no-verify` or `HUSKY=0`; explain a bypass in the PR and run the required checks. CI and repository protection settings are the shared enforcement boundary; branch protection is unchanged.
+Dùng Node 24.22.1 và lockfile npm gốc; `packageManager` chọn npm 11.12.1. Chưa chuyển sang pnpm. Oxfmt 0.78.0 là công cụ định dạng trực tiếp của dự án. Prettier có thể vẫn được cài gián tiếp bởi framework hoặc Oxfmt; không còn là lệnh dự án.
+
+Chạy `npm run format -- path/to/file` cho tệp được chọn; chỉ dùng `npm run format` khi chủ đích định dạng toàn kho mã. Quy tắc dùng dấu nháy kép, hai khoảng trắng, không dấu chấm phẩy và không sắp xếp import/package. Mã hiện có mang định dạng cũ; tránh viết lại hàng loạt. `npm run format:check` kiểm tra cấu hình formatter và kiểm tra staged trong CI; hook pre-commit kiểm tra mọi tệp nguồn/cấu hình được hỗ trợ đã stage. Dùng `npm run format:check -- path/to/file` để kiểm tra tường minh thêm. Build sinh tự động, lockfile, tài liệu/bằng chứng và bộ dữ liệu được loại trừ theo `.oxfmtrc.json`.
+
+ESLint là linter duy nhất: chưa có phương án Oxlint thay thế đầy đủ đã kiểm chứng cho quy tắc kiến trúc Medusa và quy tắc framework/TypeScript Next. Vì vậy Oxlint không được cài hoặc chạy. TypeScript và kiểm thử ứng dụng là các kiểm tra riêng. Xem [Oxfmt CLI chính thức](https://oxc.rs/docs/guide/usage/formatter/cli).
+
+Husky 9.1.7 quản lý `.husky/pre-commit`; lint-staged 16.4.0 chọn kiểm tra qua `lint-staged.config.mjs`. `npm ci` cài hook cục bộ qua `prepare`; bỏ qua khi ở production, CI hoặc không có `.git` (kể cả lớp dependency Docker). Sau khi cài với script bị tắt, chạy `npm run hooks:install` thủ công. Nếu dùng đường dẫn hook riêng, kiểm tra `git config --get core.hooksPath` trước vì Husky thay thiết lập cục bộ đó.
+
+Hook chạy `npm run hooks:verify`, dùng cơ chế sao lưu/khôi phục của lint-staged và `--hide-unstaged` để ẩn thay đổi tracked chưa stage, kể cả tệp stage một phần. Các lệnh chỉ kiểm tra; sửa định dạng và tự stage kết quả. Dependency untracked không bị ignore vẫn được nhìn thấy. Xem [hướng dẫn lint-staged](https://github.com/lint-staged/lint-staged#readme) và [thiết lập Husky](https://typicode.github.io/husky/get-started.html).
+
+Tệp staged được hỗ trợ chạy Oxfmt. Tài liệu và hướng dẫn theo phạm vi chạy trình kiểm tra tài liệu; thay đổi backend/storefront chạy ESLint của ứng dụng liên quan. Thay đổi package/lockfile/Turbo/ESLint gốc chọn kiểm tra công cụ nền và lint cả hai ứng dụng. Thay đổi presentation chạy kiểm tra kiểu và kiểm thử công cụ. Hook không build, seed hoặc truy cập cơ sở dữ liệu/cloud. Kiểm tra kiểu đầy đủ, kiểm thử tích hợp và build thuộc CI/PR. Có thể bỏ hook bằng `git commit --no-verify` hoặc `HUSKY=0`; phải giải thích trong PR và chạy kiểm tra bắt buộc. CI và bảo vệ kho mã là ranh giới thực thi chung; tài liệu này không thay đổi bảo vệ nhánh.

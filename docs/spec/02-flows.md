@@ -1,10 +1,12 @@
-# DAYMARK — end-to-end business flows
+<a id="daymark--end-to-end-business-flows"></a>
+# DAYMARK — luồng nghiệp vụ xuyên suốt
 
-Authority update — 15 November 2026: the [business-first specification](../README.md#primary-business-first-specification) takes precedence for business scope and policy. This file maps that intent to DAYMARK implementation and retains earlier proposals where not yet reconciled. See the [crosswalk and held decisions](../reference/spec-consolidation.md); open policies are not approved merely because code exists.
+[Đặc tả lấy nghiệp vụ làm gốc](../README.md#primary-business-first-specification) được ưu tiên về phạm vi và chính sách. Tài liệu này ánh xạ ý định sang triển khai DAYMARK, giữ đề xuất chưa đối chiếu thống nhất. Xem [ánh xạ và quyết định còn mở](../technical/requirements-mapping.md); có mã không đồng nghĩa chính sách mở đã được duyệt.
 
-This is the acceptance flow contract for [FR-01–FR-09](01-business.md#functional-requirements-and-flow-ownership). It specifies required behavior, not a claim that every path exists today. Medusa's actual state transitions, transaction boundaries and reservation timing must be verified against the installed version. Diagrams below use business concepts rather than undocumented enum values.
+Đây là hợp đồng luồng nghiệm thu cho [FR-01–FR-09](01-business.md#functional-requirements-and-flow-ownership), mô tả hành vi bắt buộc, không khẳng định mọi nhánh đã có. Chuyển trạng thái, ranh giới giao dịch và thời điểm giữ tồn thực tế của Medusa cần kiểm chứng với phiên bản đã cài. Sơ đồ dùng khái niệm nghiệp vụ, không tự đặt giá trị enum chưa có tài liệu.
 
-## Whole-business journey
+<a id="whole-business-journey"></a>
+## Hành trình toàn nghiệp vụ
 
 ```mermaid
 flowchart LR
@@ -21,47 +23,51 @@ flowchart LR
   Ship --> Exception[Failed delivery or inspected return]
 ```
 
-Manual actions require an actor and evidence; they are not missing arrows filled by an imaginary carrier API. For component interaction and storage ownership see [architecture](03-architecture.md) and [data/API](04-data-api.md).
+Thao tác thủ công cần tác nhân và bằng chứng; không được giả định API vận chuyển để lấp chỗ trống. Tương tác thành phần và quyền sở hữu lưu trữ ở [kiến trúc](03-architecture.md), [dữ liệu/API](04-data-api.md).
 
-## FLOW-01 — registration and login
+<a id="flow-01--registration-and-login"></a>
+## FLOW-01 — đăng ký và đăng nhập
 
-**Purpose / actor:** FR-01; Customer establishes an identity and accesses only owned information.
+**Mục đích / tác nhân:** FR-01; khách thiết lập danh tính và chỉ truy cập thông tin của mình.
 
-- **Trigger/preconditions:** Customer selects register/login over HTTPS. Backend and authentication store are reachable. Public catalog remains browsable without an account.
-- **Normal:** Validate credentials and profile fields; use supported Medusa authentication; complete any configured verification step; establish the session; create/link the customer record where required; show account and owned order history. Logout removes the local session and invokes supported logout behavior.
-- **Alternatives/failures:** Invalid input gets field-level guidance; invalid credentials get a non-sensitive message. Existing email must not silently create a second customer. If verification is required, account completion must wait for a deliverable configured verification flow. A dependency outage returns a retryable error, not a fabricated login.
-- **Data/postconditions:** Authentication identity and customer record live in PostgreSQL through Medusa; session token is held in a secure HTTP-only storefront cookie. No password or token is logged. Customer identity is resolved server-side.
-- **Acceptance:** Registration/login/logout; configured verification branch; duplicate email; expired session; Customer A cannot read/update Customer B's profile or orders. Test data is synthetic.
+- **Kích hoạt/tiền điều kiện:** Khách chọn đăng ký/đăng nhập qua HTTPS. Backend và kho xác thực truy cập được. Danh mục công khai vẫn duyệt được không cần tài khoản.
+- **Luồng chính:** Kiểm tra thông tin xác thực và hồ sơ; dùng xác thực Medusa được hỗ trợ; hoàn thành bước xác minh đã cấu hình; thiết lập phiên; tạo/liên kết bản ghi khách khi cần; hiển thị tài khoản và lịch sử đơn sở hữu. Đăng xuất xóa phiên cục bộ và gọi hành vi đăng xuất được hỗ trợ.
+- **Thay thế/thất bại:** Dữ liệu sai có hướng dẫn theo trường; thông tin đăng nhập sai có thông báo không nhạy cảm. Email đã có không được âm thầm tạo khách thứ hai. Nếu cần xác minh, hoàn tất tài khoản phải chờ luồng xác minh được cấu hình và gửi được. Lỗi phụ thuộc trả lỗi có thể thử lại, không giả đăng nhập.
+- **Dữ liệu/hậu điều kiện:** Danh tính xác thực và khách ở PostgreSQL qua Medusa; token phiên trong cookie storefront HTTP-only an toàn. Không ghi log mật khẩu/token. Phân giải danh tính phía server.
+- **Nghiệm thu:** Đăng ký/nhập/xuất; nhánh xác minh được cấu hình; trùng email; hết phiên; khách A không đọc/sửa hồ sơ hoặc đơn khách B. Dữ liệu thử là tổng hợp.
 
-## FLOW-02 — catalog, search and suggestions
+<a id="flow-02--catalog-search-and-suggestions"></a>
+## FLOW-02 — danh mục, tìm kiếm và gợi ý
 
-**Purpose / actor:** FR-02; Customer finds clothing and an eligible variant.
+**Mục đích / tác nhân:** FR-02; khách tìm quần áo và biến thể hợp lệ.
 
-- **Trigger/preconditions:** Customer opens a collection, searches by a term, applies supported filters or opens a product. Published products have permitted images, prices, variants and warehouse stock.
-- **Normal:** Resolve market/region and channel; fetch public products using native commerce visibility; apply search/filter/sort across the full result set; paginate; render images and size/color selection. Fetch non-personalized suggestions with a finite time/resource budget and validate their sellability before display.
-- **Alternatives/failures:** No results shows a useful empty state. Unavailable variants cannot be added as sellable. Broken media uses a neutral placeholder. Suggestion timeout/disabled feature/no candidates removes the section or uses eligible catalog fallback without blocking the page. Personalized results require the separate consent/identity gate.
-- **Data/postconditions:** Catalog/pricing/inventory remain Medusa-owned PostgreSQL data. Image bytes are private S3 objects delivered through the approved public-image proxy. Published candidate/version records reside in PostgreSQL; offline source artifacts do not become orders.
-- **Acceptance:** Fixture search, size/color, sort and pagination beyond 100 results; exact image URL delivery; no draft/channel-ineligible products; out-of-stock suggestion filtering; disabled/outage fallback; catalog load target in [testing](05-testing.md).
+- **Kích hoạt/tiền điều kiện:** Khách mở bộ sưu tập, tìm từ khóa, dùng bộ lọc hỗ trợ hoặc mở sản phẩm. Sản phẩm công bố có ảnh được phép, giá, biến thể và tồn kho.
+- **Luồng chính:** Phân giải thị trường/vùng và kênh; lấy sản phẩm công khai theo khả năng hiển thị thương mại gốc; tìm/lọc/sắp xếp trên toàn kết quả; phân trang; hiển thị ảnh và chọn kích cỡ/màu. Lấy gợi ý không cá nhân hóa trong giới hạn thời gian/tài nguyên và kiểm tra bán được trước hiển thị.
+- **Thay thế/thất bại:** Không có kết quả có trạng thái rỗng hữu ích. Không thêm biến thể không khả dụng như hàng bán được. Ảnh lỗi có khung thay thế trung tính. Gợi ý timeout/tắt/không ứng viên thì bỏ vùng hoặc dự phòng bằng danh mục hợp lệ, không chặn trang. Cá nhân hóa cần cổng đồng ý/danh tính riêng.
+- **Dữ liệu/hậu điều kiện:** Danh mục/giá/tồn do Medusa sở hữu trong PostgreSQL. Byte ảnh là đối tượng S3 riêng đi qua proxy ảnh công khai được duyệt. Bản ghi ứng viên/phiên bản đã công bố ở PostgreSQL; artifact nguồn ngoại tuyến không trở thành đơn hàng.
+- **Nghiệm thu:** Tìm, kích cỡ/màu, sắp xếp và phân trang quá 100 kết quả; phân phối đúng URL ảnh; loại bản nháp/sai kênh; lọc gợi ý hết tồn; dự phòng khi tắt/lỗi; mục tiêu tải ở [kiểm thử](05-testing.md).
 
-## FLOW-03 — shopping cart
+<a id="flow-03--shopping-cart"></a>
+## FLOW-03 — giỏ hàng
 
-**Purpose / actor:** FR-03; Customer maintains a provisional purchase.
+**Mục đích / tác nhân:** FR-03; khách duy trì giao dịch mua tạm tính.
 
-- **Trigger/preconditions:** Customer chooses a product variant and positive whole quantity. Region and sales channel are known.
-- **Normal:** Create/retrieve Medusa cart; add/update/remove line; retrieve authoritative prices and totals; persist cart identifier in the secure cookie; associate identity using supported authenticated operations when appropriate.
-- **Alternatives/failures:** Reject nonexistent variant, invalid quantity and unavailable purchase. Display changed price/stock on refresh. Network retry must use the operation's defined semantics; repeating an add-to-cart action is not automatically equivalent to checkout idempotency. Lost/expired cart yields a recoverable empty-cart state.
-- **Data/postconditions:** Cart and lines are PostgreSQL commerce records. Browser state is a view of the cart, not the order or inventory authority. Cart contents alone do not promise a permanent stock allocation.
-- **Acceptance:** Variant-specific add/change/remove; invalid quantities; cross-session ownership rules; stock/price refresh; no client-controlled authoritative totals or customer identity.
+- **Kích hoạt/tiền điều kiện:** Khách chọn biến thể và số lượng nguyên dương. Đã biết vùng và kênh bán.
+- **Luồng chính:** Tạo/lấy giỏ Medusa; thêm/đổi/xóa dòng; lấy giá và tổng có thẩm quyền; lưu mã giỏ trong cookie an toàn; liên kết danh tính bằng thao tác có xác thực được hỗ trợ khi phù hợp.
+- **Thay thế/thất bại:** Từ chối biến thể không có, số lượng sai và mua không khả dụng. Hiển thị giá/tồn đã đổi khi làm mới. Thử lại mạng theo ngữ nghĩa thao tác; thêm giỏ lặp không tự tương đương idempotency checkout. Giỏ mất/hết hạn có trạng thái rỗng phục hồi được.
+- **Dữ liệu/hậu điều kiện:** Giỏ/dòng là bản ghi thương mại PostgreSQL. Trình duyệt chỉ là cách nhìn giỏ, không có thẩm quyền đơn hoặc tồn. Chỉ nội dung giỏ không bảo đảm phân bổ tồn vĩnh viễn.
+- **Nghiệm thu:** Thêm/đổi/xóa theo biến thể; số lượng sai; quyền sở hữu xuyên phiên; cập nhật tồn/giá; khách không điều khiển tổng có thẩm quyền hoặc danh tính.
 
-## FLOW-04 — checkout and order creation
+<a id="flow-04--checkout-and-order-creation"></a>
+## FLOW-04 — checkout và tạo đơn
 
-**Purpose / actor:** FR-04; Customer commits one logical purchase.
+**Mục đích / tác nhân:** FR-04; khách chốt một giao dịch mua logic.
 
-- **Trigger/preconditions:** A non-empty valid cart, contact/address data, eligible shipping option and selected payment method. The cart has not already completed.
-- **Normal:** Validate input and current commerce context; obtain current price/discount/shipping/stock; confirm reconciled totals; establish the payment session; invoke supported cart completion; show the returned order outcome; clear/replace the completed cart reference. Operations can find the same order.
-- **Alternatives/failures:** Invalid address/shipping, expired promotion or insufficient stock prevents success and explains the correction. On timeout, resolve the same cart's outcome before initiating another logical purchase. Concurrent/repeated completion must not create duplicate order/payment effects. If the commit outcome is unknown, show pending/retry guidance rather than an invented success/failure.
-- **Data/postconditions:** Order, lines, payment references and reservation/inventory outcomes reconcile in PostgreSQL. An accepted order remains valid even when downstream notification fails.
-- **Acceptance:** Browser purchase visible to customer and Admin; concurrent same-cart submit; timeout after commit; discount expiry; final-unit contention; exact order/payment/inventory reconciliation.
+- **Kích hoạt/tiền điều kiện:** Giỏ hợp lệ không rỗng, thông tin liên hệ/địa chỉ, lựa chọn vận chuyển hợp lệ và phương thức thanh toán. Giỏ chưa hoàn tất.
+- **Luồng chính:** Kiểm tra đầu vào/bối cảnh thương mại; lấy giá/giảm giá/vận chuyển/tồn hiện tại; xác nhận tổng đã đối soát; thiết lập phiên thanh toán; gọi hoàn tất giỏ được hỗ trợ; hiển thị kết quả đơn trả về; xóa/thay tham chiếu giỏ hoàn tất. Vận hành tìm thấy cùng đơn.
+- **Thay thế/thất bại:** Địa chỉ/vận chuyển sai, giảm giá hết hạn hoặc thiếu tồn ngăn thành công và giải thích cách sửa. Timeout thì phân giải kết quả cùng giỏ trước tạo giao dịch logic khác. Hoàn tất đồng thời/lặp không được tạo hiệu ứng đơn/thanh toán trùng. Kết quả chốt chưa rõ phải hiển thị chờ/hướng dẫn thử lại, không bịa thành công/thất bại.
+- **Dữ liệu/hậu điều kiện:** Đơn, dòng, tham chiếu thanh toán và kết quả giữ/tồn đối soát trong PostgreSQL. Đơn chấp nhận vẫn hợp lệ khi thông báo phía sau thất bại.
+- **Nghiệm thu:** Mua qua trình duyệt thấy được ở khách và Admin; gửi cùng giỏ đồng thời; timeout sau chốt; giảm giá hết hạn; cạnh tranh đơn vị cuối; đối soát chính xác đơn/thanh toán/tồn.
 
 ```mermaid
 sequenceDiagram
@@ -81,35 +87,38 @@ sequenceDiagram
   Note over W,M: Retry resolves the same logical purchase; does not create a fresh cart
 ```
 
-## FLOW-05 — payment and duplicate handling
+<a id="flow-05--payment-and-duplicate-handling"></a>
+## FLOW-05 — thanh toán và xử lý trùng
 
-**Purpose / actor:** FR-05; Customer and Operations distinguish commitment, authorization and collection.
+**Mục đích / tác nhân:** FR-05; khách và vận hành phân biệt chốt giao dịch, ủy quyền và thu tiền.
 
-- **Trigger/preconditions:** Checkout selects COD in the public demo, or the isolated acceptance environment selects the existing simulator. Never enable the simulator in production to make a demo pass.
-- **Normal:** Create/reuse the appropriate payment session; complete the purchase through Medusa; label COD as unpaid/pending collection in business wording; staff later reconcile collection evidence through permitted payment operations. Simulator tests exercise successful and failed outcomes without real money.
-- **Alternatives/failures:** Payment failure prevents a false paid/order-success message. Repeated completion, repeated provider action or response loss must not duplicate logical payment/order effects. Inconsistent order/payment outcomes become an operator exception requiring reconciliation, not direct database edits.
-- **Data/postconditions:** Medusa owns payment collection/session/payment records. COD order placement is not proof of a captured payment, delivery or settled remittance. No card data is collected by this application.
-- **Acceptance:** Isolated simulator success/failure and replay tests; production simulator rejection; same-cart order/payment uniqueness; COD remains distinguishable from collected cash. Preserve evidence of IDs/counts and inventory outcomes without credentials.
+- **Kích hoạt/tiền điều kiện:** Demo công khai chọn COD hoặc môi trường nghiệm thu cô lập chọn bộ mô phỏng hiện có. Không bật bộ mô phỏng production để làm demo đạt.
+- **Luồng chính:** Tạo/tái dùng phiên thanh toán phù hợp; hoàn tất qua Medusa; mô tả COD là chưa thanh toán/chờ thu; nhân viên đối soát bằng chứng thu qua thao tác thanh toán được phép. Mô phỏng thử thành công/thất bại không dùng tiền thật.
+- **Thay thế/thất bại:** Thanh toán lỗi không được báo đã trả/đặt thành công giả. Hoàn tất lặp, thao tác provider lặp hoặc mất phản hồi không tạo hiệu ứng logic trùng. Kết quả đơn/thanh toán không nhất quán là ngoại lệ cần vận hành đối soát, không sửa trực tiếp cơ sở dữ liệu.
+- **Dữ liệu/hậu điều kiện:** Medusa sở hữu collection/session/bản ghi thanh toán. Đặt COD không chứng minh đã thu tiền, giao hàng hoặc quyết toán chuyển tiền. Ứng dụng không thu dữ liệu thẻ.
+- **Nghiệm thu:** Mô phỏng thành công/thất bại/phát lại cô lập; từ chối bộ mô phỏng production; duy nhất đơn/thanh toán cùng giỏ; phân biệt COD với tiền đã thu. Giữ bằng chứng ID/số lượng/kết quả tồn, không thông tin xác thực.
 
-## FLOW-06 — warehouse and inventory
+<a id="flow-06--warehouse-and-inventory"></a>
+## FLOW-06 — kho và tồn kho
 
-**Purpose / actor:** FR-06; Operations maintains sellable units for one warehouse.
+**Mục đích / tác nhân:** FR-06; vận hành duy trì số lượng bán được tại một kho.
 
-- **Trigger/preconditions:** Authorized staff receive stock, correct an inventory discrepancy, fulfill or cancel an order. Product variants are linked to inventory items and the chosen stock location/channel.
-- **Normal:** Staff record a reasoned receipt/adjustment; customer purchases invoke supported inventory reservation/availability behavior; staff pick the correct size/color and create fulfillment; use supported cancellation/release operations for eligible unshipped orders.
-- **Alternatives/failures:** Concurrent purchases of the final unit produce only permitted successful allocations; backorders are disabled for acceptance fixtures. Missing stock at pick time becomes a visible exception. Returned/failed-delivery items are not automatically resellable: inspect before restocking. Never repair inconsistencies by mutating core tables.
-- **Data/postconditions:** PostgreSQL stores location, inventory item/level, reservation and commerce links. Physical bins, scanners, procurement and staff labor are external manual operations. Receipt, allocation and return quantities can be reconciled for a test SKU.
-- **Acceptance:** Receipt/update reflected in sellability; final-unit contention; fulfillment and eligible cancellation release; inspected return disposition; before/after inventory evidence with no negative sellable units.
+- **Kích hoạt/tiền điều kiện:** Nhân viên có quyền nhận hàng, sửa chênh lệch tồn, xuất giao hoặc hủy đơn. Biến thể liên kết inventory item và địa điểm/kênh đã chọn.
+- **Luồng chính:** Nhân viên ghi nhập/điều chỉnh có lý do; mua hàng dùng giữ tồn/khả năng cung ứng được hỗ trợ; nhân viên lấy đúng kích cỡ/màu và tạo fulfillment; hủy/giải phóng bằng thao tác hỗ trợ với đơn đủ điều kiện chưa giao.
+- **Thay thế/thất bại:** Mua đồng thời đơn vị cuối chỉ tạo phân bổ thành công được phép; tắt bán vượt tồn cho dữ liệu nghiệm thu. Thiếu hàng khi lấy là ngoại lệ hiển thị được. Hàng trả/giao thất bại không tự bán lại: kiểm tra trước nhập lại. Không sửa bất nhất bằng đổi bảng lõi.
+- **Dữ liệu/hậu điều kiện:** PostgreSQL lưu địa điểm, inventory item/level, giữ chỗ và liên kết thương mại. Kệ vật lý, máy quét, mua hàng và lao động là thao tác thủ công bên ngoài. Có thể đối soát lượng nhận, phân bổ và trả cho SKU thử.
+- **Nghiệm thu:** Nhập/cập nhật phản ánh vào khả năng bán; cạnh tranh đơn vị cuối; xuất giao và giải phóng khi hủy hợp lệ; xử lý hàng trả đã kiểm tra; bằng chứng tồn trước/sau không âm lượng bán được.
 
-## FLOW-07 — fulfillment and order status
+<a id="flow-07--fulfillment-and-order-status"></a>
+## FLOW-07 — xử lý giao hàng và trạng thái đơn
 
-**Purpose / actor:** FR-07; Operations completes the physical handoff and Customer sees truthful progress.
+**Mục đích / tác nhân:** FR-07; vận hành hoàn tất bàn giao vật lý, khách thấy tiến độ đúng thực tế.
 
-- **Trigger/preconditions:** Accepted order is visible in Medusa Admin; authorized staff and stocked items are available.
-- **Normal:** Review the order; pick/pack variants; create fulfillment through supported Admin operations; hand parcel to carrier manually; record shipment/tracking information where supported; update delivery evidence and reconcile COD collection. Customer views the owned order and distinct payment/fulfillment statuses.
-- **Alternatives/failures:** Customer cancellation before shipment follows eligibility rules. Once shipped, use failed-delivery/return procedure; contact customer and record reason, carrier evidence, restock decision and cash/refund reconciliation. A delayed carrier report is unknown delivery, not automatic success.
-- **Data/postconditions:** Order/fulfillment/payment records stay Medusa-owned. Any required delivery evidence not supported by installed Admin must receive an explicit documented extension/procedure before acceptance. Do not invent native state values.
-- **Acceptance:** Recorded staff journey from placed order to shipment and COD reconciliation; customer status matches evidence; another customer is denied; failure/cancellation branch preserves history.
+- **Kích hoạt/tiền điều kiện:** Đơn được chấp nhận thấy trong Medusa Admin; có nhân viên có quyền và hàng tồn.
+- **Luồng chính:** Rà đơn; lấy/đóng biến thể; tạo fulfillment qua Admin hỗ trợ; bàn giao kiện thủ công; ghi vận chuyển/theo dõi khi hỗ trợ; cập nhật bằng chứng giao và đối soát thu COD. Khách xem đơn của mình với trạng thái thanh toán/xử lý giao riêng.
+- **Thay thế/thất bại:** Hủy trước giao theo điều kiện hợp lệ. Đã giao đi theo quy trình giao thất bại/đổi trả; liên hệ khách, ghi lý do, bằng chứng vận chuyển, quyết định nhập lại và đối soát tiền/hoàn tiền. Báo cáo vận chuyển chậm là chưa rõ kết quả, không tự thành công.
+- **Dữ liệu/hậu điều kiện:** Đơn/fulfillment/thanh toán do Medusa sở hữu. Bằng chứng giao bắt buộc mà Admin đã cài chưa hỗ trợ cần phần mở rộng/quy trình được ghi rõ trước nghiệm thu. Không tự đặt giá trị trạng thái gốc.
+- **Nghiệm thu:** Ghi hành trình nhân viên từ đơn đến giao và đối soát COD; trạng thái khách khớp bằng chứng; từ chối khách khác; nhánh lỗi/hủy giữ lịch sử.
 
 ```mermaid
 stateDiagram-v2
@@ -128,15 +137,16 @@ stateDiagram-v2
   note right of OrderAccepted: Business view only; payment and fulfillment have separate native states
 ```
 
-## FLOW-08 — customer notification
+<a id="flow-08--customer-notification"></a>
+## FLOW-08 — thông báo khách hàng
 
-**Purpose / actor:** FR-08; Customer receives confirmation without blocking checkout; Operations can recover failures.
+**Mục đích / tác nhân:** FR-08; khách nhận xác nhận không chặn checkout; vận hành phục hồi lỗi.
 
-- **Trigger/preconditions:** A committed order event and configured notification provider/template. Customer address comes from the authorized order context.
-- **Normal:** Subscriber dispatches a notification use case to background processing; produce a minimal order summary/link; deduplicate by logical order/event/channel; send through the provider adapter; record delivery attempt and observable outcome.
-- **Alternatives/failures:** Provider timeout/failure leaves the order untouched; retry with a finite policy; expose exhausted failures for operator replay. Duplicate events must not create duplicate logical notifications. Provider acceptance is not proof of inbox delivery; label evidence precisely. Do not claim exactly-once network delivery after an ambiguous timeout.
-- **Data/postconditions:** Notification attempt/deduplication state must be durable; Redis process memory alone is not the acceptance source of truth. Message payload minimizes personal data; logs contain references, not credentials/full addresses.
-- **Acceptance:** Delivered test email, duplicate event, provider outage, restart/retry and exhausted retry visibility; checkout remains successful. No customer email provider is established as implemented by this spec.
+- **Kích hoạt/tiền điều kiện:** Sự kiện đơn đã chốt và provider/mẫu thông báo đã cấu hình. Địa chỉ khách lấy từ bối cảnh đơn được phép.
+- **Luồng chính:** Subscriber chuyển ca sử dụng thông báo sang xử lý nền; tạo tóm tắt/liên kết đơn tối thiểu; chống trùng theo đơn/sự kiện/kênh logic; gửi qua adapter provider; ghi lần gửi và kết quả quan sát được.
+- **Thay thế/thất bại:** Provider timeout/lỗi không đổi đơn; thử lại hữu hạn; hiển thị lỗi hết lượt cho vận hành phát lại. Sự kiện trùng không tạo thông báo logic trùng. Provider chấp nhận không chứng minh vào hộp thư; ghi bằng chứng chính xác. Không khẳng định gửi mạng exactly-once sau timeout mơ hồ.
+- **Dữ liệu/hậu điều kiện:** Trạng thái lần gửi/chống trùng phải bền vững; chỉ bộ nhớ tiến trình Redis không phải nguồn nghiệm thu có thẩm quyền. Payload giảm dữ liệu cá nhân; log chứa tham chiếu, không thông tin xác thực/địa chỉ đầy đủ.
+- **Nghiệm thu:** Email thử đến nơi, sự kiện trùng, provider gián đoạn, khởi động lại/thử lại và hiển thị hết lượt; checkout vẫn thành công. Đặc tả chưa xác lập provider email khách đã được triển khai.
 
 ```mermaid
 sequenceDiagram
@@ -154,16 +164,18 @@ sequenceDiagram
   Note over M,E: Email failure never reverses the committed order
 ```
 
-## FLOW-09 — administration and reporting
+<a id="flow-09--administration-and-reporting"></a>
+## FLOW-09 — quản trị và báo cáo
 
-**Purpose / actor:** FR-09; Operations runs the store; Administrator controls access and deployment.
+**Mục đích / tác nhân:** FR-09; vận hành chạy cửa hàng; quản trị viên kiểm soát truy cập và triển khai.
 
-- **Trigger/preconditions:** First admin is provisioned by a protected one-off operator procedure; there is no shared seeded admin password. Staff roles/permissions and environment are documented.
-- **Normal:** Staff publish a product with permitted photos/variants/prices; receive stock; review/filter orders; process fulfillment and exceptions. Basic reporting provides order counts/value by explicit period, distinguishes cancellations and COD collection, and identifies low-stock variants. Administrator configures access/providers and follows deployment/rollback/monitoring procedures.
-- **Alternatives/failures:** Unauthorized actions are denied. Bad product/media input is rejected. Report totals explain date range, currency and included states; order value is not recognized revenue or cash collected. If native reporting lacks the required view, define a bounded read-only export/view rather than claiming unavailable analytics.
-- **Data/postconditions:** Admin mutations use supported APIs/workflows and preserve commerce history. Reports read the same authoritative records. Infrastructure secrets are not entered into storefront or exposed in report files.
-- **Acceptance:** First admin access; denied unauthenticated/unauthorized mutations; product/image publication; inventory/order processing; order-value and collection-report reconciliation against fixtures; deployment/dashboard evidence linked from [operations](06-operations.md).
+- **Kích hoạt/tiền điều kiện:** Admin đầu được cấp qua quy trình vận hành một lần có bảo vệ; không mật khẩu admin seed dùng chung. Vai trò/quyền và môi trường được ghi rõ.
+- **Luồng chính:** Nhân viên công bố sản phẩm với ảnh được phép/biến thể/giá; nhập kho; rà/lọc đơn; xử lý giao và ngoại lệ. Báo cáo có số lượng/giá trị đơn theo kỳ rõ, phân biệt hủy và thu COD, chỉ ra biến thể tồn thấp. Quản trị viên cấu hình quyền/provider, theo quy trình triển khai/quay lui/giám sát.
+- **Thay thế/thất bại:** Từ chối thao tác không có quyền. Từ chối dữ liệu sản phẩm/ảnh sai. Tổng báo cáo giải thích kỳ, tiền tệ và trạng thái gồm trong đó; giá trị đơn không phải doanh thu ghi nhận hay tiền đã thu. Nếu báo cáo gốc thiếu góc nhìn cần thiết, định nghĩa bản xuất/góc nhìn chỉ đọc giới hạn, không khẳng định năng lực phân tích chưa có.
+- **Dữ liệu/hậu điều kiện:** Thay đổi Admin dùng API/workflow hỗ trợ và giữ lịch sử thương mại. Báo cáo đọc cùng nguồn có thẩm quyền. Không đưa bí mật hạ tầng vào storefront hoặc tệp báo cáo.
+- **Nghiệm thu:** Truy cập admin đầu; từ chối thay đổi không xác thực/không quyền; công bố sản phẩm/ảnh; xử lý tồn/đơn; đối soát báo cáo giá trị đơn và tiền thu với dữ liệu mẫu; bằng chứng triển khai/dashboard từ [vận hành](06-operations.md).
 
-## Acceptance execution
+<a id="acceptance-execution"></a>
+## Thực hiện nghiệm thu
 
-Run the whole-business journey with one clearly identified fixture order, then run isolated negative/concurrency cases. Preserve test release/image identifiers, environment, fixture IDs, timestamps, expected results, actual results and cleanup disposition. Do not reuse a historical success report as proof of a new release. The authoritative thresholds and tools are in [testing](05-testing.md).
+Chạy hành trình toàn nghiệp vụ với một đơn mẫu xác định rõ, sau đó chạy ca phủ định/cạnh tranh cô lập. Giữ định danh phiên bản/ảnh phát hành, môi trường, ID mẫu, thời gian, kết quả dự kiến/thực tế và cách xử lý dữ liệu sau thử. Không dùng thành công lịch sử chứng minh phiên bản mới. Ngưỡng và công cụ có thẩm quyền ở [kiểm thử](05-testing.md).

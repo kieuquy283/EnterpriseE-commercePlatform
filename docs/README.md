@@ -1,62 +1,57 @@
-# DAYMARK engineering specification
+<a id="daymark-documentation"></a>
+# Tài liệu DAYMARK
 
-DAYMARK is a Vietnamese everyday-clothing ecommerce MVP with product suggestions. Business requirements are now governed by the business-first documents listed below, following the team consolidation decision of 15 November 2026. The earlier compact specification remains an implementation mapping and engineering reference. It describes what to build and how to accept it; historical tests remain dated evidence.
+Tài liệu có hai tuyến đọc liên kết với nhau: đặc tả nghiệp vụ độc lập công nghệ và ánh xạ kỹ thuật từ đặc tả sang triển khai DAYMARK.
 
-## Two reading paths
+<a id="primary-business-first-specification"></a>
+## Đặc tả lấy nghiệp vụ làm gốc
 
-- **Business and logical design:** start with the [primary business-first specification](#primary-business-first-specification) below. It owns scope, actors, business rules, requirements, acceptance intent and technology-neutral HLD.
-- **Technical design and implementation:** start at the [technical documentation index](technical/README.md). It owns the current Medusa/Next/AWS mapping, implementation ADRs, API/storage details, engineering tests and operational procedures.
+Các tài liệu này xác định phạm vi nghiệp vụ, tác nhân, quy tắc, yêu cầu, tải và thiết kế logic. Yêu cầu nghiệp vụ được ưu tiên khi có mâu thuẫn với bản mô tả triển khai; phê duyệt và quyết định còn mở thuộc tài liệu nguồn tương ứng.
 
-The upstream business specification describes a generic fictional fashion retailer and does not approve DAYMARK branding. DAYMARK is the implementation identity; visual decisions have their own review status. The two layers describe the same product at different levels. Existing technical choices remain documented separately; a technology-neutral business diagram does not reopen them automatically. Any actual stack/AWS change needs a proposal and user review. Unresolved requirement-to-implementation gaps remain visible in the [crosswalk](reference/spec-consolidation.md).
-
-[Approved DAYMARK branding and asset provenance](brand/README.md).
-
-[Storefront design system](design-system/README.md): tokens, primitives, accessibility and commerce display rules for the customer frontend.
-
-Supporting material: [teacher acceptance brief](reference/teacher-brief.md), [dated evidence/research index](reference/README.md), [local setup](setup.md), [deployment runbook](../deploy/RUNBOOK.md), [contributing](../CONTRIBUTING.md), [presentation engine](../presentation/README.md).
-
-## Authority and status
-
-- `00-project/` through `05-data/`: primary business scope, actors, requirements, traceability and logical data definitions. Their Draft/Open labels remain; prioritizing these documents does not invent policy approval.
-- `06-architecture/`: primary logical architecture proposal. Its technology-neutral boundaries do not replace the current runtime automatically.
-- `docs/spec/`: existing DAYMARK implementation mapping and engineering targets. Business conflicts defer to the business-first specification. The separate technical baseline remains in place; material changes and availability measurement conflicts require explicit review in [consolidation](reference/spec-consolidation.md). Targets are not measured results.
-- Executable code/templates: actual implementation, which may still have documented gaps from the target design.
-- `docs/report/`, `docs/erd/`, recommendation reports/evidence: historical observations, schema/fixture artifacts or restricted research. Preserve their source revision/date and do not treat them as a second roadmap.
-- `docs/recommendation/`: specialist implementation/research references, subject to the dataset-rights decision and feature gates. Current scope is defined here, not by old phase plans.
-- `deploy/`: operational instructions and infrastructure; full Fargate is primary, EC2/Compose fallback. A runbook is not proof its commands were executed successfully today.
-
-Vocabulary: **target** (chosen acceptance requirement), **implemented** (source exists), **verified** (named test, revision/environment/time and result), **missing** (not implemented), **deferred** (outside current gate). Never collapse these into "done".
-
-The old generic project-definition/SRS/week plans and superseded architecture narratives were removed to eliminate competing baselines. See [consolidation record](reference/documentation-reset.md). No commerce records, migrations or research datasets are deleted by this reset. Later upstream evidence removals are recorded in the consolidation crosswalk.
-
-## Teacher coverage
-
-| Required delivery | Authoritative location |
+| Lĩnh vực | Tài liệu |
 | --- | --- |
-| P1 problem, stakeholders, functional requirements | 00-project, 01-business, 02-users, 03-requirements |
-| P1 numeric NFR/workload/cloud architecture | 03-requirements, 04-workload, 06-architecture; technical mapping in spec/03 and spec/05 |
-| P2 components, API, ownership, sync/async/integrations | 03-architecture, 04-data-api |
-| P3 threat model, IAM, CI/CD, containers/IaC, rollback | 06-operations and deploy runbooks |
-| P4 load/failures, dashboard, SLI/SLO, capacity/cost | 05-testing, 06-operations |
-| P5 recommendation architecture/evaluation/guardrails/cost | 03-architecture, 05-testing |
-| Scale, duplicates, release, dashboard, architecture/ADRs demo | 05-testing and 07-delivery gates |
+| Dự án | [Điều lệ](00-project/project-charter.md), [phạm vi và giả định](00-project/scope-and-assumptions.md), [sổ nguồn và giả định](00-project/source-and-assumption-register.md) |
+| Nghiệp vụ | [BRD](01-business/BRD.md), [bản đồ năng lực](01-business/business-capability-map.md), [quy trình](01-business/business-processes.md), [quy tắc](01-business/business-rules.md) |
+| Người dùng | [Các bên liên quan](02-users/stakeholder-analysis.md), [tác nhân và mục tiêu](02-users/actors-and-user-goals.md), [hành trình](02-users/user-journeys.md) |
+| Yêu cầu | [SRS](03-requirements/SRS.md), [ca sử dụng và kiểm thử nghiệm thu](03-requirements/use-case-specifications.md), [kịch bản chất lượng](03-requirements/quality-attribute-scenarios.md), [truy vết](03-requirements/requirements-traceability.md) |
+| Tải | [Phân tích tải](04-workload/workload-analysis.md) |
+| Dữ liệu | [Mô hình miền](05-data/domain-model.md), [từ điển](05-data/data-dictionary.md), [quyền sở hữu và tính nhất quán](05-data/data-ownership-and-consistency.md) |
+| Kiến trúc logic | [Thiết kế tổng thể](06-architecture/logical-architecture.md), [hợp đồng giao diện](06-architecture/api-and-interface-contracts.md), [tích hợp](06-architecture/integration-design.md), [ADR logic](06-architecture/adr/ADR-001-application-boundary-style.md) |
 
-First implement and demonstrate one complete business journey; then measure and improve it. Do not add microservices, a new search engine or generative AI merely to enlarge the diagram.
+<a id="technical-design-and-implementation"></a>
+## Thiết kế kỹ thuật và triển khai
 
-## Primary business-first specification
+Bắt đầu từ [mục lục kỹ thuật](technical/README.md). Hướng dẫn kỹ thuật trình bày lựa chọn công nghệ, ranh giới API/lưu trữ cụ thể, kiểm chứng kỹ thuật, bảo mật, triển khai AWS và khôi phục.
 
-Read these documents first for business scope and acceptance intent. They take precedence over conflicting business statements in `docs/spec/`. Draft policies remain open; implemented behavior is recorded separately. Framework, AWS and database changes require the explicit review described in [consolidation](reference/spec-consolidation.md).
+Thành phần logic thể hiện trách nhiệm; không hàm ý dịch vụ độc lập hay thay thế nền tảng công nghệ. Thay đổi đáng kể về công nghệ hoặc triển khai cần quyết định rõ ràng. [Ánh xạ yêu cầu](technical/requirements-mapping.md) nối mã nghiệp vụ với luồng triển khai và ghi nhận quyết định xử lý khác biệt.
 
-| Giai đoạn | Tài liệu hiện có | Trạng thái |
-|---|---|---|
-| 00 Dự án | [Tuyên bố dự án](00-project/project-charter.md), [Phạm vi và giả định](00-project/scope-and-assumptions.md), [Sổ nguồn và giả định](00-project/source-and-assumption-register.md) | Bản nháp |
-| 01 Nghiệp vụ | [BRD](01-business/BRD.md), [Bản đồ năng lực](01-business/business-capability-map.md), [Quy trình](01-business/business-processes.md), [Quy tắc](01-business/business-rules.md) | Bản nháp; chờ nhóm rà soát |
-| 02 Người dùng | [Các bên liên quan](02-users/stakeholder-analysis.md), [vai trò và mục tiêu](02-users/actors-and-user-goals.md), [hành trình](02-users/user-journeys.md) | Bản nháp; chờ rà Business và quyền/chính sách |
-| 03 Yêu cầu | [SRS](03-requirements/SRS.md), [use case và AT](03-requirements/use-case-specifications.md), [tình huống chất lượng](03-requirements/quality-attribute-scenarios.md), [truy vết](03-requirements/requirements-traceability.md) | Bản nháp; mục tiêu chất lượng chưa đo/chưa duyệt |
-| 04 Tải công việc | [Phân tích tải](04-workload/workload-analysis.md) | Bản nháp; giả định và mục tiêu thử |
-| 05 Dữ liệu | [Mô hình miền](05-data/domain-model.md), [từ điển](05-data/data-dictionary.md), [quyền sở hữu và nhất quán](05-data/data-ownership-and-consistency.md) | Bản nháp logic; chính sách dữ liệu còn mở |
-| 06 Kiến trúc | [10 sơ đồ HLD và kiến trúc logic](06-architecture/logical-architecture.md), [hợp đồng giao diện](06-architecture/api-and-interface-contracts.md), [tích hợp](06-architecture/integration-design.md), [ADR](06-architecture/adr/ADR-001-application-boundary-style.md) | Provisional; 10/10 hình đã render, chờ review và 3 ADR chưa phê duyệt |
-| 07 Đánh giá công nghệ | So sánh công nghệ và kiến trúc vật lý | Dự kiến |
+<a id="working-guides"></a>
+## Hướng dẫn làm việc
 
+- [Thiết lập cục bộ và tạo tài khoản quản trị](setup.md)
+- [Quy ước đóng góp và kiểm chứng](../CONTRIBUTING.md), [hướng dẫn cho agent](../AGENTS.md)
+- [Nhận diện và nguồn gốc tài sản thương hiệu](brand/README.md), [hệ thống thiết kế storefront](design-system/README.md)
+- [Dữ liệu mẫu danh mục và quy trình nhập](catalog/DATASET.md)
+- [Quy trình triển khai](../deploy/RUNBOOK.md)
+- [Công việc còn lại](spec/07-delivery.md)
+- [Công cụ trình bày](../presentation/README.md)
 
-Consult the [source and assumption register](00-project/source-and-assumption-register.md) for their evidence and open assumptions. Local source plans and PDFs remain ignored.
+<a id="teacher-coverage"></a>
+## Đối chiếu yêu cầu giảng viên
+
+| Nội dung | Tuyến đọc |
+| --- | --- |
+| P1 — Nghiệp vụ và kiến trúc | Nghiệp vụ, người dùng, yêu cầu, tải và kiến trúc logic ở trên |
+| P2 — Ứng dụng, dữ liệu và tích hợp | Dữ liệu/giao diện logic, [kiến trúc kỹ thuật](spec/03-architecture.md) và [ánh xạ API/lưu trữ](spec/04-data-api.md) |
+| P3 — Bảo mật và DevOps | [Vận hành](spec/06-operations.md) và quy trình triển khai |
+| P4 — Kỹ thuật vận hành thực tế | [Kiểm thử](spec/05-testing.md), vận hành và bằng chứng kiểm chứng có ngày tháng |
+| P5 — Kỹ thuật gợi ý | [Yêu cầu đánh giá](spec/05-testing.md) và [tham chiếu chuyên sâu](reference/README.md#product-suggestion-research) |
+
+<a id="document-lifecycle-and-evidence"></a>
+## Vòng đời tài liệu và bằng chứng
+
+Đặc tả xác định hành vi bắt buộc; hướng dẫn kỹ thuật giải thích lựa chọn triển khai; hướng dẫn vận hành mô tả quy trình. Tiến độ, số lượng kiểm thử, phiên bản triển khai, tình trạng dịch vụ và kết quả đo thuộc công việc còn lại hoặc báo cáo có ngày tháng, không thuộc README.
+
+Mỗi báo cáo kiểm chứng cần ghi phiên bản, môi trường, ngày, lệnh và kết quả. Mục tiêu không phải số đo; tuyến API đã có không đồng nghĩa luồng nghiệp vụ đã nghiệm thu; triển khai lịch sử không chứng minh dịch vụ hiện đang hoạt động. [Bằng chứng và nghiên cứu](reference/README.md) dẫn đến kết quả và quyết định quyền sử dụng dữ liệu. Nghiên cứu chuyên sâu không thay thế phạm vi nghiệp vụ hoặc cấp quyền công bố dữ liệu.
+
+Giữ kết quả kiểm chứng trong CI hoặc báo cáo nghiệm thu có phiên bản; không thêm nhật ký bàn giao, ghi chú dọn dẹp hoặc báo cáo tiến độ tạm thời vào tài liệu hướng dẫn lâu dài.

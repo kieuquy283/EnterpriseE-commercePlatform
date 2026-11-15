@@ -1,10 +1,12 @@
-# Component architecture and decisions
+<a id="component-architecture-and-decisions"></a>
+# Kiến trúc thành phần và quyết định
 
-DAYMARK is a production-oriented clothing-commerce MVP with product suggestions. This document defines the target design and distinguishes it from the code inherited on 14 November 2026. Read [business requirements](01-business.md), [flows](02-flows.md) and [acceptance targets](05-testing.md) first. Deployment procedures remain in [operations](06-operations.md).
+DAYMARK là MVP thương mại quần áo hướng đến vận hành thực tế, có gợi ý sản phẩm. Tài liệu xác định thiết kế mục tiêu và phân biệt với hành vi mã cần kiểm chứng. Đọc [nghiệp vụ](01-business.md), [luồng](02-flows.md), [mục tiêu nghiệm thu](05-testing.md) trước. Quy trình triển khai ở [vận hành](06-operations.md).
 
-## 1. Architecture pattern
+<a id="1-architecture-pattern"></a>
+## 1. Mẫu kiến trúc
 
-**Use a Medusa modular monolith, deployed as separate API and worker processes, with a Next.js storefront.** These are runtime boundaries, not independently owned commerce microservices. The API and worker share application code and module definitions. PostgreSQL is the authoritative transactional store; Redis supports Medusa cache, events, workflows and locks; S3 stores media.
+**Dùng Medusa modular monolith, triển khai thành tiến trình API và worker riêng, cùng Next.js storefront.** Đây là ranh giới môi trường chạy, không phải microservice thương mại sở hữu độc lập. API và worker dùng chung mã ứng dụng và định nghĩa module. PostgreSQL là nguồn giao dịch có thẩm quyền; Redis hỗ trợ cache, sự kiện, workflow và khóa của Medusa; S3 lưu nội dung đa phương tiện.
 
 ```mermaid
 flowchart LR
@@ -22,9 +24,10 @@ flowchart LR
   Worker -.->|Planned notification provider| Email[Transactional email]
 ```
 
-Cloudflare is DNS-only in the existing deployment. TLS terminates at ALB; application traffic inside its security-group boundary uses HTTP. Regional resources belong in `ap-southeast-2`. A lease-based demo shutdown means this environment is not a continuously available storefront.
+Cloudflare chỉ làm DNS trong ánh xạ triển khai hiện có. TLS kết thúc ở ALB; lưu lượng ứng dụng trong ranh giới security group dùng HTTP. Tài nguyên vùng thuộc `ap-southeast-2`. Demo tắt theo lease nên không phải storefront sẵn sàng liên tục.
 
-## 2. Code structure and dependency direction
+<a id="2-code-structure-and-dependency-direction"></a>
+## 2. Cấu trúc mã và hướng phụ thuộc
 
 ```text
 HTTP route / authenticated subscriber / scheduled job
@@ -34,72 +37,77 @@ HTTP route / authenticated subscriber / scheduled job
   -> explicit response projection
 ```
 
-| Layer | Owns | Must not own |
+| Lớp | Sở hữu | Không được sở hữu |
 | --- | --- | --- |
-| Next.js pages and components | Rendering, forms, interaction and pending/error states | Authoritative prices, inventory or order creation |
-| Storefront `src/lib/data` | SDK calls, server actions, cookies and presentation cache policy | Database access or a second commerce database |
-| Backend `api/**/route.ts` | Transport controller: validated input, identity, workflow invocation and response | Ranking orchestration, cross-module writes or provider SDK logic |
-| `workflows` | Business use cases, step coordination, explicit failure/compensation behavior | Imports from HTTP route files |
-| `modules/<domain>` | Owned models, persistence services and reusable policies | Direct writes into another module's tables |
-| Providers/adapters | File, payment, email and carrier boundary implementations | Decisions about whether a business order is valid |
-| Subscribers/jobs | Translate verified events/schedules into use cases | A second implementation of the same business operation |
+| Trang và thành phần Next.js | Hiển thị, biểu mẫu, tương tác và trạng thái chờ/lỗi | Giá, tồn hoặc tạo đơn có thẩm quyền |
+| Storefront `src/lib/data` | Gọi SDK, server action, cookie và chính sách cache hiển thị | Truy cập cơ sở dữ liệu hoặc cơ sở dữ liệu thương mại thứ hai |
+| Backend `api/**/route.ts` | Controller truyền tải: đầu vào hợp lệ, danh tính, gọi workflow và phản hồi | Điều phối xếp hạng, ghi xuyên module hoặc logic SDK provider |
+| `workflows` | Ca sử dụng, điều phối bước, hành vi lỗi/bù trừ rõ ràng | Import từ tệp route HTTP |
+| `modules/<domain>` | Mô hình sở hữu, dịch vụ lưu trữ và chính sách tái sử dụng | Ghi trực tiếp bảng module khác |
+| Provider/adapter | Triển khai ranh giới tệp, thanh toán, email và vận chuyển | Quyết định đơn nghiệp vụ có hợp lệ không |
+| Subscriber/job | Chuyển sự kiện/lịch đã xác minh thành ca sử dụng | Triển khai lần hai cùng thao tác nghiệp vụ |
 
-Routes already act as controllers; extra controller classes are unnecessary. Use runtime request schemas and inferred DTO types at custom API boundaries. Return explicit response DTOs, not database models. Reuse Medusa module services rather than wrapping every generated method in a redundant repository. Apply ports-and-adapters where an external dependency needs substitution or failure testing; this is not a claim that every Medusa internal follows hexagonal architecture.
+Route đã đóng vai trò controller; không cần lớp controller bổ sung. Dùng schema kiểm tra lúc chạy và kiểu DTO suy ra ở API tùy chỉnh. Trả DTO tường minh, không trả model cơ sở dữ liệu. Tái dùng module service Medusa, không bọc mỗi phương thức sinh tự động bằng repository dư thừa. Dùng ports-and-adapters khi cần thay thế phụ thuộc ngoài hoặc thử lỗi; không khẳng định mọi phần nội bộ Medusa theo kiến trúc lục giác.
 
-Core commerce remains owned by Medusa: catalog/pricing, cart, payment, inventory, order and fulfillment. Custom modules own recommendation and personalization. Cross-module relationships use supported services, workflows and links. Verify the installed framework behavior before specifying its transaction sequence or extending it.
+Medusa sở hữu lõi danh mục/giá, giỏ, thanh toán, tồn, đơn và fulfillment. Module tùy chỉnh sở hữu gợi ý/cá nhân hóa. Quan hệ xuyên module dùng service, workflow và link được hỗ trợ. Kiểm chứng framework đã cài trước mô tả thứ tự giao dịch hoặc mở rộng.
 
-## 3. Synchronous and asynchronous boundaries
+<a id="3-synchronous-and-asynchronous-boundaries"></a>
+## 3. Ranh giới đồng bộ và bất đồng bộ
 
-| Operation | Decision | Reason and failure behavior |
+| Thao tác | Quyết định | Lý do và hành vi lỗi |
 | --- | --- | --- |
-| Price, promotion, shipping and stock validation; cart completion | Synchronous authoritative commerce workflow | Customer needs a committed result. Timeout is an unknown outcome until reconciled, not proof that no order exists. |
-| Customer reads own order | Synchronous authorized read | Never infer payment/delivery from order existence. |
-| Confirmation/status email | Asynchronous after the business change | Email failure must not undo an order. Use stable delivery keys, bounded retries and operator-visible failure state. Implementation is still required. |
-| Recommendation generation | Offline bounded job, separate from checkout | Import a validated immutable candidate run, then select its active version. Generation failure leaves the previous run active. |
-| Recommendation serving | Optional synchronous read with bounded work and fallback | Return eligible catalog suggestions or omit the section; do not hold checkout open. |
-| Profile refresh | Event/scheduled background workflow | Respect consent epoch and idempotency; the current code contains examples but cloud flags remain off. |
+| Kiểm tra giá, khuyến mãi, vận chuyển, tồn; hoàn tất giỏ | Workflow thương mại đồng bộ có thẩm quyền | Khách cần kết quả đã chốt. Timeout là chưa rõ kết quả đến khi đối soát, không chứng minh chưa có đơn. |
+| Khách đọc đơn của mình | Đọc đồng bộ có phân quyền | Không suy thanh toán/giao nhận từ việc đơn tồn tại. |
+| Email xác nhận/trạng thái | Bất đồng bộ sau thay đổi nghiệp vụ | Lỗi email không hoàn tác đơn. Dùng khóa gửi ổn định, thử lại giới hạn và trạng thái lỗi cho vận hành. Còn cần triển khai. |
+| Sinh gợi ý | Job ngoại tuyến giới hạn, tách checkout | Nhập lượt ứng viên bất biến đã kiểm tra rồi chọn phiên bản hoạt động. Sinh lỗi giữ lượt cũ. |
+| Phục vụ gợi ý | Đọc đồng bộ tùy chọn, công việc giới hạn và dự phòng | Trả gợi ý danh mục hợp lệ hoặc bỏ vùng; không giữ checkout chờ. |
+| Làm mới hồ sơ | Workflow nền theo sự kiện/lịch | Tôn trọng consent epoch và idempotency; mã có ví dụ nhưng cờ cloud còn tắt. |
 
-A Redis event bus is not, by itself, proof of durable business notification delivery. The notification implementation must document its persistence/reconciliation strategy, retry horizon and duplicate-delivery handling. Do not claim exactly-once messaging. Payment/order idempotency must hold at the authoritative operation, not just by disabling the browser button.
+Event bus Redis tự nó không chứng minh gửi thông báo nghiệp vụ bền vững. Triển khai phải ghi chiến lược lưu/đối soát, giới hạn thời gian thử lại và xử lý trùng. Không khẳng định thông điệp exactly-once. Idempotency thanh toán/đơn phải ở thao tác có thẩm quyền, không chỉ tắt nút trình duyệt.
 
-## 4. Read-heavy and promotion behavior
+<a id="4-read-heavy-and-promotion-behavior"></a>
+## 4. Tải đọc lớn và khuyến mãi
 
-Current templates configure API scaling from **one to two tasks** at a **60% average CPU target**, with scale-out cooldown 60 seconds and scale-in cooldown 180 seconds. Each API task has 1 vCPU/2 GB. The storefront is one 0.5 vCPU/1 GB task and the worker one 0.5 vCPU/2 GB task. RDS is a private Single-AZ `db.t4g.micro`; Redis is a single `t4g.micro` EC2 host. These are demo settings, not an established capacity claim.
+Template cấu hình API từ **một đến hai task**, mục tiêu **CPU trung bình 60%**, chờ tăng 60 giây và giảm 180 giây. Mỗi API task có 1 vCPU/2 GB. Storefront một task 0,5 vCPU/1 GB; worker một task 0,5 vCPU/2 GB. RDS riêng Single-AZ `db.t4g.micro`; Redis một EC2 `t4g.micro`. Đây là cấu hình demo, không phải năng lực đã chứng minh.
 
-Public media is currently streamed through the API. Thus image traffic consumes API capacity. Public product pages/queries can be cached only with an explicit region, currency, sales-channel and freshness policy. Private cart, customer and order results must not enter a public shared cache. Checkout revalidates current commerce state regardless of displayed availability.
+Ảnh công khai truyền qua API nên dùng năng lực API. Chỉ cache trang/truy vấn sản phẩm với chính sách vùng, tiền tệ, kênh và độ mới rõ ràng. Giỏ, khách và đơn riêng không vào cache công khai dùng chung. Checkout kiểm tra lại trạng thái bất kể khả năng cung ứng đã hiển thị.
 
-At 5x load, measure storefront, ALB, API, PostgreSQL connections/CPU and Redis together. CPU scaling may not trigger for database-bound work. Pre-scaling for an announced campaign is a valid operational choice but must be reported separately from automatic scaling evidence. At 10x, find the failure boundary and demonstrate controlled errors and recovery; successful service at 10x is not a release promise. Larger database instances, more storefront tasks, connection-pool budgets and alternative media delivery require measured justification and a revised cost estimate.
+Ở tải 5x, đo cùng storefront, ALB, API, kết nối/CPU PostgreSQL và Redis. Tăng theo CPU có thể không kích hoạt khi nghẽn cơ sở dữ liệu. Tăng trước chiến dịch là lựa chọn vận hành hợp lệ nhưng báo riêng với bằng chứng tự tăng. Ở 10x, tìm ranh giới lỗi, chứng minh lỗi có kiểm soát và phục hồi; không hứa phục vụ thành công 10x. Tăng cỡ cơ sở dữ liệu, task storefront, ngân sách connection pool hoặc đổi phân phối ảnh cần số đo và ước tính chi phí sửa đổi.
 
-## 5. Architecture decisions and trade-offs
+<a id="5-architecture-decisions-and-trade-offs"></a>
+## 5. Quyết định kiến trúc và đánh đổi
 
-| ADR | Decision | Alternative considered | Trade-off and revisit trigger |
+| ADR | Quyết định | Phương án đã cân nhắc | Đánh đổi và điều kiện xét lại |
 | --- | --- | --- | --- |
-| ADR-01 | Medusa modular monolith with API/worker roles | Commerce microservices | Simpler transactional ownership and operations; modules share release/database dependencies. Revisit only with evidence of independent scaling or ownership needs. |
-| ADR-02 | PostgreSQL for commerce and published recommendation records | Document database as order authority | Relational constraints and transactions fit orders/stock; connection and write capacity require management. No separate search datastore until measured need. |
-| ADR-03 | Medusa Store API product search/filter/pagination initially | Dedicated search service | Fewer integrations/costs; relevance and full-catalog behavior must meet FR-02. Current 100-product client sorting is a gap, not the intended contract. |
-| ADR-04 | Private S3 with backend public-image proxy | CloudFront distribution | Fits the existing project restriction/recovery decision and IAM provider; no edge cache, API bandwidth/CPU cost. Revisit if access or measured media load changes. |
-| ADR-05 | Fargate, managed RDS and IaC | Single EC2 Compose as primary | Independent runtime sizing and managed database, with more baseline cost/operational parts. EC2 remains a fallback, not a second production truth. |
-| ADR-06 | Offline, evaluated product recommendations | Generative shopping assistant | Predictable serving and no token cost; less conversational capability. Suggestions must pass the relevance gate without regressing the measured baseline; retain the baseline unless a more complex strategy demonstrates a benefit. |
-| ADR-07 | Shared recommendation product policy and serving-cache state live in `modules/recommendation`; routes and publishing import them | Workflow importing HTTP cache invalidation; one route importing another route's policies | Removes those upward dependencies without changing auth, DTOs, ranking or cache behavior. Route orchestration and the version-coupled product adapter remain follow-up work. |
-| ADR-08 | Oxfmt replaces direct Prettier usage; retain Medusa/Next ESLint as the single linter | Adding Oxlint alongside existing framework lint; bulk formatting | Medusa custom rules have no verified complete replacement. Stage-based formatting ratchets legacy source without a repository rewrite; CI checks the adopted tooling baseline. |
-| ADR-09 | Reusable storefront tokens/components and Motion enhancement; Medusa workflows for an owned local catalog upsert | Per-page styling and a destructive demo reset | User-authorized storefront/catalog scope, 15 November 2026. Only palette is agreed; visual choices remain proposed. Existing stock is preserved, and seed validation uses disposable local services. See design-system/catalog docs for current evidence. |
-| ADR-10 | Representative class-preview product photos may be attached only by an explicit loopback-only local Medusa file-provider mode; production importer media remains exact-product only through the configured provider | Treating illustrative stock photos as verified product/variant imagery or publishing them to S3 | User-authorized catalog preview, 15 November 2026. Existing product identities and stock remain stable. |
+| ADR-01 | Medusa modular monolith với API/worker | Microservice thương mại | Đơn giản quyền sở hữu giao dịch/vận hành; module chung phụ thuộc phát hành/cơ sở dữ liệu. Chỉ xét lại khi có bằng chứng cần mở rộng hoặc sở hữu độc lập. |
+| ADR-02 | PostgreSQL cho thương mại và bản ghi gợi ý công bố | Cơ sở dữ liệu tài liệu làm nguồn đơn | Ràng buộc quan hệ/giao dịch hợp đơn/tồn; cần quản lý kết nối và ghi. Chưa thêm kho tìm kiếm đến khi đo được nhu cầu. |
+| ADR-03 | Ban đầu tìm/lọc/phân trang bằng Medusa Store API | Dịch vụ tìm kiếm riêng | Ít tích hợp/chi phí; độ liên quan và toàn danh mục phải đạt FR-02. Cắt 100 sản phẩm khi sắp xếp phía client không phải hợp đồng mong muốn. |
+| ADR-04 | S3 riêng với proxy ảnh công khai backend | CloudFront | Phù hợp hạn chế/quyết định khôi phục và IAM provider hiện có; thiếu edge cache, tốn băng thông/CPU API. Xét lại khi quyền truy cập hoặc tải ảnh đo được đổi. |
+| ADR-05 | Fargate, RDS quản lý và IaC | Một EC2 Compose làm chính | Cỡ chạy độc lập và cơ sở dữ liệu quản lý, chi phí nền/thành phần vận hành cao hơn. EC2 là dự phòng, không phải nguồn production thứ hai. |
+| ADR-06 | Gợi ý ngoại tuyến có đánh giá | Trợ lý mua sắm sinh nội dung | Phục vụ dự đoán được, không phí token; ít khả năng hội thoại. Phải qua cổng độ liên quan, không giảm so nền đã đo; giữ nền nếu chiến lược phức tạp chưa chứng minh lợi ích. |
+| ADR-07 | Chính sách sản phẩm và cache phục vụ gợi ý dùng chung ở `modules/recommendation`; route và công bố import từ đó | Workflow import vô hiệu hóa cache HTTP; route import chính sách route khác | Bỏ phụ thuộc ngược, không đổi auth, DTO, xếp hạng/cache. Điều phối route và adapter sản phẩm gắn phiên bản còn cần xử lý. |
+| ADR-08 | Oxfmt thay dùng trực tiếp Prettier; giữ Medusa/Next ESLint làm linter duy nhất | Thêm Oxlint cạnh lint framework; định dạng hàng loạt | Chưa có thay thế đủ đã kiểm chứng cho quy tắc Medusa. Định dạng theo staged cải thiện dần mã cũ; CI kiểm tra nền công cụ. |
+| ADR-09 | Token/thành phần storefront tái sử dụng, Motion tăng cường; workflow Medusa upsert danh mục cục bộ có sở hữu | Kiểu riêng từng trang và đặt lại demo phá dữ liệu | Phạm vi storefront/danh mục được người dùng cho phép ngày 15 tháng 11 năm 2026. Nhận diện/hướng thiết kế được duyệt theo [quyết định thương hiệu](../brand/README.md#approval--15-november-2026); không suy ra duyệt nghiệp vụ. Giữ tồn hiện có, kiểm chứng seed trên dịch vụ cục bộ dùng riêng. |
+| ADR-10 | Ảnh đại diện xem thử chỉ gắn qua chế độ local file provider Medusa tường minh, chỉ loopback; ảnh nhập production phải đúng sản phẩm qua provider cấu hình | Coi ảnh minh họa là sản phẩm/biến thể xác thực hoặc công bố lên S3 | Người dùng cho phép xem thử danh mục ngày 15 tháng 11 năm 2026. Giữ định danh sản phẩm và tồn hiện có. |
 
-These decisions formalize the chosen direction; migration/refactoring tasks remain in [delivery](07-delivery.md). The historical [AWS decision](../architecture/adr/0001-aws-cloud-stack.md) records the deployment context and does not prove current uptime.
+Các quyết định xác định hướng chọn; migration/tái cấu trúc còn ở [công việc](07-delivery.md). [Quyết định AWS lịch sử](../architecture/adr/0001-aws-cloud-stack.md) ghi bối cảnh triển khai, không chứng minh uptime hiện tại.
 
-## 6. Observed gaps to close before architecture acceptance
+<a id="6-observed-gaps-to-close-before-architecture-acceptance"></a>
+## 6. Khoảng trống trước nghiệm thu kiến trúc
 
-- Recommendation routes still perform orchestration and filtering. Shared saleability/public-product projection and serving-cache state now live below HTTP in `modules/recommendation/product-policy.ts` and `serving-cache.ts`; publishing and personalized serving no longer import route helpers. Extracting the remaining use-case orchestration is follow-up work.
-- The recommendation product adapter calls installed Medusa route/middleware internals in-process. Keep it explicit, version-coupled and covered by compatibility tests until replaced with a supported application boundary.
-- Recommendation anonymous product results and candidates have process-local caches (default result TTL five seconds outside tests). Clearing one process does not invalidate other replicas. Candidate and popularity entries use the configured TTL and run ID; candidate entries clear above 2,000 keys. Product-group and valid-region caches have no TTL or independent size bound, and popularity entries have no size bound. Publication clears these maps only in the publishing process. Define eviction/freshness and cross-replica behavior before enabling them publicly.
-- Custom catalog/cart/auth endpoints coexist with standard APIs. Inventory their consumers, validate identity/DTO contracts and remove unsupported duplication only through a reviewed implementation change.
-- Production pool limits are not explicitly set by the current test-only pool configuration. Budget total connections across maximum API tasks, worker, migrations and operator tasks.
-- Storefront latest sorting now delegates pagination to Medusa; price sorting reads every matching API page before sorting. The first-100 truncation is removed in source; the 120/1,000-product correctness/performance acceptance fixtures still require separate evidence.
-- Customer notifications, complete staff fulfillment/COD reconciliation and current-cloud peak/recovery demonstrations remain acceptance work.
+- Route gợi ý vẫn điều phối/lọc. Chính sách bán được, chiếu sản phẩm công khai và trạng thái cache ở `modules/recommendation/product-policy.ts`, `serving-cache.ts`; công bố/phục vụ cá nhân không import helper route. Còn phải tách điều phối ca sử dụng.
+- Adapter sản phẩm gọi nội bộ route/middleware Medusa đã cài trong tiến trình. Ghi rõ phụ thuộc phiên bản và kiểm thử tương thích đến khi thay bằng ranh giới ứng dụng được hỗ trợ.
+- Kết quả ẩn danh và ứng viên gợi ý có cache cục bộ tiến trình (TTL kết quả mặc định ngoài test là năm giây). Xóa một tiến trình không vô hiệu các bản sao khác. Ứng viên/phổ biến dùng TTL cấu hình và run ID; cache ứng viên xóa khi hơn 2.000 khóa. Cache nhóm sản phẩm/vùng hợp lệ không có TTL hoặc giới hạn kích thước riêng; mục phổ biến không giới hạn kích thước. Công bố chỉ xóa các map trong tiến trình công bố. Xác định loại bỏ/độ mới và hành vi xuyên bản sao trước bật công khai.
+- Endpoint danh mục/giỏ/auth tùy chỉnh cùng tồn tại API chuẩn. Lập bản đồ bên dùng, kiểm tra danh tính/DTO; chỉ bỏ trùng không hỗ trợ qua thay đổi triển khai được đánh giá.
+- Cấu hình pool chỉ dành test chưa đặt rõ giới hạn production. Tính tổng kết nối API tối đa, worker, migration và task vận hành.
+- Sắp xếp mới nhất storefront giao phân trang cho Medusa; sắp giá đọc mọi trang khớp trước sắp. Mã không còn cắt 100 đầu; dữ liệu nghiệm thu 120/1.000 sản phẩm vẫn cần bằng chứng đúng/hiệu năng riêng.
+- Thông báo khách, toàn bộ xử lý giao/COD nhân viên và trình diễn tải đỉnh/khôi phục cloud còn cần nghiệm thu.
 
-No microservice extraction, cloud provisioning or application refactor is authorized by this documentation alone; this stage establishes the implementation contract.
+Tài liệu không cấp quyền tách microservice, tạo cloud hoặc tái cấu trúc ứng dụng; chỉ xác định hợp đồng triển khai.
 
-## 7. Why this technology and provider
+<a id="7-why-this-technology-and-provider"></a>
+## 7. Lý do chọn công nghệ và provider
 
-AWS is selected because the shared project already has regional infrastructure, CloudFormation, service-role policies and dated operational evidence, and ECS/RDS/S3 cover the teacher's required compute/transaction/object-storage boundaries. Other providers could meet the same requirements; changing provider now would consume effort without evidence of a business benefit. The managed project restricts regional resources to ap-southeast-2 and CloudFront access was blocked in the recorded deployment context, so the current design uses an explicit backend media proxy trade-off. Revalidate access/prices before new operations rather than assuming historical restrictions or credits are permanent.
+Chọn AWS vì dự án chung đã có hạ tầng vùng, CloudFormation, chính sách service role và bằng chứng vận hành có ngày; ECS/RDS/S3 đáp ứng ranh giới tính toán/giao dịch/lưu đối tượng theo yêu cầu giảng viên. Provider khác có thể đáp ứng; đổi lúc này tốn công khi chưa chứng minh lợi ích nghiệp vụ. Dự án quản lý giới hạn tài nguyên vùng ở ap-southeast-2; CloudFront từng bị chặn trong bối cảnh đã ghi nên thiết kế dùng proxy ảnh backend với đánh đổi rõ. Xác minh lại quyền/giá trước thao tác mới; không coi hạn chế hoặc tín dụng lịch sử là vĩnh viễn.
 
-Medusa is chosen over writing commerce primitives from scratch because catalog, pricing, cart, inventory and fulfillment already have supported module/workflow boundaries. This reduces scope but introduces framework/version coupling; our installed configuration still needs business correctness tests. Next.js is the existing storefront stack and supports server-rendered browsing and server actions without owning commerce data. Redis reuses supported Medusa coordination providers, not a second transactional database. PostgreSQL and S3 responsibilities are justified in ADR-02/04. None of these choices requires extracting microservices or adding a generative assistant.
+Chọn Medusa thay tự viết lõi thương mại vì đã có ranh giới module/workflow hỗ trợ cho danh mục, giá, giỏ, tồn và fulfillment. Giảm phạm vi nhưng gắn framework/phiên bản; cấu hình đã cài vẫn cần kiểm thử đúng nghiệp vụ. Next.js là nền storefront hiện có, hỗ trợ duyệt render server và server action, không sở hữu thương mại. Redis tái dùng provider điều phối Medusa, không là cơ sở dữ liệu giao dịch thứ hai. Trách nhiệm PostgreSQL/S3 ở ADR-02/04. Không lựa chọn nào đòi tách microservice hoặc thêm trợ lý sinh nội dung.
