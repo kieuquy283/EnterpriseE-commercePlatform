@@ -1,5 +1,7 @@
 # DAYMARK storefront design
 
+Status: approved by the project requester on 15 November 2026 as part of [DAYMARK branding](../brand/README.md#approval--15-november-2026). This records visual approval, not business-policy or deployment approval.
+
 The storefront follows the approved full-width fashion editorial direction. The existing landing hero and navigation composition, including the swallow SVG, are retained. This implementation supports browse/discovery (FR-02, REC-01), cart/purchase (FR-03–FR-05) and private account/history (FR-01, FR-07). It changes presentation, not Medusa's commerce ownership or the Next.js application boundary.
 
 ## Composition

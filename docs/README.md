@@ -9,7 +9,7 @@ DAYMARK is a Vietnamese everyday-clothing ecommerce MVP with product suggestions
 
 The upstream business specification describes a generic fictional fashion retailer and does not approve DAYMARK branding. DAYMARK is the implementation identity; visual decisions have their own review status. The two layers describe the same product at different levels. Existing technical choices remain documented separately; a technology-neutral business diagram does not reopen them automatically. Any actual stack/AWS change needs a proposal and user review. Unresolved requirement-to-implementation gaps remain visible in the [crosswalk](reference/spec-consolidation.md).
 
-[DAYMARK provisional branding and asset provenance](brand/README.md).
+[Approved DAYMARK branding and asset provenance](brand/README.md).
 
 [Storefront design system](design-system/README.md): tokens, primitives, accessibility and commerce display rules for the customer frontend.
 

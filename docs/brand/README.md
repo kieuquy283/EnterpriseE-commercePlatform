@@ -1,8 +1,14 @@
-# DAYMARK visual identity concept
+# DAYMARK approved project branding
 
-## Current direction — 15 November 2026
+## Approval — 15 November 2026
 
-Only ivory, charcoal and muted olive are agreed. The latest user instruction supersedes earlier swallow approval recorded below: all marks, fonts, shapes and layouts are provisional. Preserve the assets and prompts as provenance. The customer storefront now proposes an editorial treatment with the existing SVG swallow and wordmark restored at the user’s request; presentation is outside this task. Historical approval wording below describes the earlier decision, not current authority.
+**Status: Approved by the project requester.** The user explicitly approved DAYMARK branding on 15 November 2026. This supersedes the earlier provisional/palette-only status.
+
+The approved project identity is DAYMARK, the **Made for the everyday.** tagline, the swallow SVG/wordmark, the ivory/charcoal/muted olive palette and the current modern editorial storefront design system documented in [storefront design](../design-system/README.md). Earlier monogram/ginkgo concepts remain archived explorations, not alternative official marks.
+
+This records the requester's branding decision. It does not claim a teammate-wide sign-off, approval of the generic business drafts or resolution of open business policies. It does not authorize a deployment. Future material branding changes should update this decision record.
+
+## Historical exploration and provenance
 
 Initial generated concept, 14 November 2026. [Concept board](daymark-concept-v1.png) explores an uppercase wordmark, olive day-mark detail, DM monogram, ivory/charcoal applications and apparel labels. This is a proposal for review, not a production vector master or a trademark-clearance claim. The shown people/garments are generated concept imagery, not actual products or brand ambassadors.
 
@@ -26,7 +32,7 @@ Prompt: Use case: logo-brand. New original emblem exploration for DAYMARK, an un
 
 ## Earlier identity decision (superseded)
 
-The team approved the swallow direction on 14 November 2026. [Standalone transparent symbol](daymark-swallow.png) is the current raster master, copied unchanged to storefront/presentation public brand directories. Charcoal/ivory with muted olive remains the visual direction; exact color/vector master cleanup can follow without changing the approved bird concept. The wordmark is DAYMARK and the tagline is **Made for the everyday.**
+The requester selected the swallow direction on 14 November 2026; the current branding approval is recorded above. [Standalone transparent symbol](daymark-swallow.png) is the current raster master, copied unchanged to storefront/presentation public brand directories. Charcoal/ivory with muted olive remains the visual direction; exact color/vector master cleanup can follow without changing the approved bird concept. The wordmark is DAYMARK and the tagline is **Made for the everyday.**
 
 Meaning: the swallow represents everyday movement—clothing that goes with you through study, work and life in the city. This is the chosen brand narrative, not a historical or cultural-symbolism claim. Earlier monogram/ginkgo boards remain exploration references and must not appear as competing official marks.
 

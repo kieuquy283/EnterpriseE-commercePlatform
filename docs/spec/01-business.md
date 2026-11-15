@@ -6,7 +6,7 @@ Status: chosen product direction for the next implementation stage, dated 14 Nov
 
 ## Business problem and value
 
-DAYMARK is a fictional Vietnamese direct-to-consumer clothing brand for young adults moving between study, work and everyday city life. Its proposition is versatile everyday clothing with consistent fit, clear product information and dependable ordering. Brand line: **Made for the everyday.** Only the ivory/charcoal/muted olive palette is agreed. The swallow is a provisional asset; visual identity, typography and composition remain proposed choices. See [brand assets](../brand/README.md). The brand name and assets are project identity, not a claim of trademark or domain clearance.
+DAYMARK is a fictional Vietnamese direct-to-consumer clothing brand for young adults moving between study, work and everyday city life. Its proposition is versatile everyday clothing with consistent fit, clear product information and dependable ordering. Brand line: **Made for the everyday.** DAYMARK branding, including the swallow/wordmark, ivory/charcoal/muted olive palette and current storefront design direction, was approved by the project requester on 15 November 2026. This does not imply approval of unresolved business policies. See [brand assets](../brand/README.md). The brand name and assets are project identity, not a claim of trademark or domain clearance.
 
 Customers need to find clothing that fits their style and size, understand the final price and availability, place an order once, and know what happens afterward. Store staff need one authoritative catalog, stock and order record. Administrators need controlled access, repeatable releases and evidence that the service remains correct under promotion traffic and dependency failures.
 

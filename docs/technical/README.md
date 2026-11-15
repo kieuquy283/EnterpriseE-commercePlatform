@@ -21,7 +21,7 @@ Existing files retain their paths to preserve code/runbook links. This index sep
 
 ## Branding and requirement boundary
 
-The upstream business specification describes a fictional Vietnamese fashion retailer; it does not approve DAYMARK or any visual identity. DAYMARK is this implementation’s project brand. Only the palette has been agreed in this working session; naming/design work must not be represented as a teammate-wide branding approval. SOMEHOW is a public reference, not a sponsor or the owner of these requirements.
+The upstream business specification describes a fictional Vietnamese fashion retailer; it does not approve DAYMARK or any visual identity. DAYMARK is this implementation’s project brand. The project requester approved DAYMARK branding on 15 November 2026; see the [branding decision](../brand/README.md#approval--15-november-2026). This is distinct from a teammate-wide sign-off or approval of open business policies. SOMEHOW is a public reference, not a sponsor or the owner of these requirements.
 
 ## Baseline and change boundary
 
