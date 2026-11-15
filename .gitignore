@@ -26,3 +26,15 @@ deploy/cloudformation/settings.json
 
 # Local Medusa provider uploads are runtime data.
 /apps/backend/static/
+# Tài liệu nguồn chỉ đọc tại local
+/docs/Cloud Application Development - Project Topics.pdf
+/docs/Presentation *.pdf
+/docs/HM_Similar_Products_PDP_Plan_Docs.zip
+/docs/PLAN_DOCS_RESTRUCTURE_AND_BUSINESS_PHASE.md
+/docs/PLAN_USERS_PHASE.md
+/docs/00_EXECUTION_PLANS_README.md
+/docs/PLAN_REQUIREMENTS_PHASE.md
+/docs/PLAN_NFR_PHASE.md
+/docs/PLAN_WORKLOAD_PHASE.md
+/docs/PLAN_DATA_PHASE.md
+/docs/PLAN_LOGICAL_ARCHITECTURE_PHASE.md
