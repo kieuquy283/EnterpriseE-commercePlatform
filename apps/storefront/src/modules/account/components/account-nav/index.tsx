@@ -12,11 +12,7 @@ import MapPin from "@modules/common/icons/map-pin"
 import Package from "@modules/common/icons/package"
 import User from "@modules/common/icons/user"
 
-const AccountNav = ({
-  customer,
-}: {
-  customer: HttpTypes.StoreCustomer | null
-}) => {
+const AccountNav = ({ customer }: { customer: HttpTypes.StoreCustomer | null }) => {
   const route = usePathname()
   const { countryCode } = useParams() as { countryCode: string }
 
@@ -24,112 +20,120 @@ const AccountNav = ({
     await signout(countryCode)
   }
 
+  const isOverview = route === `/${countryCode}/account` || route === `/${countryCode}/account/`
+
+  const currentSection = (() => {
+    const path = route.split(countryCode)[1] ?? ""
+    if (path.startsWith("/account/orders")) return "/account/orders"
+    if (path.startsWith("/account/addresses")) return "/account/addresses"
+    if (path.startsWith("/account/profile")) return "/account/profile"
+    return "/account"
+  })()
+
   return (
     <div>
+      {/* Mobile: a compact selector. */}
       <div className="small:hidden" data-testid="mobile-account-nav">
-        {route !== `/${countryCode}/account` ? (
+        {!isOverview ? (
           <LocalizedClientLink
             href="/account"
-            className="flex items-center gap-x-2 text-small-regular py-2"
+            className="inline-flex items-center gap-x-2 py-2 text-dm-small font-medium text-ink-muted transition-colors duration-200 hover:text-ink"
             data-testid="account-main-link"
           >
-            <>
-              <ChevronDown className="transform rotate-90" />
-              <span>Account</span>
-            </>
+            <ChevronDown className="rotate-90" />
+            <span>Tài khoản</span>
           </LocalizedClientLink>
         ) : (
-          <>
-            <div className="text-xl-semi mb-4 px-8">
-              Hello {customer?.first_name}
-            </div>
-            <div className="text-base-regular">
-              <ul>
+          <details className="group rounded-dm-md border border-line bg-canvas">
+            <summary className="flex cursor-pointer items-center justify-between gap-3 px-4 py-3 text-dm-small font-medium text-ink">
+              <span className="flex flex-col gap-y-0.5">
+                <span className="dm-eyebrow">Menu tài khoản</span>
+                <span>
+                  {currentSection === "/account" && "Tổng quan"}
+                  {currentSection === "/account/profile" && "Thông tin cá nhân"}
+                  {currentSection === "/account/addresses" && "Địa chỉ"}
+                  {currentSection === "/account/orders" && "Đơn hàng"}
+                </span>
+              </span>
+              <ChevronDown className="shrink-0 transition-transform duration-200 group-open:rotate-180" />
+            </summary>
+            <nav aria-label="Tài khoản" className="border-t border-line px-2 py-2">
+              <ul className="flex flex-col">
+                <li>
+                  <LocalizedClientLink
+                    href="/account"
+                    aria-current={currentSection === "/account" ? "page" : undefined}
+                    className="flex items-center gap-x-2 rounded-dm-sm px-2 py-3 text-dm-small text-ink-muted hover:bg-surface"
+                    data-testid="overview-link"
+                  >
+                    <User size={18} />
+                    <span>Tổng quan</span>
+                  </LocalizedClientLink>
+                </li>
                 <li>
                   <LocalizedClientLink
                     href="/account/profile"
-                    className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
+                    aria-current={currentSection === "/account/profile" ? "page" : undefined}
+                    className="flex items-center gap-x-2 rounded-dm-sm px-2 py-3 text-dm-small text-ink-muted hover:bg-surface"
                     data-testid="profile-link"
                   >
-                    <>
-                      <div className="flex items-center gap-x-2">
-                        <User size={20} />
-                        <span>Profile</span>
-                      </div>
-                      <ChevronDown className="transform -rotate-90" />
-                    </>
+                    <User size={18} />
+                    <span>Thông tin cá nhân</span>
                   </LocalizedClientLink>
                 </li>
                 <li>
                   <LocalizedClientLink
                     href="/account/addresses"
-                    className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
+                    aria-current={currentSection === "/account/addresses" ? "page" : undefined}
+                    className="flex items-center gap-x-2 rounded-dm-sm px-2 py-3 text-dm-small text-ink-muted hover:bg-surface"
                     data-testid="addresses-link"
                   >
-                    <>
-                      <div className="flex items-center gap-x-2">
-                        <MapPin size={20} />
-                        <span>Addresses</span>
-                      </div>
-                      <ChevronDown className="transform -rotate-90" />
-                    </>
+                    <MapPin size={18} />
+                    <span>Địa chỉ</span>
                   </LocalizedClientLink>
                 </li>
                 <li>
                   <LocalizedClientLink
                     href="/account/orders"
-                    className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
+                    aria-current={currentSection === "/account/orders" ? "page" : undefined}
+                    className="flex items-center gap-x-2 rounded-dm-sm px-2 py-3 text-dm-small text-ink-muted hover:bg-surface"
                     data-testid="orders-link"
                   >
-                    <div className="flex items-center gap-x-2">
-                      <Package size={20} />
-                      <span>Orders</span>
-                    </div>
-                    <ChevronDown className="transform -rotate-90" />
+                    <Package size={18} />
+                    <span>Đơn hàng</span>
                   </LocalizedClientLink>
                 </li>
                 <li>
                   <button
                     type="button"
-                    className="flex items-center justify-between py-4 border-b border-gray-200 px-8 w-full"
+                    className="dm-btn-ghost w-full justify-start text-left"
                     onClick={handleLogout}
                     data-testid="logout-button"
                   >
-                    <div className="flex items-center gap-x-2">
-                      <ArrowRightOnRectangle />
-                      <span>Log out</span>
-                    </div>
-                    <ChevronDown className="transform -rotate-90" />
+                    <ArrowRightOnRectangle />
+                    <span>Đăng xuất</span>
                   </button>
                 </li>
               </ul>
-            </div>
-          </>
+            </nav>
+          </details>
         )}
       </div>
+
+      {/* Desktop: sticky rail. */}
       <div className="hidden small:block" data-testid="account-nav">
-        <div>
-          <div className="pb-4">
-            <h3 className="text-base-semi">Account</h3>
-          </div>
-          <div className="text-base-regular">
-            <ul className="flex mb-0 justify-start items-start flex-col gap-y-4">
+        <div className="small:sticky small:top-24">
+          <p className="dm-eyebrow pb-4">Tài khoản</p>
+          <nav aria-label="Tài khoản">
+            <ul className="flex flex-col gap-y-1">
               <li>
-                <AccountNavLink
-                  href="/account"
-                  route={route!}
-                  data-testid="overview-link"
-                >
-                  Overview
+                <AccountNavLink href="/account" route={route!} data-testid="overview-link">
+                  Tổng quan
                 </AccountNavLink>
               </li>
               <li>
-                <AccountNavLink
-                  href="/account/profile"
-                  route={route!}
-                  data-testid="profile-link"
-                >
-                  Profile
+                <AccountNavLink href="/account/profile" route={route!} data-testid="profile-link">
+                  Thông tin cá nhân
                 </AccountNavLink>
               </li>
               <li>
@@ -138,29 +142,32 @@ const AccountNav = ({
                   route={route!}
                   data-testid="addresses-link"
                 >
-                  Addresses
+                  Địa chỉ
                 </AccountNavLink>
               </li>
               <li>
-                <AccountNavLink
-                  href="/account/orders"
-                  route={route!}
-                  data-testid="orders-link"
-                >
-                  Orders
+                <AccountNavLink href="/account/orders" route={route!} data-testid="orders-link">
+                  Đơn hàng
                 </AccountNavLink>
               </li>
-              <li className="text-grey-700">
+              <li className="pt-3">
                 <button
                   type="button"
                   onClick={handleLogout}
+                  className="dm-action-link"
                   data-testid="logout-button"
                 >
-                  Log out
+                  Đăng xuất
                 </button>
               </li>
             </ul>
-          </div>
+          </nav>
+          {customer ? (
+            <div className="mt-8 border-t border-line pt-4">
+              <p className="dm-eyebrow">Đăng nhập với</p>
+              <p className="mt-1 break-words text-dm-caption text-ink-muted">{customer.email}</p>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
@@ -182,13 +189,17 @@ const AccountNavLink = ({
 }: AccountNavLinkProps) => {
   const { countryCode } = useParams() as { countryCode: string }
 
-  const active = route.split(countryCode)[1] === href
+  const path = route.split(countryCode)[1] ?? ""
+  const active =
+    href === "/account" ? path === "/account" || path === "/account/" : path.startsWith(href)
   return (
     <LocalizedClientLink
       href={href}
-      className={clx("text-ui-fg-subtle hover:text-ui-fg-base", {
-        "text-ui-fg-base font-semibold": active,
-      })}
+      aria-current={active ? "page" : undefined}
+      className={clx(
+        "inline-flex items-center border-l-2 border-transparent py-1.5 pl-3 text-dm-small transition-colors duration-200",
+        active ? "border-accent font-semibold text-ink" : "text-ink-muted hover:text-ink",
+      )}
       data-testid={dataTestId}
     >
       {children}

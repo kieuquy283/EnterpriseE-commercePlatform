@@ -26,8 +26,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   }
 
   const metadata = {
-    title: `${collection.title} | DAYMARK`,
-    description: `${collection.title} collection`,
+    title: `${collection.title}`,
+    description: `${collection.title} trong bộ sưu tập`,
   } as Metadata
 
   return metadata
@@ -39,9 +39,7 @@ export default async function CollectionPage(props: Props) {
   const { sortBy, page } = searchParams
   const optionValueIds = parseOptionValueIds(searchParams)
 
-  const collection = await getCollectionByHandle(params.handle).then(
-    (collection) => collection,
-  )
+  const collection = await getCollectionByHandle(params.handle).then((collection) => collection)
 
   if (!collection) {
     notFound()

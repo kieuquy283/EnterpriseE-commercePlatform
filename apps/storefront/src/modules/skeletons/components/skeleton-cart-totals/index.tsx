@@ -1,27 +1,27 @@
-const SkeletonCartTotals = ({ header = true }) => {
+const SkeletonCartTotals = ({ header = true }: { header?: boolean }) => {
   return (
-    <div className="flex flex-col">
-      {header && <div className="w-32 h-4 bg-gray-100 mb-4"></div>}
-      <div className="flex items-center justify-between">
-        <div className="w-32 h-3 bg-gray-100"></div>
-        <div className="w-32 h-3 bg-gray-100"></div>
+    <div className="flex flex-col" aria-hidden="true">
+      {header && <div className="dm-skeleton mb-5 h-4 w-32" />}
+      <div className="flex items-center justify-between py-2">
+        <div className="dm-skeleton h-3 w-32" />
+        <div className="dm-skeleton h-3 w-16" />
       </div>
 
-      <div className="flex items-center justify-between my-4">
-        <div className="w-24 h-3 bg-gray-100"></div>
-        <div className="w-24 h-3 bg-gray-100"></div>
+      <div className="flex items-center justify-between py-2">
+        <div className="dm-skeleton h-3 w-24" />
+        <div className="dm-skeleton h-3 w-16" />
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="w-28 h-3 bg-gray-100 "></div>
-        <div className="w-20 h-3 bg-gray-100"></div>
+      <div className="flex items-center justify-between py-2">
+        <div className="dm-skeleton h-3 w-28" />
+        <div className="dm-skeleton h-3 w-16" />
       </div>
 
-      <div className="w-full border-b border-gray-200 border-dashed my-4"></div>
+      <div className="dm-divider my-4" />
 
       <div className="flex items-center justify-between">
-        <div className="w-32 h-6 bg-gray-100 mb-4"></div>
-        <div className="w-24 h-6 bg-gray-100 mb-4"></div>
+        <div className="dm-skeleton h-5 w-24" />
+        <div className="dm-skeleton h-5 w-24" />
       </div>
     </div>
   )

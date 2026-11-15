@@ -1,8 +1,8 @@
 "use client"
 
-import React, { useEffect, useActionState } from "react";
+import React, { useEffect, useActionState } from "react"
 
-import Input from "@modules/common/components/input"
+import { Input } from "@modules/common/components/ui"
 
 import AccountInfo from "../account-info"
 import { HttpTypes } from "@medusajs/types"
@@ -15,10 +15,7 @@ type MyInformationProps = {
 const ProfileName: React.FC<MyInformationProps> = ({ customer }) => {
   const [successState, setSuccessState] = React.useState(false)
 
-  const updateCustomerName = async (
-    _currentState: Record<string, unknown>,
-    formData: FormData
-  ) => {
+  const updateCustomerName = async (_currentState: Record<string, unknown>, formData: FormData) => {
     const customer = {
       first_name: formData.get("first_name") as string,
       last_name: formData.get("last_name") as string,
@@ -48,24 +45,29 @@ const ProfileName: React.FC<MyInformationProps> = ({ customer }) => {
   return (
     <form action={formAction} className="w-full overflow-visible">
       <AccountInfo
-        label="Name"
-        currentInfo={`${customer.first_name} ${customer.last_name}`}
+        label="Họ tên"
+        currentInfo={
+          [customer.first_name, customer.last_name].filter(Boolean).join(" ") || "Chưa cập nhật"
+        }
         isSuccess={successState}
         isError={!!state?.error}
+        errorMessage={state.error || undefined}
         clearState={clearState}
         data-testid="account-name-editor"
       >
-        <div className="grid grid-cols-2 gap-x-4">
+        <div className="grid grid-cols-1 gap-4 xsmall:grid-cols-2">
           <Input
-            label="First name"
+            label="Tên"
             name="first_name"
+            autoComplete="given-name"
             required
             defaultValue={customer.first_name ?? ""}
             data-testid="first-name-input"
           />
           <Input
-            label="Last name"
+            label="Họ"
             name="last_name"
+            autoComplete="family-name"
             required
             defaultValue={customer.last_name ?? ""}
             data-testid="last-name-input"

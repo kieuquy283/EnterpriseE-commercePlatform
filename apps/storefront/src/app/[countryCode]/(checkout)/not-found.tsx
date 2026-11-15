@@ -1,19 +1,28 @@
-import InteractiveLink from "@modules/common/components/interactive-link"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "404",
-  description: "Something went wrong",
+  description: "Có lỗi xảy ra",
 }
 
 export default async function NotFound() {
   return (
-    <div className="flex flex-col gap-4 items-center justify-center min-h-[calc(100vh-64px)]">
-      <h1 className="text-2xl-semi text-ui-fg-base">Page not found</h1>
-      <p className="text-small-regular text-ui-fg-base">
-        The page you tried to access does not exist.
+    <div className="content-container flex min-h-[calc(100vh-64px)] flex-col items-center justify-center gap-y-4 text-center">
+      <p className="dm-eyebrow">Thanh toán</p>
+      <h1 className="dm-title">Phiên thanh toán không còn khả dụng</h1>
+      <p className="dm-body max-w-dm-prose">
+        Không tìm thấy giỏ hàng cho phiên thanh toán này. Về giỏ hàng hoặc tiếp tục khám phá bộ sưu
+        tập.
       </p>
-      <InteractiveLink href="/">Go to frontpage</InteractiveLink>
+      <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
+        <LocalizedClientLink href="/cart" className="dm-btn dm-btn-primary">
+          Về giỏ hàng
+        </LocalizedClientLink>
+        <LocalizedClientLink href="/store" className="dm-btn dm-btn-secondary">
+          Khám phá bộ sưu tập
+        </LocalizedClientLink>
+      </div>
     </div>
   )
 }

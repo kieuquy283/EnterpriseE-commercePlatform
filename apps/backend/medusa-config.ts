@@ -1,19 +1,47 @@
-import { defineConfig, loadEnv } from "@medusajs/framework/utils"
+import { defineConfig, loadEnv, MedusaError } from "@medusajs/framework/utils"
 
 loadEnv(process.env.NODE_ENV || "development", process.cwd())
 
 const redisUrl = process.env.REDIS_URL
 const s3AuthenticationMethod =
-  process.env.S3_AUTHENTICATION_METHOD === "s3-iam-role"
-    ? "s3-iam-role"
-    : "access-key"
+  process.env.S3_AUTHENTICATION_METHOD === "s3-iam-role" ? "s3-iam-role" : "access-key"
 const s3Configured = Boolean(
   process.env.S3_BUCKET &&
-    (s3AuthenticationMethod === "s3-iam-role" ||
-      (process.env.S3_ACCESS_KEY_ID && process.env.S3_SECRET_ACCESS_KEY)) &&
-    process.env.S3_FILE_URL
+  (s3AuthenticationMethod === "s3-iam-role" ||
+    (process.env.S3_ACCESS_KEY_ID && process.env.S3_SECRET_ACCESS_KEY)) &&
+  process.env.S3_FILE_URL,
 )
 const hmImageTestBackendUrl = process.env.HM_IMAGE_TEST_BACKEND_URL
+const daymarkLocalImageBackendUrl = process.env.DAYMARK_LOCAL_IMAGE_BACKEND_URL
+
+function isLoopbackHttpUrl(value: string): boolean {
+  try {
+    const url = new URL(value)
+    return (
+      url.protocol === "http:" &&
+      ["localhost", "127.0.0.1", "[::1]"].includes(url.hostname) &&
+      !url.username &&
+      !url.password &&
+      url.pathname === "/" &&
+      !url.search &&
+      !url.hash
+    )
+  } catch {
+    return false
+  }
+}
+
+if (
+  daymarkLocalImageBackendUrl &&
+  (process.env.NODE_ENV !== "test" ||
+    s3Configured ||
+    !isLoopbackHttpUrl(daymarkLocalImageBackendUrl))
+) {
+  throw new MedusaError(
+    MedusaError.Types.INVALID_DATA,
+    "DAYMARK_LOCAL_IMAGE_BACKEND_URL is allowed only for NODE_ENV=test with a loopback URL and no S3 provider",
+  )
+}
 
 const workerMode =
   process.env.WORKER_MODE === "server" || process.env.WORKER_MODE === "worker"
@@ -34,9 +62,7 @@ module.exports = defineConfig({
     http: {
       storeCors: process.env.STORE_CORS || "http://localhost:8000",
       adminCors: process.env.ADMIN_CORS || "http://localhost:9000",
-      authCors:
-        process.env.AUTH_CORS ||
-        "http://localhost:8000,http://localhost:9000",
+      authCors: process.env.AUTH_CORS || "http://localhost:8000,http://localhost:9000",
       jwtSecret: process.env.JWT_SECRET,
       cookieSecret: process.env.COOKIE_SECRET,
     },
@@ -49,15 +75,19 @@ module.exports = defineConfig({
     { resolve: "./src/modules/personalization" },
     ...(process.env.NODE_ENV === "production"
       ? []
-      : [{
-          resolve: "@medusajs/medusa/payment",
-          options: {
-            providers: [{
-              resolve: "./src/modules/payment-simulator",
-              id: "simulator",
-            }],
+      : [
+          {
+            resolve: "@medusajs/medusa/payment",
+            options: {
+              providers: [
+                {
+                  resolve: "./src/modules/payment-simulator",
+                  id: "simulator",
+                },
+              ],
+            },
           },
-        }]),
+        ]),
     ...(redisUrl
       ? [
           {
@@ -111,15 +141,10 @@ module.exports = defineConfig({
                       ? { prefix: "public-images/" }
                       : {}),
                     authentication_method: s3AuthenticationMethod,
-                    ...(process.env.S3_DISABLE_ACL === "true"
-                      ? { acl: false }
-                      : {}),
+                    ...(process.env.S3_DISABLE_ACL === "true" ? { acl: false } : {}),
                     access_key_id: process.env.S3_ACCESS_KEY_ID,
                     secret_access_key: process.env.S3_SECRET_ACCESS_KEY,
-                    region:
-                      process.env.S3_REGION ||
-                      process.env.AWS_REGION ||
-                      "ap-southeast-2",
+                    region: process.env.S3_REGION || process.env.AWS_REGION || "ap-southeast-2",
                     bucket: process.env.S3_BUCKET,
                     endpoint: process.env.S3_ENDPOINT,
                     additional_client_config: {
@@ -132,18 +157,40 @@ module.exports = defineConfig({
           },
         ]
       : []),
-    ...(process.env.NODE_ENV === "test" && hmImageTestBackendUrl && !s3Configured
-      ? [{
-          resolve: "@medusajs/medusa/file",
-          options: {
-            providers: [{
-              resolve: "@medusajs/medusa/file-local",
-              id: "hm-test-local",
-              is_default: true,
-              options: { backend_url: `${hmImageTestBackendUrl.replace(/\/$/, "")}/static` },
-            }],
+    ...(process.env.NODE_ENV === "test" && daymarkLocalImageBackendUrl && !s3Configured
+      ? [
+          {
+            resolve: "@medusajs/medusa/file",
+            options: {
+              providers: [
+                {
+                  resolve: "@medusajs/medusa/file-local",
+                  id: "daymark-local",
+                  is_default: true,
+                  options: {
+                    backend_url: `${daymarkLocalImageBackendUrl.replace(/\/$/, "")}/static`,
+                  },
+                },
+              ],
+            },
           },
-        }]
-      : []),
+        ]
+      : process.env.NODE_ENV === "test" && hmImageTestBackendUrl && !s3Configured
+        ? [
+            {
+              resolve: "@medusajs/medusa/file",
+              options: {
+                providers: [
+                  {
+                    resolve: "@medusajs/medusa/file-local",
+                    id: "hm-test-local",
+                    is_default: true,
+                    options: { backend_url: `${hmImageTestBackendUrl.replace(/\/$/, "")}/static` },
+                  },
+                ],
+              },
+            },
+          ]
+        : []),
   ],
 })

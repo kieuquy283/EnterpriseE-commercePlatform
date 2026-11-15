@@ -10,10 +10,7 @@ type Props = {
   searchParams: Promise<{ v_id?: string }>
 }
 
-function getImagesForVariant(
-  product: HttpTypes.StoreProduct,
-  selectedVariantId?: string,
-) {
+function getImagesForVariant(product: HttpTypes.StoreProduct, selectedVariantId?: string) {
   if (!selectedVariantId || !product.variants) {
     return product.images
   }
@@ -46,10 +43,10 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${product.title} | DAYMARK`,
+    title: `${product.title}`,
     description: `${product.title}`,
     openGraph: {
-      title: `${product.title} | DAYMARK`,
+      title: `${product.title}`,
       description: `${product.title}`,
       images: product.thumbnail ? [product.thumbnail] : [],
     },

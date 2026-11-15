@@ -1,7 +1,5 @@
 import { HttpTypes } from "@medusajs/types"
-import { Container } from "@modules/common/components/ui"
-import Checkbox from "@modules/common/components/checkbox"
-import Input from "@modules/common/components/input"
+import { Checkbox, Input } from "@modules/common/components/ui"
 import { mapKeys } from "lodash"
 import React, { useEffect, useMemo, useState } from "react"
 import AddressSelect from "../address-select"
@@ -33,22 +31,19 @@ const ShippingAddress = ({
 
   const countriesInRegion = useMemo(
     () => cart?.region?.countries?.map((c) => c.iso_2),
-    [cart?.region]
+    [cart?.region],
   )
 
   // check if customer has saved addresses that are in the current region
   const addressesInRegion = useMemo(
     () =>
       customer?.addresses.filter(
-        (a) => a.country_code && countriesInRegion?.includes(a.country_code)
+        (a) => a.country_code && countriesInRegion?.includes(a.country_code),
       ),
-    [customer?.addresses, countriesInRegion]
+    [customer?.addresses, countriesInRegion],
   )
 
-  const setFormAddress = (
-    address?: HttpTypes.StoreCartAddress,
-    email?: string
-  ) => {
+  const setFormAddress = (address?: HttpTypes.StoreCartAddress, email?: string) => {
     if (address) {
       setFormData((prevState: Record<string, string>) => ({
         ...prevState,
@@ -81,12 +76,10 @@ const ShippingAddress = ({
     if (cart && !cart.email && customer?.email) {
       setFormAddress(undefined, customer.email)
     }
-  }, [cart]) // Add cart as a dependency
+  }, [cart, customer?.email])
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLInputElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLInputElement | HTMLSelectElement>,
   ) => {
     setFormData({
       ...formData,
@@ -97,121 +90,139 @@ const ShippingAddress = ({
   return (
     <>
       {customer && (addressesInRegion?.length || 0) > 0 && (
-        <Container className="mb-6 flex flex-col gap-y-4 p-5">
-          <p className="text-small-regular">
-            {`Hi ${customer.first_name}, do you want to use one of your saved addresses?`}
+        <div className="dm-panel mb-2 flex flex-col gap-y-3 p-4 small:p-5">
+          <p className="dm-caption">
+            {`Xin chào ${customer.first_name}, bạn muốn dùng một địa chỉ đã lưu?`}
           </p>
           <AddressSelect
             addresses={customer.addresses}
             addressInput={
               mapKeys(formData, (_, key) =>
-                key.replace("shipping_address.", "")
+                key.replace("shipping_address.", ""),
               ) as unknown as HttpTypes.StoreCartAddress
             }
             onSelect={setFormAddress}
           />
-        </Container>
+        </div>
       )}
-      <div className="grid grid-cols-2 gap-4">
-        <Input
-          label="First name"
-          name="shipping_address.first_name"
-          autoComplete="given-name"
-          value={formData["shipping_address.first_name"]}
-          onChange={handleChange}
-          required
-          data-testid="shipping-first-name-input"
-        />
-        <Input
-          label="Last name"
-          name="shipping_address.last_name"
-          autoComplete="family-name"
-          value={formData["shipping_address.last_name"]}
-          onChange={handleChange}
-          required
-          data-testid="shipping-last-name-input"
-        />
-        <Input
-          label="Address"
-          name="shipping_address.address_1"
-          autoComplete="address-line1"
-          value={formData["shipping_address.address_1"]}
-          onChange={handleChange}
-          required
-          data-testid="shipping-address-input"
-        />
-        <Input
-          label="Company"
-          name="shipping_address.company"
-          value={formData["shipping_address.company"]}
-          onChange={handleChange}
-          autoComplete="organization"
-          data-testid="shipping-company-input"
-        />
-        <Input
-          label="Postal code"
-          name="shipping_address.postal_code"
-          autoComplete="postal-code"
-          value={formData["shipping_address.postal_code"]}
-          onChange={handleChange}
-          required
-          data-testid="shipping-postal-code-input"
-        />
-        <Input
-          label="City"
-          name="shipping_address.city"
-          autoComplete="address-level2"
-          value={formData["shipping_address.city"]}
-          onChange={handleChange}
-          required
-          data-testid="shipping-city-input"
-        />
-        <CountrySelect
-          name="shipping_address.country_code"
-          autoComplete="country"
-          region={cart?.region}
-          value={formData["shipping_address.country_code"]}
-          onChange={handleChange}
-          required
-          data-testid="shipping-country-select"
-        />
-        <Input
-          label="State / Province"
-          name="shipping_address.province"
-          autoComplete="address-level1"
-          value={formData["shipping_address.province"]}
-          onChange={handleChange}
-          data-testid="shipping-province-input"
-        />
+
+      <div className="flex flex-col gap-y-8">
+        <div className="flex flex-col gap-y-4">
+          <h3 className="mb-1 text-dm-small font-semibold text-ink">Thông tin liên hệ</h3>
+          <div className="grid grid-cols-1 gap-4 xsmall:grid-cols-2">
+            <Input
+              label="Email"
+              name="email"
+              type="email"
+              title="Vui lòng nhập địa chỉ email hợp lệ."
+              autoComplete="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              data-testid="shipping-email-input"
+            />
+            <Input
+              label="Số điện thoại"
+              name="shipping_address.phone"
+              type="tel"
+              autoComplete="tel"
+              value={formData["shipping_address.phone"]}
+              onChange={handleChange}
+              hint="Chỉ dùng để cập nhật tình trạng giao hàng."
+              data-testid="shipping-phone-input"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-y-4 border-t border-line pt-8">
+          <h3 className="mb-1 text-dm-small font-semibold text-ink">Địa chỉ nhận hàng</h3>
+          <div className="grid grid-cols-1 gap-4 xsmall:grid-cols-2">
+            <Input
+              label="Tên"
+              name="shipping_address.first_name"
+              autoComplete="given-name"
+              value={formData["shipping_address.first_name"]}
+              onChange={handleChange}
+              required
+              data-testid="shipping-first-name-input"
+            />
+            <Input
+              label="Họ"
+              name="shipping_address.last_name"
+              autoComplete="family-name"
+              value={formData["shipping_address.last_name"]}
+              onChange={handleChange}
+              required
+              data-testid="shipping-last-name-input"
+            />
+            <div className="xsmall:col-span-2">
+              <Input
+                label="Địa chỉ"
+                name="shipping_address.address_1"
+                autoComplete="address-line1"
+                value={formData["shipping_address.address_1"]}
+                onChange={handleChange}
+                required
+                data-testid="shipping-address-input"
+              />
+            </div>
+            <Input
+              label="Mã bưu chính"
+              name="shipping_address.postal_code"
+              autoComplete="postal-code"
+              value={formData["shipping_address.postal_code"]}
+              onChange={handleChange}
+              required
+              data-testid="shipping-postal-code-input"
+            />
+            <Input
+              label="Tỉnh / Thành phố"
+              name="shipping_address.city"
+              autoComplete="address-level2"
+              value={formData["shipping_address.city"]}
+              onChange={handleChange}
+              required
+              data-testid="shipping-city-input"
+            />
+            <CountrySelect
+              name="shipping_address.country_code"
+              autoComplete="country"
+              region={cart?.region}
+              value={formData["shipping_address.country_code"]}
+              onChange={handleChange}
+              required
+              data-testid="shipping-country-select"
+            />
+            <Input
+              label="Quận / Huyện"
+              name="shipping_address.province"
+              autoComplete="address-level1"
+              value={formData["shipping_address.province"]}
+              onChange={handleChange}
+              data-testid="shipping-province-input"
+            />
+            <div className="xsmall:col-span-2">
+              <Input
+                label="Công ty (không bắt buộc)"
+                name="shipping_address.company"
+                value={formData["shipping_address.company"]}
+                onChange={handleChange}
+                autoComplete="organization"
+                data-testid="shipping-company-input"
+              />
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="my-8">
+
+      <div className="my-6">
         <Checkbox
-          label="Billing address same as shipping address"
+          id="same-as-billing"
+          label="Địa chỉ xuất hoá đơn giống địa chỉ nhận hàng"
           name="same_as_billing"
           checked={checked}
           onChange={onChange}
           data-testid="billing-address-checkbox"
-        />
-      </div>
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <Input
-          label="Email"
-          name="email"
-          type="email"
-          title="Enter a valid email address."
-          autoComplete="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          data-testid="shipping-email-input"
-        />
-        <Input
-          label="Phone"
-          name="shipping_address.phone"
-          autoComplete="tel"
-          value={formData["shipping_address.phone"]}
-          onChange={handleChange}
-          data-testid="shipping-phone-input"
         />
       </div>
     </>

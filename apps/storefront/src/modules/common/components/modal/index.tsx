@@ -11,7 +11,7 @@ type ModalProps = {
   size?: "small" | "medium" | "large"
   search?: boolean
   children: React.ReactNode
-  'data-testid'?: string
+  "data-testid"?: string
 }
 
 const Modal = ({
@@ -20,7 +20,7 @@ const Modal = ({
   size = "medium",
   search = false,
   children,
-  'data-testid': dataTestId
+  "data-testid": dataTestId,
 }: ModalProps) => {
   return (
     <Transition appear show={isOpen} as={Fragment}>
@@ -39,13 +39,10 @@ const Modal = ({
 
         <div className="fixed inset-0 overflow-y-hidden">
           <div
-            className={clx(
-              "flex min-h-full h-full justify-center p-4 text-center",
-              {
-                "items-center": !search,
-                "items-start": search,
-              }
-            )}
+            className={clx("flex min-h-full h-full justify-center p-4 text-center", {
+              "items-center": !search,
+              "items-start": search,
+            })}
           >
             <Transition.Child
               as={Fragment}
@@ -66,7 +63,7 @@ const Modal = ({
                     "max-w-3xl": size === "large",
                     "bg-transparent shadow-none": search,
                     "bg-white shadow-xl border rounded-rounded": !search,
-                  }
+                  },
                 )}
               >
                 <ModalProvider close={close}>{children}</ModalProvider>
@@ -86,7 +83,13 @@ const Title: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     <Dialog.Title className="flex items-center justify-between">
       <div className="text-large-semi">{children}</div>
       <div>
-        <button onClick={close} data-testid="close-modal-button">
+        <button
+          type="button"
+          className="dm-btn-icon"
+          aria-label="Đóng"
+          onClick={close}
+          data-testid="close-modal-button"
+        >
           <X size={20} />
         </button>
       </div>
@@ -96,7 +99,7 @@ const Title: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 const Description: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
-    <Dialog.Description className="flex text-small-regular text-ui-fg-base items-center justify-center pt-2 pb-4 h-full">
+    <Dialog.Description className="flex text-small-regular text-ink items-center justify-center pt-2 pb-4 h-full">
       {children}
     </Dialog.Description>
   )

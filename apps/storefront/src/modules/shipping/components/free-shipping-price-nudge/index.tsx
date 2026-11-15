@@ -2,24 +2,14 @@
 
 import { convertToLocale } from "@lib/util/money"
 import { CheckCircleSolid, XMark } from "@medusajs/icons"
-import {
-  HttpTypes,
-  StoreCart,
-  StoreCartShippingOption,
-  StorePrice,
-} from "@medusajs/types"
+import { HttpTypes, StoreCart, StoreCartShippingOption, StorePrice } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { Button, clx } from "@modules/common/components/ui"
+import { IconButton, clx } from "@modules/common/components/ui"
 import { useState } from "react"
 import { StoreFreeShippingPrice } from "types/global"
 
-const computeTarget = (
-  cart: HttpTypes.StoreCart,
-  price: HttpTypes.StorePrice
-) => {
-  const priceRule = (price.price_rules || []).find(
-    (pr) => pr.attribute === "item_total"
-  )!
+const computeTarget = (cart: HttpTypes.StoreCart, price: HttpTypes.StorePrice) => {
+  const priceRule = (price.price_rules || []).find((pr) => pr.attribute === "item_total")!
 
   const currentAmount = cart.item_total
   const targetAmount = parseFloat(priceRule.value)
@@ -29,8 +19,7 @@ const computeTarget = (
       current_amount: currentAmount,
       target_amount: targetAmount,
       target_reached: currentAmount > targetAmount,
-      target_remaining:
-        currentAmount > targetAmount ? 0 : targetAmount + 1 - currentAmount,
+      target_remaining: currentAmount > targetAmount ? 0 : targetAmount + 1 - currentAmount,
       remaining_percentage: (currentAmount / targetAmount) * 100,
     }
   } else if (priceRule.operator === "gte") {
@@ -38,8 +27,7 @@ const computeTarget = (
       current_amount: currentAmount,
       target_amount: targetAmount,
       target_reached: currentAmount > targetAmount,
-      target_remaining:
-        currentAmount > targetAmount ? 0 : targetAmount - currentAmount,
+      target_remaining: currentAmount > targetAmount ? 0 : targetAmount - currentAmount,
       remaining_percentage: (currentAmount / targetAmount) * 100,
     }
   } else if (priceRule.operator === "lt") {
@@ -47,8 +35,7 @@ const computeTarget = (
       current_amount: currentAmount,
       target_amount: targetAmount,
       target_reached: targetAmount > currentAmount,
-      target_remaining:
-        targetAmount > currentAmount ? 0 : currentAmount + 1 - targetAmount,
+      target_remaining: targetAmount > currentAmount ? 0 : currentAmount + 1 - targetAmount,
       remaining_percentage: (currentAmount / targetAmount) * 100,
     }
   } else if (priceRule.operator === "lte") {
@@ -56,8 +43,7 @@ const computeTarget = (
       current_amount: currentAmount,
       target_amount: targetAmount,
       target_reached: targetAmount > currentAmount,
-      target_remaining:
-        targetAmount > currentAmount ? 0 : currentAmount - targetAmount,
+      target_remaining: targetAmount > currentAmount ? 0 : currentAmount - targetAmount,
       remaining_percentage: (currentAmount / targetAmount) * 100,
     }
   } else {
@@ -65,8 +51,7 @@ const computeTarget = (
       current_amount: currentAmount,
       target_amount: targetAmount,
       target_reached: currentAmount === targetAmount,
-      target_remaining:
-        targetAmount > currentAmount ? 0 : targetAmount - currentAmount,
+      target_remaining: targetAmount > currentAmount ? 0 : targetAmount - currentAmount,
       remaining_percentage: (currentAmount / targetAmount) * 100,
     }
   }
@@ -100,9 +85,7 @@ export default function ShippingPriceNudge({
       const validCurrencyPrices = shippingOption.prices.filter(
         (price) =>
           price.currency_code === cart.currency_code &&
-          (price.price_rules || []).some(
-            (priceRule) => priceRule.attribute === "item_total"
-          )
+          (price.price_rules || []).some((priceRule) => priceRule.attribute === "item_total"),
       )
 
       return validCurrencyPrices.map((price) => {
@@ -130,6 +113,29 @@ export default function ShippingPriceNudge({
   }
 }
 
+function FreeShippingProgress({
+  price,
+  trackClassName = "bg-line",
+}: {
+  price: { target_reached: boolean; remaining_percentage: number }
+  trackClassName?: string
+}) {
+  return (
+    <div
+      aria-hidden="true"
+      className={clx("h-1 w-full overflow-hidden rounded-dm-pill", trackClassName)}
+    >
+      <div
+        className={clx(
+          "h-full rounded-dm-pill transition-[width] duration-500 ease-dm-out",
+          price.target_reached ? "bg-success" : "bg-accent",
+        )}
+        style={{ width: `${Math.min(price.remaining_percentage, 100)}%` }}
+      />
+    </div>
+  )
+}
+
 function FreeShippingInline({
   cart,
   price,
@@ -142,140 +148,86 @@ function FreeShippingInline({
   }
 }) {
   return (
-    <div className="bg-neutral-100 p-2 rounded-lg border">
-      <div className="space-y-1.5">
-        <div className="flex justify-between text-xs text-neutral-600">
-          <div>
-            {price.target_reached ? (
-              <div className="flex items-center gap-1.5">
-                {" "}
-                <CheckCircleSolid className="text-green-500 inline-block" />{" "}
-                Free Shipping unlocked!
-              </div>
-            ) : (
-              `Unlock Free Shipping`
-            )}
-          </div>
-
-          <div
-            className={clx("visible", {
-              "opacity-0 invisible": price.target_reached,
-            })}
-          >
-            Only{" "}
-            <span className="text-neutral-950">
-              {convertToLocale({
-                amount: price.target_remaining,
-                currency_code: cart.currency_code,
-              })}
-            </span>{" "}
-            away
-          </div>
+    <div className="flex flex-col gap-y-2 rounded-dm-sm border border-line bg-surface p-3">
+      <div className="flex items-baseline justify-between gap-3 text-dm-caption text-ink-muted">
+        <div>
+          {price.target_reached ? (
+            <span className="flex items-center gap-x-1.5 text-success">
+              <CheckCircleSolid className="inline-block" />
+              Đã đủ điều kiện miễn phí giao hàng
+            </span>
+          ) : (
+            "Điều kiện miễn phí giao hàng"
+          )}
         </div>
-        <div className="flex justify-between gap-1">
-          <div
-            className={clx(
-              "bg-gradient-to-r from-zinc-400 to-zinc-500 h-1 rounded-full max-w-full duration-500 ease-in-out",
-              {
-                "from-green-400 to-green-500": price.target_reached,
-              }
-            )}
-            style={{ width: `${price.remaining_percentage}%` }}
-          ></div>
-          <div className="bg-neutral-300 h-1 rounded-full w-fit flex-grow"></div>
+        <div
+          className={clx({
+            "invisible opacity-0": price.target_reached,
+          })}
+        >
+          {convertToLocale({
+            amount: price.target_remaining,
+            currency_code: cart.currency_code,
+          })}{" "}
+          nữa
         </div>
       </div>
+      <FreeShippingProgress price={price} />
     </div>
   )
 }
 
-function FreeShippingPopup({
-  cart,
-  price,
-}: {
-  cart: StoreCart
-  price: StoreFreeShippingPrice
-}) {
+function FreeShippingPopup({ cart, price }: { cart: StoreCart; price: StoreFreeShippingPrice }) {
   const [isClosed, setIsClosed] = useState(false)
 
   return (
     <div
       className={clx(
-        "fixed bottom-5 right-5 flex flex-col items-end gap-2 transition-all duration-500 ease-in-out z-10",
+        "dm-invert fixed bottom-5 right-5 z-10 flex flex-col items-end gap-2 transition-all duration-500 ease-dm-out",
         {
-          "opacity-0 invisible delay-1000": price.target_reached,
-          "opacity-0 invisible": isClosed,
-          "opacity-100 visible": !price.target_reached && !isClosed,
-        }
+          "invisible opacity-0 delay-1000": price.target_reached,
+          "invisible opacity-0": isClosed,
+          "visible opacity-100": !price.target_reached && !isClosed,
+        },
       )}
     >
-      <div>
-        <Button
-          className="rounded-full bg-neutral-900 shadow-none outline-none border-none text-[15px] p-2"
-          onClick={() => setIsClosed(true)}
-        >
-          <XMark />
-        </Button>
-      </div>
+      <IconButton
+        label="Đóng thông báo giao hàng"
+        className="bg-canvas text-ink hover:bg-surface"
+        onClick={() => setIsClosed(true)}
+      >
+        <XMark />
+      </IconButton>
 
-      <div className="w-[400px] bg-black text-white p-6 rounded-lg ">
-        <div className="pb-4">
-          <div className="space-y-3">
-            <div className="flex justify-between text-[15px] text-neutral-400">
-              <div>
-                {price.target_reached ? (
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircleSolid className="text-green-500 inline-block" />{" "}
-                    Free Shipping unlocked!
-                  </div>
-                ) : (
-                  `Unlock Free Shipping`
-                )}
-              </div>
-
-              <div
-                className={clx("visible", {
-                  "opacity-0 invisible": price.target_reached,
+      <div className="flex w-[calc(100vw-2.5rem)] max-w-[22rem] flex-col gap-y-4 rounded-dm-lg border border-line bg-canvas p-5 text-ink shadow-dm-raised">
+        <p className="dm-eyebrow text-ink-faint">Giao hàng</p>
+        <p className="text-dm-small text-ink">
+          {price.target_reached ? (
+            <span className="flex items-center gap-x-1.5 text-success">
+              <CheckCircleSolid className="inline-block" />
+              Đã đủ điều kiện miễn phí giao hàng
+            </span>
+          ) : (
+            <>
+              <span className="tabular-nums font-semibold">
+                {convertToLocale({
+                  amount: price.target_remaining,
+                  currency_code: cart.currency_code,
                 })}
-              >
-                Only{" "}
-                <span className="text-white">
-                  {convertToLocale({
-                    amount: price.target_remaining,
-                    currency_code: cart.currency_code,
-                  })}
-                </span>{" "}
-                away
-              </div>
-            </div>
-            <div className="flex justify-between gap-1">
-              <div
-                className={clx(
-                  "bg-gradient-to-r from-zinc-400 to-zinc-500 h-1.5 rounded-full max-w-full duration-500 ease-in-out",
-                  {
-                    "from-green-400 to-green-500": price.target_reached,
-                  }
-                )}
-                style={{ width: `${price.remaining_percentage}%` }}
-              ></div>
-              <div className="bg-zinc-600 h-1.5 rounded-full w-fit flex-grow"></div>
-            </div>
-          </div>
-        </div>
+              </span>{" "}
+              nữa để được miễn phí giao hàng
+            </>
+          )}
+        </p>
+        <FreeShippingProgress price={price} trackClassName="bg-canvas/20" />
 
-        <div className="flex gap-3">
-          <LocalizedClientLink
-            className="rounded-2xl bg-transparent shadow-none outline-none border-[1px] border-white text-[15px] py-2.5 px-4"
-            href="/cart"
-          >
-            View cart
+        <div className="flex flex-wrap items-center gap-2">
+          <LocalizedClientLink href="/cart" className="dm-btn dm-btn-secondary dm-btn-sm">
+            Xem giỏ hàng
           </LocalizedClientLink>
 
-          <LocalizedClientLink
-            className="flex-grow rounded-2xl bg-white text-neutral-950 shadow-none outline-none border-[1px] border-white text-[15px] py-2.5 px-4 text-center"
-            href="/store"
-          >
-            View products
+          <LocalizedClientLink href="/store" className="dm-btn dm-btn-primary dm-btn-sm">
+            Xem sản phẩm
           </LocalizedClientLink>
         </div>
       </div>

@@ -18,15 +18,14 @@ export default function PaymentButton({
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const paymentSession = cart.payment_collection?.payment_sessions?.find(
     (session) =>
-      session.status === "pending" &&
-      isSupportedCheckoutPaymentProvider(session.provider_id)
+      session.status === "pending" && isSupportedCheckoutPaymentProvider(session.provider_id),
   )
   const ready = Boolean(
     cart.shipping_address &&
-      cart.billing_address &&
-      cart.email &&
-      cart.shipping_methods?.length &&
-      paymentSession
+    cart.billing_address &&
+    cart.email &&
+    cart.shipping_methods?.length &&
+    paymentSession,
   )
 
   const handlePayment = async () => {
@@ -45,20 +44,19 @@ export default function PaymentButton({
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-y-3">
       <Button
         disabled={!ready || submitting}
         isLoading={submitting}
+        loadingLabel="Đang đặt hàng"
         onClick={handlePayment}
         size="large"
+        className="w-full small:w-auto"
         data-testid={dataTestId}
       >
-        Place order
+        Đặt hàng
       </Button>
-      <ErrorMessage
-        error={errorMessage}
-        data-testid="payment-error-message"
-      />
-    </>
+      <ErrorMessage error={errorMessage} data-testid="payment-error-message" />
+    </div>
   )
 }

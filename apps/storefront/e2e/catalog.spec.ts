@@ -2,10 +2,12 @@ import { test, expect } from "@playwright/test"
 import { DEFAULT_PRODUCT_HANDLE, DEFAULT_PRODUCT_TITLE } from "./test-helpers"
 
 test.describe("E2E-01: Catalog and Product Detail Page", () => {
-  test("displays catalog products and allows viewing and selecting product variants", async ({ page }) => {
+  test("displays catalog products and allows viewing and selecting product variants", async ({
+    page,
+  }) => {
     // 1. Open /vn/store catalog
-    await page.goto("/vn/store")
-    await expect(page).toHaveTitle(/Store|Medusa/i)
+    await page.goto(`/vn/store?q=${encodeURIComponent(DEFAULT_PRODUCT_TITLE)}`)
+    await expect(page).toHaveTitle(/DAYMARK/i)
 
     // Verify products are listed
     const productWrappers = page.locator('[data-testid="product-wrapper"]')
@@ -34,17 +36,23 @@ test.describe("E2E-01: Catalog and Product Detail Page", () => {
     const addProductButton = page.locator('[data-testid="add-product-button"]')
     await expect(addProductButton).toBeVisible()
 
-    const optionButtons = page.locator('[data-testid="option-button"]')
-    const optionCount = await optionButtons.count()
-
-    if (optionCount > 0) {
-      // Click the first available variant option
-      await optionButtons.first().click()
-      await expect(addProductButton).toBeEnabled()
-      await expect(addProductButton).toContainText(/Add to cart/i)
-    } else {
-      // If no options to select, button should already be ready
-      await expect(addProductButton).toBeEnabled()
+    const navigations: string[] = []
+    page.on("request", (request) => {
+      if (
+        request.isNavigationRequest() ||
+        (request.headers()["rsc"] === "1" && new URL(request.url()).pathname.includes("/products/"))
+      ) {
+        navigations.push(request.url())
+      }
+    })
+    for (const group of await page.locator('[data-testid="product-options"]:visible').all()) {
+      const option = group.getByTestId("option-button").first()
+      await option.click()
+      await expect(option).toHaveAttribute("aria-pressed", "true")
     }
+    await expect(addProductButton).toBeEnabled()
+    await expect(page).toHaveURL(/v_id=variant_/)
+    expect(navigations).toEqual([])
+    await expect(addProductButton).toContainText("Thêm vào giỏ")
   })
 })

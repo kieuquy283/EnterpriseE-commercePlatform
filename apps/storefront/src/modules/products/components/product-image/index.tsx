@@ -3,29 +3,39 @@
 import Image from "next/image"
 import { useState } from "react"
 
-import PlaceholderImage from "@modules/common/icons/placeholder-image"
-
-type ProductImageProps = {
-  src?: string | null
-  alt: string
-  sizes: string
-  priority?: boolean
-  placeholderSize?: number
-}
-
+/**
+ * Product media with explicit failure and absence states.
+ *
+ * A product without a backed image shows a neutral, labelled placeholder. This
+ * is deliberate: the storefront would rather show "no photograph yet" than
+ * illustrate a garment with an unrelated stock picture.
+ */
 export default function ProductImage({
   src,
   alt,
   sizes,
   priority = false,
   placeholderSize = 24,
-}: ProductImageProps) {
+}: {
+  src?: string | null
+  alt: string
+  sizes: string
+  priority?: boolean
+  placeholderSize?: number
+}) {
   const [failedUrl, setFailedUrl] = useState<string | null>(null)
 
   if (!src || failedUrl === src) {
     return (
-      <div className="absolute inset-0 flex items-center justify-center" role="img" aria-label={alt}>
-        <PlaceholderImage size={placeholderSize} />
+      <div
+        className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-surface px-6 text-center"
+        role="img"
+        aria-label={`${alt}. Chưa có ảnh sản phẩm.`}
+      >
+        <SwallowOutline size={placeholderSize * 1.6} />
+        <p className="text-dm-micro uppercase text-ink-faint">
+          <span style={{ letterSpacing: "0.14em" }}>Đang cập nhật ảnh</span>
+        </p>
       </div>
     )
   }
@@ -37,8 +47,30 @@ export default function ProductImage({
       fill
       priority={priority}
       sizes={sizes}
-      className="absolute inset-0 object-cover object-center"
+      className="dm-cover transition-transform duration-700 ease-dm-out group-hover:scale-[1.02]"
       onError={() => setFailedUrl(src)}
     />
+  )
+}
+
+/**
+ * The approved swallow silhouette, drawn inline for the media placeholder so no
+ * extra network request is needed for a state that may appear many times.
+ */
+function SwallowOutline({ size }: { size: number }) {
+  return (
+    <svg
+      width={size}
+      height={(size * 853) / 923}
+      viewBox="0 0 923 853"
+      aria-hidden="true"
+      className="text-line-strong"
+    >
+      <path
+        d="M0 0 C9.06 -0.45 17.79 1.23 26.69 2.71 C36.67 4.34 46.08 5.89 54.87 7.34 C86.28 12.49 117.65 17.81 148.96 23.45 C157.76 25.02 219.48 35.95 281.13 48.03 C342 63 377.56 71.71 441 90 C451.88 93.36 466 98 469.71 99.22 C517.61 115.04 563.12 134.11 594 176 C602.95 188.09 610.13 198.43 617 209 C623.75 219.46 628.42 227.2 633 235 C648.08 260.8 660.18 284.28 672 308 C725.84 289.35 779.24 280.08 830.64 304.63 C841.49 310.03 851.59 316.21 861.58 323.06 C875.3 331.4 895.11 340.88 919 355 C921.84 357.03 923 358 923 358 C923 358.66 923 359.32 923 360 C885.99 365.02 854.64 371.53 824 386 C796.28 398.82 771.9 416.45 755 439 C738.88 460.47 729.43 481.67 719.76 502.28 C710.05 522.89 685.98 574.12 658.93 617.33 C619 647 601.44 660.3 567 678 C533.59 694.89 501.58 707.47 469.68 719.59 C425.46 737.15 392.17 749.3 358.7 761 C311.66 777.85 280.6 788.15 249.44 798.21 C225.88 805.86 211.22 810.53 196.52 815.08 C158.62 827.24 139.89 833.06 121.09 838.72 C109.5 842.23 103.77 843.97 96.7 846.1 C88.09 848.67 85.6 849.43 83.11 850.2 C78.21 851.68 77.09 852.02 75.94 852.38 C73.1 852.98 71.68 853.01 69 852 C79.81 841.14 87.06 833.88 93.38 827.53 C105.36 815.53 114.16 807.61 122.19 799.88 C129 793 142.47 779.37 148.51 774.32 C153.72 768.35 162.09 761.05 170.72 752.24 C179.72 743.78 190.35 733.72 197.49 726.49 C206.23 717.69 215.72 709.44 225.01 700.09 C235.19 689.88 247.1 677.94 255.95 669.06 C264.99 659.97 274.56 651 281.06 644.47 C289.58 635.3 298.51 626.44 309.6 615.41 C319.01 606.05 327.96 597.14 336.62 587.6 C343.81 580.25 349.28 574.25 353.52 569.37 C362.39 560 373.42 547.81 384.28 535.69 C393.61 524.88 396 522 396 522 C361.28 521.75 326.67 521.92 292 524 C288.99 524.18 225.65 527.95 162.89 537.17 C100.5 548.55 85.7 551.25 70.88 553.85 C56.06 556.44 52.43 557.07 48.79 557.71 C42.99 558.72 40.83 559.1 38.66 559.48 C36.7 559.82 34.75 560.16 32.83 560.49 C30.89 560.84 28.94 561.2 27 561.57 C25.07 561.94 23.22 562.3 21.48 562.64 C18.95 563.01 16.55 563.06 14 563 C22.41 555.34 27.97 551.38 35.83 545.77 C48.63 537.22 62.41 527.82 75.69 518.69 C84.67 512.57 96.89 504.42 111.25 494.59 C120.74 488.06 133.21 479.55 143.09 472.99 C151.65 467.39 155.66 464.77 156.42 464.27 C156.68 464.06 156.68 464.06 158 463 C158 462.34 158 461.68 158 461 C153.1 457.65 148.99 455.06 145.84 453.06 C140.48 449.67 134.69 445.91 128.12 441.63 C114.88 433.25 104.77 426.9 94.79 420.37 C81.32 411.56 77.83 409.29 74.34 407.03 C53.93 393.81 33.56 380.46 14 366 C14.66 364.68 15 364 15 364 C26.83 365.87 33.23 366.89 35.64 367.27 C61.69 371.43 247.43 401.8 342.92 405.92 C349.05 406.17 360.7 406.66 372.34 407.08 C384.38 407.13 389.72 407.13 392.73 406.9 C394.45 403.95 393.66 402.89 384.21 390.32 C371.56 372.83 362.82 361.38 353.47 349.31 C348.26 342.6 344.13 337.3 339.49 331.34 C331.17 320.69 323.76 311.49 316.17 302.42 C309.73 294.7 306.69 290.69 299.86 281.82 C292.31 273.49 284.75 265.25 278.68 258.41 C270.18 247.84 263.97 241.43 257.81 234.93 C252.63 229.33 246.45 222.54 242.76 218.72 C237.19 213.2 235.58 211.38 233.97 209.48 C229.13 203.91 223.88 198.74 218.66 193.53 C216.48 191.34 215.38 190.25 213.11 187.97 C208.55 183.42 205.65 180.52 202.75 177.62 C197.6 172.46 195.35 170.21 193.1 167.96 C190.96 165.82 189.89 164.76 184.62 159.47 C179.32 154.25 173.63 149.41 171.11 147.23 C166.5 142.5 162.9 138.85 159.23 135.38 C152.11 129.22 149 126.26 145.88 123.31 C140.37 118.14 134.76 113.14 129 108.27 C125.36 105.19 121.82 102.04 118.31 98.81 C114 94.86 109.55 91.14 104.99 87.46 C101.56 84.64 98.22 81.73 94.88 78.81 C88.74 73.46 82.5 68.25 76.2 63.1 C71.87 59.55 67.57 55.95 63.31 52.31 C58.45 48.17 53.48 44.19 48.44 40.26 C43.22 36.2 38.09 32.03 32.97 27.84 C28.62 24.3 24.24 20.82 19.81 17.38 C15.01 13.63 10.29 9.8 5.62 5.88 C4.49 4.93 3.91 4.44 2.59 3.32 C1.29 2.16 0 1 0 1 C0 0.67 0 0.34 0 0 Z"
+        fill="currentColor"
+        opacity="0.5"
+      />
+    </svg>
   )
 }

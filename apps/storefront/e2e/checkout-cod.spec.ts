@@ -58,7 +58,7 @@ test.describe("Checkout COD Flow (E2E-03, E2E-05, E2E-06)", () => {
     // 7. Verify confirmation UI
     const orderCompleteContainer = page.locator('[data-testid="order-complete-container"]')
     await expect(orderCompleteContainer).toBeVisible({ timeout: 15_000 })
-    await expect(orderCompleteContainer).toContainText(/Thank you/i)
+    await expect(orderCompleteContainer).toContainText(/Cảm ơn bạn/i)
     await expect(orderCompleteContainer).toContainText(DEFAULT_PRODUCT_TITLE)
 
     // Verify order email and display number
@@ -105,6 +105,6 @@ test.describe("Checkout COD Flow (E2E-03, E2E-05, E2E-06)", () => {
 
     const errorMessage = page.locator('[data-testid="payment-error-message"]')
     await expect(errorMessage).toBeVisible({ timeout: 10_000 })
-    await expect(errorMessage).toContainText("Simulated order placement error")
+    await expect(errorMessage).toContainText("Không thể hoàn tất thao tác")
   })
 })

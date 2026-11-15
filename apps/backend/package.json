@@ -23,6 +23,7 @@
     "test:integration:modules": "cross-env TEST_TYPE=integration:modules NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
     "test:unit": "cross-env TEST_TYPE=unit NODE_OPTIONS=--experimental-vm-modules jest --silent --runInBand --forceExit",
     "seed": "medusa exec ./src/scripts/seed-commerce.ts",
+    "seed:daymark-catalog": "medusa exec ./src/scripts/seed-daymark-catalog.ts --",
     "seed:sample": "medusa exec ./src/scripts/seed-erd-sample.ts",
     "check:inventory-order": "medusa exec ./src/scripts/check-inventory-order.ts"
   },

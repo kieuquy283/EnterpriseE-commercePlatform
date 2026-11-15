@@ -1,5 +1,9 @@
 # DAYMARK visual identity concept
 
+## Current direction — 15 November 2026
+
+Only ivory, charcoal and muted olive are agreed. The latest user instruction supersedes earlier swallow approval recorded below: all marks, fonts, shapes and layouts are provisional. Preserve the assets and prompts as provenance. The customer storefront now proposes an editorial treatment with the existing SVG swallow and wordmark restored at the user’s request; presentation is outside this task. Historical approval wording below describes the earlier decision, not current authority.
+
 Initial generated concept, 14 November 2026. [Concept board](daymark-concept-v1.png) explores an uppercase wordmark, olive day-mark detail, DM monogram, ivory/charcoal applications and apparel labels. This is a proposal for review, not a production vector master or a trademark-clearance claim. The shown people/garments are generated concept imagery, not actual products or brand ambassadors.
 
 Generated with the built-in imagegen tool. No existing brand or logo reference was supplied. The project copy is preserved here; use this as direction, then create consistent standalone transparent/vector assets after the identity is selected. It does not change the live storefront.
@@ -20,7 +24,7 @@ Prompt: Use case: logo-brand. Create a new original standalone emblem concept fo
 
 Prompt: Use case: logo-brand. New original emblem exploration for DAYMARK, an understated contemporary everyday clothing label for young adults in Vietnam. Create a compact abstract swallow bird in flight as the standalone brand symbol. Bold balanced geometric silhouette, subtly folded wings, short forked tail, minimal negative space, confident horizontal movement. Sophisticated and calm, neither aggressive sportswear nor a cute cartoon. Design readable as tiny single-color chest embroidery and a woven label. Aim for a fresh distinctive mark; avoid familiar athletic swooshes, airline logos, eagle crests, circular badges and generic bird clipart. Flat clean vector-like solid shapes, no gradients, outlines, feather details or three-dimensional rendering. Show one consistent emblem in an editorial landscape concept board: large charcoal mark at left on warm ivory; at right a smaller muted olive version, an ivory version in a charcoal square, and the same bird above exact text 'DAYMARK' in a restrained uppercase sans-serif wordmark. Plenty of negative space, precise optical spacing. Only text DAYMARK, no other wording. No photographic mockups. This is an exploratory new direction, not a revision of a leaf and not a trademark-clearance claim.
 
-## Confirmed identity
+## Earlier identity decision (superseded)
 
 The team approved the swallow direction on 14 November 2026. [Standalone transparent symbol](daymark-swallow.png) is the current raster master, copied unchanged to storefront/presentation public brand directories. Charcoal/ivory with muted olive remains the visual direction; exact color/vector master cleanup can follow without changing the approved bird concept. The wordmark is DAYMARK and the tagline is **Made for the everyday.**
 

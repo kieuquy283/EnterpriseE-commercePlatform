@@ -1,5 +1,5 @@
 import { HttpTypes } from "@medusajs/types"
-import { clx } from "@modules/common/components/ui"
+import { productOptionLabel } from "@lib/util/product-option-label"
 import React from "react"
 
 type OptionSelectProps = {
@@ -11,6 +11,13 @@ type OptionSelectProps = {
   "data-testid"?: string
 }
 
+/**
+ * Variant selector.
+ *
+ * Each option value is rendered as a toggle button. Availability for the
+ * selected combination is reported beside the purchase action.
+ * The selected value is announced via `aria-pressed`.
+ */
 const OptionSelect: React.FC<OptionSelectProps> = ({
   option,
   current,
@@ -19,37 +26,42 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
   "data-testid": dataTestId,
   disabled,
 }) => {
-  const filteredOptions = (option.values ?? []).map((v) => v.value)
+  const isColour = /colou?r|màu/i.test(title)
+  const values = (option.values ?? []).filter((value) => Boolean(value.value))
 
   return (
-    <div className="flex flex-col gap-y-3">
-      <span className="text-sm">Select {title}</span>
-      <div
-        className="flex flex-wrap justify-between gap-2"
-        data-testid={dataTestId}
-      >
-        {filteredOptions.map((v) => {
+    <fieldset className="flex flex-col gap-y-3 border-0 p-0">
+      <legend className="flex w-full items-baseline justify-between gap-4 pb-1">
+        <span className="dm-label mb-0">
+          {isColour ? "Màu sắc" : productOptionLabel(title)}
+          {current ? (
+            <span className="ml-2 normal-case tracking-normal text-ink-muted">
+              {productOptionLabel(current)}
+            </span>
+          ) : null}
+        </span>
+        <span className="text-dm-caption text-ink-faint">{current ? "" : "Chọn một"}</span>
+      </legend>
+
+      <div className="flex flex-wrap gap-2" data-testid={dataTestId}>
+        {values.map((value) => {
+          const value_ = value.value as string
           return (
             <button
-              onClick={() => updateOption(option.id, v)}
-              key={v}
-              className={clx(
-                "border-ui-border-base bg-ui-bg-subtle border text-small-regular h-10 rounded-rounded p-2 flex-1 ",
-                {
-                  "border-ui-border-interactive": v === current,
-                  "hover:shadow-elevation-card-rest transition-shadow ease-in-out duration-150":
-                    v !== current,
-                }
-              )}
+              type="button"
+              onClick={() => updateOption(option.id, value_)}
+              key={value.id ?? value_}
+              aria-pressed={value_ === current}
+              className="dm-choice"
               disabled={disabled}
               data-testid="option-button"
             >
-              {v}
+              {productOptionLabel(value_)}
             </button>
           )
         })}
       </div>
-    </div>
+    </fieldset>
   )
 }
 

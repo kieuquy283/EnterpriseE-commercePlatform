@@ -1,9 +1,6 @@
 "use client"
 
-import { Button, Heading } from "@modules/common/components/ui"
-
 import CartTotals from "@modules/common/components/cart-totals"
-import Divider from "@modules/common/components/divider"
 import DiscountCode from "@modules/checkout/components/discount-code"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import { HttpTypes } from "@medusajs/types"
@@ -26,19 +23,31 @@ const Summary = ({ cart }: SummaryProps) => {
   const step = getCheckoutStep(cart)
 
   return (
-    <div className="flex flex-col gap-y-4">
-      <Heading level="h2" className="text-[2rem] leading-[2.75rem]">
-        Summary
-      </Heading>
+    <div className="flex flex-col gap-y-6 bg-surface px-5 py-8 small:px-8 small:py-10">
+      <div className="flex flex-col gap-y-1.5">
+        <h2 className="dm-heading">Tóm tắt đơn hàng</h2>
+        <p className="dm-caption">
+          Phí giao hàng và thuế được hiển thị trước khi bạn xác nhận đặt hàng.
+        </p>
+      </div>
+
       <DiscountCode cart={cart} />
-      <Divider />
+
+      <div className="dm-divider" />
+
       <CartTotals totals={cart} />
+
       <LocalizedClientLink
         href={"/checkout?step=" + step}
         data-testid="checkout-button"
+        className="dm-btn dm-btn-primary dm-btn-block"
       >
-        <Button className="w-full h-10">Go to checkout</Button>
+        Tiến hành thanh toán
       </LocalizedClientLink>
+
+      <p className="dm-caption">
+        Bạn sẽ kiểm tra địa chỉ, giao hàng và phương thức thanh toán ở bước tiếp theo.
+      </p>
     </div>
   )
 }

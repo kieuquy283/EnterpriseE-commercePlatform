@@ -1,11 +1,5 @@
-import { Container, Heading, Text } from "@modules/common/components/ui"
-
 import { paymentInfoMap } from "@lib/constants"
-import {
-  COD_PAYMENT_PROVIDER_ID,
-  isSimulatorPaymentProvider,
-} from "@lib/util/checkout-payment"
-import Divider from "@modules/common/components/divider"
+import { COD_PAYMENT_PROVIDER_ID, isSimulatorPaymentProvider } from "@lib/util/checkout-payment"
 import { convertToLocale } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
 
@@ -24,50 +18,41 @@ const PaymentDetails = ({ order }: PaymentDetailsProps) => {
 
   const paymentDescription = payment
     ? payment.provider_id === COD_PAYMENT_PROVIDER_ID
-      ? `${paymentAmount} to be collected on delivery`
+      ? `${paymentAmount} thu tiền khi giao hàng`
       : isSimulatorPaymentProvider(payment.provider_id)
-        ? `${paymentAmount} — simulated payment (no real charge)`
-        : `Payment amount: ${paymentAmount}`
+        ? `${paymentAmount} - thanh toán thử (không thu tiền thật)`
+        : `Số tiền thanh toán: ${paymentAmount}`
     : null
 
   return (
-    <div>
-      <Heading level="h2" className="flex flex-row text-3xl-regular my-6">
-        Payment
-      </Heading>
-      <div>
-        {payment && (
-          <div className="flex items-start gap-x-1 w-full">
-            <div className="flex flex-col w-1/3">
-              <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                Payment method
-              </Text>
-              <Text
-                className="txt-medium text-ui-fg-subtle"
-                data-testid="payment-method"
-              >
-                {paymentInfoMap[payment.provider_id]?.title || payment.provider_id}
-              </Text>
-            </div>
-            <div className="flex flex-col w-2/3">
-              <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                Payment details
-              </Text>
-              <div className="flex gap-2 txt-medium text-ui-fg-subtle items-center">
-                <Container className="flex items-center h-7 w-fit p-2 bg-ui-button-neutral-hover">
-                  {paymentInfoMap[payment.provider_id]?.icon}
-                </Container>
-                <Text data-testid="payment-amount">
-                  {paymentDescription}
-                </Text>
-              </div>
-            </div>
+    <section className="flex flex-col gap-y-4">
+      <h2 className="dm-heading">Thanh toán</h2>
+      {payment ? (
+        <dl className="grid grid-cols-1 gap-6 small:grid-cols-2">
+          <div className="flex flex-col gap-y-1">
+            <dt className="dm-eyebrow">Phương thức</dt>
+            <dd
+              className="flex items-center gap-x-2 text-dm-small text-ink-muted"
+              data-testid="payment-method"
+            >
+              {paymentInfoMap[payment.provider_id]?.title || payment.provider_id}
+            </dd>
           </div>
-        )}
-      </div>
-
-      <Divider className="mt-8" />
-    </div>
+          <div className="flex flex-col gap-y-1">
+            <dt className="dm-eyebrow">Chi tiết</dt>
+            <dd
+              className="flex items-center gap-x-2 text-dm-small text-ink-muted"
+              data-testid="payment-amount"
+            >
+              {paymentInfoMap[payment.provider_id]?.icon}
+              <span>{paymentDescription}</span>
+            </dd>
+          </div>
+        </dl>
+      ) : (
+        <p className="dm-caption">Chưa ghi nhận thanh toán cho đơn hàng này.</p>
+      )}
+    </section>
   )
 }
 

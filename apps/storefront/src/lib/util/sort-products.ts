@@ -1,50 +1,29 @@
 import { HttpTypes } from "@medusajs/types"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
-interface MinPricedProduct extends HttpTypes.StoreProduct {
-  _minPrice?: number
-}
-
-/**
- * Helper function to sort products by price until the store API supports sorting by price
- * @param products
- * @param sortBy
- * @returns products sorted by price
- */
+/** Sort a complete result set using backend-calculated prices. Unknown prices stay last. */
 export function sortProducts(
   products: HttpTypes.StoreProduct[],
-  sortBy: SortOptions
+  sortBy: SortOptions,
 ): HttpTypes.StoreProduct[] {
-  const sortedProducts = products as MinPricedProduct[]
-
-  if (["price_asc", "price_desc"].includes(sortBy)) {
-    // Precompute the minimum price for each product
-    sortedProducts.forEach((product) => {
-      if (product.variants && product.variants.length > 0) {
-        product._minPrice = Math.min(
-          ...product.variants.map(
-            (variant) => variant?.calculated_price?.calculated_amount || 0
-          )
-        )
-      } else {
-        product._minPrice = Infinity
-      }
+  const minimumPrice = (product: HttpTypes.StoreProduct) => {
+    const prices = (product.variants ?? []).flatMap((variant) => {
+      const amount = variant.calculated_price?.calculated_amount
+      return typeof amount === "number" && Number.isFinite(amount) ? [amount] : []
     })
-
-    // Sort products based on the precomputed minimum prices
-    sortedProducts.sort((a, b) => {
-      const diff = a._minPrice! - b._minPrice!
-      return sortBy === "price_asc" ? diff : -diff
-    })
+    return prices.length ? Math.min(...prices) : null
   }
-
-  if (sortBy === "created_at") {
-    sortedProducts.sort((a, b) => {
+  return [...products].sort((a, b) => {
+    if (sortBy === "created_at") {
       return (
-        new Date(b.created_at!).getTime() - new Date(a.created_at!).getTime()
+        new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime() ||
+        a.id.localeCompare(b.id)
       )
-    })
-  }
-
-  return sortedProducts
+    }
+    const first = minimumPrice(a)
+    const second = minimumPrice(b)
+    if (first === null) return second === null ? a.id.localeCompare(b.id) : 1
+    if (second === null) return -1
+    return (sortBy === "price_asc" ? first - second : second - first) || a.id.localeCompare(b.id)
+  })
 }

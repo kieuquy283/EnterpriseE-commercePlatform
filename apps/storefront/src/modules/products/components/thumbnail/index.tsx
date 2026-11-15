@@ -9,6 +9,12 @@ type ThumbnailProps = {
   size?: "small" | "medium" | "large" | "full" | "square"
   isFeatured?: boolean
   className?: string
+  /**
+   * Marketing surface name used by the missing-image state so the customer is
+   * told plainly that a photograph is not available rather than shown a
+   * different garment.
+   */
+  label?: string
   "data-testid"?: string
 }
 
@@ -18,6 +24,7 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
   size = "small",
   isFeatured,
   className,
+  label,
   "data-testid": dataTestid,
 }) => {
   const initialImage = thumbnail || images?.[0]?.url
@@ -25,21 +32,21 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
   return (
     <Container
       className={clx(
-        "relative w-full overflow-hidden p-4 bg-ui-bg-subtle shadow-elevation-card-rest rounded-large group-hover:shadow-elevation-card-hover transition-shadow ease-in-out duration-150",
+        "relative w-full overflow-hidden rounded-none border-0 bg-surface p-0 ",
         className,
         {
-          "aspect-[11/14]": isFeatured,
-          "aspect-[9/16]": !isFeatured && size !== "square",
+          "aspect-[3/4]": isFeatured || size === "full",
+          "aspect-[4/5]": !isFeatured && size !== "square" && size !== "full",
           "aspect-[1/1]": size === "square",
           "w-[180px]": size === "small",
           "w-[290px]": size === "medium",
           "w-[440px]": size === "large",
           "w-full": size === "full",
-        }
+        },
       )}
       data-testid={dataTestid}
     >
-      <ImageOrPlaceholder image={initialImage} size={size} />
+      <ImageOrPlaceholder image={initialImage} size={size} label={label} />
     </Container>
   )
 }
@@ -47,9 +54,16 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
 const ImageOrPlaceholder = ({
   image,
   size,
-}: Pick<ThumbnailProps, "size"> & { image?: string }) => {
-  return <ProductImage src={image} alt="Product thumbnail" placeholderSize={size === "small" ? 16 : 24}
-    sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px" />
+  label,
+}: Pick<ThumbnailProps, "size" | "label"> & { image?: string }) => {
+  return (
+    <ProductImage
+      src={image}
+      alt={label ? `${label} — ảnh sản phẩm` : "Ảnh sản phẩm"}
+      placeholderSize={size === "small" ? 16 : 24}
+      sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
+    />
+  )
 }
 
 export default Thumbnail

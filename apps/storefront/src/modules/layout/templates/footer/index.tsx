@@ -1,158 +1,137 @@
+import { listCategories } from "@lib/data/categories"
+import { listCollections } from "@lib/data/collections"
 import BrandLogo from "@modules/common/components/brand-logo"
-import { listCategories } from "@lib/data/categories";
-import { listCollections } from "@lib/data/collections";
-import { Text, clx } from "@modules/common/components/ui";
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
-import LocalizedClientLink from "@modules/common/components/localized-client-link";
-import MedusaCTA from "@modules/layout/components/medusa-cta";
+const year = new Date().getFullYear()
+
+/**
+ * Service promises the storefront can actually honour today. Cash on delivery
+ * and manual fulfilment are the only configured paths, so nothing here claims
+ * express courier or self-service returns that do not exist.
+ */
+const serviceNotes = [
+  {
+    title: "Giao hàng",
+    body: "Lựa chọn giao hàng và chi phí được xác nhận khi thanh toán.",
+  },
+  {
+    title: "Thanh toán",
+    body: "Thanh toán khi nhận hàng. Hiện chưa hỗ trợ thanh toán thẻ.",
+  },
+  {
+    title: "Đổi trả",
+    body: "Liên hệ cửa hàng về đơn hàng của bạn trước khi gửi trả sản phẩm.",
+  },
+]
 
 export default async function Footer() {
-  const { collections } = await listCollections({
-    fields: "*products",
-  });
-  const productCategories = await listCategories();
+  const [categories, collectionResult] = await Promise.all([
+    listCategories().catch(() => []),
+    listCollections({ fields: "*products" }).catch(() => ({
+      collections: [],
+      count: 0,
+    })),
+  ])
+
+  const topLevelCategories = (categories ?? []).filter((category) => !category.parent_category)
+  const collections = collectionResult.collections ?? []
 
   return (
-    <footer className="border-t border-ui-border-base w-full">
-      <div className="content-container flex flex-col w-full">
-        <div className="flex flex-col gap-y-6 xsmall:flex-row items-start justify-between py-40">
-          <div>
-            <LocalizedClientLink
-              href="/"
-              className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase"
-            >
-              <BrandLogo />
-            </LocalizedClientLink>
+    <footer className="mt-20 border-t border-line bg-surface/60">
+      <div className="content-container">
+        <div className="grid grid-cols-1 gap-12 py-14 small:grid-cols-12 small:gap-8 small:py-20">
+          <div className="small:col-span-5">
+            <BrandLogo size="md" showTagline />
+            <p className="mt-6 max-w-dm-prose text-dm-body text-ink-muted">
+              Trang phục thường ngày giản dị, dễ phối cho giảng đường, công sở và cuối tuần. Cho
+              nhịp sống của bạn tại Việt Nam.
+            </p>
           </div>
-          <div className="text-small-regular gap-10 md:gap-x-16 grid grid-cols-2 sm:grid-cols-3">
-            {productCategories && productCategories?.length > 0 && (
-              <div className="flex flex-col gap-y-2">
-                <span className="txt-small-plus txt-ui-fg-base">
-                  Categories
-                </span>
-                <ul
-                  className="grid grid-cols-1 gap-2"
-                  data-testid="footer-categories"
-                >
-                  {productCategories?.slice(0, 6).map((c) => {
-                    if (c.parent_category) {
-                      return;
-                    }
 
-                    const children =
-                      c.category_children?.map((child) => ({
-                        name: child.name,
-                        handle: child.handle,
-                        id: child.id,
-                      })) || null;
-
-                    return (
-                      <li
-                        className="flex flex-col gap-2 text-ui-fg-subtle txt-small"
-                        key={c.id}
-                      >
-                        <LocalizedClientLink
-                          className={clx(
-                            "hover:text-ui-fg-base",
-                            children && "txt-small-plus"
-                          )}
-                          href={`/categories/${c.handle}`}
-                          data-testid="category-link"
-                        >
-                          {c.name}
-                        </LocalizedClientLink>
-                        {children && (
-                          <ul className="grid grid-cols-1 ml-3 gap-2">
-                            {children &&
-                              children.map((child) => (
-                                <li key={child.id}>
-                                  <LocalizedClientLink
-                                    className="hover:text-ui-fg-base"
-                                    href={`/categories/${child.handle}`}
-                                    data-testid="category-link"
-                                  >
-                                    {child.name}
-                                  </LocalizedClientLink>
-                                </li>
-                              ))}
-                          </ul>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            )}
-            {collections && collections.length > 0 && (
-              <div className="flex flex-col gap-y-2">
-                <span className="txt-small-plus txt-ui-fg-base">
-                  Collections
-                </span>
-                <ul
-                  className={clx(
-                    "grid grid-cols-1 gap-2 text-ui-fg-subtle txt-small",
-                    {
-                      "grid-cols-2": (collections?.length || 0) > 3,
-                    }
-                  )}
-                >
-                  {collections?.slice(0, 6).map((c) => (
-                    <li key={c.id}>
-                      <LocalizedClientLink
-                        className="hover:text-ui-fg-base"
-                        href={`/collections/${c.handle}`}
-                      >
-                        {c.title}
-                      </LocalizedClientLink>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <div className="flex flex-col gap-y-2">
-              <span className="txt-small-plus txt-ui-fg-base">Medusa</span>
-              <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
-                <li>
-                  <a
-                    href="https://github.com/medusajs"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-ui-fg-base"
-                  >
-                    GitHub
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://docs.medusajs.com"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-ui-fg-base"
-                  >
-                    Documentation
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="https://github.com/medusajs/dtc-starter"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-ui-fg-base"
-                  >
-                    Source code
-                  </a>
-                </li>
+          {topLevelCategories.length > 0 && (
+            <nav aria-labelledby="footer-categories-heading" className="small:col-span-2">
+              <h2 id="footer-categories-heading" className="dm-eyebrow">
+                Cửa hàng
+              </h2>
+              <ul className="mt-4 flex flex-col gap-2.5" data-testid="footer-categories">
+                {topLevelCategories.slice(0, 6).map((category) => (
+                  <li key={category.id}>
+                    <LocalizedClientLink
+                      href={`/categories/${category.handle}`}
+                      data-testid="category-link"
+                      className="text-dm-small text-ink-muted transition-colors hover:text-ink"
+                    >
+                      {category.name}
+                    </LocalizedClientLink>
+                  </li>
+                ))}
               </ul>
-            </div>
+            </nav>
+          )}
+
+          {collections.length > 0 && (
+            <nav aria-labelledby="footer-collections-heading" className="small:col-span-2">
+              <h2 id="footer-collections-heading" className="dm-eyebrow">
+                Bộ sưu tập
+              </h2>
+              <ul className="mt-4 flex flex-col gap-2.5">
+                {collections.slice(0, 6).map((collection) => (
+                  <li key={collection.id}>
+                    <LocalizedClientLink
+                      href={`/collections/${collection.handle}`}
+                      className="text-dm-small text-ink-muted transition-colors hover:text-ink"
+                    >
+                      {collection.title}
+                    </LocalizedClientLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+
+          <div id="daymark-service" className="small:col-span-3 scroll-mt-24">
+            <h2 className="dm-eyebrow">Dịch vụ</h2>
+            <dl className="mt-4 flex flex-col gap-4">
+              {serviceNotes.map((note) => (
+                <div key={note.title}>
+                  <dt className="text-dm-small font-semibold text-ink">{note.title}</dt>
+                  <dd className="mt-1 text-dm-caption text-ink-muted">{note.body}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </div>
-        <div className="flex w-full mb-16 justify-between text-ui-fg-muted">
-          <Text className="txt-compact-small">
-            © {new Date().getFullYear()} DAYMARK. All rights reserved.
-          </Text>
-          <MedusaCTA />
+
+        <div className="flex flex-col gap-4 border-t border-line py-6 text-dm-caption text-ink-faint small:flex-row small:items-center small:justify-between">
+          <p>© {year} DAYMARK. Giá bằng đồng Việt Nam. Tổng tiền được xác nhận khi thanh toán.</p>
+          <ul className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <li>
+              <LocalizedClientLink
+                href="/#daymark-service"
+                className="transition-colors hover:text-ink"
+              >
+                Giao hàng và đổi trả
+              </LocalizedClientLink>
+            </li>
+            <li>
+              <LocalizedClientLink href="/account" className="transition-colors hover:text-ink">
+                Theo dõi đơn hàng
+              </LocalizedClientLink>
+            </li>
+            <li>
+              <a
+                href="https://docs.medusajs.com"
+                target="_blank"
+                rel="noreferrer"
+                className="transition-colors hover:text-ink"
+              >
+                Nền tảng
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
     </footer>
-  );
+  )
 }

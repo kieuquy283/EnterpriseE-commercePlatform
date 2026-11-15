@@ -3,7 +3,13 @@
 import { trackPersonalizationClick } from "@lib/data/personalization"
 import { useEffect, useRef } from "react"
 
-export default function ClickTracker({ productId, children }: { productId: string; children: React.ReactNode }) {
+export default function ClickTracker({
+  productId,
+  children,
+}: {
+  productId: string
+  children: React.ReactNode
+}) {
   const container = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const element = container.current

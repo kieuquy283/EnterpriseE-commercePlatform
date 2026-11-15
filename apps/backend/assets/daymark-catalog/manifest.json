@@ -1,0 +1,529 @@
+{
+  "manifestVersion": 2,
+  "assets": [
+    {
+      "id": "dm-product-001",
+      "filename": "dm-product-001.jpg",
+      "role": "product",
+      "sha256": "aebff72c3d61a925e7e6374e3d928154eab9e2a774d2600d602e4f60428b3782",
+      "bytes": 16727,
+      "width": 960,
+      "height": 640,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-tee-core",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-002",
+      "filename": "dm-product-002.jpg",
+      "role": "product",
+      "sha256": "39a4742e6be24fb07774ac9865a4e566fbca5a93a24c0c0ddc83ffe22aaaf40a",
+      "bytes": 68457,
+      "width": 960,
+      "height": 1450,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-tee-heavy",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-003",
+      "filename": "dm-product-003.jpg",
+      "role": "product",
+      "sha256": "91d31d93bd761934219378e130ebd85d4d5ae752cce74623f6df4383ebbe36dd",
+      "bytes": 129716,
+      "width": 960,
+      "height": 1440,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-tee-pocket",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-004",
+      "filename": "dm-product-004.jpg",
+      "role": "product",
+      "sha256": "4c2a13d91756e407ca597383057c80be553bb018970ef5fddcbde7fc6f9dfc91",
+      "bytes": 17238,
+      "width": 960,
+      "height": 577,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-tee-longsleeve",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-005",
+      "filename": "dm-product-005.jpg",
+      "role": "product",
+      "sha256": "20fb9e406caa4f97afdc19b159662f575fa43a20b84a59e0f076ce116caa0168",
+      "bytes": 66853,
+      "width": 960,
+      "height": 1438,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-tee-boxy",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-006",
+      "filename": "dm-product-006.jpg",
+      "role": "product",
+      "sha256": "a609f3df30d0202c4a82c7dd4db796f0871d827bc84a083fafd8b85464a5be7b",
+      "bytes": 40799,
+      "width": 960,
+      "height": 640,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-tee-rugby",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-007",
+      "filename": "dm-product-007.jpg",
+      "role": "product",
+      "sha256": "fe42604c0d3bce3a8c3e9d082c1873b5883181831562b9c05f5bfc447e6bae8d",
+      "bytes": 159261,
+      "width": 960,
+      "height": 1440,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-shirt-linen",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-008",
+      "filename": "dm-product-008.jpg",
+      "role": "product",
+      "sha256": "abe10799e8445db704a7ed561ff6ef7a9cabf4fe536dde37b1dd2de9700ce095",
+      "bytes": 60116,
+      "width": 960,
+      "height": 1440,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-shirt-oxford",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-009",
+      "filename": "dm-product-009.jpg",
+      "role": "product",
+      "sha256": "c5a120ccee8d6a8d43b9919f7da11f606c77ffa4207fb5069c64a19c3d4aab2b",
+      "bytes": 75507,
+      "width": 960,
+      "height": 1200,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-shirt-poplin",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-010",
+      "filename": "dm-product-010.jpg",
+      "role": "product",
+      "sha256": "f7022654c3f698925475e41c2db9cdadbdb9e2d35d7a19df9731ce1c65196845",
+      "bytes": 131791,
+      "width": 960,
+      "height": 1440,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-shirt-camp",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-011",
+      "filename": "dm-product-011.jpg",
+      "role": "product",
+      "sha256": "9a34e269a9e45f079c4c6d37effb0afd805e54b72b9c035e1b6aafa47fa5cedd",
+      "bytes": 57928,
+      "width": 960,
+      "height": 641,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-shirt-stripe",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-012",
+      "filename": "dm-product-012.jpg",
+      "role": "product",
+      "sha256": "8805bee21c34111c4f7f645987bba87d21b104da73531a0dfd157051d7be9e53",
+      "bytes": 77555,
+      "width": 960,
+      "height": 1440,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-trousers-relaxed",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-013",
+      "filename": "dm-product-013.jpg",
+      "role": "product",
+      "sha256": "a83352bd965b3ff3d69ce83532a1eeca516234eaf5ad48b20cb097e37b16cb33",
+      "bytes": 92857,
+      "width": 960,
+      "height": 1440,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-trousers-crop",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-014",
+      "filename": "dm-product-014.jpg",
+      "role": "product",
+      "sha256": "392b033e00c02812805b2dbac743c31c04c5766ce453bc74e5731fe7064a972e",
+      "bytes": 204597,
+      "width": 960,
+      "height": 1440,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-trousers-jersey",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-015",
+      "filename": "dm-product-015.jpg",
+      "role": "product",
+      "sha256": "acd0539daf720c3c3e4279d0b9c00b8f2c81f285d32454761f0caaac970cac1d",
+      "bytes": 101213,
+      "width": 960,
+      "height": 1280,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-trousers-pleated",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-016",
+      "filename": "dm-product-016.jpg",
+      "role": "product",
+      "sha256": "e0ec4948c84499390f3cc32d9688b1ea8c7116278a386a2c13b89a418fbf92da",
+      "bytes": 290858,
+      "width": 960,
+      "height": 1200,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-trousers-tapered",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-017",
+      "filename": "dm-product-017.jpg",
+      "role": "product",
+      "sha256": "15844fef23c1b6712e75867dfb326fc1b041164e00b6eb772342d546b7beb514",
+      "bytes": 228978,
+      "width": 960,
+      "height": 1440,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-trousers-wide",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-018",
+      "filename": "dm-product-018.jpg",
+      "role": "product",
+      "sha256": "9ba60b244d06458765a0b2168a972b75af6da4018f57e02428d09430a2dd0d2f",
+      "bytes": 177164,
+      "width": 960,
+      "height": 1440,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-trousers-cargo",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-019",
+      "filename": "dm-product-019.jpg",
+      "role": "product",
+      "sha256": "65de9c6de24af756c8372b98d71437ed8ac96a66a41dc96f3f035384a61febae",
+      "bytes": 213321,
+      "width": 960,
+      "height": 1280,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-knit-crew",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-020",
+      "filename": "dm-product-020.jpg",
+      "role": "product",
+      "sha256": "45f70a523c9a17ccb755bc9014cf52ed8daa8ea348fa6bb78b4b1c89737a6d23",
+      "bytes": 69984,
+      "width": 960,
+      "height": 641,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-knit-polo",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-021",
+      "filename": "dm-product-021.jpg",
+      "role": "product",
+      "sha256": "d0a38b9b2b7e4b40bd8304a50e79c2b440e356480b3c0b5ef4c3305400004dac",
+      "bytes": 362753,
+      "width": 960,
+      "height": 1707,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-knit-cardigan",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-022",
+      "filename": "dm-product-022.jpg",
+      "role": "product",
+      "sha256": "6ea82ab107d291cda0b2dc8b426cb4c3bd2815009439e2fe7d2e134dea33ca88",
+      "bytes": 151048,
+      "width": 960,
+      "height": 1440,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-bag-canvas",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-023",
+      "filename": "dm-product-023.jpg",
+      "role": "product",
+      "sha256": "f18e55292d487ec8713b42eab3009176314b258c8e3d2ecb5ec04f145b867b35",
+      "bytes": 166884,
+      "width": 960,
+      "height": 1440,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-bag-crossbody",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-024",
+      "filename": "dm-product-024.jpg",
+      "role": "product",
+      "sha256": "f716b34d7d430552c1e6b14bb81265508876ae07d3cf2253605ad653e86308c9",
+      "bytes": 192789,
+      "width": 960,
+      "height": 1440,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-bag-weekend",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-025",
+      "filename": "dm-product-025.jpg",
+      "role": "product",
+      "sha256": "c9e2671c6e514eeba5cc46200ee255dbd8e28fb76a0b21f9954f866aa155f954",
+      "bytes": 44325,
+      "width": 960,
+      "height": 640,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-outer-blazer",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-026",
+      "filename": "dm-product-026.jpg",
+      "role": "product",
+      "sha256": "704e5d532f2646cab7554f927692654e9c8f6e5cae800d906508c9d3beb9da48",
+      "bytes": 91574,
+      "width": 960,
+      "height": 1425,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-outer-overshirt",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-027",
+      "filename": "dm-product-027.jpg",
+      "role": "product",
+      "sha256": "6bd9206fd19acb5d18206e1dd4045b4e45afb42488c57dec638e60a5e31fab6a",
+      "bytes": 220365,
+      "width": 960,
+      "height": 1440,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-outer-trench",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-028",
+      "filename": "dm-product-028.jpg",
+      "role": "product",
+      "sha256": "24142fac807a665bb1049eb9798e8955c3c29769bd1c0fc8f366f3fb9b332d2d",
+      "bytes": 63709,
+      "width": 960,
+      "height": 1344,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-outer-hoodie",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-029",
+      "filename": "dm-product-029.jpg",
+      "role": "product",
+      "sha256": "d65ec833140c18239d73f7a5c11e5207da1e53f41f7e3735251c42b8e117ab58",
+      "bytes": 60251,
+      "width": 960,
+      "height": 640,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-outer-coach",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-product-030",
+      "filename": "dm-product-030.jpg",
+      "role": "product",
+      "sha256": "199aa744c7c42172137ea9e0313586b4867ef929ffb547ca069998def9d107d2",
+      "bytes": 101771,
+      "width": 960,
+      "height": 640,
+      "mimeType": "image/jpeg",
+      "productMappings": [
+        {
+          "productHandle": "dm-outer-vest",
+          "matchConfidence": "representative"
+        }
+      ]
+    },
+    {
+      "id": "dm-editorial-001",
+      "filename": "dm-editorial-001.jpg",
+      "role": "editorial",
+      "sha256": "2a0e40ad384fb5d255138ea136b74ea4e49a6b847e6f4a10c0ea9cfc79346cfb",
+      "bytes": 107840,
+      "width": 960,
+      "height": 636,
+      "mimeType": "image/jpeg",
+      "productMappings": []
+    },
+    {
+      "id": "dm-editorial-002",
+      "filename": "dm-editorial-002.jpg",
+      "role": "editorial",
+      "sha256": "25e60c15b1316381475126a2e899f7488e79f1bcfff6cd3afa2edaea065ae2e2",
+      "bytes": 126567,
+      "width": 960,
+      "height": 640,
+      "mimeType": "image/jpeg",
+      "productMappings": []
+    },
+    {
+      "id": "dm-editorial-003",
+      "filename": "dm-editorial-003.jpg",
+      "role": "editorial",
+      "sha256": "298d2863b7dacadfb3703aac719819f1455cff9ac1a59fc94f84b5e2a607252d",
+      "bytes": 973022,
+      "width": 960,
+      "height": 637,
+      "mimeType": "image/jpeg",
+      "productMappings": []
+    },
+    {
+      "id": "dm-editorial-004",
+      "filename": "dm-editorial-004.jpg",
+      "role": "editorial",
+      "sha256": "f8062109ca3f71ba257447468aa1f1570a7130aac799d18c31bd03fb87c39b3d",
+      "bytes": 54781,
+      "width": 960,
+      "height": 641,
+      "mimeType": "image/jpeg",
+      "productMappings": []
+    }
+  ]
+}

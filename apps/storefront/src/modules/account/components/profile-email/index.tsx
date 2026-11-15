@@ -1,8 +1,8 @@
 "use client"
 
-import React, { useEffect, useActionState } from "react";
+import React, { useEffect, useActionState } from "react"
 
-import Input from "@modules/common/components/input"
+import { Input } from "@modules/common/components/ui"
 
 import AccountInfo from "../account-info"
 import { HttpTypes } from "@medusajs/types"
@@ -15,16 +15,11 @@ type MyInformationProps = {
 const ProfileEmail: React.FC<MyInformationProps> = ({ customer }) => {
   const [successState, setSuccessState] = React.useState(false)
 
-  // TODO: It seems we don't support updating emails now?
-  const updateCustomerEmail = (
-    _currentState: Record<string, unknown>,
-    _formData: FormData
-  ) => {
-    try {
-      // email: formData.get("email") as string
-      return { success: true, error: null }
-    } catch (error) {
-      return { success: false, error: String(error) }
+  // TODO(impl): Add an authenticated email-change workflow before enabling edits — FR-01/FLOW-01.
+  const updateCustomerEmail = (_currentState: Record<string, unknown>, _formData: FormData) => {
+    return {
+      success: false,
+      error: "Tính năng đổi email chưa khả dụng. Email hiện tại chưa được thay đổi.",
     }
   }
 
@@ -52,7 +47,7 @@ const ProfileEmail: React.FC<MyInformationProps> = ({ customer }) => {
         clearState={clearState}
         data-testid="account-email-editor"
       >
-        <div className="grid grid-cols-1 gap-y-2">
+        <div className="grid grid-cols-1 gap-4">
           <Input
             label="Email"
             name="email"
@@ -60,6 +55,7 @@ const ProfileEmail: React.FC<MyInformationProps> = ({ customer }) => {
             autoComplete="email"
             required
             defaultValue={customer.email}
+            hint="Tính năng đổi email chưa khả dụng."
             data-testid="email-input"
           />
         </div>

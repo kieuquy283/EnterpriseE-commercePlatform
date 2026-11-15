@@ -12,7 +12,9 @@ DAYMARK is a Vietnamese everyday-clothing ecommerce MVP with product suggestions
 6. [Security, operations, CI/CD, health, recovery and cost](spec/06-operations.md)
 7. [Delivery gates, implementation order and gaps](spec/07-delivery.md)
 
-[Confirmed DAYMARK branding and asset provenance](brand/README.md).
+[DAYMARK provisional branding and asset provenance](brand/README.md).
+
+[Storefront design system](design-system/README.md): tokens, primitives, accessibility and commerce display rules for the customer frontend.
 
 Supporting material: [teacher acceptance brief](reference/teacher-brief.md), [dated evidence/research index](reference/README.md), [local setup](setup.md), [deployment runbook](../deploy/RUNBOOK.md), [contributing](../CONTRIBUTING.md), [presentation engine](../presentation/README.md).
 

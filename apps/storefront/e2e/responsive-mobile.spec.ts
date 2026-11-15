@@ -1,9 +1,5 @@
 import { test, expect } from "@playwright/test"
-import {
-  generateTestEmail,
-  DEFAULT_PRODUCT_HANDLE,
-  DEFAULT_PRODUCT_TITLE,
-} from "./test-helpers"
+import { generateTestEmail, DEFAULT_PRODUCT_HANDLE, DEFAULT_PRODUCT_TITLE } from "./test-helpers"
 import {
   fillAddress,
   selectDelivery,
@@ -22,12 +18,13 @@ test.describe("Responsive & Mobile View (E2E-12)", () => {
 
     // 2. Open PDP
     await page.goto(`/vn/products/${DEFAULT_PRODUCT_HANDLE}`)
-    await expect(page.locator('#product-info [data-testid="product-title"]')).toContainText(DEFAULT_PRODUCT_TITLE)
+    await expect(page.locator('#product-info [data-testid="product-title"]')).toContainText(
+      DEFAULT_PRODUCT_TITLE,
+    )
 
     // Select variant option
-    const optionButtons = page.locator('[data-testid="option-button"]')
-    if ((await optionButtons.count()) > 0) {
-      await optionButtons.first().click()
+    for (const group of await page.locator('[data-testid="product-options"]:visible').all()) {
+      await group.getByTestId("option-button").first().click()
     }
 
     // Click add to cart button
@@ -38,7 +35,9 @@ test.describe("Responsive & Mobile View (E2E-12)", () => {
     // 3. Navigate to Cart on mobile
     await page.goto("/vn/cart")
     await expect(page.locator('[data-testid="cart-container"]')).toBeVisible({ timeout: 15_000 })
-    await expect(page.locator('[data-testid="product-row"]').first()).toBeVisible({ timeout: 15_000 })
+    await expect(page.locator('[data-testid="product-row"]').first()).toBeVisible({
+      timeout: 15_000,
+    })
 
     // 4. Proceed to Checkout on mobile
     const checkoutBtn = page.locator('[data-testid="checkout-button"]')

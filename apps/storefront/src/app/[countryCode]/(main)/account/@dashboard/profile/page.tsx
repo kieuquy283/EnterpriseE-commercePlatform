@@ -9,8 +9,8 @@ import { listRegions } from "@lib/data/regions"
 import { retrieveCustomer } from "@lib/data/customer"
 
 export const metadata: Metadata = {
-  title: "Profile",
-  description: "View and edit your DAYMARK profile.",
+  title: "Thông tin cá nhân",
+  description: "Xem và cập nhật thông tin tài khoản DAYMARK.",
 }
 
 export default async function Profile() {
@@ -22,30 +22,29 @@ export default async function Profile() {
   }
 
   return (
-    <div className="w-full" data-testid="profile-page-wrapper">
-      <div className="mb-8 flex flex-col gap-y-4">
-        <h1 className="text-2xl-semi">Profile</h1>
-        <p className="text-base-regular">
-          View and update your profile information, including your name, email,
-          and phone number. You can also update your billing address, or change
-          your password.
+    <div className="flex w-full flex-col gap-y-8" data-testid="profile-page-wrapper">
+      <div className="flex flex-col gap-y-2">
+        <p className="dm-eyebrow">Tài khoản</p>
+        <h1 className="dm-title">Thông tin cá nhân</h1>
+        <p className="dm-body max-w-dm-prose">
+          Cập nhật họ tên, số điện thoại và địa chỉ để dùng cho hoá đơn và giao hàng.
         </p>
       </div>
-      <div className="flex flex-col gap-y-8 w-full">
-        <ProfileName customer={customer} />
-        <Divider />
-        <ProfileEmail customer={customer} />
-        <Divider />
-        <ProfilePhone customer={customer} />
-        <Divider />
-        {/* <ProfilePassword customer={customer} />
-        <Divider /> */}
-        <ProfileBillingAddress customer={customer} regions={regions} />
+
+      <div className="flex w-full flex-col divide-y divide-line">
+        <div className="pb-8">
+          <ProfileName customer={customer} />
+        </div>
+        <div className="py-8">
+          <ProfileEmail customer={customer} />
+        </div>
+        <div className="py-8">
+          <ProfilePhone customer={customer} />
+        </div>
+        <div className="pt-8">
+          <ProfileBillingAddress customer={customer} regions={regions} />
+        </div>
       </div>
     </div>
   )
-}
-
-const Divider = () => {
-  return <div className="w-full h-px bg-gray-200" />
 }

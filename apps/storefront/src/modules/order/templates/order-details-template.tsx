@@ -1,6 +1,5 @@
 "use client"
 
-import { XMark } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Help from "@modules/order/components/help"
@@ -14,29 +13,38 @@ type OrderDetailsTemplateProps = {
   order: HttpTypes.StoreOrder
 }
 
-const OrderDetailsTemplate: React.FC<OrderDetailsTemplateProps> = ({
-  order,
-}) => {
+const OrderDetailsTemplate: React.FC<OrderDetailsTemplateProps> = ({ order }) => {
   return (
-    <div className="flex flex-col justify-center gap-y-4">
-      <div className="flex gap-2 justify-between items-center">
-        <h1 className="text-2xl-semi">Order details</h1>
+    <div className="flex flex-col gap-y-8">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="flex flex-col gap-y-1">
+          <p className="dm-eyebrow">Lịch sử đơn hàng</p>
+          <h1 className="dm-title">Chi tiết đơn hàng</h1>
+        </div>
         <LocalizedClientLink
           href="/account/orders"
-          className="flex gap-2 items-center text-ui-fg-subtle hover:text-ui-fg-base"
+          className="dm-btn dm-btn-secondary dm-btn-sm"
           data-testid="back-to-overview-button"
         >
-          <XMark /> Back to overview
+          Về tổng quan
         </LocalizedClientLink>
       </div>
-      <div
-        className="flex flex-col gap-4 h-full bg-white w-full"
-        data-testid="order-details-container"
-      >
-        <OrderDetails order={order} showStatus />
-        <Items order={order} />
-        <ShippingDetails order={order} />
-        <OrderSummary order={order} />
+
+      <div className="flex w-full flex-col gap-y-8" data-testid="order-details-container">
+        <div className="dm-panel p-5 small:p-6">
+          <OrderDetails order={order} showStatus />
+        </div>
+
+        <div className="flex flex-col gap-y-4">
+          <h2 className="dm-heading">Sản phẩm</h2>
+          <Items order={order} />
+        </div>
+
+        <div className="grid grid-cols-1 gap-8 small:grid-cols-2">
+          <ShippingDetails order={order} />
+          <OrderSummary order={order} />
+        </div>
+
         <Help />
       </div>
     </div>

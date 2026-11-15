@@ -19,7 +19,7 @@ This document supports [business requirements](01-business.md), [end-to-end flow
 | Browser session references | Storefront server actions | HTTP-only secure cookies in production | References/tokens, not a second order database; backend authorizes every private request. |
 | Notification delivery/retry record | Planned notification integration | Durable application-owned record, exact schema pending implementation | Must support deduplication and reconciliation after provider/worker failure. No claim that this table exists today. |
 
-The deployed AWS database was migrated on 9 November; recommendation data was not activated. The historical seed has three generic products without images. DAYMARK's 24–36 fully described clothing products with variants and permitted images are a target dataset, not existing data.
+The deployed AWS database was migrated on 9 November; recommendation data was not activated. The historical seed has three generic products without images. DAYMARK's 30-product class fixture has representative local-preview photos; exact manufactured-item and per-variant images remain a separate gap.
 
 ## 2. Logical relationships
 
@@ -91,7 +91,7 @@ Core Medusa errors retain their supported envelopes. New custom contracts should
 
 ## 6. Initial dataset and migrations
 
-A future repeatable seed must create/update its own named DAYMARK fixtures without resetting existing commerce data; report inserted/updated/skipped records, image provenance and checksum, variant stock, collections, shipping/payment setup and publishable channel key. Run twice and prove stable counts. Administrator creation remains a separate secure operator action, with no shared/default password.
+The implemented [DAYMARK importer](../catalog/DATASET.md) creates/updates its own named fixtures through Medusa workflows. Its 30 products/230 variants have disposable-local repeat-run evidence; exact product photography and current public/staff acceptance remain incomplete. A repeatable seed must create/update its own named DAYMARK fixtures without resetting existing commerce data; report inserted/updated/skipped records, image checksums, variant stock, collections, shipping/payment setup and publishable channel key. Run twice and prove stable counts. Administrator creation remains a separate secure operator action, with no shared/default password.
 
 Add migrations for changed custom models; never edit already applied migrations. Test on an empty disposable database and upgrade from the previous schema. Application rollback and schema/data rollback are separate operations. See [operations](06-operations.md) and [delivery](07-delivery.md).
 

@@ -2,29 +2,29 @@ import SkeletonCartTotals from "@modules/skeletons/components/skeleton-cart-tota
 
 const SkeletonOrderInformation = () => {
   return (
-    <div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 py-10 border-b border-gray-200">
+    <div aria-hidden="true">
+      <div className="grid grid-cols-1 gap-8 border-b border-line py-10 lg:grid-cols-2">
         <div className="flex flex-col">
-          <div className="w-32 h-4 bg-gray-100 mb-4"></div>
-          <div className="w-2/6 h-3 bg-gray-100"></div>
-          <div className="w-3/6 h-3 bg-gray-100 my-2"></div>
-          <div className="w-1/6 h-3 bg-gray-100"></div>
+          <div className="dm-skeleton mb-4 h-4 w-32" />
+          <div className="dm-skeleton h-3 w-2/6" />
+          <div className="dm-skeleton my-2 h-3 w-3/6" />
+          <div className="dm-skeleton h-3 w-1/6" />
         </div>
         <div className="flex flex-col">
-          <div className="w-32 h-4 bg-gray-100 mb-4"></div>
-          <div className="w-2/6 h-3 bg-gray-100"></div>
-          <div className="w-3/6 h-3 bg-gray-100 my-2"></div>
-          <div className="w-2/6 h-3 bg-gray-100"></div>
-          <div className="w-1/6 h-3 bg-gray-100 mt-2"></div>
-          <div className="w-32 h-4 bg-gray-100 my-4"></div>
-          <div className="w-1/6 h-3 bg-gray-100"></div>
+          <div className="dm-skeleton mb-4 h-4 w-32" />
+          <div className="dm-skeleton h-3 w-2/6" />
+          <div className="dm-skeleton my-2 h-3 w-3/6" />
+          <div className="dm-skeleton h-3 w-2/6" />
+          <div className="dm-skeleton mt-2 h-3 w-1/6" />
+          <div className="dm-skeleton my-4 h-4 w-32" />
+          <div className="dm-skeleton h-3 w-1/6" />
         </div>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 py-10">
+      <div className="grid grid-cols-1 gap-8 py-10 lg:grid-cols-2">
         <div className="flex flex-col">
-          <div className="w-32 h-4 bg-gray-100 mb-4"></div>
-          <div className="w-2/6 h-3 bg-gray-100"></div>
-          <div className="w-3/6 h-3 bg-gray-100 my-4"></div>
+          <div className="dm-skeleton mb-4 h-4 w-32" />
+          <div className="dm-skeleton h-3 w-2/6" />
+          <div className="dm-skeleton my-4 h-3 w-3/6" />
         </div>
 
         <SkeletonCartTotals />

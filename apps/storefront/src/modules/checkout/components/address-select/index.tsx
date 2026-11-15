@@ -5,22 +5,15 @@ import { Fragment, useMemo } from "react"
 
 import compareAddresses from "@lib/util/compare-addresses"
 import { HttpTypes } from "@medusajs/types"
-import Radio from "@modules/common/components/radio"
+import OptionMark from "../option-mark"
 
 type AddressSelectProps = {
   addresses: HttpTypes.StoreCustomerAddress[]
   addressInput: HttpTypes.StoreCartAddress | null
-  onSelect: (
-    address: HttpTypes.StoreCartAddress | undefined,
-    email?: string
-  ) => void
+  onSelect: (address: HttpTypes.StoreCartAddress | undefined, email?: string) => void
 }
 
-const AddressSelect = ({
-  addresses,
-  addressInput,
-  onSelect,
-}: AddressSelectProps) => {
+const AddressSelect = ({ addresses, addressInput, onSelect }: AddressSelectProps) => {
   const handleSelect = (id: string) => {
     const savedAddress = addresses.find((a) => a.id === id)
     if (savedAddress) {
@@ -36,19 +29,17 @@ const AddressSelect = ({
     <Listbox onChange={handleSelect} value={selectedAddress?.id}>
       <div className="relative">
         <Listbox.Button
-          className="relative w-full flex justify-between items-center px-4 py-[10px] text-left bg-white cursor-default focus:outline-none border rounded-rounded focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-gray-300 focus-visible:ring-offset-2 focus-visible:border-gray-300 text-base-regular"
+          className="dm-field relative flex items-center justify-between gap-3 text-left"
           data-testid="shipping-address-select"
         >
           {({ open }) => (
             <>
               <span className="block truncate">
-                {selectedAddress
-                  ? selectedAddress.address_1
-                  : "Choose an address"}
+                {selectedAddress ? selectedAddress.address_1 : "Chọn địa chỉ đã lưu"}
               </span>
               <ChevronUpDown
-                className={clx("transition-rotate duration-200", {
-                  "transform rotate-180": open,
+                className={clx("shrink-0 text-ink-faint transition-transform duration-200", {
+                  "rotate-180": open,
                 })}
               />
             </>
@@ -61,7 +52,7 @@ const AddressSelect = ({
           leaveTo="opacity-0"
         >
           <Listbox.Options
-            className="absolute z-20 w-full overflow-auto text-small-regular bg-white border border-top-0 max-h-60 focus:outline-none sm:text-sm"
+            className="absolute z-20 max-h-60 w-full overflow-auto rounded-dm-sm border border-line bg-canvas py-1 text-dm-small shadow-dm-card focus:outline-none"
             data-testid="shipping-address-options"
           >
             {addresses.map((address) => {
@@ -69,29 +60,25 @@ const AddressSelect = ({
                 <Listbox.Option
                   key={address.id}
                   value={address.id}
-                  className="cursor-default select-none relative pl-6 pr-10 hover:bg-gray-50 py-4"
+                  className="relative cursor-pointer select-none px-3 py-3 transition-colors duration-150 hover:bg-surface"
                   data-testid="shipping-address-option"
                 >
-                  <div className="flex gap-x-4 items-start">
-                    <Radio
-                      checked={selectedAddress?.id === address.id}
+                  <div className="flex items-start gap-x-3">
+                    <OptionMark
+                      selected={selectedAddress?.id === address.id}
                       data-testid="shipping-address-radio"
                     />
-                    <div className="flex flex-col">
-                      <span className="text-left text-base-semi">
+                    <div className="flex min-w-0 flex-col gap-y-1">
+                      <span className="text-dm-small font-semibold text-ink">
                         {address.first_name} {address.last_name}
                       </span>
                       {address.company && (
-                        <span className="text-small-regular text-ui-fg-base">
-                          {address.company}
-                        </span>
+                        <span className="text-dm-caption text-ink-muted">{address.company}</span>
                       )}
-                      <div className="flex flex-col text-left text-base-regular mt-2">
+                      <div className="flex flex-col text-dm-caption text-ink-muted">
                         <span>
                           {address.address_1}
-                          {address.address_2 && (
-                            <span>, {address.address_2}</span>
-                          )}
+                          {address.address_2 && <span>, {address.address_2}</span>}
                         </span>
                         <span>
                           {address.postal_code}, {address.city}

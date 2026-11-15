@@ -14,12 +14,20 @@ const LoginTemplate = () => {
   const [currentView, setCurrentView] = useState("sign-in")
 
   return (
-    <div className="w-full flex justify-start px-8 py-8">
-      {currentView === "sign-in" ? (
-        <Login setCurrentView={setCurrentView} />
-      ) : (
-        <Register setCurrentView={setCurrentView} />
-      )}
+    <div className="grid w-full gap-12 small:grid-cols-2 small:gap-24">
+      <div className="border-b border-line pb-10 small:border-b-0">
+        <h2 className="dm-display max-w-[12ch]">Không gian của bạn.</h2>
+        <p className="dm-lead mt-6 max-w-sm">
+          Lưu thông tin, xem lại những món đã chọn và theo dõi đơn hàng của bạn.
+        </p>
+      </div>
+      <div className="w-full max-w-lg small:border-l small:border-line small:pl-12">
+        {currentView === "sign-in" ? (
+          <Login setCurrentView={setCurrentView} />
+        ) : (
+          <Register setCurrentView={setCurrentView} />
+        )}
+      </div>
     </div>
   )
 }

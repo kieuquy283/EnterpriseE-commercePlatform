@@ -1,14 +1,13 @@
 import { notFound } from "next/navigation"
 import { Suspense } from "react"
 
-import InteractiveLink from "@modules/common/components/interactive-link"
+import { OptionValueIds } from "@lib/util/product-option-filters"
+import { HttpTypes } from "@medusajs/types"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
 import RefinementList from "@modules/store/components/refinement-list"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import PaginatedProducts from "@modules/store/templates/paginated-products"
-import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import { HttpTypes } from "@medusajs/types"
-import { OptionValueIds } from "@lib/util/product-option-filters"
 
 export default function CategoryTemplate({
   category,
@@ -30,75 +29,87 @@ export default function CategoryTemplate({
 
   const parents = [] as HttpTypes.StoreProductCategory[]
 
-  const getParents = (category: HttpTypes.StoreProductCategory) => {
-    if (category.parent_category) {
-      parents.push(category.parent_category)
-      getParents(category.parent_category)
+  const getParents = (node: HttpTypes.StoreProductCategory) => {
+    if (node.parent_category) {
+      parents.push(node.parent_category)
+      getParents(node.parent_category)
     }
   }
 
   getParents(category)
 
   return (
-    <div
-      className="flex flex-col small:flex-row small:items-start py-6 content-container"
-      data-testid="category-container"
-    >
-      <RefinementList
-        sortBy={sort}
-        data-testid="sort-by-container"
-        hideOptionsPicker
-      />
-      <div className="w-full">
-        <div className="flex flex-row mb-8 text-2xl-semi gap-4">
-          {parents &&
-            parents.map((parent) => (
-              <span key={parent.id} className="text-ui-fg-subtle">
+    <div className="content-container" data-testid="category-container">
+      <header className="border-b border-line py-10 small:py-14">
+        <nav aria-label="Đường dẫn điều hướng">
+          <ol className="flex flex-wrap items-center gap-2 text-dm-caption text-ink-faint">
+            <li>
+              <LocalizedClientLink href="/store" className="hover:text-ink">
+                Cửa hàng
+              </LocalizedClientLink>
+            </li>
+            {parents.map((parent) => (
+              <li key={parent.id} className="flex items-center gap-2">
+                <span aria-hidden="true">/</span>
                 <LocalizedClientLink
-                  className="mr-4 hover:text-black"
                   href={`/categories/${parent.handle}`}
+                  className="hover:text-ink"
                   data-testid="sort-by-link"
                 >
                   {parent.name}
                 </LocalizedClientLink>
-                /
-              </span>
+              </li>
             ))}
-          <h1 data-testid="category-page-title">{category.name}</h1>
-        </div>
+            <li aria-hidden="true">/</li>
+            <li aria-current="page" className="text-ink-muted">
+              {category.name}
+            </li>
+          </ol>
+        </nav>
+
+        <h1 className="dm-display mt-5 max-w-2xl" data-testid="category-page-title">
+          {category.name}
+        </h1>
+
         {category.description && (
-          <div className="mb-8 text-base-regular">
-            <p>{category.description}</p>
-          </div>
+          <p className="dm-lead mt-4 max-w-dm-prose">{category.description}</p>
         )}
-        {category.category_children && (
-          <div className="mb-8 text-base-large">
-            <ul className="grid grid-cols-1 gap-2">
-              {category.category_children?.map((c) => (
-                <li key={c.id}>
-                  <InteractiveLink href={`/categories/${c.handle}`}>
-                    {c.name}
-                  </InteractiveLink>
+      </header>
+
+      <div className="flex flex-col gap-8 py-8 small:py-12">
+        <aside className="flex flex-wrap items-start justify-between gap-6 border-b border-line pb-6">
+          {category.category_children && category.category_children.length > 0 ? (
+            <ul className="mt-4 flex flex-col gap-1">
+              {category.category_children.map((child) => (
+                <li key={child.id}>
+                  <LocalizedClientLink
+                    href={`/categories/${child.handle}`}
+                    className="block py-1.5 text-dm-small text-ink-muted transition-colors hover:text-ink"
+                  >
+                    {child.name}
+                  </LocalizedClientLink>
                 </li>
               ))}
             </ul>
+          ) : null}
+          <div className="small:ml-auto">
+            <RefinementList sortBy={sort} data-testid="sort-by-container" hideOptionsPicker />
           </div>
-        )}
-        <Suspense
-          fallback={
-            <SkeletonProductGrid
-              numberOfProducts={category.products?.length ?? 8}
+        </aside>
+
+        <div className="min-w-0 w-full">
+          <Suspense
+            fallback={<SkeletonProductGrid numberOfProducts={category.products?.length ?? 8} />}
+          >
+            <PaginatedProducts
+              sortBy={sort}
+              page={pageNumber}
+              categoryId={category.id}
+              countryCode={countryCode}
+              optionValueIds={optionValueIds}
             />
-          }
-        >
-          <PaginatedProducts
-            sortBy={sort}
-            page={pageNumber}
-            categoryId={category.id}
-            countryCode={countryCode}
-            optionValueIds={optionValueIds}
-          />
-        </Suspense>
+          </Suspense>
+        </div>
       </div>
     </div>
   )

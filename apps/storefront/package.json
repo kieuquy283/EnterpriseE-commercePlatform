@@ -17,6 +17,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
     "@headlessui/react": "^2.2.0",
     "@medusajs/icons": "2.21.2",
     "@medusajs/js-sdk": "2.21.2",
@@ -25,6 +26,7 @@
     "@radix-ui/react-slider": "^1.4.7",
     "clsx": "^2.1.1",
     "lodash": "^4.17.21",
+    "motion": "14.14.0",
     "next": "15.5.24",
     "qs": "^6.12.1",
     "react": "19.0.5",

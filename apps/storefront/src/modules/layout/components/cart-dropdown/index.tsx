@@ -1,11 +1,7 @@
 "use client"
 
-import {
-  Popover,
-  PopoverButton,
-  PopoverPanel,
-  Transition,
-} from "@headlessui/react"
+import { ShoppingBag } from "@medusajs/icons"
+import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react"
 import { convertToLocale } from "@lib/util/money"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@modules/common/components/ui"
@@ -17,44 +13,27 @@ import Thumbnail from "@modules/products/components/thumbnail"
 import { usePathname } from "next/navigation"
 import { Fragment, useEffect, useRef, useState } from "react"
 
-const CartDropdown = ({
-  cart: cartState,
-}: {
-  cart?: HttpTypes.StoreCart | null
-}) => {
-  const [activeTimer, setActiveTimer] = useState<NodeJS.Timer | undefined>(
-    undefined
+const CartDropdown = ({ cart: cartState }: { cart?: HttpTypes.StoreCart | null }) => {
+  const [activeTimer, setActiveTimer] = useState<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
   )
   const [cartDropdownOpen, setCartDropdownOpen] = useState(false)
 
   const open = () => setCartDropdownOpen(true)
   const close = () => setCartDropdownOpen(false)
 
-  const totalItems =
-    cartState?.items?.reduce((acc, item) => {
-      return acc + item.quantity
-    }, 0) || 0
+  const totalItems = cartState?.items?.reduce((total, item) => total + item.quantity, 0) || 0
 
   const subtotal = cartState?.subtotal ?? 0
   const itemRef = useRef<number>(totalItems || 0)
-
-  const timedOpen = () => {
-    open()
-
-    const timer = setTimeout(close, 5000)
-
-    setActiveTimer(timer)
-  }
 
   const openAndCancel = () => {
     if (activeTimer) {
       clearTimeout(activeTimer)
     }
-
     open()
   }
 
-  // Clean up the timer when the component unmounts
   useEffect(() => {
     return () => {
       if (activeTimer) {
@@ -65,32 +44,52 @@ const CartDropdown = ({
 
   const pathname = usePathname()
 
-  // open cart dropdown when modifying the cart items, but only if we're not on the cart page
+  // Auto-reveal the mini cart after a line item changes, unless the customer is
+  // already on the cart page where the same information is on screen.
   useEffect(() => {
-    if (itemRef.current !== totalItems && !pathname.includes("/cart")) {
-      timedOpen()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [totalItems, itemRef.current])
+    const previous = itemRef.current
+    itemRef.current = totalItems
+    if (previous === totalItems || pathname.includes("/cart")) return
+    setCartDropdownOpen(true)
+    const timer = setTimeout(() => setCartDropdownOpen(false), 5000)
+    setActiveTimer(timer)
+    return () => clearTimeout(timer)
+  }, [totalItems, pathname])
+
+  const sortedItems = [...(cartState?.items ?? [])].sort((a, b) =>
+    (a.created_at ?? "") > (b.created_at ?? "") ? -1 : 1,
+  )
 
   return (
     <div
-      className="h-full z-50"
+      className="z-50 flex h-full items-center"
       onMouseEnter={openAndCancel}
       onMouseLeave={close}
     >
-      <Popover className="relative h-full">
-        <PopoverButton className="h-full">
+      <Popover className="relative flex h-full items-center">
+        <PopoverButton as={Fragment}>
           <LocalizedClientLink
-            className="hover:text-ui-fg-base"
+            className="dm-nav-link whitespace-nowrap uppercase"
+            style={{ letterSpacing: "0.08em" }}
             href="/cart"
             data-testid="nav-cart-link"
-          >{`Cart (${totalItems})`}</LocalizedClientLink>
+            aria-label={`Giỏ hàng (${totalItems})`}
+          >
+            <span className="hidden small:inline">Giỏ hàng ({totalItems})</span>
+            <span className="inline-flex items-center gap-1.5 small:hidden" aria-hidden="true">
+              <ShoppingBag />
+              {totalItems}
+            </span>
+            <span className="sr-only">
+              {totalItems === 1 ? "sản phẩm trong giỏ" : "sản phẩm trong giỏ"}
+            </span>
+          </LocalizedClientLink>
         </PopoverButton>
+
         <Transition
           show={cartDropdownOpen}
           as={Fragment}
-          enter="transition ease-out duration-200"
+          enter="transition ease-dm-out duration-200"
           enterFrom="opacity-0 translate-y-1"
           enterTo="opacity-100 translate-y-0"
           leave="transition ease-in duration-150"
@@ -99,125 +98,112 @@ const CartDropdown = ({
         >
           <PopoverPanel
             static
-            className="hidden small:block absolute top-[calc(100%+1px)] right-0 bg-white border-x border-b border-gray-200 w-[420px] text-ui-fg-base"
+            className="absolute right-0 top-[calc(100%+0.75rem)] hidden w-[26rem] border border-line bg-canvas shadow-dm-raised small:block"
             data-testid="nav-cart-dropdown"
           >
-            <div className="p-4 flex items-center justify-center">
-              <h3 className="text-large-semi">Cart</h3>
+            <div className="flex items-center justify-between border-b border-line px-5 py-4">
+              <h3 className="dm-eyebrow">Giỏ hàng của bạn</h3>
+              <span className="text-dm-caption text-ink-faint">
+                {totalItems} {totalItems === 1 ? "item" : "items"}
+              </span>
             </div>
-            {cartState && cartState.items?.length ? (
+
+            {sortedItems.length > 0 ? (
               <>
-                <div className="overflow-y-scroll max-h-[402px] px-4 grid grid-cols-1 gap-y-8 no-scrollbar p-px">
-                  {cartState.items
-                    .sort((a, b) => {
-                      return (a.created_at ?? "") > (b.created_at ?? "")
-                        ? -1
-                        : 1
-                    })
-                    .map((item) => (
-                      <div
-                        className="grid grid-cols-[122px_1fr] gap-x-4"
-                        key={item.id}
-                        data-testid="cart-item"
+                <ul className="no-scrollbar max-h-[24rem] divide-y divide-line overflow-y-auto">
+                  {sortedItems.map((item) => (
+                    <li
+                      className="grid grid-cols-[4.5rem_1fr] gap-x-4 px-5 py-4"
+                      key={item.id}
+                      data-testid="cart-item"
+                    >
+                      <LocalizedClientLink
+                        href={`/products/${item.product_handle}`}
+                        className="block"
                       >
-                        <LocalizedClientLink
-                          href={`/products/${item.product_handle}`}
-                          className="w-24"
-                        >
-                          <Thumbnail
-                            thumbnail={item.thumbnail}
-                            images={item.variant?.product?.images}
-                            size="square"
-                          />
-                        </LocalizedClientLink>
-                        <div className="flex flex-col justify-between flex-1">
-                          <div className="flex flex-col flex-1">
-                            <div className="flex items-start justify-between">
-                              <div className="flex flex-col overflow-ellipsis whitespace-nowrap mr-4 w-[180px]">
-                                <h3 className="text-base-regular overflow-hidden text-ellipsis">
-                                  <LocalizedClientLink
-                                    href={`/products/${item.product_handle}`}
-                                    data-testid="product-link"
-                                  >
-                                    {item.title}
-                                  </LocalizedClientLink>
-                                </h3>
-                                <LineItemOptions
-                                  variant={item.variant}
-                                  data-testid="cart-item-variant"
-                                  data-value={item.variant}
-                                />
-                                <span
-                                  data-testid="cart-item-quantity"
-                                  data-value={item.quantity}
-                                >
-                                  Quantity: {item.quantity}
-                                </span>
-                              </div>
-                              <div className="flex justify-end">
-                                <LineItemPrice
-                                  item={item}
-                                  style="tight"
-                                  currencyCode={cartState.currency_code}
-                                />
-                              </div>
-                            </div>
+                        <Thumbnail
+                          thumbnail={item.thumbnail}
+                          images={item.variant?.product?.images}
+                          size="square"
+                        />
+                      </LocalizedClientLink>
+                      <div className="flex min-w-0 flex-col justify-between">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <h4 className="truncate text-dm-small font-medium text-ink">
+                              <LocalizedClientLink
+                                href={`/products/${item.product_handle}`}
+                                data-testid="product-link"
+                              >
+                                {item.title}
+                              </LocalizedClientLink>
+                            </h4>
+                            <LineItemOptions
+                              variant={item.variant}
+                              data-testid="cart-item-variant"
+                              data-value={item.variant}
+                            />
+                            <span
+                              className="text-dm-caption text-ink-faint"
+                              data-testid="cart-item-quantity"
+                              data-value={item.quantity}
+                            >
+                              Số lượng: {item.quantity}
+                            </span>
                           </div>
-                          <DeleteButton
-                            id={item.id}
-                            className="mt-1"
-                            data-testid="cart-item-remove-button"
-                          >
-                            Remove
-                          </DeleteButton>
+                          <LineItemPrice
+                            item={item}
+                            style="tight"
+                            currencyCode={cartState?.currency_code ?? "vnd"}
+                          />
                         </div>
+                        <DeleteButton
+                          id={item.id}
+                          className="mt-2 self-start text-dm-caption text-ink-faint hover:text-danger"
+                          data-testid="cart-item-remove-button"
+                        >
+                          Xoá
+                        </DeleteButton>
                       </div>
-                    ))}
-                </div>
-                <div className="p-4 flex flex-col gap-y-4 text-small-regular">
-                  <div className="flex items-center justify-between">
-                    <span className="text-ui-fg-base font-semibold">
-                      Subtotal{" "}
-                      <span className="font-normal">(excl. taxes)</span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="flex flex-col gap-4 border-t border-line px-5 py-4">
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-dm-small text-ink-muted">
+                      Tạm tính{" "}
+                      <span className="text-dm-caption text-ink-faint">
+                        (chưa gồm phí giao hàng và thuế)
+                      </span>
                     </span>
                     <span
-                      className="text-large-semi"
+                      className="text-dm-title-sm font-semibold tabular-nums text-ink"
                       data-testid="cart-subtotal"
                       data-value={subtotal}
                     >
                       {convertToLocale({
                         amount: subtotal,
-                        currency_code: cartState.currency_code,
+                        currency_code: cartState?.currency_code ?? "vnd",
                       })}
                     </span>
                   </div>
                   <LocalizedClientLink href="/cart" passHref>
-                    <Button
-                      className="w-full"
-                      size="large"
-                      data-testid="go-to-cart-button"
-                    >
-                      Go to cart
+                    <Button className="w-full" data-testid="go-to-cart-button" onClick={close}>
+                      Xem giỏ hàng
                     </Button>
                   </LocalizedClientLink>
                 </div>
               </>
             ) : (
-              <div>
-                <div className="flex py-16 flex-col gap-y-4 items-center justify-center">
-                  <div className="bg-gray-900 text-small-regular flex items-center justify-center w-6 h-6 rounded-full text-white">
-                    <span>0</span>
-                  </div>
-                  <span>Your shopping bag is empty.</span>
-                  <div>
-                    <LocalizedClientLink href="/store">
-                      <>
-                        <span className="sr-only">Go to all products page</span>
-                        <Button onClick={close}>Explore products</Button>
-                      </>
-                    </LocalizedClientLink>
-                  </div>
-                </div>
+              <div className="flex flex-col items-start gap-4 px-5 py-10">
+                <p className="text-dm-title-sm font-medium text-ink">Giỏ hàng đang trống</p>
+                <p className="text-dm-small text-ink-muted">
+                  Tìm những món đồ dễ mặc cho mỗi ngày của bạn.
+                </p>
+                <LocalizedClientLink href="/store" onClick={close}>
+                  <Button variant="secondary">Khám phá bộ sưu tập</Button>
+                </LocalizedClientLink>
               </div>
             )}
           </PopoverPanel>
