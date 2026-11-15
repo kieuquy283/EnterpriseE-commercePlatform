@@ -6,11 +6,8 @@ type AddItemBody = {
   quantity?: number
 }
 
-export async function POST(
-  req: MedusaRequest<AddItemBody>,
-  res: MedusaResponse
-) {
-  const { variant_id: variantId, quantity } = req.body
+export async function POST(req: MedusaRequest<AddItemBody>, res: MedusaResponse) {
+  const { variant_id: variantId, quantity } = req.validatedBody
 
   if (!variantId || !quantity || quantity <= 0) {
     res.status(400).json({

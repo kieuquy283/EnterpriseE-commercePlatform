@@ -7,11 +7,8 @@ type Credentials = {
   password?: string
 }
 
-export async function POST(
-  req: MedusaRequest<Credentials>,
-  res: MedusaResponse
-) {
-  const { email, password } = req.body
+export async function POST(req: MedusaRequest<Credentials>, res: MedusaResponse) {
+  const { email, password } = req.validatedBody
 
   if (!email || !password) {
     res.status(400).json({ message: "email and password are required" })
@@ -19,7 +16,7 @@ export async function POST(
   }
 
   const authModuleService = req.scope.resolve(Modules.AUTH)
-  const { success, error, authIdentity } = await authModuleService.authenticate("emailpass", {
+  const { success, authIdentity } = await authModuleService.authenticate("emailpass", {
     url: req.url,
     headers: req.headers as Record<string, string>,
     query: req.query as Record<string, string>,
@@ -28,7 +25,7 @@ export async function POST(
   })
 
   if (!success || !authIdentity) {
-    res.status(401).json({ message: error || "Authentication failed" })
+    res.status(401).json({ message: "Authentication failed" })
     return
   }
 
