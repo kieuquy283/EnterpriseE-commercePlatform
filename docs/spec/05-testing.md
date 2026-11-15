@@ -50,7 +50,7 @@ Chi phí/độ sẵn sàng áp dụng lịch vận hành giới hạn rõ. Chạ
 | FR-05 / FLOW-05 | Mô phỏng cô lập thành công/thất bại; COD production; timeout và gửi trùng đồng thời | Tích hợp + k6 có kiểm soát | Hiệu ứng đơn/thanh toán chính xác; không thu thật; không mô phỏng production |
 | FR-06 / FLOW-06 | Nhân viên nhận tồn, khách giữ, hủy giải phóng phù hợp, lấy/đóng/fulfillment đúng | Tích hợp + kiểm tra Admin | Mức tồn trước/sau và đối soát giữ chỗ; thử vòng đời đã cài |
 | FR-07 / FLOW-07 | Khách thấy tiến độ được phép; nhân viên ghi bàn giao, giao/COD hoặc giao thất bại | Playwright + nghiệm thu nhân viên | Ánh xạ trạng thái thực hỗ trợ và bản ghi bàn giao; không bịa tự động vận chuyển |
-| FR-08 / FLOW-08 | Xác nhận sau chốt; trùng sự kiện/email gián đoạn; khôi phục/thử lại | Unit provider giả + tích hợp + hộp thư thử | Bản ghi giao/chống trùng, lượt giới hạn, đơn không đổi |
+| FR-08 / FLOW-08 | Xác nhận sau nhận đơn và cập nhật trạng thái đủ điều kiện; event trùng/cũ/sai thứ tự; kênh gián đoạn và phục hồi | Unit provider giả + tích hợp + kênh thử đã duyệt | Bản ghi theo từng event/version, không trùng/sai mốc, thử lại hữu hạn, trang đơn và trạng thái nguồn không đổi; mốc/kênh cần chốt |
 | FR-09 / FLOW-09 | Nhân viên sửa sản phẩm/tồn/đơn; Admin cấp truy cập, xem báo cáo đơn/tồn | Kiểm tra Admin + thử phân quyền API | Chính sách vai trò chứng minh được, tổng báo cáo đối soát mẫu |
 | REC-01 | Gợi ý tương tự/nổi bật loại không thấy/không khả dụng; không dùng dữ liệu cá nhân hóa nếu chưa đồng ý theo dõi | Unit/HTTP + Playwright + đánh giá ngoại tuyến | Phiên bản ứng viên, dữ liệu có quyền, chất lượng và dự phòng |
 

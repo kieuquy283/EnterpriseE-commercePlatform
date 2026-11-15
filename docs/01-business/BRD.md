@@ -83,7 +83,7 @@ Tất cả dòng dưới đây có trạng thái **Draft / PROJECT-PROPOSED**. C
 | BREQ-ORD-001 | ngăn đơn ngoài ý muốn khi một ý định mua được gửi lại | BP-02 → OBJ-02 | Trưởng nhóm sản phẩm / MUST | Gửi lại cho cùng kết quả đã biết hoặc từ chối an toàn; SRC-P-001 |
 | BREQ-PAY-001 | phân biệt nhận đơn, trạng thái thanh toán và việc thực thu tiền | BP-02 → OBJ-02 | Chủ thương mại / MUST | Mô phỏng lỗi và COD không bị tính nhầm là đã thu tiền; SRC-C-001 |
 | BREQ-TRACK-001 | cho khách được phép xem tiến độ đơn có ý nghĩa | BP-02 → OBJ-01 | Vận hành / MUST | Khách xem được trạng thái đơn của mình; SRC-C-001 |
-| BREQ-NOT-001 | thông báo đơn đã nhận mà lỗi gửi không làm mất hiệu lực đơn | BP-03 → OBJ-04 | Vận hành / MUST | Đơn hợp lệ còn nguyên khi thông báo thất bại; SRC-C-001 |
+| BREQ-NOT-001 | thông báo cho khách khi đơn được nhận và khi có mốc trạng thái đơn/giao được phép công bố, mà lỗi gửi không làm đổi trạng thái nghiệp vụ | BP-03 → OBJ-04 | Vận hành / MUST | Mỗi sự kiện đủ điều kiện có kết quả gửi hoặc việc cần xử lý; đơn và trạng thái vẫn có thể tra cứu khi gửi lỗi; SRC-C-001 |
 | BREQ-OPS-001 | cho nhân viên có quyền quản lý danh mục, đơn và xem báo cáo tối thiểu | BP-04 → OBJ-07 | Quản trị viên / MUST | Làm được thao tác quản trị và báo cáo cơ bản; SRC-C-001 |
 | BREQ-SEC-001 | giới hạn thông tin khách/giao dịch theo vai trò được phép | BP-02 → OBJ-01 | Quản trị viên / MUST | Người không có quyền không đọc được đơn người khác; SRC-P-003 |
 | BREQ-REL-001 | phát hiện, xử lý và phục hồi gián đoạn bán hàng hoặc thay đổi có kiểm soát | BP-04,05 → OBJ-07,08 | Trưởng nhóm dự án / MUST | Có bằng chứng sự cố và phục hồi để rà soát; SRC-C-002 |
@@ -103,7 +103,7 @@ Tất cả dòng dưới đây có trạng thái **Draft / PROJECT-PROPOSED**. C
 | Số đơn ngoài ý muốn cho cùng ý định mua | Chưa có | Đề xuất bằng 0 trong tình huống kiểm soát; QA định nghĩa ý định và đo |
 | Số lần bán vượt: lượng đã cam kết lớn hơn nguồn hợp lệ | Chưa có | Đề xuất bằng 0 trong tình huống kiểm soát; vận hành và QA |
 | Đọc đúng trạng thái đơn: lượt xem có quyền hiển thị trạng thái đã thống nhất | Chưa có | Mục tiêu chưa chốt; vận hành |
-| Theo dõi thông báo: đơn đã nhận có kết quả gửi hoặc việc cần xử lý | Chưa có | Mục tiêu chưa chốt; vận hành |
+| Theo dõi thông báo: sự kiện đơn/mốc trạng thái đủ điều kiện có kết quả gửi hoặc việc cần xử lý | Chưa có | Mục tiêu và độ trễ chưa chốt; vận hành |
 | Khả năng xem và đặt hàng ở đỉnh tải | Chưa có | Chốt chỉ tiêu định lượng ở giai đoạn tải/NFR; QA |
 | Thời gian phát hiện và phục hồi sự cố | Chưa có | Chốt chỉ tiêu ở NFR/vận hành; trưởng nhóm dự án |
 
@@ -119,7 +119,7 @@ ASM-001/002 xác định doanh nghiệp giả định; ASM-003 ngăn suy diễn 
 |---|---|---|---|---|---|
 | BP-01 | OBJ-01,03 | BREQ-CAT-001, BREQ-PRICE-001, BREQ-INV-001 | CAP-CAT-001, CAP-PRICE-001, CAP-INV-001 | PROC-CAT-001, PROC-INV-001 | RULE-CAT-001, RULE-PRICE-001, RULE-INV-001 |
 | BP-02 | OBJ-01,02,03 | BREQ-CART-001, BREQ-SALES-001, BREQ-ORD-001, BREQ-PAY-001 | CAP-CART-001, CAP-ORD-001, CAP-PAY-001 | PROC-CART-001, PROC-ORD-001, PROC-PAY-001 | RULE-ORD-001, RULE-PAY-001 |
-| BP-03 | OBJ-04 | BREQ-NOT-001 | CAP-NOT-001 | PROC-NOT-001 | RULE-NOT-001 |
+| BP-03 | OBJ-04 | BREQ-NOT-001 | CAP-NOT-001 | PROC-NOT-001 | RULE-NOT-001/002 |
 | BP-04 | OBJ-07,08 | BREQ-OPS-001, BREQ-REL-001 | CAP-ADMIN-001, CAP-REPORT-001 | PROC-REPORT-001 | RULE-REPORT-001; chỉ tiêu vận hành sẽ chốt sau |
 | BP-05 | OBJ-07,08 | BREQ-REL-001 | CAP-ADMIN-001 | PROC-REPORT-001 | Chính sách vận hành sẽ chốt sau |
 | BP-06 | OBJ-05,06 | BREQ-DISC-001, BREQ-CAP-001 | CAP-DISC-001, CAP-CART-001 | PROC-SALES-001, PROC-ORD-001 | Ngưỡng tải sẽ chốt sau |

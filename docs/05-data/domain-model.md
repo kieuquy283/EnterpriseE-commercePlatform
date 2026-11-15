@@ -22,7 +22,7 @@ source_baseline: BRD-01, SRS-01, WL-01 Draft; Topics trang 4–5; Presentation 2
 | Tồn hiện có / đã cam kết / có thể bán | Lượng thực tế / lượng dành cho đơn / lượng còn có thể nhận; chính sách giữ/trả hàng chờ OPEN-STOCK-001. |
 | Cart / CheckoutAttempt / Order | Lựa chọn còn sửa được / một ý định hoàn tất có thể được gửi lại / kết quả mua đã được nhận. Một lần gửi lại không tạo một ý định mới. |
 | PaymentAttempt / PaymentState | Kết quả của một thử thanh toán; nhận COD hoặc đơn không tự chứng minh đã thu tiền. |
-| Fulfillment / NotificationIntent | Tiến độ xử lý giao / việc liên lạc phát sinh sau đơn; lỗi liên lạc không vô hiệu đơn. |
+| Fulfillment / NotificationIntent | Tiến độ xử lý giao / việc liên lạc cho xác nhận đơn hoặc mốc đơn/giao được phép công bố; lỗi liên lạc không đổi trạng thái nguồn. |
 
 Các miền logic: **Identity** giữ khách và quyền; **Catalog** giữ sản phẩm, biến thể và metadata ảnh; **Pricing** giữ giá đang áp dụng; **Cart/Checkout** giữ lựa chọn và định danh ý định; **Ordering** giữ kết quả đơn và snapshot; **Payment** giữ trạng thái tiền; **Inventory** giữ số có thể bán; **Fulfillment** giữ tiến độ; **Notification** giữ việc gửi; **Reporting** chỉ đọc dữ kiện theo quyền. Đổi/trả, loyalty, recommendation là mở rộng tùy chọn. [BREQ-CAT-001, BREQ-ORD-001, BREQ-SEC-001]
 
@@ -75,6 +75,7 @@ erDiagram
 | INV-PAY-001 | Trạng thái đã thu chỉ sau bằng chứng thu tương ứng; COD không tự là đã thu; RULE-PAY-001/002 | AT-02,14 |
 | INV-ACCESS-001 | Khách A không đọc/sửa đơn hoặc PII B; RULE-ACCESS-001 | AT-04 |
 | INV-NOT-001 | Thất bại thông báo không vô hiệu đơn đã nhận; RULE-NOT-001 | AT-05 |
+| INV-NOT-002 | Chỉ xác nhận đơn đã nhận và chuyển trạng thái đơn/giao hợp lệ được phép công bố mới tạo thông báo; một sự kiện nguồn chỉ có tối đa một ý định thông báo logic cho cùng kênh/mẫu | AT-05 |
 
 Trạng thái **đề xuất** cho đơn: `đang chuẩn bị → chờ quyết định → được nhận → đang xử lý → đã hoàn tất`, với nhánh `bị từ chối` trước nhận và `đã hủy` sau nhận nếu chính sách cho phép. Trạng thái thanh toán riêng: `chưa có kết quả / chờ / thất bại / đã chấp nhận nhưng chưa thu / đã thu`; hoàn tiền chỉ khi có chính sách và bằng chứng. Tồn chuyển qua `khả dụng → cam kết cho đơn → hoàn tất hoặc trả lại`; thao tác chuyển phải kiểm quyền và nguồn hàng. Fulfillment `chưa xử lý → đang xử lý → hoàn tất`, không được nhảy bước chưa được phép. Đây là từ vựng thiết kế, **không xác nhận** bộ trạng thái cuối; OPEN-FUL-001, OPEN-STOCK-001, OPEN-USR-003.
 
@@ -84,7 +85,7 @@ Trạng thái **đề xuất** cho đơn: `đang chuẩn bị → chờ quyết 
 | Order được nhận → đang xử lý | Staff có quyền và trạng thái trước hợp lệ | Lưu người/giờ/hành động; sai quyền/bước thì giữ trạng thái cũ |
 | Payment chờ → thất bại/đã thu | Kết quả đáng tin theo phương án đã chọn | Không suy từ việc tạo đơn; callback lặp không nhân tác dụng |
 | Stock cam kết → trả khả dụng | Hủy/không giao theo chính sách đã chốt | Chưa tự động trả khi policy OPEN; đối chiếu lại đơn và nguồn |
-| Order được nhận → NotificationIntent | Có liên lạc hợp lệ | Tạo việc gửi; lỗi nhà cung cấp không quay ngược Order |
+| Order được nhận hoặc trạng thái đơn/giao đủ điều kiện → NotificationIntent | Có liên hệ hợp lệ và chuyển trạng thái được phép công bố | Tạo việc gửi gắn với sự kiện nguồn; sự kiện lặp/cũ không gửi trùng/sai mốc; lỗi provider không quay ngược Order/Fulfillment |
 
 Các sự kiện nghiệp vụ khả dĩ: `OrderAccepted`, `PaymentOutcomeRecorded`, `OrderStatusChanged`, `NotificationOutcomeRecorded`; tên và payload cần chốt ở [thiết kế tích hợp](../06-architecture/integration-design.md). Command “nhận đơn” và sự kiện “đã nhận” khác nhau. Không giả định atomic xuyên nhà cung cấp thanh toán/thông báo.
 

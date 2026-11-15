@@ -32,7 +32,7 @@ source_baseline: BRD-01, ACT-GOAL-01, SRS-01, QAS-01, WL-01, DOM-01 đều Draft
 | DRV-02 / cao | Biến thể/SKU và tồn đúng; RULE-CAT-001, RULE-INV-001, INV-INV-001 | SKU cuối chỉ một cam kết hợp lệ; AT-15 |
 | DRV-03 / cao | Gửi lại checkout/payment an toàn; FR-PAY-03, QAS-REL-001 | Cùng intent không sinh đơn/thu tiền thứ hai; AT-03 |
 | DRV-04 / cao | Xem nhiều, peak khuyến mại; Topics trang 5, WL-CAT/SEARCH/MEDIA-001 | Read/search/cache/media có độ tươi rõ; load test AT-07, chưa có số đo |
-| DRV-05 / cao | Thông báo nền; BREQ-NOT-001, INV-NOT-001 | Provider lỗi không hủy đơn; AT-05 |
+| DRV-05 / cao | Xác nhận đơn và thông báo nền cho mốc trạng thái đủ điều kiện; BREQ-NOT-001, INV-NOT-001/002 | Provider lỗi không đổi đơn/trạng thái; event trùng/cũ không gửi trùng/sai mốc; AT-05 |
 | DRV-06 / cao | Khách A không đọc đơn B; RULE-ACCESS-001, QAS-SEC-001 | Quyền theo tài nguyên tại application boundary; AT-04 |
 | DRV-07 / cao | Dependency lỗi/timeout; QAS-REL-003/005 | Không báo thành công giả; tra kết quả và đối soát; AT-02/06 |
 | DRV-08 / cao | Quan sát và phục hồi; QAS-OBS-001, QAS-DR-001 | Có correlation, backlog, RPO/RTO đề xuất; AT-08/20 sau này |
@@ -212,28 +212,30 @@ sequenceDiagram
 | Payment thất bại / Payment | Không báo đã thu/đơn thành công; giỏ/giữ hàng theo policy OPEN-STOCK-001; AT-02/14 |
 | Gửi lặp/double-click / Checkout | Cùng intent và nội dung trả cùng kết quả, khác nội dung từ chối; không thêm đơn/thu tiền; AT-03 |
 | Client timeout sau commit / Checkout, Order | `pending` hoặc tra IF-CHK-002, không suy thất bại rồi gửi ý định mới; AT-03 |
-| Notification lỗi sau nhận / Notification | Khách vẫn tra được đơn; việc gửi lỗi có thể xử lý, không đảo kết quả; AT-05 |
+| Notification lỗi sau nhận/cập nhật trạng thái / Notification | Khách vẫn tra được trạng thái nguồn; việc gửi lỗi có thể xử lý, không đảo đơn/trạng thái; AT-05 |
 
 Hai khách độc lập cùng mua SKU cuối là tranh chấp giữa **hai intent khác nhau**; không thể giải bằng dedupe cùng intent. Nếu Inventory/Order không sẵn sàng, không xác nhận đơn giả; nếu external payment chưa rõ thì phải đối soát, không tuyên bố atomic xuyên đối tác. Thời điểm cam kết/hoàn hàng là quyết định nghiệp vụ chưa được duyệt, nên sơ đồ không chứng minh giao dịch đã nhất quán trong triển khai.
 
 ### HLD-06 — Thông báo bất đồng bộ: event khác work item
 
-**Mục đích/ranh giới:** Kết quả đơn bền tạo nhu cầu liên lạc, công việc gửi và kết quả gửi riêng. **Nguồn:** BREQ-NOT-001, RULE-NOT-001, FR-NOT-01..03, INV-NOT-001, EVT-ORD-001/WORK-NOT-001 trong [Integration Design](integration-design.md). **Open:** kênh, retry cap, lag và cơ chế bảo đảm event không mất (`OPEN-USR-009`, `OPEN-ARCH-002`). **Không thể hiện:** broker/queue cụ thể, exactly-once hoặc cam kết email đã tới. **Reviewer:** vận hành và QA, chưa thực hiện.
+**Mục đích/ranh giới:** Đơn đã nhận và mốc trạng thái đơn/giao đủ điều kiện tạo nhu cầu liên lạc, công việc gửi và kết quả gửi riêng. **Nguồn:** BREQ-NOT-001, RULE-NOT-001/002, FR-NOT-01..03, INV-NOT-001/002, EVT-ORD-001/EVT-FUL-001/WORK-NOT-001 trong [Integration Design](integration-design.md). **Open:** danh sách mốc, kênh, retry cap, lag và cơ chế bảo đảm event không mất (`OPEN-USR-006/009`, `OPEN-ARCH-002`). **Không thể hiện:** broker/queue cụ thể, exactly-once hoặc cam kết thông báo đã tới khách. **Reviewer:** vận hành và QA, chưa thực hiện.
 
 ```mermaid
 flowchart LR
   CMD[CompleteCheckout command] -->|requested action| ORD[Order Ownership]
   ORD -->|accepted outcome recorded| STATE[(Order state)]
   ORD -.->|EVT-ORD-001 business event candidate| EVENT[Delivery Intent Boundary]
+  FUL[Fulfillment Ownership] -.->|eligible EVT-FUL-001 status event| EVENT
   EVENT -.->|WORK-NOT-001 async work item| NOT[Notification Processing]
   NOT -->|delivery attempt, minimal contact| EXT[Communication Boundary]
   EXT -->|delivery outcome or timeout| NOT
   NOT -->|write attempts and failure status| STATUS[(Notification status)]
   STATUS -->|authorized query| OPS[Operations Review]
   STATE -->|order status remains authoritative| CUSTOMER[Customer Order Query]
+  FUL -->|fulfillment status remains authoritative| CUSTOMER
 ```
 
-`CMD-CHK-001` là yêu cầu làm; `EVT-ORD-001` chỉ được phát khi đơn đã được nhận; `WORK-NOT-001` là việc gửi. Mũi tên đứt thể hiện tách thời gian, **không** chứng minh event/work đã bền. Cần nhận diện `eventId/jobId`, dedupe khi lặp, retry hữu hạn, backoff, trạng thái thất bại cần xử lý và đối soát khi event bị mất; chi tiết thuộc [thiết kế tích hợp](integration-design.md). Hình không cho Notification ghi lại Order. AT-05 kiểm provider lỗi rồi hồi và đơn vẫn nguyên.
+`CMD-CHK-001` là yêu cầu làm; `EVT-ORD-001` chỉ được phát khi đơn đã được nhận; `EVT-FUL-001` chỉ sinh sau chuyển trạng thái hợp lệ và chỉ trạng thái được duyệt mới tạo thông báo; `WORK-NOT-001` là việc gửi. Mũi tên đứt thể hiện tách thời gian, **không** chứng minh event/work đã bền. Cần nhận diện `eventId/jobId` và phiên bản trạng thái, dedupe khi lặp, bỏ sự kiện cũ, retry hữu hạn, backoff, trạng thái thất bại cần xử lý và đối soát khi event bị mất; chi tiết thuộc [thiết kế tích hợp](integration-design.md). Hình không cho Notification ghi lại Order/Fulfillment. AT-05 kiểm provider lỗi rồi hồi mà nguồn trạng thái vẫn nguyên.
 
 ### HLD-07 — Đọc catalog, tìm kiếm, cache và media
 
@@ -325,7 +327,7 @@ Các nhánh `fallback` là **ứng viên cần policy**, không mặc nhiên ho�
 | Catalog/giá/media | IF-CAT-001/002, IF-PRICE-001, IF-MEDIA-001; đọc từ Catalog/Pricing/Media | Product/Variant/Price có chủ; cache/search không được ghi giá chuẩn |
 | Giỏ/checkout/đơn | IF-CART-001, IF-CHK-001/002, IF-ORD-001; intent → kết quả đơn có thể đọc lại | ENT-CART/CHECKOUT-ATTEMPT/ORDER; INV-ORD/PRICE-001 |
 | Tiền/tồn | IF-PAY-001, IF-INV-001; quyết định ở Payment/Inventory | ENT-PAYMENT-ATTEMPT/STOCK-POSITION; INV-PAY/INV-001 |
-| Xử lý/thông báo/quản trị | IF-FUL-001, IF-NOT-001, IF-ADMIN-001, IF-REPORT-001; thao tác có quyền và việc nền | ENT-FULFILLMENT/NOTIFICATION-INTENT/REPORT-SNAPSHOT |
+| Xử lý/thông báo/quản trị | IF-FUL-001, IF-NOT-001, IF-ADMIN-001, IF-REPORT-001; chuyển trạng thái được phép tạo việc nền | ENT-FULFILLMENT/NOTIFICATION-INTENT/REPORT-SNAPSHOT |
 
 Định nghĩa đầy đủ input/output/error/idempotency/version và contract test chỉ tại [api-and-interface-contracts.md](api-and-interface-contracts.md). Chủ/reader/writer, PII, độ tươi và giữ dữ liệu chỉ tại [data-ownership-and-consistency.md](../05-data/data-ownership-and-consistency.md). Không có đường ghi chéo vào trạng thái của owner khác được cho phép bởi hình. `EVT-ORD-001` và `WORK-NOT-001` chỉ là hợp đồng logic đề xuất, chưa là bảo đảm phát bền.
 
@@ -350,7 +352,7 @@ Các nhánh `fallback` là **ứng viên cần policy**, không mặc nhiên ho�
 | P1-UC05 thanh toán; BREQ-PAY-001, FR-PAY-01..05 | CMP-PAY-001; HLD-05/08/10 | IF-PAY-001; AT-02/14 |
 | P1-UC06 tồn kho; BREQ-INV-001, FR-INV-01..03 | CMP-INV-001; HLD-03/04/05 | IF-INV-001; AT-15/16 |
 | P1-UC07 theo dõi đơn; BREQ-TRACK-001, FR-ORD-01..03 | CMP-ORD/FUL-001; HLD-03/04/09 | IF-ORD/FUL-001; AT-04/17 |
-| P1-UC08 thông báo; BREQ-NOT-001, FR-NOT-01..03 | CMP-NOT-001; HLD-06/08/10 | IF-NOT-001, EVT-ORD-001; AT-05 |
+| P1-UC08 thông báo; BREQ-NOT-001, FR-NOT-01..03 | CMP-NOT-001; HLD-06/08/10 | IF-NOT-001, EVT-ORD-001/EVT-FUL-001; AT-05 |
 | P1-UC09 quản trị/báo cáo; BREQ-OPS-001, FR-ADM-01/02 | CMP-ADMIN/REPORT-001; HLD-01/02/03/09 | IF-ADMIN/REPORT-001; AT-10/18 |
 
 NFR-PERF-01/02 và WL-CAT/CHK-001 ràng buộc HLD-05/07; NFR-REL-01..05 HLD-04/05/06/10; NFR-SEC-01..05 HLD-01/08/09; NFR-OBS-01..03 HLD-10; NFR-COST-01/QAS-MOD-001 HLD-02/03/11. Các số 30 RPS/3 RPS, p95, RPO/RTO và 99,5% ở QAS vẫn là **mục tiêu đề xuất**, không được tô thành kết quả trong hình.
@@ -392,7 +394,7 @@ AI/recommendation (HLD-12) **không vẽ** vì chưa có BREQ và evaluation pla
 | OPEN-USR-003/004 quyền Staff/Admin/PII | Bảng tác vụ được giao và audit, có người duyệt | Vận hành + bảo mật; trước baseline HLD |
 | OPEN-STOCK-001, OPEN-RETRY-001, OPEN-PRICE-001 | Thứ tự cam kết/thu tiền, bù trừ, khóa intent, giá đổi | Chủ nghiệp vụ + dữ liệu + QA; trước duyệt HLD-05 |
 | OPEN-FUL-001, OPEN-REPORT-001 | Bộ trạng thái và chỉ số báo cáo | Vận hành; trước baseline HLD |
-| OPEN-ARCH-002 / Notification durability | Cách giữ OrderAccepted → work không mất, retry cap, đối soát | Kiến trúc + vận hành; trước duyệt HLD-06 |
+| OPEN-ARCH-002 / Notification durability | Cách giữ OrderAccepted/OrderStatusChanged đủ điều kiện → work không mất, retry cap, dedupe event-version và đối soát | Kiến trúc + vận hành; trước duyệt HLD-06 |
 | OPEN-DATA-006 / cache-search freshness | Độ trễ, invalidation và fallback cho read | Chủ sản phẩm + QA; trước duyệt HLD-07/10 |
 | OPEN-USR-007/009, OPEN-ASSET-001 | Phạm vi simulator/kênh gửi/quyền ảnh | Chủ sản phẩm + pháp lý/tài sản; trước tích hợp thật |
 | OPEN-WL-001..005, ngân sách và SLO | Analytics/dataset/run thật và chủ chỉ tiêu | Chủ nghiệp vụ + QA + vận hành; trước Capacity/Technology Evaluation |

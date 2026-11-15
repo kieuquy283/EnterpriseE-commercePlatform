@@ -67,7 +67,7 @@ Khách chưa đăng nhập có thể xem đề nghị bán công khai; quyền g
 | Cách thanh toán | Chọn COD hoặc mô phỏng phù hợp phạm vi | Hiểu COD chưa phải đã thu; mô phỏng không chuyển tiền thật | OPEN-USR-007; không nhận tiền thật |
 | Xác nhận ý định | Đối chiếu biến thể, số lượng, giá và điều kiện rồi xác nhận | Doanh nghiệp kiểm lại điều kiện bán và kết quả thanh toán cần thiết; khách không phải đoán đơn đã tồn tại | Hết hàng, giá đổi, gửi lặp, timeout |
 | Kết quả | Nhận kết quả rõ ràng hoặc cách xác minh tình trạng chưa rõ | Nếu đã nhận, có mã đơn; nếu thất bại, không báo thành công; nếu chưa rõ, có đường kiểm tra trước khi thử lại | RULE-ORD-001, RULE-ORD-002 |
-| Sau kết quả | Chuyển sang theo dõi đơn | Đơn đã nhận được bàn giao cho vận hành; thông báo là công việc riêng | Lỗi gửi không hủy đơn; RULE-NOT-001 |
+| Sau kết quả | Chuyển sang theo dõi đơn | Đơn đã nhận được bàn giao cho vận hành; xác nhận/cập nhật trạng thái là công việc riêng và không thay nguồn tra cứu | Lỗi gửi không đổi đơn/trạng thái; RULE-NOT-001/002 |
 
 | Mã | Kích hoạt | Kết quả người dùng cần thấy; liên kết |
 |---|---|---|
@@ -78,7 +78,7 @@ Khách chưa đăng nhập có thể xem đề nghị bán công khai; quyền g
 | EXC-J02-003 | Mô phỏng thanh toán thất bại | Không hiện thành công giả; giải thích thất bại và đường sửa/thử lại hợp lệ; RULE-PAY-001, RULE-ORD-002 |
 | EXC-J02-004 | Liên hệ/địa chỉ sai hoặc thiếu | Chỉ rõ trường cần sửa, giữ thông tin giỏ còn hợp lệ; BREQ-SALES-001 |
 | EXC-J02-005 | Kết nối gián đoạn hoặc phản hồi chưa rõ | Cho cách kiểm tra tình trạng trước khi tạo ý định mới; không suy diễn đã nhận hay thất bại; OPEN-RETRY-001 |
-| EXC-J02-006 | Gửi thông báo thất bại sau đơn hợp lệ | Kết quả đơn không đổi; vẫn có mã/trạng thái để tra; vận hành theo dõi liên lạc lại; RULE-NOT-001 |
+| EXC-J02-006 | Gửi xác nhận hoặc cập nhật trạng thái thất bại | Đơn/trạng thái không đổi; khách vẫn tra được; vận hành theo dõi liên lạc lại; RULE-NOT-001 |
 
 ```mermaid
 flowchart TD
@@ -105,10 +105,10 @@ flowchart TD
 
 | Chặng | Ý định/hành động | Phản hồi và thông tin cần hiểu | Ngoại lệ có thể gặp |
 |---|---|---|---|
-| Sau nhận đơn | Khách lưu mã và xem tóm tắt đơn của mình | Thấy đơn đã nhận, trạng thái đơn và thanh toán được phân biệt | Thông báo chưa tới |
+| Sau nhận đơn | Khách lưu mã và xem tóm tắt đơn của mình | Thấy đơn đã nhận, trạng thái đơn và thanh toán được phân biệt; có xác nhận qua kênh đã được chốt | Thông báo chưa tới; trang tra cứu vẫn là nguồn trạng thái |
 | Tiếp nhận xử lý | Nhân viên tìm đơn thuộc phần việc được giao | Biết đơn nào cần xử lý, điều kiện giao và thông tin tối thiểu cần thiết | Đơn ngoài quyền |
-| Thực hiện | Nhân viên chuẩn bị/bàn giao theo chính sách và cập nhật trạng thái hợp lệ | Khách chỉ thấy mốc được phép công bố; không gọi “đã giao” khi chưa có căn cứ | Chuyển trạng thái sai |
-| Theo dõi tiếp | Khách tự xem lại hoặc nhận thông báo nếu có | Biết trạng thái mới hoặc việc cần liên hệ; thông báo chỉ hỗ trợ | Kênh gửi lỗi/chậm |
+| Thực hiện | Nhân viên chuẩn bị/bàn giao theo chính sách và cập nhật trạng thái hợp lệ | Khách chỉ thấy mốc được phép công bố; không gọi “đã giao” khi chưa có căn cứ; chuyển trạng thái đủ điều kiện tạo thông báo | Chuyển trạng thái sai hoặc chưa có chứng cứ giao |
+| Theo dõi tiếp | Khách tự xem lại hoặc nhận thông báo cho mốc trạng thái đủ điều kiện | Biết trạng thái mới hoặc việc cần liên hệ; trang đơn là nguồn chuẩn, thông báo chỉ hỗ trợ | Kênh gửi lỗi/chậm |
 
 | Mã | Kích hoạt | Xử lý mong đợi |
 |---|---|---|
@@ -116,7 +116,7 @@ flowchart TD
 | EXC-J03-001 | Khách A yêu cầu xem đơn của khách B | Từ chối, không tiết lộ thông tin riêng; PERM-003, RULE-ACCESS-001 |
 | EXC-J03-002 | Nhân viên thao tác ngoài phạm vi được giao | Không cho thực hiện; chuyển yêu cầu tới vai trò có thẩm quyền; OPEN-USR-003 |
 | EXC-J03-003 | Không có sự kiện hợp lệ chứng minh đã giao | Không hiển thị “đã giao” như sự thật; RULE-FUL-001, OPEN-USR-006 |
-| EXC-J03-004 | Thông báo chậm hoặc thất bại | Đơn giữ nguyên; khách dùng cách kiểm tra chính; vận hành biết việc cần theo dõi; RULE-NOT-001 |
+| EXC-J03-004 | Thông báo xác nhận/cập nhật chậm hoặc thất bại | Đơn và trạng thái giữ nguyên; khách dùng cách kiểm tra chính; vận hành biết việc cần theo dõi; RULE-NOT-001 |
 | EXC-J03-005 | Khách hỏi hủy/đổi hàng | Ghi nhận yêu cầu và hướng đến chính sách nếu có; không tự thêm quy trình bắt buộc; OPEN-POLICY-001 |
 
 ```mermaid
@@ -127,7 +127,8 @@ flowchart LR
   V -->|Không| E[Giữ trạng thái và xin xử lý đúng thẩm quyền]
   V -->|Có| U[Cập nhật tiến độ]
   U --> C
-  O --> N[Thông báo hỗ trợ]
+  U -->|Mốc đủ điều kiện công bố| N[Thông báo xác nhận/cập nhật]
+  O -->|Đơn đã nhận| N
   N -->|Gửi lỗi| F[Theo dõi liên lạc lại]
 ```
 
@@ -178,7 +179,7 @@ Mã UC dưới đây là **số thứ tự của đề bài**, không đồng nh
 | 5 Mô phỏng/tích hợp thanh toán | ACT-CUST; bên thanh toán hỗ trợ nếu có | GOAL-CUST-004 → J-02; ALT-J02-002, EXC-J02-003 | BREQ-PAY-001; CAP-PAY-001; RULE-PAY-001/002 | FR-PAY-01..05 |
 | 6 Cập nhật tồn kho | ACT-STAFF/ADMIN theo quyền; hệ thống xử lý cam kết | GOAL-STAFF-003, GOAL-ADMIN-002 → J-04; giao với J-02 | BREQ-INV-001; CAP-INV-001; PROC-INV-001; RULE-INV-001 | FR-INV-01..03 |
 | 7 Theo dõi trạng thái đơn | ACT-CUST, ACT-STAFF | GOAL-CUST-005, GOAL-STAFF-002 → J-03 | BREQ-TRACK-001; CAP-FUL-001; RULE-FUL-001/ACCESS-001 | FR-ORD-01..03 |
-| 8 Thông báo khách | ACT-SYSTEM gửi theo sự kiện; ACT-CUST nhận | GOAL-CUST-005 → J-02 sau nhận, J-03; EXC-J02-006/J03-004 | BREQ-NOT-001; CAP-NOT-001; PROC-NOT-001; RULE-NOT-001 | FR-NOT-01..03 |
+| 8 Thông báo khách | ACT-SYSTEM gửi xác nhận đơn và mốc đơn/giao đủ điều kiện; ACT-CUST nhận | GOAL-CUST-005 → J-02 sau nhận, J-03; EXC-J02-006/J03-004 | BREQ-NOT-001; CAP-NOT-001; PROC-NOT-001; RULE-NOT-001/002 | FR-NOT-01..03 |
 | 9 Quản trị/báo cáo cơ bản | ACT-ADMIN; ACT-STAFF theo quyền | GOAL-ADMIN-001/003, GOAL-STAFF-001 → J-04/J-03 | BREQ-OPS-001; CAP-ADMIN-001/REPORT-001; PROC-REPORT-001 | FR-ADM-01/02 |
 
 Ví dụ truy vết đầy đủ: BP-02 → OBJ-02 → BREQ-ORD-001 → CAP-ORD-001 → PROC-ORD-001 → RULE-ORD-001 → STK-001 → ACT-CUST → GOAL-CUST-004 → J-02/EXC-J02-002 → ứng viên SRS đối chiếu FR-PAY-03. Đây là **đường truy vết tài liệu Draft**, chưa phải kết quả nghiệm thu.
