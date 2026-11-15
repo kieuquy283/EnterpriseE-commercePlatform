@@ -22,17 +22,17 @@ Primary business sources: [scope](../00-project/scope-and-assumptions.md), [BRD]
 
 Recommendation FR-REC-01/02 stays optional/COULD. The existing recommendation engine is available implementation, not proof of evaluation or a core release requirement. Generative shopping chat is not selected. Promotions, exchanges/returns and guest-checkout policy remain open per the primary business specification; observed COD/guest implementation is recorded as current behavior, not automatic business approval.
 
-## Held technical decisions — notify user before adoption
+## Separate technical baseline — review material changes
 
 No competing concrete framework, cloud provider or database was selected upstream. Instead, their phase-07 handoff leaves technology choice open. Do not interpret priority for business documents as authorization to replace or decommission the existing stack.
 
 | Decision | Existing DAYMARK approach: benefits / costs | Upstream approach: benefits / costs | Integration status |
 | --- | --- | --- | --- |
-| Technology selection | Keep Medusa/Next.js/PostgreSQL/Redis: existing code, fixtures and tests; low migration risk. Costs: framework coupling and current database/cache capacity constraints | Reopen technology evaluation, including PostgreSQL vs NoSQL: stronger explicit comparison and independent justification. Costs: evaluation effort and possible rework; no alternative chosen or demonstrated | Hold change of decision status pending user review; existing runtime unchanged |
+| Technology selection | Keep Medusa/Next.js/PostgreSQL/Redis: existing code, fixtures and tests; low migration risk. Costs: framework coupling and current database/cache capacity constraints | Reopen technology evaluation, including PostgreSQL vs NoSQL: stronger explicit comparison and independent justification. Costs: evaluation effort and possible rework; no alternative chosen or demonstrated | Keep existing technical baseline in its separate documentation; evaluation may justify it, but replacement needs user review |
 | Cloud/deployment | Existing Fargate API/worker/storefront, private RDS, Redis EC2, S3 backend proxy: known IaC and separate runtime sizing. Costs: baseline spend, proxy load, Single-AZ/database/Redis limits | Provider-neutral logical HLD, physical deployment chosen later: clearer separation of requirements and implementation. Costs: no concrete replacement, migration plan, price or operational evidence | Logical diagrams incorporated; no AWS/deployment change |
 | Availability measurement | 99.5% external probes during declared demo windows: fits scheduled service and easy independent monitoring. Costs: excludes off-window downtime and samples rather than measures every request | 99.5% successful valid requests over a proposed monthly window: reflects customer outcomes. Costs: needs agreed denominator/instrumentation, maintenance policy and service schedule; greater operating commitment if continuous availability is intended | Both retained as proposals with different meanings; do not claim equivalence or silently replace either |
 
-Current technical mappings remain in [architecture](../spec/03-architecture.md), [testing](../spec/05-testing.md) and [operations](../spec/06-operations.md). User selection is required before changing these held decisions. A future technology evaluation can document the rationale for keeping the existing stack without rewriting it.
+Current technical mappings remain in [architecture](../spec/03-architecture.md), [testing](../spec/05-testing.md) and [operations](../spec/06-operations.md). Following the user direction to keep technical documents separate, the [technical index](../technical/README.md) retains the existing implementation baseline. User review is required before adopting a materially different technical choice; no replacement is implied by the business-first ordering. A future technology evaluation can document the rationale for keeping the existing stack without rewriting it.
 
 ## Historical references
 

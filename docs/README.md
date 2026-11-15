@@ -2,15 +2,12 @@
 
 DAYMARK is a Vietnamese everyday-clothing ecommerce MVP with product suggestions. Business requirements are now governed by the business-first documents listed below, following the team consolidation decision of 15 November 2026. The earlier compact specification remains an implementation mapping and engineering reference. It describes what to build and how to accept it; historical tests remain dated evidence.
 
-## Engineering implementation mapping
+## Two reading paths
 
-1. [Business, users, scope and requirements](spec/01-business.md)
-2. [End-to-end business flows and failure paths](spec/02-flows.md)
-3. [Component architecture, patterns and decisions](spec/03-architecture.md)
-4. [Data ownership and API contracts](spec/04-data-api.md)
-5. [NFRs, workloads, acceptance tests and evaluation](spec/05-testing.md)
-6. [Security, operations, CI/CD, health, recovery and cost](spec/06-operations.md)
-7. [Delivery gates, implementation order and gaps](spec/07-delivery.md)
+- **Business and logical design:** start with the [primary business-first specification](#primary-business-first-specification) below. It owns scope, actors, business rules, requirements, acceptance intent and technology-neutral HLD.
+- **Technical design and implementation:** start at the [technical documentation index](technical/README.md). It owns the current Medusa/Next/AWS mapping, implementation ADRs, API/storage details, engineering tests and operational procedures.
+
+The upstream business specification describes a generic fictional fashion retailer and does not approve DAYMARK branding. DAYMARK is the implementation identity; visual decisions have their own review status. The two layers describe the same product at different levels. Existing technical choices remain documented separately; a technology-neutral business diagram does not reopen them automatically. Any actual stack/AWS change needs a proposal and user review. Unresolved requirement-to-implementation gaps remain visible in the [crosswalk](reference/spec-consolidation.md).
 
 [DAYMARK provisional branding and asset provenance](brand/README.md).
 
@@ -22,7 +19,7 @@ Supporting material: [teacher acceptance brief](reference/teacher-brief.md), [da
 
 - `00-project/` through `05-data/`: primary business scope, actors, requirements, traceability and logical data definitions. Their Draft/Open labels remain; prioritizing these documents does not invent policy approval.
 - `06-architecture/`: primary logical architecture proposal. Its technology-neutral boundaries do not replace the current runtime automatically.
-- `docs/spec/`: existing DAYMARK implementation mapping and engineering targets. Business conflicts defer to the business-first specification. Technical decisions and availability measurement conflicts remain held for explicit review in [consolidation](reference/spec-consolidation.md). Targets are not measured results.
+- `docs/spec/`: existing DAYMARK implementation mapping and engineering targets. Business conflicts defer to the business-first specification. The separate technical baseline remains in place; material changes and availability measurement conflicts require explicit review in [consolidation](reference/spec-consolidation.md). Targets are not measured results.
 - Executable code/templates: actual implementation, which may still have documented gaps from the target design.
 - `docs/report/`, `docs/erd/`, recommendation reports/evidence: historical observations, schema/fixture artifacts or restricted research. Preserve their source revision/date and do not treat them as a second roadmap.
 - `docs/recommendation/`: specialist implementation/research references, subject to the dataset-rights decision and feature gates. Current scope is defined here, not by old phase plans.
@@ -30,14 +27,14 @@ Supporting material: [teacher acceptance brief](reference/teacher-brief.md), [da
 
 Vocabulary: **target** (chosen acceptance requirement), **implemented** (source exists), **verified** (named test, revision/environment/time and result), **missing** (not implemented), **deferred** (outside current gate). Never collapse these into "done".
 
-The old generic project-definition/SRS/week plans and superseded architecture narratives were removed to eliminate competing baselines. See [consolidation record](reference/documentation-reset.md). No commerce records, migrations, test evidence or research datasets are deleted by this reset.
+The old generic project-definition/SRS/week plans and superseded architecture narratives were removed to eliminate competing baselines. See [consolidation record](reference/documentation-reset.md). No commerce records, migrations or research datasets are deleted by this reset. Later upstream evidence removals are recorded in the consolidation crosswalk.
 
 ## Teacher coverage
 
 | Required delivery | Authoritative location |
 | --- | --- |
-| P1 problem, stakeholders, functional requirements | 01-business, 02-flows |
-| P1 numeric NFR/workload/cloud architecture | 03-architecture, 05-testing |
+| P1 problem, stakeholders, functional requirements | 00-project, 01-business, 02-users, 03-requirements |
+| P1 numeric NFR/workload/cloud architecture | 03-requirements, 04-workload, 06-architecture; technical mapping in spec/03 and spec/05 |
 | P2 components, API, ownership, sync/async/integrations | 03-architecture, 04-data-api |
 | P3 threat model, IAM, CI/CD, containers/IaC, rollback | 06-operations and deploy runbooks |
 | P4 load/failures, dashboard, SLI/SLO, capacity/cost | 05-testing, 06-operations |
