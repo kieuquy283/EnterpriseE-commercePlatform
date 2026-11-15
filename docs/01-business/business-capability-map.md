@@ -44,7 +44,7 @@ Tất cả ở trạng thái Draft. Đầu vào/đầu ra là thông tin nghiệ
 | CAP-DISC-001 / Bán hàng | Giúp khách tìm đề nghị bán phù hợp; ý định tìm → sản phẩm liên quan | Trưởng nhóm sản phẩm | BREQ-DISC-001, BREQ-CAP-001 | Cốt lõi / tìm hàng |
 | CAP-CART-001 / Bán hàng | Giữ lựa chọn mua còn chỉnh được; biến thể/số lượng → giỏ | Trưởng nhóm sản phẩm | BREQ-CART-001, BREQ-CAP-001 | Cốt lõi / chuẩn bị mua |
 | CAP-ORD-001 / Bán hàng | Quyết định và quản lý kết quả đơn; ý định đặt → đơn/mã hoặc từ chối | Vận hành | BREQ-SALES-001, BREQ-ORD-001, BREQ-TRACK-001 | Cốt lõi / giao dịch đáng tin |
-| CAP-NOT-001 / Bán hàng | Thông báo sự kiện đơn quan trọng và theo dõi lỗi gửi; đơn đã nhận → kết quả liên lạc | Vận hành | BREQ-NOT-001 | Cốt lõi / khách nắm tình hình |
+| CAP-NOT-001 / Bán hàng | Thông báo khi đơn được nhận và khi có mốc trạng thái đơn/giao được phép công bố; theo dõi lỗi gửi | Vận hành | BREQ-NOT-001 | Cốt lõi / khách nắm tình hình |
 | CAP-PRICE-001 / Thương mại | Quản lý giá cam kết; điều kiện giá → số tiền được chấp thuận | Chủ thương mại | BREQ-PRICE-001 | Cốt lõi / cam kết đúng |
 | CAP-PAY-001 / Thương mại | Ghi lựa chọn và kết quả thu tiền riêng với đơn; lựa chọn/kết quả → trạng thái thanh toán | Chủ thương mại | BREQ-PAY-001 | Cốt lõi / minh bạch tiền |
 | CAP-INV-001 / Cung ứng | Kiểm soát số có thể bán theo biến thể; hàng và cam kết → khả năng cung ứng | Vận hành | BREQ-INV-001 | Cốt lõi / không bán vượt |

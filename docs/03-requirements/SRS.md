@@ -50,9 +50,9 @@ Mỗi dòng có đủ **actor · hành động · đầu vào · đầu ra · qu
 | FR-ORD-01 M | Khách xem danh sách/chi tiết đơn | Danh tính, mã đơn → chỉ đơn của mình hoặc từ chối | RULE-ACCESS-001 | AT-04, AT-17 |
 | FR-ORD-02 M | Khách xem tiến độ | Mã đơn sở hữu → trạng thái hiện tại có nghĩa | Không hiển thị giao/thu tiền chưa xảy ra; RULE-FUL-001 | AT-17 |
 | FR-ORD-03 M | Staff xử lý đơn được giao | Đơn, chuyển trạng thái → kết quả hợp lệ/từ chối | Không nhảy trạng thái hoặc vượt quyền; OPEN-FUL-001, OPEN-USR-003 | AT-10, AT-16 |
-| FR-NOT-01 M | Hệ thống nhận đơn hợp lệ | Đơn đã nhận → việc thông báo có thể theo dõi | Lỗi liên lạc không hủy đơn; RULE-NOT-001 | AT-05 |
-| FR-NOT-02 M | Staff/hệ thống xử lý lỗi gửi | Việc lỗi/lặp → thử lại có giới hạn, trạng thái theo dõi | Không tạo thông báo trùng ngoài quy tắc; RULE-NOT-001 | AT-05 |
-| FR-NOT-03 M | Khách nhận thông tin đơn | Đơn được nhận, kênh đã chốt → thông báo đúng đơn hoặc lỗi gửi có thể xử lý | Kênh email/SMS còn OPEN-USR-009 | AT-05 |
+| FR-NOT-01 M | Hệ thống xử lý đơn được nhận hoặc chuyển trạng thái đơn/giao đủ điều kiện | Sự kiện nghiệp vụ hợp lệ → việc thông báo riêng có thể theo dõi | Thông báo không chặn/đổi kết quả đơn hoặc trạng thái; chỉ mốc được phép công bố theo RULE-NOT-002 | AT-05 |
+| FR-NOT-02 M | Staff/hệ thống xử lý lỗi gửi hoặc sự kiện lặp | Việc gửi lỗi/lặp → thử lại có giới hạn và trạng thái theo dõi | Một sự kiện logic không tạo thông báo trùng; lỗi cuối có việc cần xử lý; RULE-NOT-001/002 | AT-05 |
+| FR-NOT-03 M | Khách nhận xác nhận/cập nhật đơn | Đơn đã nhận hoặc mốc trạng thái đủ điều kiện, liên hệ hợp lệ → thông báo tương ứng hoặc lỗi gửi có thể xử lý | Nội dung khớp sự kiện và đúng đơn; không khẳng định đã gửi tới khách nếu thiếu bằng chứng; kênh còn OPEN-USR-009, danh sách mốc còn OPEN-USR-006 | AT-05 |
 | FR-ADM-01 M | Admin quản lý chào bán/tồn/đơn | Hành động có quyền → thay đổi hoặc từ chối | RULE-CAT-001, RULE-INV-001, RULE-ACCESS-001 | AT-10, AT-18 |
 | FR-ADM-02 M | Admin xem báo cáo cơ bản | Khoảng thời gian → số đơn theo trạng thái và ngoại lệ | Không nhập nhằng đặt/thu/giao; chỉ số chờ OPEN-REPORT-001 | AT-18 |
 

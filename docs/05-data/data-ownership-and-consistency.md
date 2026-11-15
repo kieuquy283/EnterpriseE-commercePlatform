@@ -22,7 +22,7 @@ Chủ ở bảng này là **miền logic**, không là cơ sở dữ liệu hay 
 | PaymentAttempt | Payment; adapter kết quả có kiểm chứng | Checkout/Order, Staff được giao trạng thái | Nhạy cảm; không báo đã thu giả; không lưu thẻ |
 | StockPosition | Inventory; điều phối cam kết hoặc Staff được phép điều chỉnh | Catalog (hiển thị), Checkout, Staff | Nội bộ; bất biến SKU tại thời điểm nhận đơn, không chấp nhận stale availability để cam kết |
 | Fulfillment | Fulfillment; Staff có quyền chuyển bước | Khách chỉ đơn mình; Reporting | Nhạy cảm; bước trạng thái có guard; OPEN-FUL-001 |
-| NotificationIntent | Notification; bộ xử lý gửi và kết quả | Staff được giao, khách chỉ kết quả cần thiết | Nhạy cảm; gửi có thể trễ, lỗi không đổi Order; retention TBD |
+| NotificationIntent | Notification; việc gửi/kết quả cho OrderAccepted hoặc mốc OrderStatusChanged/Fulfillment được phép công bố | Staff được giao; khách chỉ nhận nội dung tối thiểu tương ứng sự kiện | Nhạy cảm; gửi có thể trễ, lỗi không đổi Order/Fulfillment; event identity/version chống trùng và sai thứ tự; retention TBD |
 | ReportSnapshot | Reporting; xây từ nguồn có thẩm quyền | Admin/Staff theo quyền | Nội bộ; cho phép trễ có gắn thời điểm tạo, chính sách độ trễ TBD |
 
 ## 1. Pattern truy cập, độ tươi và tài nguyên
@@ -34,7 +34,7 @@ Chủ ở bảng này là **miền logic**, không là cơ sở dữ liệu hay 
 | Giỏ, WL-CART | Cart có trạng thái riêng; giá/tồn chỉ là dự kiến | Khi đổi giá/hết hàng, yêu cầu khách xử lý trước nhận đơn |
 | Nhận đơn, WL-CHK/INV/PAY | Ordering quyết định kết quả, Inventory quyết định khả năng cam kết, Payment quyết định trạng thái tiền | Không xác nhận giả khi một quyết định thiết yếu chưa rõ; đọc lại theo intent |
 | Theo dõi đơn, WL-ADMIN | Order/Fulfillment là chuẩn; khách chỉ đơn mình | Nếu bản đọc chậm, hiển thị thời điểm cập nhật; không bịa trạng thái giao |
-| Thông báo, WL-NOT | Order đã nhận tạo nhu cầu; Notification giữ kết quả gửi | Chậm được nếu có ngưỡng được duyệt; mất/lặp phải đối soát và thử lại an toàn |
+| Thông báo, WL-NOT | OrderAccepted hoặc chuyển trạng thái đơn/giao đủ điều kiện tạo nhu cầu; Notification giữ kết quả gửi riêng | Chậm được nếu có ngưỡng được duyệt; trang đơn là nguồn chuẩn; mất/lặp/trễ/sai thứ tự phải đối soát và thử lại an toàn theo event identity |
 | Báo cáo/nhập hàng, WL-ADMIN/IMPORT | Reporting có thể dùng bản tổng hợp; Catalog nhập qua kiểm tra hợp lệ | Chưa chốt độ trễ báo cáo; nhập hàng không được phá SKU/giá đang bán |
 
 Không ấn định TTL, index, engine search hoặc cache; trigger vô hiệu hóa gồm công bố/ngừng bán/đổi giá/đổi tồn, còn thời gian chấp nhận trễ `OPEN-DATA-006`. Ảnh cần chính sách loại/kích thước, quyền upload, bản gốc/bản dẫn xuất, tham chiếu mồ côi, xóa an toàn, egress; quyền sử dụng tài sản `OPEN-ASSET-001`. Một datastore vật lý có thể chứa nhiều miền nhưng vẫn phải giữ hợp đồng ghi một chủ.

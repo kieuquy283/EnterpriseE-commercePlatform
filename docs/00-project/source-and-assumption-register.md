@@ -74,10 +74,10 @@ Tất cả mục dưới đây được mở ngày **2026-11-15**, trạng thái
 | OPEN-USR-003 | Staff được hủy/đổi đơn, chỉnh tồn kho và trạng thái đến đâu? Ảnh hưởng PERM-004, J-03/04 | Chủ vận hành: chỉ báo cáo, thao tác được giao, hoặc xin cấp quyền có điều kiện | OPEN-FUL-001, OPEN-STOCK-001; lập bảng quyền được rà |
 | OPEN-USR-004 | Admin quản lý quyền nhân viên hoặc xuất dữ liệu riêng của khách không? | Chủ chính sách + người rà bảo mật: giới hạn theo nhiệm vụ hoặc cho phép có điều kiện | OPEN-REVIEW-001; xác định mục đích và phạm vi dữ liệu |
 | OPEN-USR-005 | Đổi size, hủy/hoàn tiền và hỗ trợ khách có thuộc MVP không? | Chủ sản phẩm: OUT, tùy chọn hoặc phạm vi tối thiểu | OPEN-POLICY-001; không lấy thời hạn SOMEHOW làm mặc định |
-| OPEN-USR-006 | Trạng thái đơn nào được cho khách thấy, chứng cứ để gọi “đã giao”? | Chủ vận hành: bộ trạng thái tối thiểu và quy tắc công bố | OPEN-FUL-001; rà RULE-FUL-001 trước SRS |
+| OPEN-USR-006 | Trạng thái đơn/giao nào được cho khách thấy và tạo thông báo; chứng cứ nào cho phép gọi “đã giao”? | Chủ vận hành: bộ trạng thái tối thiểu, mốc thông báo và quy tắc công bố | OPEN-FUL-001; rà RULE-FUL-001/NOT-002 trước khi duyệt SRS |
 | OPEN-USR-007 | Mô phỏng thanh toán dùng ở môi trường nào và mô tả với khách ra sao? | Chủ sản phẩm + QA: quy tắc demo và từ ngữ “không thu tiền thật” | ASM-004; đối chiếu RULE-PAY-001/002 |
 | OPEN-USR-008 | Đổi số lượng sau khi đã xác nhận ý định mua có được không? | Chủ chính sách: từ chối, hoặc quy trình sửa/hủy riêng | OPEN-RETRY-001, OPEN-STOCK-001; không tự thêm vào J-02 |
-| OPEN-USR-009 | Thông báo là email, SMS hay kênh khác; cần báo thất bại thế nào? | Chủ sản phẩm + vận hành: chốt kênh và mục tiêu liên lạc | BREQ-NOT-001; chi tiết giao nhận thuộc SRS |
+| OPEN-USR-009 | Thông báo giao dịch dùng email, SMS hay kênh khác; liên hệ nào được phép và báo/thử lại lỗi ra sao? | Chủ sản phẩm + vận hành: chốt kênh, liên hệ và mục tiêu giao nhận | BREQ-NOT-001; chi tiết giao nhận thuộc SRS |
 | OPEN-USR-010 | Hướng dẫn chọn size là MUST hay SHOULD? | Chủ sản phẩm: thông tin tối thiểu hoặc tính năng mở rộng | OPEN-SKU-001; rà J-01 và phạm vi |
 | OPEN-USR-011 | Báo cáo tối thiểu và quyền xem gồm gì? | Vận hành + quản trị: chốt câu hỏi kinh doanh và nhóm dữ liệu | OPEN-REPORT-001; rà PERM-004 |
 | OPEN-USR-012 | Ai đã rà BRD/Business Baseline và có quyết định chưa? | Trưởng nhóm BA: giữ Draft hoặc ghi biên bản thực | OPEN-REVIEW-001; Users chỉ lên Reviewed khi có bằng chứng |
@@ -102,7 +102,7 @@ Các mục sau được ghi ngày **2026-11-15**, trạng thái **Open**, chưa 
 | OPEN-DATA-005 | Một hay nhiều vị trí tồn/giao trong MVP | Vận hành |
 | OPEN-DATA-006 | Độ trễ chấp nhận được, trigger vô hiệu hóa cache/search | Chủ sản phẩm và QA |
 | OPEN-ARCH-001 | Kiểu cấu trúc và ranh giới nhất quán logic trong ADR-001..003 | Chủ dự án, kiến trúc và chủ dữ liệu |
-| OPEN-ARCH-002 | Bảo đảm kết quả đơn đã nhận tạo việc thông báo bền, retry/dedupe và đối soát event mất; tác động HLD-06 | Kiến trúc, vận hành và QA |
+| OPEN-ARCH-002 | Bảo đảm OrderAccepted/OrderStatusChanged đủ điều kiện tạo việc thông báo bền, retry/dedupe theo event-version và đối soát event mất/trễ; tác động HLD-06 | Kiến trúc, vận hành và QA |
 | OPEN-TECH-DB | So sánh PostgreSQL/NoSQL, chọn database và ADR ở phase 07 | Kiến trúc, vận hành và chủ dữ liệu |
 
 ## Ranh giới với triển khai hiện tại

@@ -31,7 +31,7 @@ Mọi dòng có trạng thái Draft. Người phụ trách nghiệp vụ cần r
 | PROC-PAY-001 | Xử lý lựa chọn/kết quả thanh toán; khách và tác nhân thanh toán | Có lựa chọn hợp lệ → trạng thái thanh toán riêng | BREQ-PAY-001; RULE-PAY-001, RULE-PAY-002 |
 | PROC-INV-001 | Xét/giữ/trả khả năng cung ứng; vận hành | Biết nguồn hàng theo biến thể → cam kết hợp lệ hoặc không cam kết | BREQ-INV-001; RULE-INV-001 |
 | PROC-FUL-001 | Xử lý và theo dõi đơn; nhân viên và khách | Đơn được nhận → khách có quyền xem trạng thái hiện tại | BREQ-TRACK-001; RULE-FUL-001, RULE-ACCESS-001 |
-| PROC-NOT-001 | Thông báo/theo dõi gửi lỗi; vận hành và khách | Có đơn đã nhận → gửi được hoặc có việc cần xử lý | BREQ-NOT-001; RULE-NOT-001 |
+| PROC-NOT-001 | Thông báo/theo dõi gửi lỗi; vận hành và khách | Đơn được nhận hoặc có mốc trạng thái đơn/giao đủ điều kiện → gửi được hoặc có việc cần xử lý | BREQ-NOT-001; RULE-NOT-001/002 |
 | PROC-REPORT-001 | Xem hoạt động cơ bản; nhân viên có quyền | Có dữ kiện bán hàng → báo cáo và hướng xử lý ngoại lệ | BREQ-OPS-001, BREQ-REL-001; RULE-REPORT-001 |
 | PROC-RET-001 | Xem yêu cầu đổi/trả nếu được duyệt | OPEN-POLICY-001 chưa giải quyết | Tùy chọn; RULE-RET-001 còn mở |
 | PROC-PROMO-001 | Đặt điều kiện chiến dịch nếu được duyệt | OPEN-PROMO-001 chưa giải quyết | Tùy chọn; chưa có quy tắc chuẩn |
@@ -51,10 +51,11 @@ flowchart TD
   H -->|Không| F
   H -->|Có| I[Chấp nhận một đơn và cấp mã tham chiếu]
   I --> J[Nhân viên xử lý giao hàng và cập nhật trạng thái]
-  I --> K[Thông báo hoặc ghi việc cần liên lạc lại]
+  I --> K[Thông báo xác nhận hoặc ghi việc cần liên lạc lại]
+  J -->|Mốc trạng thái được phép công bố| K
 ```
 
-**Đề xuất / To-Be:** PROC-SALES-001 → PROC-CART-001 → PROC-ORD-001; PROC-PAY-001 và PROC-INV-001 tham gia tại ranh giới nhận đơn, sau đó là PROC-FUL-001 và PROC-NOT-001. Mũi tên là bàn giao nghiệp vụ, không phải kết nối mạng. Khi khách phải sửa thông tin, chưa có đơn được nhận cho tới lúc qua kiểm tra.
+**Đề xuất / To-Be:** PROC-SALES-001 → PROC-CART-001 → PROC-ORD-001; PROC-PAY-001 và PROC-INV-001 tham gia tại ranh giới nhận đơn, sau đó là PROC-FUL-001 và PROC-NOT-001. Mũi tên là bàn giao nghiệp vụ, không phải kết nối mạng. Khi khách phải sửa thông tin, chưa có đơn được nhận cho tới lúc qua kiểm tra. Thông báo trạng thái chỉ phát sinh từ chuyển trạng thái hợp lệ và được duyệt công bố; bộ mốc cụ thể vẫn theo OPEN-USR-006/OPEN-FUL-001.
 
 ## Quyết định về đơn, nguồn hàng và xử lý giao
 
@@ -85,7 +86,7 @@ flowchart TD
 | PROC-PAY-001 | Khách chọn COD hoặc mô phỏng; ghi trạng thái thanh toán tách với đơn | Mô phỏng lỗi → không báo đơn thành công; COD → chưa thu tiền; timeout → trạng thái chưa xác định, không đoán đã thu |
 | PROC-INV-001 | Xác minh số có thể bán theo SKU; cam kết cho đơn đã nhận; trả hàng khi chính sách cho phép | Hai khách cùng mua món cuối → không cam kết vượt số có thể bán; hủy/trả hàng → OPEN-STOCK-001 |
 | PROC-FUL-001 | Nhân viên nhận đơn, xử lý bàn giao hợp lệ và đổi trạng thái; khách xem đơn của mình | Chuyển trạng thái sai → từ chối và giữ trạng thái trước; xem đơn người khác → chặn; không mặc định tích hợp hãng vận chuyển |
-| PROC-NOT-001 | Đơn đã nhận phát sinh nhu cầu thông báo; theo dõi kết quả gửi; nhân viên xử lý lỗi | Nhà cung cấp lỗi/gửi lặp → đơn hợp lệ không bị hủy; bảo đảm gửi và số lần thử thuộc giai đoạn sau |
+| PROC-NOT-001 | Đơn được nhận hoặc trạng thái đơn/giao đủ điều kiện phát sinh nhu cầu thông báo; theo dõi kết quả gửi; nhân viên xử lý lỗi | Provider lỗi/gửi lặp hoặc trạng thái chưa được phép công bố → đơn/trạng thái không bị đổi, không gửi thông tin sai; mốc công bố theo OPEN-USR-006, kênh và mục tiêu gửi theo OPEN-USR-009 |
 | PROC-REPORT-001 | Nhân viên có quyền xem tổng hợp đơn, thanh toán, giao và ngoại lệ | Chỉ số thiếu/mơ hồ → nêu giới hạn báo cáo; danh mục chỉ số OPEN-REPORT-001 |
 
 Kiểm tra danh tính/quyền áp dụng với thao tác danh mục, xử lý đơn và báo cáo. Khách chỉ được xem đơn của mình; hành vi của khách mua không cần tài khoản chờ OPEN-GUEST-001. [BREQ-IDENT-001, BREQ-SEC-001, RULE-ACCESS-001]

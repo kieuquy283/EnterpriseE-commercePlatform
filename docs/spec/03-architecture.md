@@ -21,7 +21,7 @@ flowchart LR
   Worker --> Redis
   API -->|IAM file provider| S3[(Private S3)]
   Worker --> S3
-  Worker -.->|Planned notification provider| Email[Transactional email]
+  Worker -.->|Planned transactional notification channel; TBD| Provider[Communication provider]
 ```
 
 Cloudflare chỉ làm DNS trong ánh xạ triển khai hiện có. TLS kết thúc ở ALB; lưu lượng ứng dụng trong ranh giới security group dùng HTTP. Tài nguyên vùng thuộc `ap-southeast-2`. Demo tắt theo lease nên không phải storefront sẵn sàng liên tục.

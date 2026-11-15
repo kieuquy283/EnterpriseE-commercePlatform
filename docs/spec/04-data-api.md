@@ -109,12 +109,13 @@ Thêm migration cho model tùy chỉnh đổi; không sửa migration đã áp d
 
 FR-08 là tích hợp ứng dụng mới, không phải topic cảnh báo vận hành SNS. Chọn provider còn cần ADR triển khai, giới hạn trong dịch vụ/vùng được phép và ngân sách thống nhất.
 
-Bản ghi ý định thông báo đề xuất: `id`, `order_id`, `template_version`, `dedupe_key`, `state`, `attempt_count`, `next_attempt_at`, `provider_reference`, `last_error_code` đã che, các mốc thời gian. Khóa duy nhất gồm đơn + loại thông báo + phiên bản mẫu; sự kiện đơn lặp dùng lại ý định. Trạng thái pending, processing, retry_wait, sent và failed là khái niệm ứng dụng, không khẳng định model Medusa gốc.
+Bản ghi ý định thông báo đề xuất: `id`, `order_id`, `source_event_id`, `source_state_version`, `notification_type`, `channel`, `template_version`, `dedupe_key`, `state`, `attempt_count`, `next_attempt_at`, `provider_reference`, `last_error_code` đã che, các mốc thời gian. Khóa duy nhất gắn với event nguồn + phiên bản trạng thái + kênh/loại/mẫu; các trạng thái hợp lệ khác nhau của cùng đơn được phép tạo thông báo khác nhau, còn event trùng dùng lại ý định cũ. Trạng thái pending, processing, retry_wait, sent và failed là khái niệm ứng dụng, không khẳng định model Medusa gốc.
 
 - Consumer tạo/nhận xử lý ý định qua module/workflow hỗ trợ. Claim/lease lưu bền ngăn worker gửi đồng thời; claim cũ phục hồi sau timeout được ghi rõ.
 - Lịch thử lại mục tiêu: lần đầu, rồi 1, 5, 15 phút sau lần lỗi trước, tối đa bốn lần. Lỗi cuối hiển thị cho người có quyền thử lại thủ công bằng cùng khóa nghiệp vụ.
-- Chọn adapter hỗ trợ idempotency phía provider hoặc hợp đồng chống trùng tương đương đã kiểm chứng. Timeout mơ hồ phải đối soát provider; cờ sent cục bộ không chứng minh exactly-once.
-- Lưu chuyển trạng thái trước xác nhận xử lý sự kiện thành công. Kiểm ranh giới giao dịch/công bố sự kiện framework đã cài; nếu có thể bỏ lỡ đơn đã chốt, thêm outbox bền hoặc đối soát đơn–ý định trước nghiệm thu FR-08. Chỉ đăng ký Redis không đủ bằng chứng.
+- Chọn adapter/kênh hỗ trợ idempotency phía provider hoặc hợp đồng chống trùng tương đương đã kiểm chứng. Timeout mơ hồ phải đối soát provider; cờ sent cục bộ không chứng minh exactly-once. Kênh vẫn chờ OPEN-USR-009.
+- Chỉ phát thông báo trạng thái từ chuyển trạng thái hợp lệ được duyệt công bố; kiểm phiên bản để bỏ event cũ và không thông báo “đã giao” khi thiếu bằng chứng. Danh sách trạng thái còn OPEN-USR-006/OPEN-FUL-001.
+- Lưu chuyển trạng thái trước xác nhận xử lý sự kiện thành công. Kiểm ranh giới giao dịch/công bố sự kiện framework đã cài; nếu có thể bỏ lỡ `OrderAccepted` hoặc chuyển trạng thái đủ điều kiện, thêm outbox bền hoặc đối soát Order/Fulfillment với ý định gửi trước nghiệm thu FR-08. Chỉ đăng ký Redis không đủ bằng chứng.
 - Lỗi thông báo không đổi kết quả đơn đã chốt. Chỉ giữ tham chiếu người nhận/mẫu cần thiết; không lộ địa chỉ hộp thư hoặc payload provider trong log/bằng chứng công khai.
 
 Đây là hợp đồng mục tiêu cho triển khai/kiểm thử. Tài liệu không tạo bảng hoặc provider thông báo.

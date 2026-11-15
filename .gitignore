@@ -15,8 +15,6 @@ medusa-scaffold/
 !.env.template
 coverage/
 .DS_Store
-.agents/*
-!.agents/skills/
 data/hm/
 __pycache__/
 
