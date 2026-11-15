@@ -18,7 +18,7 @@ type ApiClient = {
   post: <T>(
     path: string,
     body: Record<string, unknown>,
-    config: RequestConfig
+    config: RequestConfig,
   ) => Promise<{ data: T }>
 }
 
@@ -39,7 +39,7 @@ async function prepareCheckout(
   api: ApiClient,
   headers: ReturnType<typeof storeHeaders>,
   email: string,
-  simulatedOutcome: boolean
+  simulatedOutcome: boolean,
 ) {
   const { data: regionResponse } = await api.get<{
     regions: Array<{ id: string; name: string }>
@@ -51,10 +51,7 @@ async function prepareCheckout(
 
   const { data: productResponse } = await api.get<{
     products: Array<{ variants?: Array<{ id: string }> }>
-  }>(
-    `/store/products?handle=ao-thun-essential&region_id=${region.id}`,
-    { headers }
-  )
+  }>(`/store/products?handle=ao-thun-essential&region_id=${region.id}`, { headers })
   const variant = productResponse.products[0]?.variants?.[0]
   if (!variant) {
     throw new Error("Seed product variant is not available")
@@ -63,14 +60,14 @@ async function prepareCheckout(
   const { data: cartResponse } = await api.post<{ cart: { id: string } }>(
     "/store/carts",
     { region_id: region.id },
-    { headers }
+    { headers },
   )
   const cartId = cartResponse.cart.id
 
   await api.post(
     `/store/carts/${cartId}/line-items`,
     { variant_id: variant.id, quantity: 1 },
-    { headers }
+    { headers },
   )
 
   const address = {
@@ -85,15 +82,12 @@ async function prepareCheckout(
   await api.post(
     `/store/carts/${cartId}`,
     { email, shipping_address: address, billing_address: address },
-    { headers }
+    { headers },
   )
 
   const { data: shippingResponse } = await api.get<{
     shipping_options: Array<{ id: string }>
-  }>(
-    `/store/shipping-options?cart_id=${cartId}`,
-    { headers }
-  )
+  }>(`/store/shipping-options?cart_id=${cartId}`, { headers })
   const shippingOption = shippingResponse.shipping_options[0]
   if (!shippingOption) {
     throw new Error("No shipping option is available for the test cart")
@@ -101,23 +95,19 @@ async function prepareCheckout(
   await api.post(
     `/store/carts/${cartId}/shipping-methods`,
     { option_id: shippingOption.id },
-    { headers }
+    { headers },
   )
 
   const { data: paymentResponse } = await api.post<{
     payment_collection: { id: string }
-  }>(
-    "/store/payment-collections",
-    { cart_id: cartId },
-    { headers }
-  )
+  }>("/store/payment-collections", { cart_id: cartId }, { headers })
   await api.post(
     `/store/payment-collections/${paymentResponse.payment_collection.id}/payment-sessions`,
     {
       provider_id: simulatorProviderId,
       data: { simulated_outcome: simulatedOutcome },
     },
-    { headers }
+    { headers },
   )
 
   return {
@@ -126,10 +116,7 @@ async function prepareCheckout(
   }
 }
 
-async function getSimulatorPaymentSession(
-  container: MedusaContainer,
-  paymentCollectionId: string
-) {
+async function getSimulatorPaymentSession(container: MedusaContainer, paymentCollectionId: string) {
   const query = container.resolve(ContainerRegistrationKeys.QUERY)
   const { data: paymentSessions } = await query.graph({
     entity: "payment_session",
@@ -173,7 +160,11 @@ async function getInventorySnapshot(container: MedusaContainer) {
 }
 
 medusaIntegrationTestRunner({
-  env: { REDIS_URL: "", ENABLE_PERSONALIZED_RECOMMENDATIONS: "true", ENABLE_PERSONALIZATION_ORDER_EVENTS: "true" },
+  env: {
+    REDIS_URL: "",
+    ENABLE_PERSONALIZED_RECOMMENDATIONS: "true",
+    ENABLE_PERSONALIZATION_ORDER_EVENTS: "true",
+  },
   testSuite: ({ api, getContainer }) => {
     let publishableKey: string
     const storeApi: ApiClient = api
@@ -203,13 +194,17 @@ medusaIntegrationTestRunner({
       })
       expect(salesChannels).toHaveLength(1)
 
-      const { result: [apiKey] } = await createApiKeysWorkflow(container).run({
+      const {
+        result: [apiKey],
+      } = await createApiKeysWorkflow(container).run({
         input: {
-          api_keys: [{
-            title: "Checkout integration tests",
-            type: "publishable",
-            created_by: "",
-          }],
+          api_keys: [
+            {
+              title: "Checkout integration tests",
+              type: "publishable",
+              created_by: "",
+            },
+          ],
         },
       })
       publishableKey = apiKey.token
@@ -226,20 +221,20 @@ medusaIntegrationTestRunner({
       const { data: registration } = await storeApi.post<{ token: string }>(
         "/auth/customer/emailpass/register",
         { email, password },
-        { headers }
+        { headers },
       )
       expect(registration.token).toBeDefined()
 
       await storeApi.post(
         "/store/customers",
         { email, first_name: "Integration", last_name: "Test" },
-        { headers: storeHeaders(publishableKey, registration.token) }
+        { headers: storeHeaders(publishableKey, registration.token) },
       )
 
       const { data: login } = await storeApi.post<{ token: string }>(
         "/auth/customer/emailpass",
         { email, password },
-        { headers }
+        { headers },
       )
       expect(login.token).toBeDefined()
 
@@ -247,17 +242,13 @@ medusaIntegrationTestRunner({
       await storeApi.post(
         "/store/personalization/consent",
         { granted: true, terms_version: "v1" },
-        { headers: customerHeaders }
+        { headers: customerHeaders },
       )
-      const checkout = await prepareCheckout(
-        storeApi,
-        customerHeaders,
-        email,
-        true
-      )
+      const inventoryBefore = await getInventorySnapshot(getContainer())
+      const checkout = await prepareCheckout(storeApi, customerHeaders, email, true)
       const paymentSession = await getSimulatorPaymentSession(
         getContainer(),
-        checkout.paymentCollectionId
+        checkout.paymentCollectionId,
       )
       expect(paymentSession.provider_id).toBe(simulatorProviderId)
       expect(paymentSession.data.simulated_outcome).toBe(true)
@@ -265,14 +256,30 @@ medusaIntegrationTestRunner({
       const { data: completion } = await storeApi.post<{
         type: string
         order: { id: string; items: unknown[] }
-      }>(
-        `/store/carts/${checkout.cartId}/complete`,
-        {},
-        { headers: customerHeaders }
-      )
+      }>(`/store/carts/${checkout.cartId}/complete`, {}, { headers: customerHeaders })
       expect(completion.type).toBe("order")
       expect(completion.order.id).toBeDefined()
       expect(completion.order.items).toHaveLength(1)
+
+      const inventoryReserved = await getInventorySnapshot(getContainer())
+      expect(inventoryReserved).toEqual(
+        inventoryBefore.map((level) => ({
+          ...level,
+          reserved_quantity: Number(level.reserved_quantity) + 1,
+        })),
+      )
+      const { data: paymentCollections } = await getContainer()
+        .resolve(ContainerRegistrationKeys.QUERY)
+        .graph({
+          entity: "payment_collection",
+          fields: ["status", "amount", "currency_code"],
+          filters: { id: checkout.paymentCollectionId },
+        })
+      expect(paymentCollections[0]).toMatchObject({
+        status: "authorized",
+        amount: 279000,
+        currency_code: "vnd",
+      })
 
       const orderId = completion.order.id
       const { data: orderResponse } = await storeApi.get<{
@@ -283,29 +290,60 @@ medusaIntegrationTestRunner({
 
       const { data: historyResponse } = await storeApi.get<{
         orders: Array<{ id: string }>
-      }>(
-        "/store/orders?limit=20",
-        { headers: customerHeaders }
-      )
+      }>("/store/orders?limit=20", { headers: customerHeaders })
       expect(historyResponse.orders.map((order) => order.id)).toContain(orderId)
-      const personalization: PersonalizationModuleService = getContainer().resolve("personalization")
-      let orderSignals = await personalization.listRecommendationEvents({ event_type: "order_placed" })
-      for (let attempt = 0; attempt < 30 && !orderSignals.some((row) => row.event_key.startsWith(`order_placed:${orderId}:`)); attempt++) {
+      const personalization: PersonalizationModuleService =
+        getContainer().resolve("personalization")
+      let orderSignals = await personalization.listRecommendationEvents({
+        event_type: "order_placed",
+      })
+      for (
+        let attempt = 0;
+        attempt < 30 &&
+        !orderSignals.some((row) => row.event_key.startsWith(`order_placed:${orderId}:`));
+        attempt++
+      ) {
         await new Promise((resolve) => setTimeout(resolve, 100))
-        orderSignals = await personalization.listRecommendationEvents({ event_type: "order_placed" })
+        orderSignals = await personalization.listRecommendationEvents({
+          event_type: "order_placed",
+        })
       }
-      expect(orderSignals.filter((row) => row.event_key.startsWith(`order_placed:${orderId}:`))).toHaveLength(1)
+      expect(
+        orderSignals.filter((row) => row.event_key.startsWith(`order_placed:${orderId}:`)),
+      ).toHaveLength(1)
       await cancelOrderWorkflow(getContainer()).run({ input: { order_id: orderId } })
-      let canceledSignals = await personalization.listRecommendationEvents({ event_type: "order_canceled" })
-      for (let attempt = 0; attempt < 30 && !canceledSignals.some((row) => row.event_key.startsWith(`order_canceled:${orderId}:`)); attempt++) {
+      expect(await getInventorySnapshot(getContainer())).toEqual(inventoryBefore)
+      let canceledSignals = await personalization.listRecommendationEvents({
+        event_type: "order_canceled",
+      })
+      for (
+        let attempt = 0;
+        attempt < 30 &&
+        !canceledSignals.some((row) => row.event_key.startsWith(`order_canceled:${orderId}:`));
+        attempt++
+      ) {
         await new Promise((resolve) => setTimeout(resolve, 100))
-        canceledSignals = await personalization.listRecommendationEvents({ event_type: "order_canceled" })
+        canceledSignals = await personalization.listRecommendationEvents({
+          event_type: "order_canceled",
+        })
       }
-      expect(canceledSignals.filter((row) => row.event_key.startsWith(`order_canceled:${orderId}:`))).toHaveLength(1)
-      let [profile] = await personalization.listRecommendationProfiles({ customer_id: orderSignals[0].customer_id })
-      for (let attempt = 0; attempt < 30 && (profile?.interests as { source_products?: unknown[] } | undefined)?.source_products?.length; attempt++) {
+      expect(
+        canceledSignals.filter((row) => row.event_key.startsWith(`order_canceled:${orderId}:`)),
+      ).toHaveLength(1)
+      let [profile] = await personalization.listRecommendationProfiles({
+        customer_id: orderSignals[0].customer_id,
+      })
+      for (
+        let attempt = 0;
+        attempt < 30 &&
+        (profile?.interests as { source_products?: unknown[] } | undefined)?.source_products
+          ?.length;
+        attempt++
+      ) {
         await new Promise((resolve) => setTimeout(resolve, 100))
-        const updatedProfiles = await personalization.listRecommendationProfiles({ customer_id: orderSignals[0].customer_id })
+        const updatedProfiles = await personalization.listRecommendationProfiles({
+          customer_id: orderSignals[0].customer_id,
+        })
         profile = updatedProfiles[0]
       }
       expect((profile.interests as { source_products: unknown[] }).source_products).toEqual([])
@@ -314,27 +352,18 @@ medusaIntegrationTestRunner({
     it("does not create an order or change inventory when simulated payment fails", async () => {
       const headers = storeHeaders(publishableKey)
       const email = `payment-failure-${Date.now()}@example.test`
-      const checkout = await prepareCheckout(
-        storeApi,
-        headers,
-        email,
-        false
-      )
+      const checkout = await prepareCheckout(storeApi, headers, email, false)
       const container = getContainer()
       const paymentSession = await getSimulatorPaymentSession(
         container,
-        checkout.paymentCollectionId
+        checkout.paymentCollectionId,
       )
       expect(paymentSession.provider_id).toBe(simulatorProviderId)
       expect(paymentSession.data.simulated_outcome).toBe(false)
 
       const inventoryBefore = await getInventorySnapshot(container)
       await expect(
-        storeApi.post(
-          `/store/carts/${checkout.cartId}/complete`,
-          {},
-          { headers }
-        )
+        storeApi.post(`/store/carts/${checkout.cartId}/complete`, {}, { headers }),
       ).rejects.toMatchObject({
         response: { status: 400 },
       })

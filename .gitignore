@@ -15,7 +15,8 @@ medusa-scaffold/
 !.env.template
 coverage/
 .DS_Store
-.agents/
+.agents/*
+!.agents/skills/
 data/hm/
 __pycache__/
 
@@ -23,6 +24,8 @@ test-results/
 playwright-report/
 deploy/cloudformation/settings.json
 
+# Local Medusa provider uploads are runtime data.
+/apps/backend/static/
 # Tài liệu nguồn chỉ đọc tại local
 /docs/Cloud Application Development - Project Topics.pdf
 /docs/Presentation *.pdf

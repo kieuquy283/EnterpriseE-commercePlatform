@@ -1,16 +1,57 @@
-# Mục lục tài liệu
+<a id="daymark-documentation"></a>
+# Tài liệu DAYMARK
 
-Đây là lộ trình tài liệu theo hướng **nghiệp vụ trước, công nghệ sau**. Các bản định nghĩa dự án, phạm vi, SRS và bằng chứng triển khai cũ vẫn ở đường dẫn lịch sử để đối chiếu. Tài liệu mới ở trạng thái **Draft**, chưa phải chính sách nghiệp vụ đã được duyệt.
+Tài liệu có hai tuyến đọc liên kết với nhau: đặc tả nghiệp vụ độc lập công nghệ và ánh xạ kỹ thuật từ đặc tả sang triển khai DAYMARK.
 
-| Giai đoạn | Tài liệu hiện có | Trạng thái |
-|---|---|---|
-| 00 Dự án | [Tuyên bố dự án](00-project/project-charter.md), [Phạm vi và giả định](00-project/scope-and-assumptions.md), [Sổ nguồn và giả định](00-project/source-and-assumption-register.md) | Bản nháp |
-| 01 Nghiệp vụ | [BRD](01-business/BRD.md), [Bản đồ năng lực](01-business/business-capability-map.md), [Quy trình](01-business/business-processes.md), [Quy tắc](01-business/business-rules.md) | Bản nháp; chờ nhóm rà soát |
-| 02 Người dùng | [Các bên liên quan](02-users/stakeholder-analysis.md), [vai trò và mục tiêu](02-users/actors-and-user-goals.md), [hành trình](02-users/user-journeys.md) | Bản nháp; chờ rà Business và quyền/chính sách |
-| 03 Yêu cầu | [SRS](03-requirements/SRS.md), [use case và AT](03-requirements/use-case-specifications.md), [tình huống chất lượng](03-requirements/quality-attribute-scenarios.md), [truy vết](03-requirements/requirements-traceability.md) | Bản nháp; mục tiêu chất lượng chưa đo/chưa duyệt |
-| 04 Tải công việc | [Phân tích tải](04-workload/workload-analysis.md) | Bản nháp; giả định và mục tiêu thử |
-| 05 Dữ liệu | [Mô hình miền](05-data/domain-model.md), [từ điển](05-data/data-dictionary.md), [quyền sở hữu và nhất quán](05-data/data-ownership-and-consistency.md) | Bản nháp logic; chính sách dữ liệu còn mở |
-| 06 Kiến trúc | [10 sơ đồ HLD và kiến trúc logic](06-architecture/logical-architecture.md), [hợp đồng giao diện](06-architecture/api-and-interface-contracts.md), [tích hợp](06-architecture/integration-design.md), [ADR](06-architecture/adr/ADR-001-application-boundary-style.md) | Provisional; 10/10 hình đã render, chờ review và 3 ADR chưa phê duyệt |
-| 07 Đánh giá công nghệ | So sánh công nghệ và kiến trúc vật lý | Dự kiến |
+<a id="primary-business-first-specification"></a>
+## Đặc tả lấy nghiệp vụ làm gốc
 
-Đọc [sổ nguồn và giả định](00-project/source-and-assumption-register.md) trước khi coi một nhận định là sự thật đã xác minh. Công nghệ trong bản kiến trúc cũ tại local `docs/architecture/cloud-system-architecture.md` chỉ là ảnh chụp triển khai lịch sử, không phải thiết kế đích đã duyệt. Các file kế hoạch và PDF nguồn chỉ đọc tại local theo `.gitignore`; các file cũ đã được Git theo dõi vẫn còn trong lịch sử. Giai đoạn 07 chưa có phase plan trong bộ kế hoạch, vì vậy quyết định database và triển khai vật lý vẫn đang chờ.
+Các tài liệu này xác định phạm vi nghiệp vụ, tác nhân, quy tắc, yêu cầu, tải và thiết kế logic. Yêu cầu nghiệp vụ được ưu tiên khi có mâu thuẫn với bản mô tả triển khai; phê duyệt và quyết định còn mở thuộc tài liệu nguồn tương ứng.
+
+| Lĩnh vực | Tài liệu |
+| --- | --- |
+| Dự án | [Điều lệ](00-project/project-charter.md), [phạm vi và giả định](00-project/scope-and-assumptions.md), [sổ nguồn và giả định](00-project/source-and-assumption-register.md) |
+| Nghiệp vụ | [BRD](01-business/BRD.md), [bản đồ năng lực](01-business/business-capability-map.md), [quy trình](01-business/business-processes.md), [quy tắc](01-business/business-rules.md) |
+| Người dùng | [Các bên liên quan](02-users/stakeholder-analysis.md), [tác nhân và mục tiêu](02-users/actors-and-user-goals.md), [hành trình](02-users/user-journeys.md) |
+| Yêu cầu | [SRS](03-requirements/SRS.md), [ca sử dụng và kiểm thử nghiệm thu](03-requirements/use-case-specifications.md), [kịch bản chất lượng](03-requirements/quality-attribute-scenarios.md), [truy vết](03-requirements/requirements-traceability.md) |
+| Tải | [Phân tích tải](04-workload/workload-analysis.md) |
+| Dữ liệu | [Mô hình miền](05-data/domain-model.md), [từ điển](05-data/data-dictionary.md), [quyền sở hữu và tính nhất quán](05-data/data-ownership-and-consistency.md) |
+| Kiến trúc logic | [Thiết kế tổng thể](06-architecture/logical-architecture.md), [hợp đồng giao diện](06-architecture/api-and-interface-contracts.md), [tích hợp](06-architecture/integration-design.md), [ADR logic](06-architecture/adr/ADR-001-application-boundary-style.md) |
+
+<a id="technical-design-and-implementation"></a>
+## Thiết kế kỹ thuật và triển khai
+
+Bắt đầu từ [mục lục kỹ thuật](technical/README.md). Hướng dẫn kỹ thuật trình bày lựa chọn công nghệ, ranh giới API/lưu trữ cụ thể, kiểm chứng kỹ thuật, bảo mật, triển khai AWS và khôi phục.
+
+Thành phần logic thể hiện trách nhiệm; không hàm ý dịch vụ độc lập hay thay thế nền tảng công nghệ. Thay đổi đáng kể về công nghệ hoặc triển khai cần quyết định rõ ràng. [Ánh xạ yêu cầu](technical/requirements-mapping.md) nối mã nghiệp vụ với luồng triển khai và ghi nhận quyết định xử lý khác biệt.
+
+<a id="working-guides"></a>
+## Hướng dẫn làm việc
+
+- [Thiết lập cục bộ và tạo tài khoản quản trị](setup.md)
+- [Quy ước đóng góp và kiểm chứng](../CONTRIBUTING.md), [hướng dẫn cho agent](../AGENTS.md)
+- [Nhận diện và nguồn gốc tài sản thương hiệu](brand/README.md), [hệ thống thiết kế storefront](design-system/README.md)
+- [Dữ liệu mẫu danh mục và quy trình nhập](catalog/DATASET.md)
+- [Quy trình triển khai](../deploy/RUNBOOK.md)
+- [Công việc còn lại](spec/07-delivery.md)
+- [Công cụ trình bày](../presentation/README.md)
+
+<a id="teacher-coverage"></a>
+## Đối chiếu yêu cầu giảng viên
+
+| Nội dung | Tuyến đọc |
+| --- | --- |
+| P1 — Nghiệp vụ và kiến trúc | Nghiệp vụ, người dùng, yêu cầu, tải và kiến trúc logic ở trên |
+| P2 — Ứng dụng, dữ liệu và tích hợp | Dữ liệu/giao diện logic, [kiến trúc kỹ thuật](spec/03-architecture.md) và [ánh xạ API/lưu trữ](spec/04-data-api.md) |
+| P3 — Bảo mật và DevOps | [Vận hành](spec/06-operations.md) và quy trình triển khai |
+| P4 — Kỹ thuật vận hành thực tế | [Kiểm thử](spec/05-testing.md), vận hành và bằng chứng kiểm chứng có ngày tháng |
+| P5 — Kỹ thuật gợi ý | [Yêu cầu đánh giá](spec/05-testing.md) và [tham chiếu chuyên sâu](reference/README.md#product-suggestion-research) |
+
+<a id="document-lifecycle-and-evidence"></a>
+## Vòng đời tài liệu và bằng chứng
+
+Đặc tả xác định hành vi bắt buộc; hướng dẫn kỹ thuật giải thích lựa chọn triển khai; hướng dẫn vận hành mô tả quy trình. Tiến độ, số lượng kiểm thử, phiên bản triển khai, tình trạng dịch vụ và kết quả đo thuộc công việc còn lại hoặc báo cáo có ngày tháng, không thuộc README.
+
+Mỗi báo cáo kiểm chứng cần ghi phiên bản, môi trường, ngày, lệnh và kết quả. Mục tiêu không phải số đo; tuyến API đã có không đồng nghĩa luồng nghiệp vụ đã nghiệm thu; triển khai lịch sử không chứng minh dịch vụ hiện đang hoạt động. [Bằng chứng và nghiên cứu](reference/README.md) dẫn đến kết quả và quyết định quyền sử dụng dữ liệu. Nghiên cứu chuyên sâu không thay thế phạm vi nghiệp vụ hoặc cấp quyền công bố dữ liệu.
+
+Giữ kết quả kiểm chứng trong CI hoặc báo cáo nghiệm thu có phiên bản; không thêm nhật ký bàn giao, ghi chú dọn dẹp hoặc báo cáo tiến độ tạm thời vào tài liệu hướng dẫn lâu dài.

@@ -1,3 +1,5 @@
+> Reference status (14 November 2026): specialist/research documentation. Current DAYMARK scope, requirements and acceptance authority are in [../../README.md](../../README.md). Historical measurements and data-rights restrictions remain in force.
+
 # PDP verification — bổ sung private runbook
 
 Đây là hướng dẫn test chuyên biệt PDP, bổ sung [runbook nền](../runbook.md), không thay commerce bootstrap. Không public H&M data/ảnh/candidates. Master plan/spec tổng thể không bị sửa.

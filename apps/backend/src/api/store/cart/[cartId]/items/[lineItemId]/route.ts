@@ -1,11 +1,11 @@
 import type { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { deleteLineItemsWorkflow } from "@medusajs/medusa/core-flows"
+import { deleteLegacyCartItemWorkflow } from "../../../../../../workflows/delete-legacy-cart-item"
 
 export async function DELETE(req: MedusaRequest, res: MedusaResponse) {
-  await deleteLineItemsWorkflow(req.scope).run({
+  await deleteLegacyCartItemWorkflow(req.scope).run({
     input: {
       cart_id: req.params.cartId,
-      ids: [req.params.lineItemId],
+      line_item_id: req.params.lineItemId,
     },
   })
 

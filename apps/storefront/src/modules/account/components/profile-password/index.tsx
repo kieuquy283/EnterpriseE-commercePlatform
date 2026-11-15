@@ -1,65 +1,62 @@
 "use client"
 
 import React from "react"
-import Input from "@modules/common/components/input"
+import { Input } from "@modules/common/components/ui"
 import AccountInfo from "../account-info"
 import { HttpTypes } from "@medusajs/types"
-// TODO: Re-add toast notifications when Toaster component is implemented
 
 type MyInformationProps = {
   customer: HttpTypes.StoreCustomer
 }
 
 const ProfilePassword: React.FC<MyInformationProps> = ({ customer: _customer }) => {
-  const [successState, setSuccessState] = React.useState(false)
+  const [error, setError] = React.useState<string | undefined>()
 
-  // TODO: Add support for password updates
+  // TODO(impl): Add password changes through the Medusa auth provider before enabling edits — FR-01/FLOW-01.
   const updatePassword = async () => {
-    // TODO: Re-add toast notification when Toaster component is implemented
-    console.info("Password update is not implemented")
+    setError("Tính năng đổi mật khẩu chưa khả dụng. Mật khẩu hiện tại chưa được thay đổi.")
   }
 
   const clearState = () => {
-    setSuccessState(false)
+    setError(undefined)
   }
 
   return (
-    <form
-      action={updatePassword}
-      onReset={() => clearState()}
-      className="w-full"
-    >
+    <form action={updatePassword} onReset={() => clearState()} className="w-full">
       <AccountInfo
-        label="Password"
+        label="Mật khẩu"
         currentInfo={
-          <span>The password is not shown for security reasons</span>
+          <span className="text-dm-small text-ink-muted">Mật khẩu của bạn luôn được ẩn.</span>
         }
-        isSuccess={successState}
-        isError={false}
-        errorMessage={undefined}
+        isSuccess={false}
+        isError={Boolean(error)}
+        errorMessage={error}
         clearState={clearState}
         data-testid="account-password-editor"
       >
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 xsmall:grid-cols-2">
           <Input
-            label="Old password"
+            label="Mật khẩu hiện tại"
             name="old_password"
             required
             type="password"
+            autoComplete="current-password"
             data-testid="old-password-input"
           />
           <Input
-            label="New password"
+            label="Mật khẩu mới"
             type="password"
             name="new_password"
             required
+            autoComplete="new-password"
             data-testid="new-password-input"
           />
           <Input
-            label="Confirm password"
+            label="Nhập lại mật khẩu mới"
             type="password"
             name="confirm_password"
             required
+            autoComplete="new-password"
             data-testid="confirm-password-input"
           />
         </div>

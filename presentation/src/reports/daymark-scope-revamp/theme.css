@@ -1,0 +1,140 @@
+[data-theme="daymark"] {
+  --deck-bg: #e7e2d7;
+  --deck-surface: #f7f4ee;
+  --deck-ink: #1a1713;
+  --deck-muted: #6f665b;
+  --deck-line: rgba(26, 23, 19, 0.15);
+  --deck-line-strong: rgba(26, 23, 19, 0.46);
+  --deck-accent: #73795a;
+  --deck-accent-ink: #f7f4ee;
+  --deck-ok: #53694d;
+  --deck-target: #455c68;
+  --deck-proposed: #817246;
+  --deck-gap: #8a5140;
+  --deck-display: "Iowan Old Style", "Palatino Linotype", Palatino,
+    "Book Antiqua", Georgia, "Times New Roman", serif;
+}
+
+[data-theme="daymark"] .wordmark {
+  letter-spacing: 0.17em;
+}
+
+[data-theme="daymark"] .wordmark--hero {
+  letter-spacing: 0.045em;
+}
+
+/* ---------- diagrams ---------- */
+
+[data-theme="daymark"] .figure__body {
+  font-family: var(--deck-ui);
+}
+
+[data-theme="daymark"] .dg-box {
+  fill: var(--slide-bg);
+  stroke: var(--slide-line-strong);
+  stroke-width: 1;
+}
+
+[data-theme="daymark"] .dg-box--soft {
+  fill: color-mix(in srgb, var(--slide-bg) 90%, var(--slide-ink));
+}
+
+[data-theme="daymark"] .dg-box--accent {
+  fill: color-mix(in srgb, var(--slide-accent) 9%, var(--slide-bg));
+  stroke: var(--slide-accent);
+}
+
+[data-theme="daymark"] .dg-box--dashed {
+  fill: none;
+  stroke: var(--slide-line-strong);
+  stroke-dasharray: 5 4;
+}
+
+[data-theme="daymark"] .dg-title {
+  fill: var(--slide-ink);
+  font-size: 13.5px;
+  font-weight: 650;
+  letter-spacing: 0.005em;
+}
+
+[data-theme="daymark"] .dg-line {
+  fill: var(--slide-muted);
+  font-size: 10.5px;
+  letter-spacing: 0.01em;
+}
+
+[data-theme="daymark"] .dg-note {
+  fill: var(--slide-muted);
+  font-size: 9.5px;
+  letter-spacing: 0.02em;
+}
+
+[data-theme="daymark"] .dg-legend {
+  fill: var(--slide-muted);
+  font-size: 9px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+[data-theme="daymark"] .dg-chip {
+  fill: color-mix(in srgb, var(--slide-bg) 95%, var(--slide-ink));
+  stroke: var(--slide-line);
+  stroke-width: 1;
+}
+
+[data-theme="daymark"] .dg-chip--accent {
+  fill: color-mix(in srgb, var(--slide-accent) 12%, var(--slide-bg));
+  stroke: var(--slide-accent);
+}
+
+[data-theme="daymark"] .dg-chip-label {
+  fill: var(--slide-ink);
+  font-size: 9.5px;
+  letter-spacing: 0.015em;
+}
+
+[data-theme="daymark"] .dg-edge line,
+[data-theme="daymark"] .dg-edge path:not(.dg-arrowhead) {
+  fill: none;
+  stroke: var(--slide-line-strong);
+  stroke-width: 1;
+}
+
+[data-theme="daymark"] .dg-edge--soft line {
+  stroke: var(--slide-line);
+}
+
+[data-theme="daymark"] .dg-edge--dashed line,
+[data-theme="daymark"] .dg-edge--dashed path:not(.dg-arrowhead) {
+  stroke-dasharray: 4 3;
+}
+
+[data-theme="daymark"] .dg-edge--accent line,
+[data-theme="daymark"] .dg-edge--accent path:not(.dg-arrowhead) {
+  stroke: var(--slide-accent);
+}
+
+[data-theme="daymark"] .dg-arrowhead {
+  fill: var(--slide-line-strong);
+  stroke: none;
+}
+
+[data-theme="daymark"] .dg-edge--accent .dg-arrowhead {
+  fill: var(--slide-accent);
+}
+
+[data-theme="daymark"] .dg-dot {
+  fill: var(--slide-accent);
+  stroke: none;
+}
+
+[data-theme="daymark"] .dg-edge-label {
+  fill: var(--slide-muted);
+  font-size: 8.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+[data-theme="daymark"] .slide--cover .wordmark--hero {
+  color: var(--slide-ink);
+}

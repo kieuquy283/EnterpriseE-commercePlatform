@@ -3,9 +3,13 @@ import { DEFAULT_PRODUCT_HANDLE, DEFAULT_PRODUCT_TITLE } from "./test-helpers"
 import { addCurrentProductToCart } from "./checkout-flow"
 
 test.describe("Cart Operations (E2E-02 & E2E-10)", () => {
-  test("E2E-10: Displays empty cart state and returns 404 for checkout without cart", async ({ page }) => {
+  test("E2E-10: Displays empty cart state and returns 404 for checkout without cart", async ({
+    page,
+  }) => {
     await page.goto("/vn/cart")
-    await expect(page.locator('[data-testid="empty-cart-message"]')).toBeVisible({ timeout: 15_000 })
+    await expect(page.locator('[data-testid="empty-cart-message"]')).toBeVisible({
+      timeout: 15_000,
+    })
     await expect(page.locator('[data-testid="product-row"]')).toHaveCount(0)
 
     const response = await page.goto("/vn/checkout")
@@ -18,12 +22,13 @@ test.describe("Cart Operations (E2E-02 & E2E-10)", () => {
 
     // 1. Navigate to PDP
     await page.goto(`/vn/products/${DEFAULT_PRODUCT_HANDLE}`)
-    await expect(page.locator('#product-info [data-testid="product-title"]')).toContainText(DEFAULT_PRODUCT_TITLE)
+    await expect(page.locator('#product-info [data-testid="product-title"]')).toContainText(
+      DEFAULT_PRODUCT_TITLE,
+    )
 
     // Select variant option if available
-    const optionButtons = page.locator('[data-testid="option-button"]')
-    if ((await optionButtons.count()) > 0) {
-      await optionButtons.first().click()
+    for (const group of await page.locator('[data-testid="product-options"]:visible').all()) {
+      await group.getByTestId("option-button").first().click()
     }
 
     const addProductBtn = page.locator('[data-testid="add-product-button"]').first()
@@ -36,7 +41,9 @@ test.describe("Cart Operations (E2E-02 & E2E-10)", () => {
 
     const productRows = page.locator('[data-testid="product-row"]')
     await expect(productRows.first()).toBeVisible({ timeout: 15_000 })
-    await expect(productRows.first().locator('[data-testid="product-title"]')).toContainText(DEFAULT_PRODUCT_TITLE)
+    await expect(productRows.first().locator('[data-testid="product-title"]')).toContainText(
+      DEFAULT_PRODUCT_TITLE,
+    )
 
     // 3. Verify checkout button exists
     const checkoutButton = page.locator('[data-testid="checkout-button"]')
@@ -68,7 +75,9 @@ test.describe("Cart Operations (E2E-02 & E2E-10)", () => {
     expect(deleteResponse.ok()).toBeTruthy()
 
     // Verify empty cart state is displayed
-    await expect(page.locator('[data-testid="empty-cart-message"]')).toBeVisible({ timeout: 15_000 })
+    await expect(page.locator('[data-testid="empty-cart-message"]')).toBeVisible({
+      timeout: 15_000,
+    })
     await expect(page.locator('[data-testid="product-row"]')).toHaveCount(0)
   })
 })

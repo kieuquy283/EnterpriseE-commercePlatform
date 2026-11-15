@@ -1,0 +1,104 @@
+/* Reference visual language, expressed through DAYMARK's olive/ivory palette. */
+.slide-inner,
+.slide--cover .slide-inner {
+  padding: 3.8cqw 4.7cqw 2.6cqw;
+}
+
+.slide[data-tone="light"]::before {
+  inset: -3%;
+  background:
+    radial-gradient(ellipse at 6% 110%, #a4ad70 0%, #dce2b8 23%, transparent 48%),
+    radial-gradient(ellipse at 95% -12%, #d9dfb9 0%, transparent 38%),
+    linear-gradient(105deg, #fafbf6 5%, #edf0d9 40%, #fafaf3 85%);
+  background-size: auto;
+  opacity: 1;
+  animation: light-field 18s ease-in-out infinite alternate;
+}
+
+.slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23000' filter='url(%23n)' opacity='.4' d='M0 0h180v180H0z'/%3E%3C/svg%3E");
+}
+
+.slide-head,
+.slide-head--cover {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 0;
+  padding-bottom: 0;
+  font-size: 1.02cqw;
+  letter-spacing: 0.035cqw;
+  font-weight: 500;
+}
+.slide-head > :nth-child(2) { text-align: center; }
+.slide-head > :last-child { text-align: right; }
+.slide-brand .wordmark { font-size: 1.05cqw; letter-spacing: 0.07em; }
+.slide-foot { border: 0; font-size: 0.95cqw; padding-top: 0; }
+.slide-titleblock { padding-top: 4.2cqw; gap: 0; }
+
+.slide:not(.slide--preview):not(.slide--cover) .slide-title {
+  font-size: 6.1cqw;
+  font-weight: 450;
+  line-height: 1.14;
+  letter-spacing: -0.045em;
+  text-wrap: pretty;
+}
+.slide--cover .cover-body { padding-top: 4.5cqw; }
+.cover-title {
+  max-width: 96%;
+  font-size: 8.2cqw;
+  font-weight: 450;
+  line-height: 1.12;
+  letter-spacing: -0.055em;
+}
+.slide:not(.slide--preview) .slide-lede,
+.slide:not(.slide--preview) .cover-lede {
+  max-width: 80cqw;
+  margin: 1.6cqw 0 0;
+  font-size: 1.55cqw;
+  line-height: 1.55;
+  color: #4a4d40;
+}
+.slide:not(.slide--preview) .cover-lede { margin-top: 2.2cqw; }
+.slide:not(.slide--preview) .card__title { font-size: 2.2cqw; font-weight: 500; }
+.slide:not(.slide--preview) .card__body { font-size: 1.3cqw; line-height: 1.55; }
+.card { background: transparent; }
+
+.presenter-stage { position: relative; }
+@keyframes light-field { from { transform: translate(-1%, 0) scale(1); } to { transform: translate(1%, -1%) scale(1.025); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .presenter-canvas,
+  .presenter-canvas .slide *,
+  .slide::before { animation: none !important; transition: none !important; }
+}
+
+.slide--preview::before { animation: none; }
+
+/* Diagram page reserves space for the graph rather than reusing a text layout. */
+.slide[data-slide-id="architecture"] .slide-titleblock { padding-top: 2.3cqw; }
+.slide[data-slide-id="architecture"] .slide-body { margin-top: 1cqw; }
+.slide[data-slide-id="architecture"] .figure__body { padding: 0.7cqw 1cqw; }
+.slide[data-slide-id="architecture"] .arch-diagram { gap: 0.4cqw; }
+.slide[data-slide-id="architecture"] .arch-tier > div { min-height: 3.8cqw; padding: 0.5cqw; }
+
+.wordmark { align-items: center; line-height: 1; }
+.wordmark__first, .wordmark__second { display: block; }
+.wordmark__logo { width: 1.35em; height: 1.25em; margin-right: 0.5em; object-fit: contain; }
+
+.slide-head .slide-section { text-align: center; color: var(--slide-ink); font-size: 1.05cqw; font-weight: 550; }
+.slide-head .slide-edition { text-align: right; font-size: 0.8cqw; color: var(--slide-muted); font-weight: 400; }
+
+/* Motion owns transforms and content timing; CSS only paints the light fields. */
+.presenter-canvas { position: absolute; top: 50%; left: 50%; translate: -50% -50%; z-index: 2; }
+.presenter-canvas * { animation: none !important; }
+.mermaid-chart { display: grid; place-items: center; width: 100%; height: 100%; min-height: 0; }
+.mermaid-chart svg { width: 100%; height: 100%; max-width: 100% !important; max-height: 100%; }
+.slide[data-slide-id="architecture"] .block--figure { flex: 1; min-height: 0; }
+.slide[data-slide-id="architecture"] .figure__body { height: 100%; min-height: 0; display: flex; overflow: clip; }
+
+.slide[data-slide-id="architecture"] .figure__body { background: transparent; border: 0; }

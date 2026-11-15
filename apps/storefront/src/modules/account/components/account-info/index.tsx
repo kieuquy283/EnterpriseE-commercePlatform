@@ -1,5 +1,5 @@
-import { Disclosure } from "@headlessui/react"
-import { Badge, Button, clx } from "@modules/common/components/ui"
+import { customerErrorMessage } from "@lib/util/customer-error-message"
+import { Alert, Button, clx } from "@modules/common/components/ui"
 import { useEffect } from "react"
 
 import useToggleState from "@lib/hooks/use-toggle-state"
@@ -13,7 +13,7 @@ type AccountInfoProps = {
   errorMessage?: string
   clearState: () => void
   children?: React.ReactNode
-  'data-testid'?: string
+  "data-testid"?: string
 }
 
 const AccountInfo = ({
@@ -22,9 +22,9 @@ const AccountInfo = ({
   isSuccess,
   isError,
   clearState,
-  errorMessage = "An error occurred, please try again",
+  errorMessage = "Có lỗi xảy ra. Vui lòng thử lại.",
   children,
-  'data-testid': dataTestid
+  "data-testid": dataTestid,
 }: AccountInfoProps) => {
   const { state, close, toggle } = useToggleState()
 
@@ -42,97 +42,67 @@ const AccountInfo = ({
   }, [isSuccess, close])
 
   return (
-    <div className="text-small-regular" data-testid={dataTestid}>
-      <div className="flex items-end justify-between">
-        <div className="flex flex-col">
-          <span className="uppercase text-ui-fg-base">{label}</span>
-          <div className="flex items-center flex-1 basis-0 justify-end gap-x-4">
+    <section
+      className="flex flex-col gap-y-3"
+      data-testid={dataTestid}
+      aria-busy={pending || undefined}
+    >
+      <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
+        <div className="flex min-w-0 flex-col gap-y-1">
+          <h2 className="dm-eyebrow">{label}</h2>
+          <div
+            className={clx("min-w-0 break-words text-dm-body text-ink", state && "text-ink-muted")}
+          >
             {typeof currentInfo === "string" ? (
-              <span className="font-semibold" data-testid="current-info">{currentInfo}</span>
+              <span data-testid="current-info">{currentInfo}</span>
             ) : (
               currentInfo
             )}
           </div>
         </div>
-        <div>
-          <Button
-            variant="secondary"
-            className="w-[100px] min-h-[25px] py-1"
-            onClick={handleToggle}
-            type={state ? "reset" : "button"}
-            data-testid="edit-button"
-            data-active={state}
-          >
-            {state ? "Cancel" : "Edit"}
-          </Button>
-        </div>
+        <Button
+          variant="secondary"
+          size="small"
+          className="shrink-0"
+          onClick={handleToggle}
+          type={state ? "reset" : "button"}
+          aria-expanded={state}
+          data-testid="edit-button"
+          data-active={state}
+        >
+          {state ? "Huỷ" : "Chỉnh sửa"}
+        </Button>
       </div>
 
-      {/* Success state */}
-      <Disclosure>
-        <Disclosure.Panel
-          static
-          className={clx(
-            "transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden",
-            {
-              "max-h-[1000px] opacity-100": isSuccess,
-              "max-h-0 opacity-0": !isSuccess,
-            }
-          )}
-          data-testid="success-message"
-        >
-          <Badge className="p-2 my-4" color="green">
-            <span>{label} updated succesfully</span>
-          </Badge>
-        </Disclosure.Panel>
-      </Disclosure>
+      {isSuccess && (
+        <div data-testid="success-message">
+          <Alert tone="success">{label} đã được cập nhật.</Alert>
+        </div>
+      )}
 
-      {/* Error state  */}
-      <Disclosure>
-        <Disclosure.Panel
-          static
-          className={clx(
-            "transition-[max-height,opacity] duration-300 ease-in-out overflow-hidden",
-            {
-              "max-h-[1000px] opacity-100": isError,
-              "max-h-0 opacity-0": !isError,
-            }
-          )}
-          data-testid="error-message"
-        >
-          <Badge className="p-2 my-4" color="red">
-            <span>{errorMessage}</span>
-          </Badge>
-        </Disclosure.Panel>
-      </Disclosure>
+      {isError && (
+        <div data-testid="error-message">
+          <Alert tone="error">{customerErrorMessage(errorMessage)}</Alert>
+        </div>
+      )}
 
-      <Disclosure>
-        <Disclosure.Panel
-          static
-          className={clx(
-            "transition-[max-height,opacity] duration-300 ease-in-out overflow-visible",
-            {
-              "max-h-[1000px] opacity-100": state,
-              "max-h-0 opacity-0": !state,
-            }
-          )}
-        >
-          <div className="flex flex-col gap-y-2 py-4">
-            <div>{children}</div>
-            <div className="flex items-center justify-end mt-2">
-              <Button
-                isLoading={pending}
-                className="w-full small:max-w-[140px]"
-                type="submit"
-                data-testid="save-button"
-              >
-                Save changes
-              </Button>
-            </div>
+      {state && (
+        <div className="dm-panel flex flex-col gap-y-4 p-4">
+          <div>{children}</div>
+          <div className="flex justify-end">
+            <Button
+              isLoading={pending}
+              loadingLabel="Đang lưu"
+              className="w-full small:w-auto"
+              type="submit"
+              data-testid="save-button"
+            >
+              Lưu thay đổi
+            </Button>
           </div>
-        </Disclosure.Panel>
-      </Disclosure>
-    </div>
+        </div>
+      )}
+    </section>
   )
 }
 

@@ -1,5 +1,5 @@
 import { HttpTypes } from "@medusajs/types"
-import { Text } from "@modules/common/components/ui"
+import OrderStatusBadge from "@modules/order/components/order-status-badge"
 
 type OrderDetailsProps = {
   order: HttpTypes.StoreOrder
@@ -7,55 +7,50 @@ type OrderDetailsProps = {
 }
 
 const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
-  const formatStatus = (str: string) => {
-    const formatted = str.split("_").join(" ")
-
-    return formatted.slice(0, 1).toUpperCase() + formatted.slice(1)
-  }
-
   return (
-    <div>
-      <Text>
-        Order recorded for{" "}
-        <span
-          className="text-ui-fg-medium-plus font-semibold"
-          data-testid="order-email"
-        >
-          {order.email}
-        </span>
-        .
-      </Text>
-      <Text className="mt-2">
-        Order date:{" "}
-        <span data-testid="order-date">
-          {new Date(order.created_at).toDateString()}
-        </span>
-      </Text>
-      <Text className="mt-2 text-ui-fg-interactive">
-        Order number: <span data-testid="order-id">{order.display_id}</span>
-      </Text>
+    <div className="flex flex-col gap-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-4">
+        <div className="flex flex-col gap-y-1">
+          <p className="dm-eyebrow">Mã đơn hàng</p>
+          <p className="dm-numeric text-dm-title font-medium text-ink" data-testid="order-id">
+            {order.display_id}
+          </p>
+        </div>
 
-      <div className="flex items-center text-compact-small gap-x-4 mt-4">
-        {showStatus && (
-          <>
-            <Text>
-              Order status:{" "}
-              <span className="text-ui-fg-subtle " data-testid="order-status">
-                {formatStatus(order.fulfillment_status)}
-              </span>
-            </Text>
-            <Text>
-              Payment status:{" "}
-              <span
-                className="text-ui-fg-subtle "
-                data-testid="order-payment-status"
-              >
-                {formatStatus(order.payment_status)}
-              </span>
-            </Text>
-          </>
-        )}
+        {showStatus ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <OrderStatusBadge
+              label="Giao hàng"
+              status={order.fulfillment_status}
+              statusTestId="order-status"
+            />
+            <OrderStatusBadge
+              label="Thanh toán"
+              status={order.payment_status}
+              statusTestId="order-payment-status"
+            />
+          </div>
+        ) : null}
       </div>
+
+      <dl className="grid grid-cols-1 gap-6 border-t border-line pt-6 small:grid-cols-2">
+        <div className="flex flex-col gap-y-1">
+          <dt className="dm-eyebrow">Ngày đặt hàng</dt>
+          <dd className="text-dm-small text-ink-muted">
+            <span data-testid="order-date">
+              {new Date(order.created_at).toLocaleDateString("vi-VN", {
+                timeZone: "Asia/Ho_Chi_Minh",
+              })}
+            </span>
+          </dd>
+        </div>
+        <div className="flex flex-col gap-y-1">
+          <dt className="dm-eyebrow">Email của đơn hàng</dt>
+          <dd className="break-words text-dm-small font-medium text-ink">
+            <span data-testid="order-email">{order.email}</span>
+          </dd>
+        </div>
+      </dl>
     </div>
   )
 }

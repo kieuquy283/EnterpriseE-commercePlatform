@@ -3,9 +3,9 @@ import SkeletonCartTotals from "@modules/skeletons/components/skeleton-cart-tota
 
 const SkeletonOrderSummary = () => {
   return (
-    <div className="grid-cols-1">
+    <div className="grid-cols-1" aria-hidden="true">
       <SkeletonCartTotals header={false} />
-      <div className="mt-4">
+      <div className="mt-6">
         <SkeletonButton />
       </div>
     </div>

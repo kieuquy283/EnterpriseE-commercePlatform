@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useSearchParams } from "next/navigation"
-import { Button } from "@modules/common/components/ui"
+import { Alert, SpinnerMark } from "@modules/common/components/ui"
 import { confirmEmailVerification } from "@lib/data/customer"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
@@ -27,43 +27,43 @@ const VerifyAccount = () => {
       return
     }
 
-    confirmEmailVerification(token).then(({ success }) =>
-      setState(success ? "success" : "error")
-    )
+    confirmEmailVerification(token).then(({ success }) => setState(success ? "success" : "error"))
   }, [token])
 
   return (
-    <div
-      className="max-w-sm w-full flex flex-col items-center text-center gap-y-4"
-      data-testid="verify-account-page"
-    >
-      <h1 className="text-large-semi uppercase">Email verification</h1>
+    <div className="flex w-full max-w-md flex-col gap-y-6" data-testid="verify-account-page">
+      <div className="flex flex-col gap-y-2">
+        <p className="dm-eyebrow">Tài khoản</p>
+        <h1 className="dm-title">Xác thực email</h1>
+      </div>
 
       {state === "verifying" && (
-        <p className="text-base-regular text-ui-fg-base">
-          Verifying your email...
+        <p
+          className="flex items-center gap-x-3 text-dm-body text-ink-muted"
+          role="status"
+          aria-live="polite"
+        >
+          <SpinnerMark className="text-ink-faint" />
+          Đang xác thực email
         </p>
       )}
 
       {state === "success" && (
         <>
-          <p className="text-base-regular text-ui-fg-base">
-            Your email is verified. You can now sign in to your account.
-          </p>
-          <LocalizedClientLink href="/account">
-            <Button variant="primary">Go to sign in</Button>
+          <Alert tone="success">Email đã được xác thực. Bạn có thể đăng nhập vào tài khoản.</Alert>
+          <LocalizedClientLink href="/account" className="dm-btn dm-btn-primary self-start">
+            Đến trang đăng nhập
           </LocalizedClientLink>
         </>
       )}
 
       {state === "error" && (
         <>
-          <p className="text-base-regular text-ui-fg-base">
-            This verification link is invalid or has expired. Sign in to receive
-            a new verification email.
-          </p>
-          <LocalizedClientLink href="/account">
-            <Button variant="secondary">Go to sign in</Button>
+          <Alert tone="error">
+            Liên kết xác thực không hợp lệ hoặc đã hết hạn. Đăng nhập để yêu cầu email xác thực mới.
+          </Alert>
+          <LocalizedClientLink href="/account" className="dm-btn dm-btn-secondary self-start">
+            Đến trang đăng nhập
           </LocalizedClientLink>
         </>
       )}

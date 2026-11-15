@@ -1,8 +1,9 @@
-FROM node:22.22.0-bookworm-slim
+FROM node:24.22.1-bookworm-slim
 WORKDIR /app
 COPY package*.json ./
 COPY apps/backend/package.json apps/backend/package.json
 COPY apps/storefront/package.json apps/storefront/package.json
+COPY presentation/package.json presentation/package.json
 RUN npm ci --no-audit --no-fund
 COPY . .
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY

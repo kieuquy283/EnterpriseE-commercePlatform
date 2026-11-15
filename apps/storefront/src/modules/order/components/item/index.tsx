@@ -4,7 +4,7 @@ import { Table, Text } from "@modules/common/components/ui"
 import LineItemOptions from "@modules/common/components/line-item-options"
 import LineItemPrice from "@modules/common/components/line-item-price"
 import LineItemUnitPrice from "@modules/common/components/line-item-unit-price"
-import Thumbnail from "@modules/products/components/thumbnail"
+import ProductImage from "@modules/products/components/product-image"
 
 type ItemProps = {
   item: HttpTypes.StoreCartLineItem | HttpTypes.StoreOrderLineItem
@@ -14,15 +14,16 @@ type ItemProps = {
 const Item = ({ item, currencyCode }: ItemProps) => {
   return (
     <Table.Row className="w-full" data-testid="product-row">
-      <Table.Cell className="!pl-0 p-4 w-24">
-        <div className="flex w-16">
-          <Thumbnail thumbnail={item.thumbnail} size="square" />
+      <Table.Cell className="!pl-0 px-0 py-5">
+        <div className="dm-media-portrait w-16 overflow-hidden rounded-dm-xs bg-surface small:w-20">
+          <ProductImage src={item.thumbnail} alt="" sizes="80px" placeholderSize={14} />
         </div>
       </Table.Cell>
 
-      <Table.Cell className="text-left">
+      <Table.Cell className="px-3 py-5 text-left">
         <Text
-          className="txt-medium-plus text-ui-fg-base"
+          as="span"
+          className="block break-words text-dm-body font-medium leading-snug text-ink"
           data-testid="product-name"
         >
           {item.product_title}
@@ -30,24 +31,17 @@ const Item = ({ item, currencyCode }: ItemProps) => {
         <LineItemOptions variant={item.variant} data-testid="product-variant" />
       </Table.Cell>
 
-      <Table.Cell className="!pr-0">
-        <span className="!pr-0 flex flex-col items-end h-full justify-center">
-          <span className="flex gap-x-1 ">
-            <Text className="text-ui-fg-muted">
-              <span data-testid="product-quantity">{item.quantity}</span>x{" "}
-            </Text>
-            <LineItemUnitPrice
-              item={item}
-              style="tight"
-              currencyCode={currencyCode}
-            />
+      <Table.Cell className="!pr-0 px-0 py-5">
+        <span className="flex flex-col items-end gap-y-1">
+          <span className="flex items-baseline gap-x-1.5 text-dm-caption text-ink-faint">
+            <span className="tabular-nums" data-testid="product-quantity">
+              {item.quantity}
+            </span>
+            <span aria-hidden="true">×</span>
+            <LineItemUnitPrice item={item} style="tight" currencyCode={currencyCode} />
           </span>
 
-          <LineItemPrice
-            item={item}
-            style="tight"
-            currencyCode={currencyCode}
-          />
+          <LineItemPrice item={item} style="tight" currencyCode={currencyCode} />
         </span>
       </Table.Cell>
     </Table.Row>

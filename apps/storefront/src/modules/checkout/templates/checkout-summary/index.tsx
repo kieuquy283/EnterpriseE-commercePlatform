@@ -1,28 +1,28 @@
-import { Heading } from "@modules/common/components/ui"
-
 import ItemsPreviewTemplate from "@modules/cart/templates/preview"
-import DiscountCode from "@modules/checkout/components/discount-code"
 import CartTotals from "@modules/common/components/cart-totals"
-import Divider from "@modules/common/components/divider"
+import DiscountCode from "@modules/checkout/components/discount-code"
 import { HttpTypes } from "@medusajs/types"
 
 const CheckoutSummary = ({ cart }: { cart: HttpTypes.StoreCart }) => {
+  const itemCount = cart.items?.reduce((total, item) => total + item.quantity, 0) ?? 0
+
   return (
-    <div className="sticky top-0 flex flex-col-reverse small:flex-col gap-y-8 py-8 small:py-0 ">
-      <div className="w-full bg-white flex flex-col">
-        <Divider className="my-6 small:hidden" />
-        <Heading
-          level="h2"
-          className="flex flex-row text-3xl-regular items-baseline"
-        >
-          In your Cart
-        </Heading>
-        <Divider className="my-6" />
-        <CartTotals totals={cart} />
-        <ItemsPreviewTemplate cart={cart} />
-        <div className="my-6">
-          <DiscountCode cart={cart} />
+    <div className="small:sticky small:top-24">
+      <div className="flex flex-col gap-y-6 bg-surface px-5 py-8 small:px-8 small:py-10">
+        <div className="flex flex-col gap-y-1.5">
+          <h2 className="dm-heading">Trong giỏ hàng</h2>
+          <p className="dm-caption tabular-nums">
+            {itemCount} {itemCount === 1 ? "sản phẩm" : "sản phẩm"}
+          </p>
         </div>
+
+        <ItemsPreviewTemplate cart={cart} />
+
+        <DiscountCode cart={cart} />
+
+        <div className="dm-divider" />
+
+        <CartTotals totals={cart} />
       </div>
     </div>
   )

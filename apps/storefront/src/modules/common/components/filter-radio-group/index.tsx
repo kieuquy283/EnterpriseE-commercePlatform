@@ -1,5 +1,5 @@
-import { EllipseMiniSolid } from "@medusajs/icons"
-import { Label, RadioGroup, Text, clx } from "@modules/common/components/ui"
+import { Label, RadioGroup, clx } from "@modules/common/components/ui"
+
 type FilterRadioGroupProps = {
   title: string
   items: {
@@ -19,41 +19,36 @@ const FilterRadioGroup = ({
   "data-testid": dataTestId,
 }: FilterRadioGroupProps) => {
   return (
-    <div className="flex gap-x-3 flex-col gap-y-3">
-      <Text className="txt-compact-small-plus text-ui-fg-muted">{title}</Text>
-      <RadioGroup data-testid={dataTestId}>
-        {items?.map((i) => (
-          <div
-            key={i.value}
-            className={clx("flex items-center", {
-              "ml-[-23px]": i.value === value,
-            })}
-          >
-            {i.value === value && <EllipseMiniSolid className="mr-2" />}
-            <RadioGroup.Item
-              checked={i.value === value}
-              onChange={() => handleChange(i.value)}
-              className="hidden peer"
-              id={i.value}
-              value={i.value}
-            />
-            <Label
-              htmlFor={i.value}
-              className={clx(
-                "!txt-compact-small !transform-none text-ui-fg-subtle hover:cursor-pointer",
-                {
-                  "text-ui-fg-base": i.value === value,
-                }
-              )}
-              data-testid="radio-label"
-              data-active={i.value === value}
-            >
-              {i.label}
-            </Label>
-          </div>
-        ))}
+    <fieldset className="flex flex-wrap items-center gap-x-6 gap-y-3">
+      <legend className="dm-label mb-3">{title}</legend>
+      <RadioGroup data-testid={dataTestId} className="!flex-row flex-wrap gap-x-6 gap-y-3">
+        {items?.map((item) => {
+          const isActive = item.value === value
+          return (
+            <div key={item.value} className="flex items-center gap-2">
+              <RadioGroup.Item
+                checked={isActive}
+                onChange={() => handleChange(item.value)}
+                name="sortBy"
+                id={`sort-${item.value}`}
+                value={item.value}
+              />
+              <Label
+                htmlFor={`sort-${item.value}`}
+                className={clx(
+                  "mb-0 flex cursor-pointer items-center gap-2 text-dm-small normal-case tracking-normal transition-colors",
+                  isActive ? "text-ink" : "text-ink-muted hover:text-ink",
+                )}
+                data-testid="radio-label"
+                data-active={isActive}
+              >
+                {item.label}
+              </Label>
+            </div>
+          )
+        })}
       </RadioGroup>
-    </div>
+    </fieldset>
   )
 }
 

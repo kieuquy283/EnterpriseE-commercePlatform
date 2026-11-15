@@ -1,7 +1,9 @@
+> Reference status (14 November 2026): specialist/research documentation. Current DAYMARK scope, requirements and acceptance authority are in [../../README.md](../../README.md). Historical measurements and data-rights restrictions remain in force.
+
 # Personalized Recommendation Engine — Functional & Technical Specification
 
 > **ID:** PERS-SPEC-01 · **Version:** 1.1 · **Status:** P0 code partially implemented; release gates open
-> **Plan:** [plan.md](plan.md) · **Evaluation:** [evaluation_protocol.md](evaluation_protocol.md).
+> **Plan:** [plan.md](../../spec/07-delivery.md) · **Evaluation:** [evaluation_protocol.md](evaluation_protocol.md).
 
 ## 1. Use cases & requirements
 

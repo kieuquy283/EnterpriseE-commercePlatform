@@ -1,3 +1,5 @@
+> Reference status (14 November 2026): specialist/research documentation. Current DAYMARK scope, requirements and acceptance authority are in [../../README.md](../../README.md). Historical measurements and data-rights restrictions remain in force.
+
 # Hybrid Recommendation v2 — đặc tả thực thi
 
 **Trạng thái:** contract v2; triển khai code đang PARTIAL, xem [system report](reports/system_test_report.md). **Baseline:** `recommendation-pdp` tại `cf16e0ba2e2af3519f79f5d1b516708d64a28605` (07/11/2026). V2 chỉ nâng Similar Products trên PDP; Home Popularity tiếp tục dùng contract hiện tại. Các chữ MUST dưới đây chỉ có hiệu lực nếu nhóm chọn triển khai phần mở rộng v2, không biến Recommendation thành điều kiện của checkout.

@@ -2,7 +2,7 @@
 
 The primary course deployment is **ALB/ACM → ECS Fargate storefront, Medusa API/admin and worker → private RDS PostgreSQL and Redis on EC2**, with private S3 product images streamed through the backend proxy. CloudFormation owns the infrastructure. All regional resources use `ap-southeast-2`; the local AWS profile is `aws-project`.
 
-The full stack passed 14 public checks on November 9, 2026. That is dated verification evidence, not a promise that a timed demo is currently running. See the [architecture decision](../docs/architecture/adr/0001-aws-cloud-stack.md), [architecture](../docs/architecture/cloud-system-architecture.md), and [deployment report](../docs/report/aws-fargate-deployment-2026-11-08.md).
+The full stack passed 18 public checks on November 9, 2026. That is dated verification evidence, not a promise that a timed demo is currently running. See the [architecture decision](../docs/architecture/adr/0001-aws-cloud-stack.md), [architecture](../docs/spec/03-architecture.md), and [deployment report](../docs/report/aws-redeployment-main389e855-2026-11-09.md).
 
 ## Before operating
 

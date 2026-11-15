@@ -10,7 +10,7 @@ export async function addProductToCart(page: Page, productHandle = DEFAULT_PRODU
   for (const group of await optionGroups.all()) {
     const button = group.getByTestId("option-button").first()
     await button.click()
-    await expect(button).toHaveClass(/border-ui-border-interactive/)
+    await expect(button).toHaveAttribute("aria-pressed", "true")
   }
   await expect(addBtn).toBeEnabled({ timeout: 10_000 })
   await addCurrentProductToCart(page)
@@ -19,13 +19,18 @@ export async function addProductToCart(page: Page, productHandle = DEFAULT_PRODU
 export async function addCurrentProductToCart(page: Page) {
   const addBtn = page.locator('[data-testid="add-product-button"]').first()
   const [response] = await Promise.all([
-    page.waitForResponse((result) => result.request().method() === "POST" && Boolean(result.request().headers()["next-action"]) && result.url().includes("/products/")),
+    page.waitForResponse(
+      (result) =>
+        result.request().method() === "POST" &&
+        Boolean(result.request().headers()["next-action"]) &&
+        result.url().includes("/products/"),
+    ),
     addBtn.click(),
   ])
   expect(response.ok()).toBeTruthy()
   // Server Action responses can keep streaming optional Suspense sections after
   // the cart mutation commits. Wait for the observable cart state below.
-  await expect(page.getByTestId("nav-cart-link").first()).toContainText(/Cart \([1-9]\d*\)/)
+  await expect(page.getByTestId("nav-cart-link").first()).toContainText(/Giỏ hàng \([1-9]\d*\)/)
 }
 
 export async function goToCheckout(page: Page) {
@@ -39,7 +44,7 @@ export async function goToCheckout(page: Page) {
 export async function fillAddress(
   page: Page,
   email: string,
-  overrides: Partial<typeof TEST_ADDRESS> = {}
+  overrides: Partial<typeof TEST_ADDRESS> = {},
 ) {
   const addr = { ...TEST_ADDRESS, ...overrides }
 

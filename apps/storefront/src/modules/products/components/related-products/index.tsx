@@ -1,91 +1,120 @@
 import { listProducts } from "@lib/data/products"
 import { getRegion } from "@lib/data/regions"
-import { HttpTypes } from "@medusajs/types"
-import Product from "../product-preview"
 import { getRecommendations } from "@lib/data/recommendations"
+import { HttpTypes } from "@medusajs/types"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import Product from "../product-preview"
 
 type RelatedProductsProps = {
   product: HttpTypes.StoreProduct
   countryCode: string
 }
 
-export default async function RelatedProducts({
-  product,
-  countryCode,
-}: RelatedProductsProps) {
+type SectionProps = {
+  id: string
+  heading: string
+  note?: string
+  products: HttpTypes.StoreProduct[]
+  region: HttpTypes.StoreRegion
+  testId: string
+}
+
+function ProductRow({ id, heading, note, products, region, testId }: SectionProps) {
+  if (!products.length) {
+    return null
+  }
+
+  return (
+    <section aria-labelledby={id} data-testid={testId}>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h2 id={id} className="dm-display">
+            {heading}
+          </h2>
+        </div>
+        <LocalizedClientLink href="/store" className="dm-link text-dm-small">
+          Tất cả sản phẩm
+        </LocalizedClientLink>
+      </div>
+      {note && <p className="dm-small mt-3 max-w-dm-prose text-ink-muted">{note}</p>}
+      <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 small:grid-cols-3 medium:grid-cols-4 small:gap-x-6">
+        {products.map((item) => (
+          <li key={item.id}>
+            <Product region={region} product={item} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+export default async function RelatedProducts({ product, countryCode }: RelatedProductsProps) {
   const region = await getRegion(countryCode)
 
   if (!region) {
     return null
   }
 
-  const recommendations = await getRecommendations(region.id, product.id)
   const seen = new Set<string>([product.id])
-  const uniqueProducts = (items: HttpTypes.StoreProduct[]) => items.filter((item) => {
-    if (seen.has(item.id)) return false
-    seen.add(item.id)
-    return true
-  }).slice(0, 6)
+  const uniqueProducts = (items: HttpTypes.StoreProduct[]) =>
+    items
+      .filter((item) => {
+        if (seen.has(item.id)) return false
+        seen.add(item.id)
+        return true
+      })
+      .slice(0, 4)
+
+  // Suggestions are an enhancement: any failure falls through to the catalog
+  // query below so the page still offers somewhere to go next.
+  const recommendations = await getRecommendations(region.id, product.id).catch(() => null)
+
   const recommendedProducts = uniqueProducts(recommendations?.products ?? [])
+
   if (recommendedProducts.length && recommendations) {
-    const isSimilarity = ["hm_metadata_similarity", "hm_hybrid_similarity"].includes(recommendations.strategy)
+    const isSimilarity = ["hm_metadata_similarity", "hm_hybrid_similarity"].includes(
+      recommendations.strategy,
+    )
+
     return (
-      <section className="product-page-constraint" aria-labelledby="similar-products-heading" data-testid="similar-products">
-        <h2 id="similar-products-heading" className="text-2xl-regular mb-8">{isSimilarity ? "Similar products" : "You may also like"}</h2>
-        <p className="mb-6 text-ui-fg-subtle">{recommendations.strategy === "hm_hybrid_similarity" ? "Based on product attributes and appearance." : isSimilarity ? "Based on product attributes." : "Selected products from the available catalog."}</p>
-        <ul className="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-6">
-          {recommendedProducts.map((item) => (
-            <li key={item.id}><Product region={region} product={item} /></li>
-          ))}
-        </ul>
-      </section>
+      <ProductRow
+        id="similar-products-heading"
+        testId="similar-products"
+        heading={isSimilarity ? "Sản phẩm tương tự" : "Có thể bạn sẽ thích"}
+        note={
+          recommendations.strategy === "hm_hybrid_similarity"
+            ? "Gợi ý từ đặc điểm và hình thức sản phẩm trong danh mục."
+            : isSimilarity
+              ? "Gợi ý từ đặc điểm sản phẩm trong danh mục."
+              : "Được chọn từ các sản phẩm hiện có tại cửa hàng."
+        }
+        products={recommendedProducts}
+        region={region}
+      />
     )
   }
 
-  // edit this function to define your related products logic
-  const queryParams: HttpTypes.StoreProductListParams = {}
-  if (region?.id) {
-    queryParams.region_id = region.id
+  const queryParams: HttpTypes.StoreProductListParams = {
+    is_giftcard: false,
   }
   if (product.collection_id) {
     queryParams.collection_id = [product.collection_id]
   }
-  if (product.tags) {
-    queryParams.tag_id = product.tags
-      .map((t) => t.id)
-      .filter(Boolean) as string[]
-  }
-  queryParams.is_giftcard = false
 
   const products = await listProducts({
     queryParams,
     countryCode,
-  }).then(({ response }) => {
-    return uniqueProducts(response.products)
-  }).catch(() => [])
-
-  if (!products.length) {
-    return null
-  }
+  })
+    .then(({ response }) => uniqueProducts(response.products))
+    .catch(() => [])
 
   return (
-    <section className="product-page-constraint" aria-labelledby="related-products-heading" data-testid="related-products">
-      <div className="flex flex-col items-center text-center mb-16">
-        <h2 id="related-products-heading" className="text-base-regular text-gray-600 mb-6">
-          Related products
-        </h2>
-        <p className="text-2xl-regular text-ui-fg-base max-w-lg">
-          You might also want to check out these products.
-        </p>
-      </div>
-
-      <ul className="grid grid-cols-2 small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8">
-        {products.map((product) => (
-          <li key={product.id}>
-            <Product region={region} product={product} />
-          </li>
-        ))}
-      </ul>
-    </section>
+    <ProductRow
+      id="related-products-heading"
+      testId="related-products"
+      heading="Cùng bộ sưu tập"
+      products={products}
+      region={region}
+    />
   )
 }

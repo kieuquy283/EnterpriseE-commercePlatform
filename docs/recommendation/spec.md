@@ -1,8 +1,10 @@
+> Reference status (14 November 2026): specialist/research documentation. Current DAYMARK scope, requirements and acceptance authority are in [../README.md](../README.md). Historical measurements and data-rights restrictions remain in force.
+
 # Recommendation MVP — Functional & Technical Specification
 
 > **Document ID:** REC-SPEC · **Version:** 1.1 · **Status:** IMPLEMENTED cho private pilot; kết quả nghiệm thu trong [reports](reports/final_implementation_report.md). Public NO-GO.
 > **Owner:** Data/Recommendation lead; reviewed by Backend, Frontend, QA/DevOps.
-> **Implementation evidence:** [final report](reports/final_implementation_report.md) · **Parent:** [SRS](../03_Software_Requirements_Specification.md) `FR-REC-01/02` (COULD).
+> **Implementation evidence:** [final report](reports/final_implementation_report.md) · **Parent:** [SRS](../spec/05-testing.md) `FR-REC-01/02` (COULD).
 > **Scope:** Non-personalized **Popularity (Home)** + **Metadata Similarity (PDP)** only.
 
 ## 1. Mục đích và ranh giới

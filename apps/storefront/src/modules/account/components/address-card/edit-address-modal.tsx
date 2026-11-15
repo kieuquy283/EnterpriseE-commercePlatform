@@ -1,19 +1,15 @@
 "use client"
 
-import {
-  deleteCustomerAddress,
-  updateCustomerAddress,
-} from "@lib/data/customer"
+import { deleteCustomerAddress, updateCustomerAddress } from "@lib/data/customer"
 import useToggleState from "@lib/hooks/use-toggle-state"
 import { PencilSquare as Edit, Trash } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
 import CountrySelect from "@modules/checkout/components/country-select"
 import { SubmitButton } from "@modules/checkout/components/submit-button"
-import Input from "@modules/common/components/input"
 import Modal from "@modules/common/components/modal"
-import { Button, Heading, Text, clx } from "@modules/common/components/ui"
+import { Alert, Button, Heading, Input, Text, clx } from "@modules/common/components/ui"
 import Spinner from "@modules/common/icons/spinner"
-import React, { useActionState, useEffect, useState } from "react"
+import React, { useCallback, useActionState, useEffect, useState } from "react"
 
 type EditAddressProps = {
   region: HttpTypes.StoreRegion
@@ -21,11 +17,7 @@ type EditAddressProps = {
   isActive?: boolean
 }
 
-const EditAddress: React.FC<EditAddressProps> = ({
-  region,
-  address,
-  isActive = false,
-}) => {
+const EditAddress: React.FC<EditAddressProps> = ({ region, address, isActive = false }) => {
   const [removing, setRemoving] = useState(false)
   const [successState, setSuccessState] = useState(false)
   const { state, open, close: closeModal } = useToggleState(false)
@@ -35,17 +27,16 @@ const EditAddress: React.FC<EditAddressProps> = ({
     error: null,
   } as { success: boolean; error: string | null })
 
-  const close = () => {
+  const close = useCallback(() => {
     setSuccessState(false)
     closeModal()
-  }
+  }, [closeModal])
 
   useEffect(() => {
     if (successState) {
       close()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [successState])
+  }, [successState, close])
 
   useEffect(() => {
     if (formState.success) {
@@ -63,29 +54,27 @@ const EditAddress: React.FC<EditAddressProps> = ({
     <>
       <div
         className={clx(
-          "border rounded-rounded p-5 min-h-[220px] h-full w-full flex flex-col justify-between transition-colors",
-          {
-            "border-gray-900": isActive,
-          }
+          "flex h-full min-h-[220px] w-full flex-col justify-between gap-y-4 rounded-dm-md border p-5 transition-colors duration-200 ease-dm-out",
+          isActive
+            ? "border-accent bg-accent-soft/20"
+            : "border-line bg-canvas hover:border-line-strong",
         )}
         data-testid="address-container"
       >
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-y-1">
           <Heading
-            className="text-left text-base-semi"
+            level="h3"
+            className="text-left text-dm-small font-semibold text-ink"
             data-testid="address-name"
           >
             {address.first_name} {address.last_name}
           </Heading>
           {address.company && (
-            <Text
-              className="txt-compact-small text-ui-fg-base"
-              data-testid="address-company"
-            >
+            <Text className="text-dm-caption text-ink-muted" data-testid="address-company">
               {address.company}
             </Text>
           )}
-          <Text className="flex flex-col text-left text-base-regular mt-2">
+          <Text className="flex flex-col text-left text-dm-small text-ink-muted">
             <span data-testid="address-address">
               {address.address_1}
               {address.address_2 && <span>, {address.address_2}</span>}
@@ -99,133 +88,134 @@ const EditAddress: React.FC<EditAddressProps> = ({
             </span>
           </Text>
         </div>
-        <div className="flex items-center gap-x-4">
+        <div className="flex items-center gap-x-4 border-t border-line pt-3">
           <button
-            className="text-small-regular text-ui-fg-base flex items-center gap-x-2"
+            type="button"
+            className="dm-action-link"
             onClick={open}
             data-testid="address-edit-button"
           >
             <Edit />
-            Edit
+            Chỉnh sửa
           </button>
           <button
-            className="text-small-regular text-ui-fg-base flex items-center gap-x-2"
+            type="button"
+            className="dm-action-link"
             onClick={removeAddress}
+            disabled={removing}
+            aria-busy={removing || undefined}
             data-testid="address-delete-button"
           >
             {removing ? <Spinner /> : <Trash />}
-            Remove
+            Xoá
           </button>
         </div>
       </div>
 
       <Modal isOpen={state} close={close} data-testid="edit-address-modal">
         <Modal.Title>
-          <Heading className="mb-2">Edit address</Heading>
+          <Heading level="h2" className="mb-2 text-dm-title-sm">
+            Sửa địa chỉ
+          </Heading>
         </Modal.Title>
         <form action={formAction}>
           <input type="hidden" name="addressId" value={address.id} />
           <Modal.Body>
-            <div className="grid grid-cols-1 gap-y-2">
-              <div className="grid grid-cols-2 gap-x-2">
+            <div className="flex w-full flex-col gap-4">
+              <div className="grid grid-cols-1 gap-4 xsmall:grid-cols-2">
                 <Input
-                  label="First name"
+                  label="Tên"
                   name="first_name"
-                  required
                   autoComplete="given-name"
+                  required
                   defaultValue={address.first_name || undefined}
                   data-testid="first-name-input"
                 />
                 <Input
-                  label="Last name"
+                  label="Họ"
                   name="last_name"
-                  required
                   autoComplete="family-name"
+                  required
                   defaultValue={address.last_name || undefined}
                   data-testid="last-name-input"
                 />
-              </div>
-              <Input
-                label="Company"
-                name="company"
-                autoComplete="organization"
-                defaultValue={address.company || undefined}
-                data-testid="company-input"
-              />
-              <Input
-                label="Address"
-                name="address_1"
-                required
-                autoComplete="address-line1"
-                defaultValue={address.address_1 || undefined}
-                data-testid="address-1-input"
-              />
-              <Input
-                label="Apartment, suite, etc."
-                name="address_2"
-                autoComplete="address-line2"
-                defaultValue={address.address_2 || undefined}
-                data-testid="address-2-input"
-              />
-              <div className="grid grid-cols-[144px_1fr] gap-x-2">
                 <Input
-                  label="Postal code"
+                  label="Công ty (không bắt buộc)"
+                  name="company"
+                  autoComplete="organization"
+                  defaultValue={address.company || undefined}
+                  data-testid="company-input"
+                />
+                <div className="xsmall:col-span-2">
+                  <Input
+                    label="Địa chỉ"
+                    name="address_1"
+                    autoComplete="address-line1"
+                    required
+                    defaultValue={address.address_1 || undefined}
+                    data-testid="address-1-input"
+                  />
+                </div>
+                <div className="xsmall:col-span-2">
+                  <Input
+                    label="Căn hộ, số tầng (không bắt buộc)"
+                    name="address_2"
+                    autoComplete="address-line2"
+                    defaultValue={address.address_2 || undefined}
+                    data-testid="address-2-input"
+                  />
+                </div>
+                <Input
+                  label="Mã bưu chính"
                   name="postal_code"
-                  required
                   autoComplete="postal-code"
+                  required
                   defaultValue={address.postal_code || undefined}
                   data-testid="postal-code-input"
                 />
                 <Input
-                  label="City"
+                  label="Tỉnh / Thành phố"
                   name="city"
+                  autoComplete="address-level2"
                   required
-                  autoComplete="locality"
                   defaultValue={address.city || undefined}
                   data-testid="city-input"
                 />
+                <Input
+                  label="Quận / Huyện"
+                  name="province"
+                  autoComplete="address-level1"
+                  defaultValue={address.province || undefined}
+                  data-testid="state-input"
+                />
+                <CountrySelect
+                  name="country_code"
+                  region={region}
+                  required
+                  autoComplete="country"
+                  defaultValue={address.country_code || undefined}
+                  data-testid="country-select"
+                />
+                <div className="xsmall:col-span-2">
+                  <Input
+                    label="Số điện thoại"
+                    name="phone"
+                    type="tel"
+                    autoComplete="tel"
+                    defaultValue={address.phone || undefined}
+                    data-testid="phone-input"
+                  />
+                </div>
               </div>
-              <Input
-                label="Province / State"
-                name="province"
-                autoComplete="address-level1"
-                defaultValue={address.province || undefined}
-                data-testid="state-input"
-              />
-              <CountrySelect
-                name="country_code"
-                region={region}
-                required
-                autoComplete="country"
-                defaultValue={address.country_code || undefined}
-                data-testid="country-select"
-              />
-              <Input
-                label="Phone"
-                name="phone"
-                autoComplete="phone"
-                defaultValue={address.phone || undefined}
-                data-testid="phone-input"
-              />
+              {formState.error && <Alert tone="error">{formState.error}</Alert>}
             </div>
-            {formState.error && (
-              <div className="text-rose-500 text-small-regular py-2">
-                {formState.error}
-              </div>
-            )}
           </Modal.Body>
           <Modal.Footer>
-            <div className="flex gap-3 mt-6">
-              <Button
-                type="reset"
-                variant="secondary"
-                onClick={close}
-                className="h-10"
-                data-testid="cancel-button"
-              >
-                Cancel
+            <div className="mt-6 flex gap-3">
+              <Button type="reset" variant="secondary" onClick={close} data-testid="cancel-button">
+                Huỷ
               </Button>
-              <SubmitButton data-testid="save-button">Save</SubmitButton>
+              <SubmitButton data-testid="save-button">Lưu địa chỉ</SubmitButton>
             </div>
           </Modal.Footer>
         </form>

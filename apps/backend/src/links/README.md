@@ -1,26 +1,5 @@
-# Module Links
+# Module links
 
-A module link forms an association between two data models of different modules, while maintaining module isolation.
+Use supported Medusa module links for cross-module relationships; do not create raw application joins or write another module’s tables.
 
-> Learn more about links in [this documentation](https://docs.medusajs.com/learn/fundamentals/module-links)
-
-For example:
-
-```ts
-import BlogModule from "../modules/blog"
-import ProductModule from "@medusajs/medusa/product"
-import { defineLink } from "@medusajs/framework/utils"
-
-export default defineLink(
-  ProductModule.linkable.product,
-  BlogModule.linkable.post
-)
-```
-
-This defines a link between the Product Module's `product` data model and the Blog Module (custom module)'s `post` data model.
-
-Then, in the Medusa application, run the following command to sync the links to the database:
-
-```bash
-npx medusa db:migrate
-```
+Read [backend conventions](../../AGENTS.md) and the [canonical component design](../../../../docs/spec/03-architecture.md). Target rules are not proof that inherited code already follows them.

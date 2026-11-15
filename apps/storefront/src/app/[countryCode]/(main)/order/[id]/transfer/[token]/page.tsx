@@ -1,4 +1,3 @@
-import { Heading, Text } from "@modules/common/components/ui"
 import TransferActions from "@modules/order/components/transfer-actions"
 import TransferImage from "@modules/order/components/transfer-image"
 
@@ -10,27 +9,27 @@ export default async function TransferPage({
   const { id, token } = await params
 
   return (
-    <div className="flex flex-col gap-y-4 items-start w-2/5 mx-auto mt-10 mb-20">
-      <TransferImage />
-      <div className="flex flex-col gap-y-6">
-        <Heading level="h1" className="text-xl text-zinc-900">
-          Transfer request for order {id}
-        </Heading>
-        <Text className="text-zinc-600">
-          You&#39;ve received a request to transfer ownership of your order ({id}).
-          If you agree to this request, you can approve the transfer by clicking
-          the button below.
-        </Text>
-        <div className="w-full h-px bg-zinc-200" />
-        <Text className="text-zinc-600">
-          If you accept, the new owner will take over all responsibilities and
-          permissions associated with this order.
-        </Text>
-        <Text className="text-zinc-600">
-          If you do not recognize this request or wish to retain ownership, no
-          further action is required.
-        </Text>
-        <div className="w-full h-px bg-zinc-200" />
+    <div className="dm-section">
+      <div className="content-container flex flex-col items-start gap-y-6 small:max-w-2xl">
+        <TransferImage />
+        <div className="flex flex-col gap-y-4">
+          <p className="dm-eyebrow">Liên kết đơn hàng</p>
+          <h1 className="dm-title">Yêu cầu liên kết đơn hàng {id}</h1>
+        </div>
+        <p className="dm-body">
+          Bạn nhận được yêu cầu chuyển quyền sở hữu đơn hàng{" "}
+          <span className="font-medium text-ink">{id}</span>. Nếu đồng ý, bạn có thể chấp nhận yêu
+          cầu bên dưới.
+        </p>
+        <div className="dm-divider" />
+        <p className="dm-body">
+          Khi chấp nhận, chủ mới sẽ tiếp nhận quyền hạn và trách nhiệm đối với đơn hàng.
+        </p>
+        <p className="dm-body">
+          Nếu không nhận ra yêu cầu hoặc muốn giữ quyền sở hữu, bạn không cần thực hiện thêm thao
+          tác.
+        </p>
+        <div className="dm-divider" />
         <TransferActions id={id} token={token} />
       </div>
     </div>

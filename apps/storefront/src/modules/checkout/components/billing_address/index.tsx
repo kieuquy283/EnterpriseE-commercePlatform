@@ -1,5 +1,5 @@
 import { HttpTypes } from "@medusajs/types"
-import Input from "@modules/common/components/input"
+import { Input } from "@modules/common/components/ui"
 import React, { useState } from "react"
 import CountrySelect from "../country-select"
 
@@ -17,9 +17,7 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
   })
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLInputElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLInputElement | HTMLSelectElement>,
   ) => {
     setFormData({
       ...formData,
@@ -29,9 +27,9 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 xsmall:grid-cols-2">
         <Input
-          label="First name"
+          label="Tên"
           name="billing_address.first_name"
           autoComplete="given-name"
           value={formData["billing_address.first_name"]}
@@ -40,7 +38,7 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
           data-testid="billing-first-name-input"
         />
         <Input
-          label="Last name"
+          label="Họ"
           name="billing_address.last_name"
           autoComplete="family-name"
           value={formData["billing_address.last_name"]}
@@ -48,25 +46,19 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
           required
           data-testid="billing-last-name-input"
         />
+        <div className="xsmall:col-span-2">
+          <Input
+            label="Địa chỉ"
+            name="billing_address.address_1"
+            autoComplete="address-line1"
+            value={formData["billing_address.address_1"]}
+            onChange={handleChange}
+            required
+            data-testid="billing-address-input"
+          />
+        </div>
         <Input
-          label="Address"
-          name="billing_address.address_1"
-          autoComplete="address-line1"
-          value={formData["billing_address.address_1"]}
-          onChange={handleChange}
-          required
-          data-testid="billing-address-input"
-        />
-        <Input
-          label="Company"
-          name="billing_address.company"
-          value={formData["billing_address.company"]}
-          onChange={handleChange}
-          autoComplete="organization"
-          data-testid="billing-company-input"
-        />
-        <Input
-          label="Postal code"
+          label="Mã bưu chính"
           name="billing_address.postal_code"
           autoComplete="postal-code"
           value={formData["billing_address.postal_code"]}
@@ -75,11 +67,12 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
           data-testid="billing-postal-input"
         />
         <Input
-          label="City"
+          label="Tỉnh / Thành phố"
           name="billing_address.city"
           autoComplete="address-level2"
           value={formData["billing_address.city"]}
           onChange={handleChange}
+          data-testid="billing-city-input"
         />
         <CountrySelect
           name="billing_address.country_code"
@@ -91,7 +84,7 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
           data-testid="billing-country-select"
         />
         <Input
-          label="State / Province"
+          label="Quận / Huyện"
           name="billing_address.province"
           autoComplete="address-level1"
           value={formData["billing_address.province"]}
@@ -99,8 +92,17 @@ const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
           data-testid="billing-province-input"
         />
         <Input
-          label="Phone"
+          label="Công ty (không bắt buộc)"
+          name="billing_address.company"
+          value={formData["billing_address.company"]}
+          onChange={handleChange}
+          autoComplete="organization"
+          data-testid="billing-company-input"
+        />
+        <Input
+          label="Số điện thoại"
           name="billing_address.phone"
+          type="tel"
           autoComplete="tel"
           value={formData["billing_address.phone"]}
           onChange={handleChange}

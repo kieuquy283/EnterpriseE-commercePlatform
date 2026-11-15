@@ -2,8 +2,7 @@
 
 import React, { useActionState, useEffect, useMemo } from "react"
 
-import Input from "@modules/common/components/input"
-import NativeSelect from "@modules/common/components/native-select"
+import { Input, NativeSelect } from "@modules/common/components/ui"
 
 import { addCustomerAddress, updateCustomerAddress } from "@lib/data/customer"
 import { HttpTypes } from "@medusajs/types"
@@ -14,10 +13,7 @@ type MyInformationProps = {
   regions: HttpTypes.StoreRegion[]
 }
 
-const ProfileBillingAddress: React.FC<MyInformationProps> = ({
-  customer,
-  regions,
-}) => {
+const ProfileBillingAddress: React.FC<MyInformationProps> = ({ customer, regions }) => {
   const regionOptions = useMemo(() => {
     return (
       regions
@@ -33,9 +29,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
 
   const [successState, setSuccessState] = React.useState(false)
 
-  const billingAddress = customer.addresses?.find(
-    (addr) => addr.is_default_billing
-  )
+  const billingAddress = customer.addresses?.find((addr) => addr.is_default_billing)
 
   const initialState: Record<string, unknown> = {
     isDefaultBilling: true,
@@ -50,7 +44,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
 
   const [state, formAction] = useActionState(
     billingAddress ? updateCustomerAddress : addCustomerAddress,
-    initialState
+    initialState,
   )
 
   const clearState = () => {
@@ -63,13 +57,12 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
 
   const currentInfo = useMemo(() => {
     if (!billingAddress) {
-      return "No billing address"
+      return "Chưa lưu địa chỉ xuất hoá đơn"
     }
 
     const country =
-      regionOptions?.find(
-        (country) => country?.value === billingAddress.country_code
-      )?.label || billingAddress.country_code?.toUpperCase()
+      regionOptions?.find((country) => country?.value === billingAddress.country_code)?.label ||
+      billingAddress.country_code?.toUpperCase()
 
     return (
       <div className="flex flex-col font-semibold" data-testid="current-info">
@@ -93,87 +86,88 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
     <form action={formAction} onReset={() => clearState()} className="w-full">
       <input type="hidden" name="addressId" value={billingAddress?.id} />
       <AccountInfo
-        label="Billing address"
+        label="Địa chỉ xuất hoá đơn"
         currentInfo={currentInfo}
         isSuccess={successState}
         isError={!!state.error}
+        errorMessage={typeof state.error === "string" ? state.error : undefined}
         clearState={clearState}
         data-testid="account-billing-address-editor"
       >
-        <div className="grid grid-cols-1 gap-y-2">
-          <div className="grid grid-cols-2 gap-x-2">
-            <Input
-              label="First name"
-              name="first_name"
-              defaultValue={billingAddress?.first_name || undefined}
-              required
-              data-testid="billing-first-name-input"
-            />
-            <Input
-              label="Last name"
-              name="last_name"
-              defaultValue={billingAddress?.last_name || undefined}
-              required
-              data-testid="billing-last-name-input"
-            />
-          </div>
+        <div className="grid grid-cols-1 gap-4 xsmall:grid-cols-2">
           <Input
-            label="Company"
+            label="Tên"
+            name="first_name"
+            autoComplete="given-name"
+            defaultValue={billingAddress?.first_name || undefined}
+            required
+            data-testid="billing-first-name-input"
+          />
+          <Input
+            label="Họ"
+            name="last_name"
+            autoComplete="family-name"
+            defaultValue={billingAddress?.last_name || undefined}
+            required
+            data-testid="billing-last-name-input"
+          />
+          <Input
+            label="Công ty (không bắt buộc)"
             name="company"
+            autoComplete="organization"
             defaultValue={billingAddress?.company || undefined}
             data-testid="billing-company-input"
           />
           <Input
-            label="Phone"
+            label="Số điện thoại"
             name="phone"
-            type="phone"
-            autoComplete="phone"
+            type="tel"
+            autoComplete="tel"
             required
             defaultValue={billingAddress?.phone ?? customer?.phone ?? ""}
             data-testid="billing-phone-input"
           />
-          <Input
-            label="Address"
-            name="address_1"
-            defaultValue={billingAddress?.address_1 || undefined}
-            required
-            data-testid="billing-address-1-input"
-          />
-          <Input
-            label="Apartment, suite, etc."
-            name="address_2"
-            defaultValue={billingAddress?.address_2 || undefined}
-            data-testid="billing-address-2-input"
-          />
-          <div className="grid grid-cols-[144px_1fr] gap-x-2">
+          <div className="xsmall:col-span-2">
             <Input
-              label="Postal code"
-              name="postal_code"
-              defaultValue={billingAddress?.postal_code || undefined}
+              label="Địa chỉ"
+              name="address_1"
+              autoComplete="address-line1"
+              defaultValue={billingAddress?.address_1 || undefined}
               required
-              data-testid="billing-postcal-code-input"
-            />
-            <Input
-              label="City"
-              name="city"
-              defaultValue={billingAddress?.city || undefined}
-              required
-              data-testid="billing-city-input"
+              data-testid="billing-address-1-input"
             />
           </div>
           <Input
-            label="Province"
+            label="Mã bưu chính"
+            name="postal_code"
+            autoComplete="postal-code"
+            defaultValue={billingAddress?.postal_code || undefined}
+            required
+            data-testid="billing-postcal-code-input"
+          />
+          <Input
+            label="Tỉnh / Thành phố"
+            name="city"
+            autoComplete="address-level2"
+            defaultValue={billingAddress?.city || undefined}
+            required
+            data-testid="billing-city-input"
+          />
+          <Input
+            label="Quận / Huyện"
             name="province"
+            autoComplete="address-level1"
             defaultValue={billingAddress?.province || undefined}
             data-testid="billing-province-input"
           />
           <NativeSelect
+            label="Quốc gia"
             name="country_code"
             defaultValue={billingAddress?.country_code || undefined}
             required
             data-testid="billing-country-code-select"
           >
-            <option value="">-</option>
+            <option value="">Chọn quốc gia</option>
             {regionOptions.map((option, i) => {
               return (
                 <option key={i} value={option?.value}>
@@ -182,6 +176,15 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
               )
             })}
           </NativeSelect>
+          <div className="xsmall:col-span-2">
+            <Input
+              label="Căn hộ, số tầng (không bắt buộc)"
+              name="address_2"
+              autoComplete="address-line2"
+              defaultValue={billingAddress?.address_2 || undefined}
+              data-testid="billing-address-2-input"
+            />
+          </div>
         </div>
       </AccountInfo>
     </form>

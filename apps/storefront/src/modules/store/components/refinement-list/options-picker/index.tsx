@@ -4,7 +4,8 @@ import * as Accordion from "@radix-ui/react-accordion"
 import { useEffect, useState } from "react"
 
 import { ChevronDownMini } from "@medusajs/icons"
-import { sdk } from "@lib/config"
+import { productOptionLabel } from "@lib/util/product-option-label"
+import { listProductOptions } from "@lib/data/product-options"
 import { HttpTypes } from "@medusajs/types"
 import clsx from "clsx"
 
@@ -13,29 +14,14 @@ type OptionsPickerProps = {
   setOptionValueIds: (valueIds: string[]) => void
 }
 
-const OptionsPicker = ({
-  selectedValueIds,
-  setOptionValueIds,
-}: OptionsPickerProps) => {
+const OptionsPicker = ({ selectedValueIds, setOptionValueIds }: OptionsPickerProps) => {
   const [options, setOptions] = useState<HttpTypes.StoreProductOption[]>([])
   const [openItems, setOpenItems] = useState<string[]>([])
 
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const response = await sdk.client.fetch<{
-          product_options?: HttpTypes.StoreProductOption[]
-        }>("/store/product-options", {
-          method: "GET",
-          query: {
-            is_exclusive: false,
-            fields: "*values",
-          },
-        })
-
-        if (response?.product_options) {
-          setOptions(response.product_options)
-        }
+        setOptions(await listProductOptions())
       } catch (error) {
         console.error("Failed to fetch product options", error)
       }
@@ -55,17 +41,20 @@ const OptionsPicker = ({
   }
 
   return (
-    <div className="flex flex-col gap-y-4">
-      <div className="flex items-center justify-between px-1">
-        <span className="txt-compact-small-plus text-ui-fg-subtle">
-          Options
+    <div className="mt-3 flex flex-col gap-y-2">
+      <div className="flex items-center justify-between">
+        <span
+          className="text-dm-caption font-semibold uppercase text-ink-muted"
+          style={{ letterSpacing: "0.08em" }}
+        >
+          Phân loại
         </span>
       </div>
       <Accordion.Root
         type="multiple"
         value={openItems}
         onValueChange={(values) => setOpenItems(values as string[])}
-        className="flex flex-col gap-y-3 pr-6"
+        className="flex flex-col gap-y-1"
       >
         {options.map((option) => {
           const values =
@@ -75,8 +64,7 @@ const OptionsPicker = ({
                 label: value.value,
               }))
               .filter(
-                (value): value is { id: string; label: string } =>
-                  !!value.id && !!value.label
+                (value): value is { id: string; label: string } => !!value.id && !!value.label,
               ) || []
 
           if (!values.length) {
@@ -93,32 +81,24 @@ const OptionsPicker = ({
           }
 
           const isOpen = openItems.includes(option.id)
-          const selectedCount = values.filter((value) =>
-            selectedValueIds.includes(value.id)
-          ).length
+          const selectedCount = values.filter((value) => selectedValueIds.includes(value.id)).length
 
           return (
-            <Accordion.Item
-              key={option.id}
-              value={option.id}
-              className="overflow-hidden"
-            >
+            <Accordion.Item key={option.id} value={option.id} className="overflow-hidden">
               <Accordion.Header>
                 <Accordion.Trigger className="flex w-full items-center justify-between py-3 text-left">
                   <div className="flex items-center gap-2">
-                    <span className="txt-compact-small-plus text-ui-fg-base">
-                      {option.title || "Option"}
+                    <span className="text-dm-small font-semibold text-ink">
+                      {option.title || "Lựa chọn"}
                     </span>
-                    <span className="txt-compact-small-plus text-ui-fg-muted">
-                      ({selectedCount})
-                    </span>
+                    <span className="text-dm-caption text-ink-faint">({selectedCount})</span>
                   </div>
                   <span
                     className={clsx(
-                      "flex h-7 w-7 items-center justify-center text-ui-fg-muted transition-transform duration-150",
+                      "flex h-7 w-7 items-center justify-center text-ink-muted transition-transform duration-150",
                       {
                         "rotate-180": isOpen,
-                      }
+                      },
                     )}
                   >
                     <ChevronDownMini />
@@ -134,18 +114,10 @@ const OptionsPicker = ({
                       <button
                         key={value.id}
                         onClick={() => toggleValue(value.id)}
-                        className={clsx(
-                          "border-ui-border-base border text-small-regular h-10 rounded-rounded px-3 flex items-center transition-colors duration-150",
-                          {
-                            "border-ui-border-interactive text-ui-fg-base":
-                              isSelected,
-                            "text-ui-fg-muted hover:text-ui-fg-base":
-                              !isSelected,
-                          }
-                        )}
+                        className="dm-choice"
                         aria-pressed={isSelected}
                       >
-                        {value.label}
+                        {productOptionLabel(value.label)}
                       </button>
                     )
                   })}

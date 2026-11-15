@@ -1,7 +1,8 @@
 "use client"
 
 import { isSupportedCheckoutPaymentProvider } from "@lib/util/checkout-payment"
-import { Heading, Text, clx } from "@modules/common/components/ui"
+import CheckoutSection from "@modules/checkout/components/section"
+import { Text } from "@modules/common/components/ui"
 import PaymentButton from "../payment-button"
 import { useSearchParams } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
@@ -12,53 +13,38 @@ const Review = ({ cart }: { cart: HttpTypes.StoreCart }) => {
 
   const previousStepsCompleted = Boolean(
     cart.shipping_address &&
-      cart.billing_address &&
-      cart.email &&
-      (cart.shipping_methods?.length ?? 0) > 0 &&
-      cart.payment_collection?.payment_sessions?.some(
-        (session) =>
-          session.status === "pending" &&
-          isSupportedCheckoutPaymentProvider(session.provider_id)
-      )
+    cart.billing_address &&
+    cart.email &&
+    (cart.shipping_methods?.length ?? 0) > 0 &&
+    cart.payment_collection?.payment_sessions?.some(
+      (session) =>
+        session.status === "pending" && isSupportedCheckoutPaymentProvider(session.provider_id),
+    ),
   )
 
   return (
-    <div className="bg-white">
-      <div className="flex flex-row items-center justify-between mb-6">
-        <Heading
-          level="h2"
-          className={clx(
-            "flex flex-row text-3xl-regular gap-x-2 items-baseline",
-            {
-              "opacity-50 pointer-events-none select-none": !isOpen,
-            }
-          )}
-        >
-          Review
-        </Heading>
-      </div>
+    <CheckoutSection
+      index={3}
+      id="checkout-review"
+      title="Kiểm tra và đặt hàng"
+      isOpen={isOpen}
+      isComplete={false}
+    >
       {isOpen && previousStepsCompleted && (
-        <>
-          <div className="flex items-start gap-x-1 w-full mb-6">
-            <div className="w-full">
-              <Text className="txt-medium-plus text-ui-fg-base mb-1">
-                By clicking the Place Order button, you confirm that you have
-                read, understand and accept our Terms of Use, Terms of Sale and
-                Returns Policy and acknowledge that you have read Medusa
-                Store&apos;s Privacy Policy.
-              </Text>
-            </div>
-          </div>
+        <div className="flex flex-col gap-y-6">
+          <Text className="max-w-dm-prose text-dm-caption text-ink-faint">
+            Vui lòng kiểm tra sản phẩm, địa chỉ, phí giao hàng và tổng tiền trước khi đặt. Với COD,
+            bạn thanh toán khi nhận hàng.
+          </Text>
           <PaymentButton cart={cart} data-testid="submit-order-button" />
-        </>
+        </div>
       )}
       {isOpen && !previousStepsCompleted && (
-        <Text>
-          Complete your address, shipping method, and payment selection before
-          placing the order.
+        <Text className="text-dm-small text-ink-muted">
+          Vui lòng hoàn tất địa chỉ, phương thức giao hàng và thanh toán trước khi đặt hàng.
         </Text>
       )}
-    </div>
+    </CheckoutSection>
   )
 }
 

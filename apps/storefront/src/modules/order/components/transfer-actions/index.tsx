@@ -1,7 +1,7 @@
 "use client"
 
 import { acceptTransferRequest, declineTransferRequest } from "@lib/data/orders"
-import { Button, Text } from "@modules/common/components/ui"
+import { Alert, Button } from "@modules/common/components/ui"
 import { useState } from "react"
 
 type TransferStatus = "pending" | "success" | "error"
@@ -37,43 +37,39 @@ const TransferActions = ({ id, token }: { id: string; token: string }) => {
   }
 
   return (
-    <div className="flex flex-col gap-y-4">
+    <div className="flex w-full flex-col gap-y-4">
       {status?.accept === "success" && (
-        <Text className="text-emerald-500">
-          Order transferred successfully!
-        </Text>
+        <Alert tone="success">
+          Đã liên kết đơn hàng với chủ mới. Chủ mới chịu trách nhiệm về đơn hàng này.
+        </Alert>
       )}
       {status?.decline === "success" && (
-        <Text className="text-emerald-500">
-          Order transfer declined successfully!
-        </Text>
+        <Alert tone="info">Đã từ chối liên kết. Đơn hàng vẫn thuộc về bạn.</Alert>
       )}
       {status?.accept !== "success" && status?.decline !== "success" && (
-        <div className="flex gap-x-4">
+        <div className="flex flex-wrap gap-x-3 gap-y-3">
           <Button
             size="large"
             onClick={acceptTransfer}
             isLoading={status?.accept === "pending"}
-            disabled={
-              status?.accept === "pending" || status?.decline === "pending"
-            }
+            loadingLabel="Đang chấp nhận"
+            disabled={status?.accept === "pending" || status?.decline === "pending"}
           >
-            Accept transfer
+            Chấp nhận liên kết
           </Button>
           <Button
             size="large"
             variant="secondary"
             onClick={declineTransfer}
             isLoading={status?.decline === "pending"}
-            disabled={
-              status?.accept === "pending" || status?.decline === "pending"
-            }
+            loadingLabel="Đang từ chối"
+            disabled={status?.accept === "pending" || status?.decline === "pending"}
           >
-            Decline transfer
+            Từ chối liên kết
           </Button>
         </div>
       )}
-      {errorMessage && <Text className="text-red-500">{errorMessage}</Text>}
+      {errorMessage && <Alert tone="error">{errorMessage}</Alert>}
     </div>
   )
 }

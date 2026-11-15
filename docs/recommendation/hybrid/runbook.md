@@ -1,3 +1,5 @@
+> Reference status (14 November 2026): specialist/research documentation. Current DAYMARK scope, requirements and acceptance authority are in [../../README.md](../../README.md). Historical measurements and data-rights restrictions remain in force.
+
 # Hybrid v2 — private implementation runbook
 
 **Chưa có Hybrid run được publish.** Chỉ dùng test DB `recommendation_test` hoặc `hm_hybrid_test`; không chạy script publish vào `commerce`/production. H&M CSV/JPEG, vectors, candidates, license record và review forms ở `data/hm/` (ignored). Không copy artifacts vào Git.
@@ -26,4 +28,4 @@ python scripts/hm/evaluate-hybrid.py --candidates data/hm/processed/hybrid/weigh
 
 ## Test và rollback
 
-`python -m unittest discover -s scripts/hm/tests -v`; `npm run test:unit --workspace=@dtc/backend`; `npm run test:integration:http --workspace=@dtc/backend` trên disposable runner DB; `npm run typecheck --workspace=@dtc/storefront`; Playwright/k6 theo [Phase 07](phase_07_system_testing_release.md). Nếu publish fail, old active pointer còn nguyên. Nếu v2 gây lỗi, activate lại metadata ready run bằng script hiện có hoặc tắt `ENABLE_RECOMMENDATIONS`/`NEXT_PUBLIC_ENABLE_RECOMMENDATIONS`; không xóa Product/Order/volume. Public flag tiếp tục OFF cho đến quyền và NFR gate.
+`python -m unittest discover -s scripts/hm/tests -v`; `npm run test:unit --workspace=@dtc/backend`; `npm run test:integration:http --workspace=@dtc/backend` trên disposable runner DB; `npm run typecheck --workspace=@dtc/storefront`; Playwright/k6 theo [Phase 07](../../spec/07-delivery.md). Nếu publish fail, old active pointer còn nguyên. Nếu v2 gây lỗi, activate lại metadata ready run bằng script hiện có hoặc tắt `ENABLE_RECOMMENDATIONS`/`NEXT_PUBLIC_ENABLE_RECOMMENDATIONS`; không xóa Product/Order/volume. Public flag tiếp tục OFF cho đến quyền và NFR gate.

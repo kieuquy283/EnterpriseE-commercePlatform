@@ -1,3 +1,5 @@
+> Reference status (14 November 2026): specialist/research documentation. Current DAYMARK scope, requirements and acceptance authority are in [../../README.md](../../README.md). Historical measurements and data-rights restrictions remain in force.
+
 # Technical & Functional Specification — H&M Similar Products API + PDP
 
 > **ID:** REC-PDP-SPEC · **Version:** 1.0 · **Status:** Contract; xem [báo cáo triển khai](reports/final_implementation_report.md) để biết kết quả kiểm chứng.

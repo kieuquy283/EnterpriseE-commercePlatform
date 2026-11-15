@@ -1,6 +1,6 @@
 import { Radio as RadioGroupOption } from "@headlessui/react"
 import { Text, clx } from "@modules/common/components/ui"
-import Radio from "@modules/common/components/radio"
+import OptionMark from "@modules/checkout/components/option-mark"
 import type { JSX } from "react"
 
 type PaymentContainerProps = {
@@ -20,17 +20,17 @@ export default function PaymentContainer({
     <RadioGroupOption
       value={paymentProviderId}
       className={clx(
-        "mb-2 cursor-pointer rounded-rounded border px-8 py-4 text-small-regular",
-        { "border-ui-border-interactive": selected }
+        "flex cursor-pointer items-center justify-between gap-4 rounded-dm-sm border px-4 py-4 text-dm-small transition-colors duration-200 ease-dm-out",
+        selected ? "border-accent bg-accent-soft/40" : "border-line hover:border-line-strong",
       )}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-x-4">
-          <Radio checked={selected} />
-          <Text>{paymentInfoMap[paymentProviderId]?.title || paymentProviderId}</Text>
-        </div>
-        {paymentInfoMap[paymentProviderId]?.icon}
-      </div>
+      <span className="flex items-center gap-x-3">
+        <OptionMark selected={selected} />
+        <Text className="text-dm-small font-medium text-ink">
+          {paymentInfoMap[paymentProviderId]?.title || paymentProviderId}
+        </Text>
+      </span>
+      {paymentInfoMap[paymentProviderId]?.icon}
     </RadioGroupOption>
   )
 }

@@ -1,24 +1,25 @@
-import { Heading } from "@modules/common/components/ui"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import React from "react"
 
 const Help = () => {
   return (
-    <div className="mt-6">
-      <Heading className="text-base-semi">Need help?</Heading>
-      <div className="text-base-regular my-2">
-        <ul className="gap-y-2 flex flex-col">
-          <li>
-            <LocalizedClientLink href="/contact">Contact</LocalizedClientLink>
-          </li>
-          <li>
-            <LocalizedClientLink href="/contact">
-              Returns & Exchanges
-            </LocalizedClientLink>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <section className="dm-panel flex flex-col gap-y-3 p-5">
+      <h2 className="text-dm-small font-semibold text-ink">Bạn cần hỗ trợ?</h2>
+      <p className="dm-caption">
+        Bạn cần hỏi về đơn hàng, giao hàng hoặc đổi trả? Chúng tôi sẵn sàng hỗ trợ.
+      </p>
+      <ul className="flex flex-wrap items-center gap-x-6 gap-y-2">
+        <li>
+          <LocalizedClientLink href="/#daymark-service" className="dm-link text-dm-small">
+            Liên hệ
+          </LocalizedClientLink>
+        </li>
+        <li>
+          <LocalizedClientLink href="/#daymark-service" className="dm-link text-dm-small">
+            Đổi và trả hàng
+          </LocalizedClientLink>
+        </li>
+      </ul>
+    </section>
   )
 }
 

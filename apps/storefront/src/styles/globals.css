@@ -1,9 +1,534 @@
+@import "@fontsource-variable/inter/wght.css";
+
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/*
+ * DAYMARK design tokens.
+ *
+ * Colour roles are declared once as raw RGB channels so Tailwind can apply
+ * opacity modifiers (`bg-surface/80`). Components consume the semantic names
+ * (`canvas`, `surface`, `ink`, `line`, `accent`) rather than raw palettes.
+ * See docs/design-system/README.md.
+ */
+@layer base {
+  :root {
+    color-scheme: light;
+
+    /* Warm paper and charcoal ink. */
+    --dm-canvas: 251 249 244;
+    --dm-surface: 246 242 233;
+    --dm-stage: 241 236 225;
+    --dm-plate: 240 235 224;
+    --dm-inverse: 27 29 26;
+    --dm-ink: 36 39 34;
+    --dm-ink-muted: 74 75 69;
+    --dm-ink-faint: 105 107 97;
+    --dm-line: 228 220 203;
+    --dm-line-strong: 142 143 129;
+
+    /* Muted olive accent. */
+    --dm-accent: 95 107 69;
+    --dm-accent-soft: 227 230 212;
+    --dm-accent-ink: 58 66 43;
+
+    /* Feedback, muted to stay inside the editorial palette. */
+    --dm-success: 75 85 55;
+    --dm-warning: 75 85 55;
+    --dm-danger: 36 39 34;
+
+    --dm-gutter: 1.25rem;
+  }
+
+  @media (min-width: 512px) {
+    :root {
+      --dm-gutter: 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --dm-gutter: 3rem;
+    }
+  }
+
+  @media (min-width: 1440px) {
+    :root {
+      --dm-gutter: 4rem;
+    }
+  }
+
+  /* Inverted editorial band: paper becomes ink and vice versa. */
+  .dm-invert {
+    color-scheme: dark;
+    --dm-canvas: 27 29 26;
+    --dm-surface: 36 39 34;
+    --dm-stage: 33 35 31;
+    --dm-plate: 40 42 37;
+    --dm-inverse: 251 249 244;
+    --dm-ink: 246 242 233;
+    --dm-ink-muted: 205 194 175;
+    --dm-ink-faint: 150 141 122;
+    --dm-line: 54 56 51;
+    --dm-line-strong: 88 90 81;
+    --dm-accent: 169 177 137;
+    --dm-accent-soft: 48 55 36;
+    --dm-accent-ink: 227 230 212;
+    --dm-success: 169 177 137;
+    --dm-warning: 169 177 137;
+    --dm-danger: 246 242 233;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-canvas font-sans text-ink antialiased;
+    /* Slightly tighter optical fit for the Inter variable axes. */
+    font-feature-settings:
+      "cv11" 1,
+      "ss03" 1;
+  }
+
+  /* Visible, consistent keyboard focus. Never removed without a replacement. */
+  :where(a, button, summary, [tabindex]):focus-visible,
+  :where(input, select, textarea):focus-visible {
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-canvas;
+  }
+
+  ::selection {
+    @apply bg-accent-soft text-accent-ink;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-sans text-ink;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* ---------------------------------------------------------------------- */
+  /* Layout                                                                 */
+  /* ---------------------------------------------------------------------- */
+
+  .content-container {
+    @apply mx-auto w-full max-w-dm-wide;
+    padding-inline: var(--dm-gutter);
+  }
+
+  .dm-shell-wide {
+    @apply mx-auto w-full max-w-dm-wide;
+    padding-inline: var(--dm-gutter);
+  }
+
+  .dm-section {
+    @apply py-14 small:py-24;
+  }
+
+  .dm-section-tight {
+    @apply py-10 small:py-14;
+  }
+
+  /*
+   * Soft stage: the signature surface of the DAYMARK storefront. A single
+   * large-radius, warm-toned plane that content sits inside, echoing a
+   * showroom stage rather than a list of boxed cards.
+   */
+  .dm-stage {
+    @apply rounded-dm-2xl bg-stage;
+    padding: clamp(1.25rem, 3vw, 2.5rem);
+  }
+
+  .dm-stage-inset {
+    @apply rounded-dm-xl bg-canvas;
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Typography                                                             */
+  /* ---------------------------------------------------------------------- */
+
+  .dm-eyebrow {
+    @apply font-sans text-dm-small font-medium text-ink-muted;
+    letter-spacing: 0;
+  }
+
+  .dm-display {
+    @apply font-sans text-dm-display font-normal uppercase text-ink;
+  }
+
+  .dm-display-lg {
+    @apply font-sans text-dm-display-lg font-normal uppercase text-ink;
+  }
+
+  .dm-title {
+    @apply font-sans text-dm-title-lg font-medium text-ink;
+  }
+
+  .dm-heading {
+    @apply font-sans text-dm-title font-normal text-ink;
+  }
+
+  .dm-lead {
+    @apply font-sans text-dm-lead text-ink-muted;
+  }
+
+  .dm-body {
+    @apply font-sans text-dm-body text-ink-muted;
+  }
+
+  .dm-caption {
+    @apply font-sans text-dm-caption text-ink-faint;
+  }
+
+  .dm-meta {
+    @apply font-sans text-dm-small text-ink-muted;
+  }
+
+  .dm-link {
+    @apply underline decoration-line-strong decoration-1 underline-offset-4 transition-colors duration-200 hover:text-accent hover:decoration-accent;
+  }
+
+  /*
+   * Day index.
+   *
+   * DAYMARK's structural motif: every editorial section is numbered the way a
+   * day is indexed. Two-digit numerals in tabular Inter, set small and quiet,
+   * aligned to a hairline rule. It gives long pages a printed cadence and ties
+   * the layout to the brand name without extra ornament.
+   */
+  .dm-index {
+    @apply flex items-baseline gap-3 border-t border-line pt-4;
+  }
+
+  .dm-index-numeral {
+    @apply font-sans text-dm-caption font-semibold tabular-nums text-accent;
+    letter-spacing: 0.08em;
+  }
+
+  .dm-index-label {
+    @apply font-sans text-dm-small font-medium text-ink-muted;
+    letter-spacing: 0;
+  }
+
+  /* Oversized section numeral used in editorial bands. */
+  .dm-numeral-xl {
+    @apply font-sans text-accent tabular-nums;
+    font-size: clamp(0.875rem, 1.2vw, 1.0625rem);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Surfaces                                                               */
+  /* ---------------------------------------------------------------------- */
+
+  .dm-card {
+    @apply border-b border-line bg-transparent;
+  }
+
+  .dm-panel {
+    @apply border-t border-line bg-transparent;
+  }
+
+  .dm-divider {
+    @apply h-px w-full bg-line;
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Chips and badges                                                       */
+  /* ---------------------------------------------------------------------- */
+
+  .dm-chip {
+    @apply inline-flex items-center gap-1.5 rounded-dm-pill border border-line bg-canvas px-3 py-1 text-dm-caption font-medium text-ink-muted;
+  }
+
+  .dm-chip-accent {
+    @apply inline-flex items-center gap-1.5 rounded-dm-pill border border-accent/30 bg-accent-soft px-3 py-1 text-dm-caption font-semibold text-accent-ink;
+  }
+
+  .dm-badge-instock {
+    @apply inline-flex items-center gap-1.5 text-dm-caption font-medium text-success;
+  }
+
+  .dm-badge-outstock {
+    @apply inline-flex items-center gap-1.5 text-dm-caption font-medium text-ink-faint;
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Buttons                                                                */
+  /* ---------------------------------------------------------------------- */
+
+  .dm-btn {
+    @apply inline-flex select-none items-center justify-center gap-2 min-h-12 rounded-none border border-transparent px-6 py-3 text-dm-small font-medium transition-colors duration-200 ease-dm-out disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-45;
+  }
+
+  .dm-btn-primary {
+    @apply dm-btn bg-inverse text-canvas hover:bg-charcoal-600;
+  }
+
+  .dm-btn-secondary {
+    @apply dm-btn border-line-strong bg-transparent text-ink hover:border-ink hover:bg-surface;
+  }
+
+  .dm-btn-accent {
+    @apply dm-btn bg-accent text-canvas hover:bg-accent-ink;
+  }
+
+  .dm-btn-ghost {
+    @apply dm-btn border-transparent bg-transparent text-ink-muted hover:text-ink;
+  }
+
+  .dm-btn-sm {
+    @apply px-6 py-3 text-dm-small;
+  }
+
+  .dm-btn-block {
+    @apply w-full;
+  }
+
+  /* Canonical action geometry; icons and choices are semantic variants. */
+  .dm-btn-icon {
+    @apply dm-btn-ghost h-12 w-12 shrink-0 p-0;
+  }
+
+  .dm-choice {
+    @apply dm-btn-secondary min-w-12 px-4;
+  }
+
+  .dm-choice[aria-pressed="true"],
+  .dm-choice[aria-current="page"] {
+    @apply border-ink bg-ink text-canvas;
+  }
+
+  .dm-action-link {
+    @apply dm-link inline-flex min-h-12 items-center gap-2 text-dm-small font-medium disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-45;
+  }
+
+  .dm-btn svg,
+  .dm-action-link svg {
+    @apply h-4 w-4 shrink-0;
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Forms                                                                  */
+  /* ---------------------------------------------------------------------- */
+
+  .dm-field {
+    @apply h-12 w-full rounded-none border border-line-strong bg-transparent px-4 text-dm-body text-ink placeholder:text-ink-faint focus:border-accent disabled:cursor-not-allowed disabled:bg-surface disabled:text-ink-faint;
+  }
+
+  .dm-label {
+    @apply mb-2 block text-dm-small font-medium text-ink;
+    letter-spacing: 0;
+  }
+
+  .dm-hint {
+    @apply mt-1.5 text-dm-caption text-ink-faint;
+  }
+
+  .dm-error-text {
+    @apply text-dm-caption font-medium text-danger;
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Navigation                                                             */
+  /* ---------------------------------------------------------------------- */
+
+  .dm-nav-link {
+    @apply relative inline-flex items-center py-2 text-dm-small text-ink-muted transition-colors duration-200 hover:text-ink;
+  }
+
+  .dm-nav-link-active {
+    @apply text-ink;
+  }
+
+  /* Underline that grows from the left on hover/active. */
+  .dm-nav-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0.35rem;
+    height: 1px;
+    width: 0;
+    background-color: currentColor;
+    transition: width 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .dm-nav-underline:hover::after,
+  .dm-nav-underline[aria-current="page"]::after {
+    width: 100%;
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Data rows                                                              */
+  /* ---------------------------------------------------------------------- */
+
+  .dm-data-row {
+    @apply flex items-baseline justify-between gap-4 border-b border-line py-3 text-dm-small;
+  }
+
+  .dm-data-row-last {
+    @apply flex items-baseline justify-between gap-4 border-b-0 py-3 text-dm-small;
+  }
+
+  .dm-total {
+    @apply font-sans text-dm-title-sm font-semibold text-ink tabular-nums;
+  }
+
+  .dm-numeric {
+    @apply tabular-nums;
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Feedback                                                               */
+  /* ---------------------------------------------------------------------- */
+
+  .dm-alert {
+    @apply rounded-none border-l-2 border-y-0 border-r-0 px-4 py-4 text-dm-small;
+  }
+
+  .dm-alert-info {
+    @apply dm-alert border-line-strong bg-surface text-ink-muted;
+  }
+
+  .dm-alert-error {
+    @apply dm-alert border-danger/40 bg-danger/5 text-danger;
+  }
+
+  .dm-alert-warning {
+    @apply dm-alert border-warning/40 bg-warning/5 text-warning;
+  }
+
+  .dm-alert-success {
+    @apply dm-alert border-success/40 bg-success/5 text-success;
+  }
+
+  .dm-skeleton {
+    @apply rounded-none bg-line/60;
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Media                                                                  */
+  /* ---------------------------------------------------------------------- */
+
+  .dm-media-portrait {
+    @apply relative overflow-hidden bg-surface;
+    aspect-ratio: 3 / 4;
+  }
+
+  .dm-media-editorial {
+    @apply relative overflow-hidden bg-surface;
+    aspect-ratio: 4 / 5;
+  }
+
+  .dm-media-landscape {
+    @apply relative overflow-hidden bg-surface;
+    aspect-ratio: 3 / 2;
+  }
+
+  /* Product media window: the plate a garment sits on inside a grid. */
+  .dm-media-plate {
+    @apply relative overflow-hidden rounded-dm-md bg-product-plate;
+    aspect-ratio: 4 / 5;
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Accessibility                                                          */
+  /* ---------------------------------------------------------------------- */
+
+  .dm-skip-link {
+    @apply absolute left-4 top-4 z-[100] -translate-y-24 rounded-dm-sm bg-inverse px-4 py-2 text-dm-small font-semibold text-canvas transition-transform focus:translate-y-0;
+  }
+
+  /* ---------------------------------------------------------------------- */
+  /* Legacy compatibility                                                   */
+  /* ---------------------------------------------------------------------- */
+
+  /*
+   * The starter templates referenced these class names throughout. They are
+   * kept as thin aliases onto the DAYMARK scale so a partially migrated surface
+   * stays legible; new work must use the `dm-*` roles above.
+   * TODO(refactor): remove these aliases once no component references them.
+   */
+  .text-xsmall-regular {
+    @apply text-dm-micro font-normal;
+  }
+
+  .text-small-regular {
+    @apply text-dm-small font-normal;
+  }
+
+  .text-small-semi {
+    @apply text-dm-small font-semibold;
+  }
+
+  .text-base-regular {
+    @apply text-dm-body font-normal;
+  }
+
+  .text-base-semi {
+    @apply text-dm-body font-semibold;
+  }
+
+  .text-large-regular {
+    @apply text-dm-lead font-normal;
+  }
+
+  .text-large-semi {
+    @apply text-dm-lead font-semibold;
+  }
+
+  .text-xl-regular {
+    @apply text-dm-title font-normal;
+  }
+
+  .text-xl-semi {
+    @apply text-dm-title font-semibold;
+  }
+
+  .text-2xl-regular {
+    @apply text-dm-title-lg font-normal;
+  }
+
+  .text-2xl-semi {
+    @apply text-dm-title-lg font-semibold;
+  }
+
+  .text-3xl-regular {
+    @apply text-dm-display font-normal;
+  }
+
+  .text-3xl-semi {
+    @apply text-dm-display font-medium;
+  }
+
+  .contrast-btn {
+    @apply dm-btn-secondary;
+  }
+}
+
 @layer utilities {
-  /* Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -13,31 +538,33 @@
   }
 
   .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
-  input:focus ~ label,
-  input:not(:placeholder-shown) ~ label {
-    @apply -translate-y-2 text-xsmall-regular;
+  .dm-cover {
+    @apply absolute inset-0 h-full w-full object-cover object-center;
   }
 
-  input:focus ~ label {
-    @apply left-0;
+  .dm-contain {
+    @apply absolute inset-0 h-full w-full object-contain object-center;
+  }
+
+  /* Optical alignment for large display type set against a gutter. */
+  .dm-optical-left {
+    margin-left: -0.04em;
   }
 
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   textarea:-webkit-autofill,
-  textarea:-webkit-autofill:hover,
   textarea:-webkit-autofill:focus,
   select:-webkit-autofill,
-  select:-webkit-autofill:hover,
   select:-webkit-autofill:focus {
-    border: 1px solid #212121;
-    -webkit-text-fill-color: #212121;
-    -webkit-box-shadow: 0 0 0px 1000px #fff inset;
+    border: 1px solid theme("colors.line-strong");
+    -webkit-text-fill-color: #242722;
+    -webkit-box-shadow: 0 0 0px 1000px #fbf9f4 inset;
     transition: background-color 5000s ease-in-out 0s;
   }
 
@@ -46,67 +573,5 @@
   input[type="search"]::-webkit-search-results-button,
   input[type="search"]::-webkit-search-results-decoration {
     -webkit-appearance: none;
-  }
-}
-
-@layer components {
-  .content-container {
-    @apply max-w-[1440px] w-full mx-auto px-6;
-  }
-
-  .contrast-btn {
-    @apply px-4 py-2 border border-black rounded-full hover:bg-black hover:text-white transition-colors duration-200 ease-in;
-  }
-
-  .text-xsmall-regular {
-    @apply text-[10px] leading-4 font-normal;
-  }
-
-  .text-small-regular {
-    @apply text-xs leading-5 font-normal;
-  }
-
-  .text-small-semi {
-    @apply text-xs leading-5 font-semibold;
-  }
-
-  .text-base-regular {
-    @apply text-sm leading-6 font-normal;
-  }
-
-  .text-base-semi {
-    @apply text-sm leading-6 font-semibold;
-  }
-
-  .text-large-regular {
-    @apply text-base leading-6 font-normal;
-  }
-
-  .text-large-semi {
-    @apply text-base leading-6 font-semibold;
-  }
-
-  .text-xl-regular {
-    @apply text-2xl leading-[36px] font-normal;
-  }
-
-  .text-xl-semi {
-    @apply text-2xl leading-[36px] font-semibold;
-  }
-
-  .text-2xl-regular {
-    @apply text-[30px] leading-[48px] font-normal;
-  }
-
-  .text-2xl-semi {
-    @apply text-[30px] leading-[48px] font-semibold;
-  }
-
-  .text-3xl-regular {
-    @apply text-[32px] leading-[44px] font-normal;
-  }
-
-  .text-3xl-semi {
-    @apply text-[32px] leading-[44px] font-semibold;
   }
 }

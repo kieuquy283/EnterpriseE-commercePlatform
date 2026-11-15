@@ -1,6 +1,6 @@
 "use client"
 
-import { IconBadge, clx } from "@modules/common/components/ui"
+import { clx } from "@modules/common/components/ui"
 import {
   SelectHTMLAttributes,
   forwardRef,
@@ -19,13 +19,13 @@ type NativeSelectProps = {
 } & Omit<SelectHTMLAttributes<HTMLSelectElement>, "size">
 
 const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
-  ({ placeholder = "Select...", className, children, ...props }, ref) => {
+  ({ placeholder = "Chọn...", className, children, ...props }, ref) => {
     const innerRef = useRef<HTMLSelectElement>(null)
     const [isPlaceholder, setIsPlaceholder] = useState(false)
 
     useImperativeHandle<HTMLSelectElement | null, HTMLSelectElement | null>(
       ref,
-      () => innerRef.current
+      () => innerRef.current,
     )
 
     useEffect(() => {
@@ -37,35 +37,28 @@ const CartItemSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
     }, [innerRef.current?.value])
 
     return (
-      <div>
-        <IconBadge
-          onFocus={() => innerRef.current?.focus()}
-          onBlur={() => innerRef.current?.blur()}
-          className={clx(
-            "relative flex items-center txt-compact-small border text-ui-fg-base group",
-            className,
-            {
-              "text-ui-fg-subtle": isPlaceholder,
-            }
-          )}
+      <div className={clx("relative inline-flex items-center", className)}>
+        <select
+          ref={innerRef}
+          {...props}
+          className={clx("dm-field w-20 appearance-none pl-4 pr-8 tabular-nums", {
+            "text-ink-faint": isPlaceholder,
+          })}
         >
-          <select
-            ref={innerRef}
-            {...props}
-            className="appearance-none bg-transparent border-none px-4 transition-colors duration-150 focus:border-gray-700 outline-none w-16 h-16 items-center justify-center"
-          >
-            <option disabled value="">
-              {placeholder}
-            </option>
-            {children}
-          </select>
-          <span className="absolute flex pointer-events-none justify-end w-8 group-hover:animate-pulse">
-            <ChevronDown />
-          </span>
-        </IconBadge>
+          <option disabled value="">
+            {placeholder}
+          </option>
+          {children}
+        </select>
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute right-2.5 flex items-center text-ink-faint"
+        >
+          <ChevronDown />
+        </span>
       </div>
     )
-  }
+  },
 )
 
 CartItemSelect.displayName = "CartItemSelect"

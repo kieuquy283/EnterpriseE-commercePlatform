@@ -65,15 +65,11 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
       <Listbox
         as="span"
         onChange={handleChange}
-        defaultValue={
-          countryCode
-            ? options?.find((o) => o?.country === countryCode)
-            : undefined
-        }
+        defaultValue={countryCode ? options?.find((o) => o?.country === countryCode) : undefined}
       >
         <ListboxButton className="py-1 w-full">
           <div className="txt-compact-small flex items-start gap-x-2">
-            <span>Shipping to:</span>
+            <span>Giao đến:</span>
             {current && (
               <span className="txt-compact-small flex items-center gap-x-2">
                 <ReactCountryFlag
@@ -106,7 +102,7 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
                   <ListboxOption
                     key={index}
                     value={o}
-                    className="py-2 hover:bg-gray-200 px-3 cursor-pointer flex items-center gap-x-2"
+                    className="py-2 hover:bg-surface px-3 cursor-pointer flex items-center gap-x-2"
                   >
                     <ReactCountryFlag
                       svg

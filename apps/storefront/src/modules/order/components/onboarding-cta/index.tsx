@@ -1,27 +1,24 @@
 "use client"
 
 import { resetOnboardingState } from "@lib/data/onboarding"
-import { Button, Container, Text } from "@modules/common/components/ui"
+import { Button } from "@modules/common/components/ui"
 
 const OnboardingCta = ({ orderId }: { orderId: string }) => {
   return (
-    <Container className="max-w-4xl h-full bg-ui-bg-subtle w-full">
-      <div className="flex flex-col gap-y-4 center p-4 md:items-center">
-        <Text className="text-ui-fg-base text-xl">
-          Your test order was successfully created! 🎉
-        </Text>
-        <Text className="text-ui-fg-subtle text-small-regular">
-          You can now complete setting up your store in the admin.
-        </Text>
+    <div className="dm-panel w-full max-w-4xl p-5">
+      <div className="flex flex-col items-start gap-y-3">
+        <p className="text-dm-title-sm font-medium text-ink">Đơn hàng thử đã được tạo</p>
+        <p className="dm-caption">Bạn có thể hoàn tất cài đặt cửa hàng trong trang quản trị.</p>
         <Button
           className="w-fit"
-          size="large"
+          size="small"
+          variant="secondary"
           onClick={() => resetOnboardingState(orderId)}
         >
-          Complete setup in admin
+          Hoàn tất trong trang quản trị
         </Button>
       </div>
-    </Container>
+    </div>
   )
 }
 

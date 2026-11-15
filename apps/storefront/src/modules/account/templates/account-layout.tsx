@@ -1,6 +1,6 @@
 import React from "react"
 
-import UnderlineLink from "@modules/common/components/interactive-link"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 import AccountNav from "../components/account-nav"
 import { HttpTypes } from "@medusajs/types"
@@ -10,30 +10,32 @@ interface AccountLayoutProps {
   children: React.ReactNode
 }
 
-const AccountLayout: React.FC<AccountLayoutProps> = ({
-  customer,
-  children,
-}) => {
+const AccountLayout: React.FC<AccountLayoutProps> = ({ customer, children }) => {
   return (
-    <div className="flex-1 small:py-12" data-testid="account-page">
-      <div className="flex-1 content-container h-full max-w-5xl mx-auto bg-white flex flex-col">
-        <div className="grid grid-cols-1  small:grid-cols-[240px_1fr] py-12">
-          <div>{customer && <AccountNav customer={customer} />}</div>
-          <div className="flex-1">{children}</div>
+    <div className="dm-section" data-testid="account-page">
+      <div className="content-container flex flex-col">
+        <div className="grid grid-cols-1 gap-x-16 gap-y-8 small:grid-cols-[240px_minmax(0,1fr)]">
+          {customer && (
+            <aside className="border-b border-line pb-6 small:border-b-0 small:border-r small:pr-8">
+              <AccountNav customer={customer} />
+            </aside>
+          )}
+          <div className={customer ? "min-w-0 flex-1" : "min-w-0 small:col-span-2"}>{children}</div>
         </div>
-        <div className="flex flex-col small:flex-row items-end justify-between small:border-t border-gray-200 py-12 gap-8">
-          <div>
-            <h3 className="text-xl-semi mb-4">Got questions?</h3>
-            <span className="txt-medium">
-              You can find frequently asked questions and answers on our
-              customer service page.
-            </span>
+
+        <div className="mt-16 flex flex-col items-start justify-between gap-6 border-t border-line pt-8 small:flex-row small:items-end">
+          <div className="flex flex-col gap-y-2">
+            <h2 className="dm-heading">Bạn cần hỗ trợ về đơn hàng?</h2>
+            <p className="dm-body max-w-dm-prose">
+              Chúng tôi sẵn sàng hỗ trợ về cỡ, giao hàng và đổi trả.
+            </p>
           </div>
-          <div>
-            <UnderlineLink href="/customer-service">
-              Customer Service
-            </UnderlineLink>
-          </div>
+          <LocalizedClientLink
+            href="/#daymark-service"
+            className="dm-btn dm-btn-secondary dm-btn-sm"
+          >
+            Chăm sóc khách hàng
+          </LocalizedClientLink>
         </div>
       </div>
     </div>

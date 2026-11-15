@@ -12,7 +12,7 @@
 | 05 Medusa publish/API | PARTIAL; HTTP fixture 4/4 PASS, real publish pending | [05](phase_05_report.md) |
 | 06 PDP UI | PARTIAL; E2E 20 PASS/6 skipped, real Hybrid pending | [06](phase_06_report.md) |
 | 07 System/release | PARTIAL; private/public Hybrid NO-GO | [07](phase_07_report.md) |
-| 08 Session tracking | OPTIONAL / AFTER V2, not started | [phase](../phase_08_session_tracking_optional.md) |
+| 08 Session tracking | OPTIONAL / AFTER V2, not started | [phase](../../../spec/07-delivery.md) |
 
 **Code:** `scripts/hm/{hybrid_core.py,build-visual-embeddings.py,build-hybrid-candidates.py,evaluate-hybrid.py}`, Python fixture tests; Medusa `src/workflows/recommendation/publish.ts`, `src/api/store/recommendations/route.ts`, `src/scripts/publish-hm-recommendations.ts`, backend unit/HTTP tests; Next `src/modules/products/components/related-products/index.tsx`. No custom schema/migration or dependency installed. Existing Home Popularity candidate rows are copied into v2 artifact and API route still supports Home. Product purchasability remains native Medusa runtime filtering; offline vector computation cannot change price/stock. Hybrid strategy is exposed only once a ready run exists; none exists from this work.
 

@@ -1,3 +1,5 @@
+> Reference status (14 November 2026): specialist/research documentation. Current DAYMARK scope, requirements and acceptance authority are in [../../README.md](../../README.md). Historical measurements and data-rights restrictions remain in force.
+
 # H&M image pipeline contract
 
 - Input: `data/hm/processed/catalog.jsonl`, `medusa-mapping.jsonl`, H&M image path `images/<article_id[0:3]>/<article_id>.jpg`; `article_id` stays a ten-character string.

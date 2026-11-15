@@ -1,38 +1,45 @@
-# ADR: AWS cloud deployment for the course
+> ADR triển khai theo thời điểm. Mẫu thành phần và quyết định DAYMARK hiện hành ở [kiến trúc chính thức](../../spec/03-architecture.md); quyết định bên dưới giữ bối cảnh ban đầu.
 
-- Status: accepted on November 8, 2026; publicly verified on November 9.
-- Supersedes: the primary-deployment role of ADR-05 (single VM and Caddy). The EC2 rehearsal remains valid historical evidence and a fallback.
-- Scope: cloud deployment, image delivery and operations. Medusa remains one modular commerce application, with API and worker as separate processes.
+<a id="adr-aws-cloud-deployment-for-the-course"></a>
+# ADR: Triển khai AWS cho môn học
 
-## Decision
+- Trạng thái: chấp nhận ngày 8 tháng 11 năm 2026; kiểm chứng công khai ngày 9 tháng 11.
+- Thay thế vai trò triển khai chính của ADR-05 (một VM và Caddy). Diễn tập EC2 vẫn là bằng chứng lịch sử hợp lệ và phương án dự phòng.
+- Phạm vi: triển khai cloud, phân phối ảnh và vận hành. Medusa vẫn là một ứng dụng thương mại mô đun, API và worker là tiến trình riêng.
 
-Use AWS CloudFormation in `ap-southeast-2` for three layers:
+<a id="decision"></a>
+## Quyết định
 
-| Layer | Responsibility |
+Dùng AWS CloudFormation tại `ap-southeast-2` cho ba lớp:
+
+| Lớp | Trách nhiệm |
 | --- | --- |
-| Foundation | VPC/subnets/security groups, ECR image repositories, ACM certificate and optional scoped GitHub publishing role |
-| Data | Private Single-AZ RDS PostgreSQL, Redis on a dedicated EC2 host, private encrypted/versioned S3, secrets, lease, watchdog and alerts |
-| Application | Internet-facing ALB with ACM HTTPS and hostname routing, separate Fargate storefront/API/worker services, API scaling capped at two tasks, CloudWatch and app watchdog |
+| Foundation | VPC/subnet/security group, ECR repository, chứng chỉ ACM và role công bố GitHub giới hạn tùy chọn |
+| Dữ liệu | RDS PostgreSQL riêng Single-AZ, Redis trên EC2 riêng, S3 riêng mã hóa/có phiên bản, bí mật, lease, watchdog và cảnh báo |
+| Ứng dụng | ALB công khai với ACM HTTPS và định tuyến hostname, dịch vụ Fargate storefront/API/worker riêng, API tối đa hai task, CloudWatch và watchdog ứng dụng |
 
-Product images are delivered from private S3 through the backend's public `/product-images/public-images/<key>` proxy using the ECS task role. CloudFront was removed from the implementation because AWS project verification denied distribution creation. New image uploads use a dedicated public-image prefix; private customer documents must use a separate storage boundary. No edge CDN is currently deployed.
+Ảnh sản phẩm từ S3 riêng qua proxy backend công khai `/product-images/public-images/<key>` bằng ECS task role. Không dùng CloudFront trong triển khai vì kiểm tra quyền dự án AWS từ chối tạo distribution. Ảnh tải mới dùng tiền tố công khai riêng; tài liệu khách riêng phải có ranh giới lưu trữ khác. Không triển khai edge CDN trong cấu hình này.
 
-## Rationale and limits
+<a id="rationale-and-limits"></a>
+## Lý do và giới hạn
 
-The course needs a concrete demonstration of cloud networking, managed data services, independent process deployment, declarative infrastructure, health routing, scaling configuration and operational controls. This is the chosen baseline even though the tested single-EC2 Compose setup is simpler and cheaper.
+Môn học cần trình diễn cụ thể mạng cloud, dịch vụ dữ liệu quản lý, triển khai tiến trình độc lập, hạ tầng khai báo, định tuyến sức khỏe, cấu hình tăng giảm và kiểm soát vận hành. Đây là nền được chọn dù thiết lập Compose một EC2 đã thử đơn giản và rẻ hơn.
 
-This design is not fully highly available: RDS is Single-AZ and Redis is one host. Configured API scaling is not evidence of capacity or measured scaling performance. Redis transport is not TLS-encrypted inside its restricted security-group boundary. Image traffic consumes API/ALB capacity. Backups, restore drills, worker business jobs, browser checkout, release rollback and load tests need their own evidence.
+Thiết kế chưa sẵn sàng cao toàn diện: RDS Single-AZ, Redis một máy. Cấu hình tăng API không chứng minh năng lực hoặc hiệu năng tăng giảm đã đo. Truyền Redis không mã hóa TLS trong ranh giới security group giới hạn. Lưu lượng ảnh dùng năng lực API/ALB. Sao lưu, diễn tập khôi phục, việc nghiệp vụ worker, checkout trình duyệt, quay lui phát hành và thử tải cần bằng chứng riêng.
 
-Demo compute uses a bounded lease with best-effort scheduled shutdown. ALB and retained storage/secrets remain billable after a pause. Hibernation removes only the app stack; retained data must not be deleted as routine cleanup.
+Compute demo có lease hữu hạn với lịch tắt theo nỗ lực tốt nhất. ALB và lưu trữ/bí mật giữ lại vẫn tính phí sau pause. Hibernate chỉ bỏ app stack; không xóa dữ liệu giữ lại như dọn dẹp thường lệ.
 
-## Evidence and chronology
+<a id="evidence-and-chronology"></a>
+## Bằng chứng và trình tự thời gian
 
-The [November 6 EC2 report](../../report/aws-ec2-deployment-2026-11-06.md) records 12 smoke checks, nine external checks and one COD API order on the former single-VM path. It is not evidence of a Fargate checkout.
+[Báo cáo EC2 ngày 6 tháng 11](../../report/aws-ec2-deployment-2026-11-06.md) ghi 12 kiểm tra smoke, chín kiểm tra ngoài và một đơn COD qua API trên đường một VM trước đó. Không là bằng chứng checkout Fargate.
 
-The [November 8–9 AWS report](../../report/aws-fargate-deployment-2026-11-08.md) records retained-resource import without replacements, three ECS services, healthy ALB targets and 14 public checks including private-S3 proxy delivery. Deployment used local Docker builds and AWS CLI operations. GitHub publishing and the fallback SSH workflow are configured but were not exercised by that report.
+[Báo cáo AWS ngày 8–9 tháng 11](../../report/aws-fargate-deployment-2026-11-08.md) ghi nhập tài nguyên giữ lại không thay thế, ba dịch vụ ECS, target ALB khỏe và 14 kiểm tra công khai gồm proxy S3 riêng. Triển khai dùng Docker build cục bộ và AWS CLI. Công bố GitHub và workflow SSH dự phòng được cấu hình nhưng báo cáo đó chưa thực thi.
 
-## Operational references
+<a id="operational-references"></a>
+## Tham chiếu vận hành
 
-- [Canonical runbook](../../../deploy/RUNBOOK.md)
-- [Detailed CloudFormation guide](../../../deploy/cloudformation/README.md)
-- [System architecture](../cloud-system-architecture.md)
-- [EC2 fallback runbook](../../../deploy/ec2/RUNBOOK.md)
+- [Hướng dẫn vận hành chính thức](../../../deploy/RUNBOOK.md)
+- [Hướng dẫn CloudFormation chi tiết](../../../deploy/cloudformation/README.md)
+- [Kiến trúc hệ thống](../../spec/03-architecture.md)
+- [Hướng dẫn EC2 dự phòng](../../../deploy/ec2/RUNBOOK.md)

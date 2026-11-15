@@ -1,3 +1,5 @@
+> Reference status (14 November 2026): specialist/research documentation. Current DAYMARK scope, requirements and acceptance authority are in [../../README.md](../../README.md). Historical measurements and data-rights restrictions remain in force.
+
 # Private personalization pilot runbook
 
 Status: **not approved for activation on `commerce` or public deployment**. Current evidence: [final implementation report](reports/final_implementation_report.md).

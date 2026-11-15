@@ -25,21 +25,17 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
   }
 
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <Nav />
-      {customer && cart && (
-        <CartMismatchBanner customer={customer} cart={cart} />
-      )}
+      {customer && cart && <CartMismatchBanner customer={customer} cart={cart} />}
 
       {cart && (
-        <FreeShippingPriceNudge
-          variant="popup"
-          cart={cart}
-          shippingOptions={shippingOptions}
-        />
+        <FreeShippingPriceNudge variant="popup" cart={cart} shippingOptions={shippingOptions} />
       )}
-      {props.children}
+      <main id="daymark-main" className="flex-1">
+        {props.children}
+      </main>
       <Footer />
-    </>
+    </div>
   )
 }
