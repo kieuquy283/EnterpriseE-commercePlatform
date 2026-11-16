@@ -1,6 +1,6 @@
 # DAYMARK — KẾ HOẠCH THỰC HIỆN TUẦN 1
 **Feature Completion · Integration · Test Foundation**
-**Thời gian:** 16–22/11/2026 · **Phiên bản:** 1.1 · Checkpoint-based · **Baseline:** `main`/`084f229` (15/11/2026)
+**Thời gian:** 16–22/11/2026 · **Phiên bản:** 1.2 · Checkpoint-based · Bổ sung Staff/Admin RBAC · **Baseline:** `main`/`084f229` (15/11/2026)
 **Mục tiêu:** chuyển hệ thống từ có code sang ứng viên Feature Complete trên môi trường tích hợp, làm cơ sở kiểm thử/staging Tuần 2.
 
 # 1. Tổng quan, phạm vi và mục tiêu
@@ -47,15 +47,15 @@
 
 ## 2.2. Checklist theo từng thành viên tại ba mốc
 
-**Quy tắc ghi nhận:** Dấu ☐ là mục cần kiểm, **không phải kết quả đã đạt**. Tại cuộc check, ghi `PASS / PARTIAL / FAIL / BLOCKED / NOT RUN`, kèm link PR, CI run, test report hoặc ảnh/trace và blocker. Mục 3 giữ nguyên 35 task và điều kiện Done để đối chiếu.
+**Quy tắc ghi nhận:** Dấu ☐ là mục cần kiểm, **không phải kết quả đã đạt**. Tại cuộc check, ghi `PASS / PARTIAL / FAIL / BLOCKED / NOT RUN`, kèm link PR, CI run, test report hoặc ảnh/trace và blocker. Mục 3 gồm 36 task (bổ sung BE-08) và điều kiện Done để đối chiếu.
 
 | Thành viên | Check 18/11 | Check 20/11 | Check 22/11 |
 | --- | --- | --- | --- |
 | **Quý** | ☐ FE-01, TL-01: route inventory, API contract, bug P0/P1 | ☐ FE-02/03/04/05: demo Catalog/Auth/Cart/Checkout/Order, trạng thái lỗi | ☐ FE-01..07, TL-01: UI/UX và responsive, recommendation fallback, RC1 |
-| **Thắng** | ☐ OPS-01/02: môi trường cô lập, CI baseline; OPS-05/06: risk inventory | ☐ OPS-02/03/04: lint/test/build, Playwright CI bản đầu, Docker smoke | ☐ OPS-01..07: pipeline/evidence, audit triage, AWS readiness read-only |
-| **Hoàng** | ☐ BE-01/02: auth/cart boundary và COD/simulator contract | ☐ BE-02/03: duplicate/retry/concurrency + stock readback; BE-04/05 demo đầu | ☐ BE-01..07: transaction suite, notification async, Staff/reporting smoke |
+| **Thắng** | ☐ OPS-01/02: môi trường, CI; đầu vào test 3 role và policy | ☐ OPS-02/03/04: tích hợp role-negative HTTP tests + Playwright, Docker smoke | ☐ OPS-01..07: CI role-authz gate và run link, audit, AWS readiness |
+| **Hoàng** | ☐ BE-01/02 và **BE-08**: auth/cart, permission matrix + license feasibility | ☐ BE-02/03, BE-08: transaction; thử Staff/Admin allow/deny trên API test | ☐ BE-01..08: notification, Staff/Reporting + chứng cứ RBAC/blocked rõ ràng |
 | **Trung** | ☐ DATA-01/02: ERD, schema, fixture/seed baseline | ☐ DATA-02/03/04: dataset readback, stock/payment reconcile, report definitions | ☐ DATA-01..06: data-quality evidence, reconciliation, migration/rights register |
-| **Quân** | ☐ QA-01/02: RTM, test plan, fixture/harness, smoke report | ☐ QA-03/04/05: E2E và negative tests ban đầu; QA-06 bug triage | ☐ QA-01..07: E2E/HTTP, defect report, acceptance matrix, Week1 sign-off |
+| **Quân** | ☐ QA-01/02: RTM, fixture, AT-10 role matrix cho Customer/Staff/Admin | ☐ QA-04/05: test Staff/Admin allow/deny, lỗi 401/403 ở API và `/app` | ☐ QA-01..07: role regression có log, blocker/QA sign-off |
 
 ## 2.3. Kỷ luật làm việc và cập nhật
 
@@ -143,7 +143,7 @@
 
 ### OPS-02 — CI gates: lint, unit, HTTP, build, IaC [P0; checkpoint 22/11]
 
-**Thực hiện:** Rà `.github/workflows/ci.yml`, `api-tests.yml`: docs-check, format, typecheck, lint, Jest unit, HTTP integration với Postgres, Docker build, CloudFormation lint/Guard. Thêm/điều chỉnh điều kiện fail và lưu JUnit/log artifacts cho SHA; chạy Redis/worker smoke riêng nếu cần.  
+**Thực hiện:** Rà `.github/workflows/ci.yml`, `api-tests.yml`: docs-check, format, typecheck, lint, Jest unit, HTTP integration với Postgres, Docker build, CloudFormation lint/Guard. Thêm/điều chỉnh điều kiện fail và lưu JUnit/log artifacts cho SHA; chạy Redis/worker smoke riêng nếu cần. **Đưa suite Staff/Admin role-negative của Quân/Hoàng vào CI** trên fixture tách biệt, kiểm tra test cấm trả 401/403; CI job đỏ nếu quyền sai. Không đưa license/secrets vào artifact.  
 **Điều kiện Done:** PR có trạng thái checks rõ PASS/FAIL; job lỗi thật chặn merge theo quy tắc bảo vệ branch; CI/HTTP không bỏ qua P0.  
 **Phối hợp / phụ thuộc:** Hoàng và Quân cung cấp suites/test commands.  
 **Bằng chứng / bàn giao:** CI PR + check matrix + sample failed/passed run  
@@ -219,7 +219,7 @@
 
 ### BE-05 — Staff/Admin lifecycle, fulfillment, tracking và COD [P0; checkpoint 22/11]
 
-**Thực hiện:** Dùng Medusa Admin mặc định: invite/login staff; kiểm products/stock/orders; chạy nghiệp vụ nhập tồn → publish → order → fulfillment/tracking thủ công → cập nhật status/COD. Chốt permission matrix và trạng thái an toàn, không bịa vận chuyển thật.  
+**Thực hiện:** Dùng Medusa Admin mặc định: invite/login staff; kiểm products/stock/orders; chạy nghiệp vụ nhập tồn → publish → order → fulfillment/tracking thủ công → cập nhật status/COD. Chốt các trạng thái an toàn, không bịa vận chuyển thật. **Việc triển khai/cấu hình quyền Staff khác Admin tách thành BE-08**; không coi một user nội bộ đăng nhập `/app` là đã được phân quyền.  
 **Điều kiện Done:** Một walkthrough end-to-end có ID đơn, actors, states và audit trail; staff trái quyền bị từ chối; customer thấy trạng thái đúng.  
 **Phối hợp / phụ thuộc:** Trung data checks, Quân kiểm chứng Staff/role, Quý hiển thị trạng thái.  
 **Bằng chứng / bàn giao:** Staff walkthrough + permission matrix + status contract  
@@ -237,6 +237,24 @@
 **Điều kiện Done:** Lint/typecheck/unit/HTTP trên PR pass hoặc blocker ghi rõ; mọi thay đổi có code→test→requirement mapping và rollback/compatibility note.  
 **Phối hợp / phụ thuộc:** Thắng CI, Quân RTM, Trung DB.  
 **Bằng chứng / bàn giao:** Backend test evidence + API/ADR docs  
+
+### BE-08 — Phân quyền Staff / Admin thực tế (RBAC) [P0; checkpoint 22/11]
+
+**Hiện trạng / nguyên tắc:** SRS đã tách `ACT-CUST`, `ACT-STAFF`, `ACT-ADMIN` và có ma trận quyền **Draft**. Code hiện tại dùng Medusa `customer` cho Store API và `user` cho Medusa Admin; chưa thấy module RBAC được đăng ký trong `apps/backend/medusa-config.ts`, chưa có bằng chứng hai nhóm `Staff`/`Admin` có quyền tách biệt. Medusa Admin là UI có sẵn, **không đồng nghĩa Staff đã được giới hạn quyền**.
+
+**Thực hiện:** (1) Đối chiếu PERM-001..005, FR-AUTH-04, FR-ORD-03, FR-ADM-01/02 và OPEN-USR-003/004/011; Quý/chủ chính sách chốt bảng quyền cần cho MVP. (2) Xác minh dự án có license hợp lệ cho Medusa Enterprise RBAC hay không; không ghi/commit license key. (3) **Nếu có license:** đề xuất đăng ký module RBAC trong Medusa 2.21.2, kiểm tra migration trên DB disposable, tạo role/policy, gán đúng người; **cảnh báo:** khi bật RBAC, admin hiện hữu và user tạo qua CLI có thể nhận Super Admin theo cơ chế bootstrap, phải kiểm tra rồi thu hồi quyền dư cho tài khoản Staff. (4) **Nếu không có license:** ghi ADR/gap; xây ranh giới Staff được bảo vệ ở server với các endpoint/đường vào hạn chế, hoặc giữ Staff ở trạng thái BLOCKED. **Không** cấp quyền vào toàn bộ `/app`/Admin API mặc định rồi chỉ ẩn menu; không quảng cáo đã có phân quyền.
+
+**Ma trận tối thiểu cần chứng minh:** `Customer` chỉ truy cập tài nguyên của mình; `Staff` chỉ xem/xử lý đơn/tồn kho được giao theo policy, không mời/quản lý user, không cấu hình quyền hay xuất dữ liệu ngoài phạm vi; `Admin` thực hiện các hành động được duyệt. Chốt cụ thể từng quyền theo ma trận chính thức, không tự suy ra từ tên vai trò.
+
+**Điều kiện Done:** Có bảng role × resource × action được duyệt; ít nhất 3 tài khoản kiểm thử tách biệt (Customer/Staff/Admin), test cả **ALLOW và DENY tại server API** (401/403 thích hợp), kiểm tra giao diện `/app` tương ứng; Staff gọi trực tiếp API cấm vẫn bị từ chối; log/trace và version/commit được lưu. Nếu thiếu license, policy hoặc không thể bảo vệ Admin API thì task ghi `BLOCKED`, không tự đánh PASS.
+
+**Phối hợp / phụ thuộc:** Quý duyệt phạm vi và quyết định chính sách; Quân xây authorization test matrix / AT-10 và test độc lập; Thắng tích hợp tests vào CI; Trung cung cấp dữ liệu kiểm thử độc lập. Không yêu cầu Quý xây dashboard Staff riêng khi UI Medusa đáp ứng.
+
+**Bằng chứng / bàn giao:** Permission Matrix v1 + License/Feasibility Decision + ADR đường triển khai + PR cấu hình/guard (nếu được phép) + Role-negative HTTP/Browser Test Report + CI artifact.
+
+**Checkpoint:** **18/11** chốt ma trận quyền và tính khả dụng license; **20/11** kiểm tra cấu hình/guard trên DB test và thử quyền dương/âm; **22/11** nghiệm thu Staff/Admin riêng hoặc nêu blocker P0 rõ ràng.
+
+**Tài liệu Medusa:** https://docs.medusajs.com/resources/enterprise/rbac · https://docs.medusajs.com/resources/enterprise/rbac/concepts · https://docs.medusajs.com/user-guide/settings/roles
 
 ## 3.4. Trung — Data Engineer · PostgreSQL · Data Quality & Reporting Data
 
@@ -315,14 +333,14 @@
 
 ### QA-04 — API/security/transaction negative testing [P0; checkpoint 22/11]
 
-**Thực hiện:** Chạy với Hoàng/Trung HTTP scenarios login bad token, A/B order, cross-cart, invalid qty, simulator fail, retry/timeout, simultaneous completion, last-unit. Xác nhận trạng thái DB và payment/stock, không chỉ status code.  
+**Thực hiện:** Chạy với Hoàng/Trung HTTP scenarios login bad token, A/B order, cross-cart, invalid qty, simulator fail, retry/timeout, simultaneous completion, last-unit. **Bổ sung AT-10:** đăng nhập Customer/Staff/Admin bằng tài khoản test tách biệt; kiểm Staff không thể mời/quản lý user, sửa role, hoặc gọi API ngoài nhiệm vụ qua request trực tiếp; Admin và Staff hợp lệ chỉ được quyền đã chốt; kiểm tra 401/403 và không rò dữ liệu. Xác nhận trạng thái DB và payment/stock, không chỉ status code.  
 **Điều kiện Done:** P0 transaction/authz có expected/actual/readback; khi fail ghi BUG-P0 và chặn nghiệm thu.  
 **Phối hợp / phụ thuộc:** Hoàng code fixes, Trung reconciliation, Thắng CI.  
 **Bằng chứng / bàn giao:** Negative API matrix + concurrency evidence  
 
 ### QA-05 — Notification và Staff/Admin acceptance [P0; checkpoint 22/11]
 
-**Thực hiện:** Kiểm event duplicate/out-of-order, sandbox inbox, provider fail/recover, bounded retries; Staff invite/login, nhận hàng, publish, fulfillment, tracking, COD, RBAC và report totals.  
+**Thực hiện:** Kiểm event duplicate/out-of-order, sandbox inbox, provider fail/recover, bounded retries; Staff invite/login, nhận hàng, publish, fulfillment, tracking, COD, RBAC và report totals. **Role acceptance:** đối chiếu permission matrix đã chốt với quyền tại API và `/app`; test DENY bằng lời gọi trực tiếp, kiểm Super Admin có bị gán nhầm cho Staff hay không; nếu chưa triển khai RBAC an toàn thì đánh BLOCKED.  
 **Điều kiện Done:** Có witnessed walkthrough/recording và outcome theo AT-05/17/18; lỗi email không thay đổi đơn; không coi bản mock UI là chứng cứ chức năng.  
 **Phối hợp / phụ thuộc:** Hoàng flow, Trung counts, Thắng worker runtime.  
 **Bằng chứng / bàn giao:** Staff+Notification acceptance logs + screenshots  
@@ -355,7 +373,7 @@ Một use case chỉ được đánh dấu hoàn thiện khi cả UI/API/data/te
 | FR-06 | Inventory | FE-02/04 | BE-03/05 | DATA-03 | QA-04 | OPS-02 |
 | FR-07 | Order Tracking | FE-05 | BE-05 | DATA-03 | QA-03/05 | OPS-03 |
 | FR-08 | Notifications | FE-05 (state) | BE-04 | DATA-01 | QA-05 | OPS-04/07 |
-| FR-09 | Admin/Reporting | Không làm Admin UI mới | BE-05/06 | DATA-04 | QA-05 | OPS-02/04 |
+| FR-09 | Admin/Reporting + Staff/Admin RBAC | Không làm Admin UI mới | BE-05/06/**08** | DATA-04 | QA-04/05 | OPS-02/04 |
 
 ## 4.1. Phụ thuộc quan trọng
 
@@ -373,7 +391,7 @@ Một use case chỉ được đánh dấu hoàn thiện khi cả UI/API/data/te
 | AT-02,14 / P0 | Simulator non-prod success/failure | Failure không báo success/không có order ngoài ý muốn; snapshot stock/collection. |
 | AT-03 / P0 | Double click, 2 requests, timeout/retry | Một intent không tạo hai hiệu ứng; readback Order/Payment/Stock; case payload khác phân loại. |
 | AT-15 / P0 | 20 attempts / 5 cuối cùng | Không oversell, không reservation âm/ngoài ý muốn; fixture disposable. |
-| AT-04,09,10 / P0 | Customer A/B, guest, staff role | API kiểm quyền server 401/403; không lộ dữ liệu riêng. |
+| AT-04,09,10 / P0 | Customer A/B; Staff/Admin role matrix; direct Admin API; user management | API cho phép đúng quyền và từ chối trái quyền (401/403); Staff không quản lý user/role; không lộ dữ liệu riêng; kiểm Super Admin bootstrap. |
 | AT-11,12 / P0 | Search/filter/sort, variants, cart invalid | Catalog published/region đúng; >100 sản phẩm sort có kiểm; giỏ nguyên vẹn. |
 | AT-05 / P0 | Event notification fail/duplicate/retry | Order bền; gửi qua sandbox; retry có hạn, dedupe và trạng thái cuối quan sát. |
 | AT-17,18 / P0 | Staff: stock→publish→fulfillment→COD/report | Walkthrough + data reconciliation, role negative tests, không nhầm COD thu thật. |
@@ -401,7 +419,7 @@ Khuyến nghị evidence folder theo `docs/report/evidence/2026-11-22-w1-<run-id
 - [ ] 9/9 nhóm nghiệp vụ có owner và status VERIFIED/PARTIAL/BLOCKED; không có FR bắt buộc “mất” khỏi RTM.
 - [ ] Customer flows: browse → PDP → cart → address/shipping → COD → order confirmation/history được kiểm thử trên RC1.
 - [ ] Checkout retry, payment failure và last-unit contention được thử trên database disposable với readback dữ liệu.
-- [ ] Staff/Admin, Notification có walkthrough/integration evidence hoặc được ghi P0 blocker và kế hoạch sửa có ngày.
+- [ ] Staff/Admin có ma trận quyền duyệt, 3 tài khoản test riêng, server-side allow/deny và `/app` role acceptance; **thiếu RBAC/license hoặc bảo vệ API thì ghi P0 BLOCKED**, không cấp Staff toàn quyền. Notification có walkthrough/integration evidence hoặc P0 blocker.
 - [ ] Frontend responsive/empty/error/keyboard và recommendation OFF/fail không chặn checkout.
 - [ ] CI lint/typecheck/unit/HTTP/build có logs; Playwright pipeline hoạt động hoặc có blocker rõ, không ghi “đã có” như “pass”.
 - [ ] Security audit được chạy lại; 23 high snapshot cũ được triage; không tuyên bố production-ready khi unresolved high/runtime.
@@ -423,11 +441,12 @@ Khuyến nghị evidence folder theo `docs/report/evidence/2026-11-22-w1-<run-id
 | W1-R6 | P0 | Audit 23 high theo snapshot lịch sử | Quét lại theo SHA, triage reachability, không bỏ qua gate hay ghi security PASS giả.  /  Owner: Thắng |
 | W1-R7 | P1 | Quý quá tải frontend + Tech Lead | Giữ frontend core ưu tiên P0, giao QA hoàn toàn cho Quân; review PR theo 2 khung giờ.  /  Owner: Quý |
 | W1-R8 | P1 | Tác động nhầm vào RDS/Redis/S3 AWS | Chỉ data test disposable; AWS inventory read-only, change set/chi phí cần phê duyệt.  /  Owner: Thắng / Trung |
+| W1-R9 | **P0** | Staff được dùng Medusa Admin nhưng chưa có RBAC → có thể toàn quyền | BE-08 xác minh license và cấu hình/guard server-side; QA-04/05 thử DENY direct API; Thắng đưa vào CI. Nếu không bảo vệ được, khóa Staff và ghi BLOCKED.  /  Owner: Hoàng / Quân / Thắng |
 
 ## 7.1. Các quyết định cần chốt trước checkpoint 18/11
 
 - Cho phép guest checkout và cơ chế guest tra cứu đơn; không mặc nhiên cho guest xem đơn qua ID không xác thực.
-- Quyền Staff/Admin, khi nào nhập kho/cancel/fulfill và trạng thái nào công bố cho khách.
+- Quyền Staff/Admin theo PERM-001..005; quyết định license Medusa Enterprise RBAC và phương án không-license (Staff API/surface hạn chế, không cho Staff dùng Admin full-access); khi nào nhập kho/cancel/fulfill và trạng thái nào công bố cho khách.
 - Quy tắc COD: đơn nhận chưa phải đã thu, thời điểm ghi collected và cách báo cáo/đối soát.
 - Thời điểm reservation/release stock, hành vi retry timeout/payload mismatch và lỗi upstream.
 - Mốc cần gửi thông báo, kênh sandbox/email, trạng thái delivered/failed, retry cap và người xử lý lỗi cuối.
@@ -439,9 +458,9 @@ Khuyến nghị evidence folder theo `docs/report/evidence/2026-11-22-w1-<run-id
 | --- | --- |
 | Quý | Frontend PRs + route status + screenshots mobile/desktop + architecture/API changes + integration RC1 SHA. |
 | Thắng | CI workflows + sample run links/artifacts + Docker smoke + audit triage + AWS/budget plan. |
-| Hoàng | Backend PRs + HTTP/unit results + concurrency/notification evidence + staff/fulfillment contract. |
+| Hoàng | Backend PRs + HTTP/unit results + concurrency/notification evidence + staff/fulfillment contract + **BE-08 role policy/ADR/permission evidence**. |
 | Trung | Data fixture report + ERD/data dictionary + stock/order/payment reconciliation + reporting dataset. |
-| Quân | Test Plan/RTM + Playwright reports/traces + bug tracker + Week1 QA acceptance + known limitations. |
+| Quân | Test Plan/RTM + Playwright reports/traces + bug tracker + **Customer/Staff/Admin authorization matrix results** + Week1 QA acceptance + known limitations. |
 
 **Mẫu cập nhật ở các mốc 18/20/22 (trước 21:00):** `Ngày checkpoint | Người | Task ID | Status (TODO/IN PROGRESS/PR/TESTED/BLOCKED/DONE) | PR/commit | Test & evidence | Blocker | Hành động tiếp theo/owner`. Với status DONE phải có reviewer xác nhận; dùng Not Run thay vì ghi “pass” nếu chưa chạy.
 
@@ -458,6 +477,8 @@ Khuyến nghị evidence folder theo `docs/report/evidence/2026-11-22-w1-<run-id
 - **Design system:** https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/docs/design-system/README.md
 - **Testing / NFR:** https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/docs/spec/05-testing.md
 - **Delivery gaps:** https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/docs/spec/07-delivery.md
+- **Staff/Admin actor và permission Draft:** https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/docs/02-users/actors-and-user-goals.md
+- **Medusa Enterprise RBAC:** https://docs.medusajs.com/resources/enterprise/rbac · https://docs.medusajs.com/resources/enterprise/rbac/concepts
 - **CI pipeline:** https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/.github/workflows/ci.yml
 - **Cloud operations:** https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/deploy/RUNBOOK.md
 

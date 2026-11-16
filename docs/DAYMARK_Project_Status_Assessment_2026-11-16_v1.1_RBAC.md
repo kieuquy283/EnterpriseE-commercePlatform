@@ -1,7 +1,7 @@
 # BÁO CÁO ĐÁNH GIÁ HIỆN TRẠNG DỰ ÁN DAYMARK
 
 **Tổng thể và chi tiết theo Frontend · Backend · Ops & CI/CD · Data · QA, Testing & Documentation**  
-**Ngày đánh giá:** 16/11/2026 · **Phiên bản báo cáo:** Audit v1.0 · **Mục đích:** Làm baseline giao việc và cổng nghiệm thu cho giai đoạn 16/11–06/12/2026.  
+**Ngày đánh giá:** 16/11/2026 · **Phiên bản báo cáo:** Audit v1.1 (bổ sung Staff/Admin RBAC) · **Mục đích:** Làm baseline giao việc và cổng nghiệm thu cho giai đoạn 16/11–06/12/2026.  
 **Repository:** [kieuquy283/EnterpriseE-commercePlatform](https://github.com/kieuquy283/EnterpriseE-commercePlatform) · **Baseline xem xét:** `main` tại `084f2297ac00f90cab59692865439a6ba5139855` (merge PR #15 ngày 15/11/2026).  
 **Đối tượng nhận báo cáo:** Tech Lead, các thành viên phát triển, QA và người review đồ án.
 
@@ -28,7 +28,7 @@
 | R-01 | **P0** | Duplicate/retry/timeout khi complete cart | Có nguy cơ nhiều hiệu ứng Order/Payment cho một ý định mua; phải chứng minh bằng test concurrent và DB readback. |
 | R-02 | **P0** | Tranh chấp tồn cuối và reservation/cancel/fulfill | Không được bán vượt tồn; một success test đơn lẻ chưa chứng minh concurrency. |
 | R-03 | **P0** | Chưa hoàn thành notification giao dịch | Redis worker có sẵn không đồng nghĩa đã có email subscriber/provider, bounded retries và dedupe. |
-| R-04 | **P0** | Staff/Admin full order lifecycle và phân quyền | Chưa có bằng chứng walkthrough nhận tồn→publish→fulfillment→tracking→COD và role negative tests đầy đủ. |
+| R-04 | **P0** | Staff/Admin full order lifecycle và **RBAC** | Chưa có module RBAC đăng ký trong `medusa-config.ts`; Staff/Admin cùng actor `user` và chưa chứng minh được role/permission server-side. Chưa có walkthrough nhận tồn→publish→fulfillment→tracking→COD và role negative tests đầy đủ. |
 | R-05 | **P0** | Chưa chạy full browser E2E của DAYMARK vừa merge | PR #14 đổi nhiều UI/routes; kết quả Playwright ngày 09/11 không đại diện bản ngày 15/11. |
 | R-06 | **P0** | Cổng dependency security chưa đạt | Audit 15/11 báo 23 high, 0 critical; CI `npm audit` đang `continue-on-error: true`. Cần triage rủi ro và quyết định release gate. |
 | R-07 | **P0** | AWS deployment trên release candidate mới chưa được chứng minh | Kết quả AWS 09/11 là bản `389e855`, khác baseline ngày 15/11; thời gian lease lịch sử đã kết thúc. |
@@ -125,7 +125,7 @@ Backend là **Medusa v2.21.2**, không phải Express API/Prisma riêng. Các ro
 
 | Phần nhỏ | Tình trạng có căn cứ | Thiếu/điểm cần chú ý | Đề xuất action |
 |---|---|---|---|
-| Auth/store & staff onboarding | Có Store/customer auth, legacy auth compatibility, staff invite; một số HTTP tests [S03][S16]. | A/B order privacy, expired token, tách admin actor/customer và privilege matrix. | Negative authz tests, role table và browser Admin walkthrough. |
+| Auth/store & staff onboarding | Có Store/customer auth, legacy auth compatibility, staff invite; một số HTTP tests [S03][S16]. | A/B order privacy, expired token, tách admin actor/customer và privilege matrix. **Chưa thấy RBAC module trong `medusa-config.ts`; không suy từ Staff invite ra quyền Staff hạn chế.** | Negative authz tests, role table và browser Admin walkthrough; đánh giá license Medusa Enterprise. |
 | Product/Catalog/Price | Medusa Product/Pricing API, sales channel, region/VND; search `q` và catalog route [S04][S13]. | Caching/search consistency, published/unpublished, variant price/availability. | Test region/channel/price tampering và out-of-stock. |
 | Cart Store API | Native SDK `/store/carts` + legacy `/store/cart`; đã vá DTO/trust-boundary và cross-cart item deletion [S03][S16]. | Guest cart capability semantics, cart ID cookie, API misuse, quantity extremes. | Regression native+legacy paths, anonymous vs authenticated. |
 | Checkout/Order creation | Storefront hoàn tất Medusa cart, HTTP test successful order; order readback [S16]. | Race/double click, lost response after commit, payload mismatch, timeout handling. | Viết kịch bản two parallel completes + retry-after-timeout + readback. |
@@ -145,7 +145,19 @@ Backend là **Medusa v2.21.2**, không phải Express API/Prisma riêng. Các ro
 
 Một test thành công chỉ chứng minh luồng đơn lẻ. Để nghiệm thu phải quan sát **cùng một intent** được gửi hai lần đồng thời, gửi lại sau timeout, đổi payload và tranh chấp last stock. Xác minh không có Order/Payment effect trùng và `reserved_quantity`, stocked/available cùng đúng; kết quả phải đọc từ Medusa/PostgreSQL test riêng. Với failure, không hiển thị order confirmation giả; với COD không nói “đã thu tiền”. Không chỉnh bảng thương mại trực tiếp, chỉ dùng Medusa workflow.
 
-### 3.4. Ranh giới chức năng của Hoàng và Trung
+### 3.4. RBAC Staff/Admin — đối chiếu tài liệu và source (bổ sung 16/11)
+
+**Actor nghiệp vụ vs actor kỹ thuật:** `docs/02-users/actors-and-user-goals.md` định nghĩa `ACT-CUST`, `ACT-STAFF`, `ACT-ADMIN` và ma trận `PERM-001..005` dưới trạng thái **Draft**. Medusa xác thực `customer` cho Store API và `user` cho cả Staff/Admin. Sở hữu chung actor `user` không tạo giới hạn quyền Staff tự động.
+
+**Hiện trạng source:** `apps/backend/medusa-config.ts` chưa đăng ký `@medusajs/medusa/rbac`; `apps/backend/src/api/middlewares.ts` không có guard role Staff/Admin; `apps/backend/src/admin/README.md` chỉ định dùng Medusa Admin mặc định. Đã có HTTP test Staff nhận invite và dùng `/admin/users/me`, nhưng chưa có suite xác nhận Staff gọi Admin API bị cấm nhận `403`. **Chưa xem runtime AWS hoặc danh sách account/role DB**, nên không khẳng định đã có tài khoản Staff thực tế với giới hạn quyền.
+
+**Khả năng framework và điều kiện:** Medusa v2.21.2 đáp ứng mức version tối thiểu cho **Enterprise RBAC Module**; module không mặc định bật. Cần license hợp lệ có feature `rbac`, khai báo module và migrations có duyệt. Tài liệu Medusa lưu ý người dùng nội bộ hiện hữu/CLI có thể được gán **Super Admin** khi khởi tạo RBAC; cần kiểm và thu hồi quyền dư khỏi Staff trước kiểm thử. Nếu không có license, không thể coi việc ẩn menu Admin là RBAC; phải dùng API/Staff surface giới hạn, bảo vệ server-side, hoặc đánh mục tiêu Staff hạn chế là **BLOCKED**.
+
+**Việc khép gap:** Hoàng sở hữu `BE-08` (permission matrix, license check, cấu hình/ADR, server authorization); Quân viết bài test Customer–Staff–Admin có ca ALLOW/DENY, gồm gọi trực tiếp Admin API, và kiểm tra giao diện `/app`; Thắng gắn test vào CI để lỗi phân quyền làm job đỏ. Quý duyệt permission matrix và quyết định policy còn mở. Chỉ đánh VERIFIED khi có role fixtures, test report, commit SHA và evidence môi trường.
+
+**Tham chiếu Medusa:** https://docs.medusajs.com/resources/enterprise/rbac · https://docs.medusajs.com/resources/enterprise/rbac/concepts · https://docs.medusajs.com/user-guide/settings/roles
+
+### 3.5. Ranh giới chức năng của Hoàng và Trung
 
 - **Hoàng sở hữu** state machine, hành vi thay đổi nghiệp vụ, route/workflow Medusa, customer/staff authorization, payment, fulfillment và notification; tạo test backend tương ứng.
 - **Trung sở hữu** fixture, quan hệ dữ liệu, migration, chất lượng dữ liệu, truy vấn/reporting dataset và đối soát DB. Trung *không* chịu trách nhiệm viết toàn bộ Medusa Admin hay fulfillment workflow.
@@ -247,7 +259,7 @@ Medusa/PostgreSQL giữ dữ liệu Customer, Product, Price, Cart, Order, Payme
 | QA-04 | COD checkout success → order confirmation/history/admin readback | Quý + Hoàng + Trung | Quân: order ID, item, money, reserved stock |
 | QA-05 | Simulator fail, no false confirmation/no unintended order/stock | Quý + Hoàng | Quân: HTTP/E2E + DB readback |
 | QA-06 | Double click/parallel complete/retry after timeout; 20 attempts vs 5 units cuối | Hoàng + Trung | Quân: concurrent report and reconciliation |
-| QA-07 | Staff invite/login/RBAC → receive inventory/publish/fulfill/track/COD report | Hoàng + Trung | Quân: witnessed Admin walkthrough + screenshots |
+| QA-07 | Staff invite/login/**role ALLOW/DENY server-side** → receive inventory/publish/fulfill/track/COD report; test direct API 401/403 | Hoàng + Trung | Quân: 3 test identities, permission matrix, witnessed Admin walkthrough + screenshots + denial logs |
 | QA-08 | Order event notification, provider down/retry/recover, duplicate/stale event | Hoàng | Quân: fake provider, sandbox inbox, delivery state |
 | QA-09 | Recommendation ON/OFF/503/consent/no consent, no checkout impact | Quý + Hoàng + Trung | Quân: feature-flag matrices |
 | QA-10 | Cloud rollout HTTPS/migration/media/monitoring/alarm/rollback/restore | Thắng + Hoàng + Trung | Quân: cloud E2E + evidence index |
@@ -288,7 +300,7 @@ Các số dưới đây là **TARGET**, không được viết thành “đã đ
 |---|---|---|---|---|
 | P0-01 | P0 | **Hoàng** + Trung/Quân | Duplicate/retry idempotency và last-unit inventory | Concurrent tests + Order/Payment/Stock readback |
 | P0-02 | P0 | **Hoàng** + Quân | Transactional notification provider + subscriber + retry/dedupe | Provider fail/recover + sandbox receipts + no order rollback |
-| P0-03 | P0 | **Hoàng** + Trung/Quân | Staff/Admin order lifecycle, manual tracking, COD policy/role | Walkthrough, API authorization & report reconciliation |
+| P0-03 | P0 | **Hoàng** + Trung/Quân | Staff/Admin order lifecycle, **BE-08 permission matrix/Enterprise RBAC viability and server-side role separation**, manual tracking, COD | Walkthrough, license/ADR decision, 3-role API allow/deny + report reconciliation; BLOCKED nếu Staff vẫn có toàn quyền |
 | P0-04 | P0 | **Quý** + Quân | Regression toàn bộ DAYMARK UI/route, checkout/account mobile | Playwright của đúng release SHA + screenshots |
 | P0-05 | P0 | **Thắng** + Quân | CI Playwright gate, audit vulnerability triage | CI required checks + audit disposition + clean artifacts |
 | P0-06 | P0 | **Thắng** + cả nhóm | AWS release mới: staging, migrations, full cloud smoke | Digest/SHA, HTTPS, checkout/worker, logs & rollback plan |
@@ -354,6 +366,7 @@ Nguồn từ GitHub ưu tiên link tại `main`, trừ khi ghi khác. Báo cáo 
 - **[S19]** [Recommendations API](https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/apps/backend/src/api/store/recommendations/route.ts) và [For-you API](https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/apps/backend/src/api/store/recommendations/for-you/route.ts).
 - **[S20]** [NFR/test specification](https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/docs/spec/05-testing.md), [catalog load](https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/load/catalog.js), [checkout load](https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/load/checkout.js), [recommendation load](https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/load/recommendations.js).
 - **[S21]** [Recommendation research reports](https://github.com/kieuquy283/EnterpriseE-commercePlatform/tree/main/docs/recommendation) — lịch sử từng module, không suy ra quality/human rights accepted.
+- **[S22]** [Actors/permissions Draft](https://github.com/kieuquy283/EnterpriseE-commercePlatform/blob/main/docs/02-users/actors-and-user-goals.md), [Medusa RBAC Module](https://docs.medusajs.com/resources/enterprise/rbac), [RBAC Concepts](https://docs.medusajs.com/resources/enterprise/rbac/concepts), [Medusa Roles UI](https://docs.medusajs.com/user-guide/settings/roles).
 
 ---
 
