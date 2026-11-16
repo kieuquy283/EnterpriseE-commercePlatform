@@ -53,7 +53,7 @@ Vai trò mô tả trách nhiệm cần có. Phân quyền nhân viên chi tiết
 | BR-01 | Khách chọn biến thể quần áo bán được với thông tin tin cậy | Đối chiếu ảnh, kích cỡ/màu, giá và khả năng cung ứng với dữ liệu mẫu |
 | BR-02 | Mua hàng tạo một kết quả đơn, thanh toán và tồn kho nhất quán | Checkout xuyên suốt, đối soát thử lại và cạnh tranh |
 | BR-03 | Nhân viên đưa đơn từ tiếp nhận đến giao và giải thích trạng thái giao/thanh toán | Hành trình Admin được ghi nhận và bàn giao vận chuyển/COD thủ công |
-| BR-04 | Khách xem tiến độ và nhận xác nhận bất đồng bộ | Trạng thái tài khoản và thông báo thử đã gửi đến; lỗi provider không xóa đơn |
+| BR-04 | Khách xem tiến độ và nhận xác nhận/cập nhật trạng thái đủ điều kiện một cách bất đồng bộ | Trang đơn là nguồn chuẩn; lỗi provider không đổi đơn/trạng thái; thông báo không khẳng định trạng thái chưa có chứng cứ |
 | BR-05 | Khuyến mãi dùng được trong tải đã đo và lỗi có thể dự đoán ngoài mức đó | Bằng chứng tải, tăng đột biến và khôi phục cùng bất biến nghiệp vụ |
 | BR-06 | Vận hành triển khai, bảo vệ, quan sát và khôi phục trong giới hạn công bố | CI/CD, kiểm tra truy cập, dashboard, quay lui/khôi phục và chi phí |
 | BR-07 | Gợi ý cải thiện khám phá, giữ tính đúng thương mại và riêng tư | Ứng viên được phép, kiểm tra hợp lệ, dự phòng và đánh giá |
@@ -70,7 +70,7 @@ Vai trò mô tả trách nhiệm cần có. Phân quyền nhân viên chi tiết
 | FR-05 | Biểu diễn COD và thanh toán thử thành công/thất bại không lặp hiệu ứng | BR-02 | [FLOW-05](02-flows.md#flow-05--payment-and-duplicate-handling): cô lập bộ mô phỏng khỏi production, phát lại và đối soát |
 | FR-06 | Nhập, điều chỉnh, giữ chỗ, xuất giao và giải phóng tồn tại một kho | BR-01, BR-02, BR-03 | [FLOW-06](02-flows.md#flow-06--warehouse-and-inventory): cạnh tranh tồn, hủy và truy vết điều chỉnh |
 | FR-07 | Hiển thị đúng tiến độ đơn/giao/thanh toán và theo dõi vận chuyển thủ công | BR-03, BR-04 | [FLOW-07](02-flows.md#flow-07--fulfillment-and-order-status): xử lý Admin và quyền sở hữu khách |
-| FR-08 | Gửi xác nhận bất đồng bộ, thử lại giới hạn và chống trùng | BR-04, BR-06 | [FLOW-08](02-flows.md#flow-08--customer-notification): thành công, provider gián đoạn và sự kiện lặp |
+| FR-08 | Gửi xác nhận đơn và cập nhật trạng thái đơn/giao đủ điều kiện bất đồng bộ, thử lại giới hạn và chống trùng | BR-04, BR-06 | [FLOW-08](02-flows.md#flow-08--customer-notification): đúng sự kiện/trạng thái, provider gián đoạn, sự kiện lặp/trễ |
 | FR-09 | Quản trị danh mục/đơn/tồn và báo cáo vận hành cơ bản | BR-03, BR-05, BR-06 | [FLOW-09](02-flows.md#flow-09--administration-and-reporting): truy cập, đối soát tổng và thao tác vận hành |
 
 Cả chín ca sử dụng thuộc phạm vi nghiệm thu cốt lõi. Gợi ý là phạm vi nâng cao tùy chọn theo SRS ưu tiên; lựa chọn triển khai không biến nó thành cổng phát hành cốt lõi. Không cam kết trợ lý mua sắm AI. Gợi ý có thể xác định bằng quy tắc; phiên bản đầu không cần AI sinh nội dung hoặc tuyên bố chi phí token.
@@ -107,7 +107,7 @@ Sàn đa người bán, phân bổ đa kho, mua hàng/ERP, đồng bộ POS, tí
 | Admin/kho | Có Medusa core và địa điểm/tồn seed | Cấp admin đầu, thao tác nhân viên hợp lệ và đối soát giao/COD |
 | Thanh toán | Có nhãn COD và bộ mô phỏng ngoài production | Bất biến thử lại/trùng và thất bại trong môi trường chọn |
 | Gợi ý | Có module/API tùy chỉnh và công cụ ngoại tuyến; cờ triển khai từng tắt | Đầu vào DAYMARK an toàn, đánh giá và cổng bật rõ |
-| Thông báo | Đặc tả chưa xác lập provider email khách đã cấu hình | Triển khai xác nhận bất đồng bộ và chứng minh lỗi provider |
+| Thông báo | Đặc tả chưa chốt kênh/provider; cấu hình gửi thực tế chưa được xác minh | Triển khai xác nhận/cập nhật trạng thái đủ điều kiện bất đồng bộ và chứng minh lỗi provider |
 | Cloud | Có bằng chứng triển khai đủ nền tảng theo ngày | Kiểm tra phiên bản/trạng thái triển khai; lịch sử thành công không chứng minh uptime/năng lực |
 
 Trình tự triển khai và định nghĩa hoàn thành ở mục lục tài liệu. Trách nhiệm thành phần ở [kiến trúc](03-architecture.md); lưu trữ/hợp đồng ở [dữ liệu/API](04-data-api.md). Đổi các ranh giới nghiệp vụ cần cập nhật đặc tả được đánh giá và kiểm thử nghiệm thu tương ứng.

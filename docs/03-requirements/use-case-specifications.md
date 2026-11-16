@@ -70,11 +70,11 @@ Các mã `P1-UC01..09` tương ứng đúng 9 use case của Topics trang 4; `UC
 
 ## P1-UC08 — Thông báo khách hàng
 
-- **Actor/mục tiêu:** ACT-SYSTEM phục vụ ACT-CUST/GOAL-CUST-005; Staff theo dõi lỗi; BREQ-NOT-001, RULE-NOT-001; FR-NOT-01..03; J-02/J-03.
-- **Tiền điều kiện:** Đơn hợp lệ đã được nhận, có kênh/liên hệ được phép theo OPEN-USR-009.
-- **Luồng chính:** Tạo việc thông báo riêng khỏi kết quả nhận đơn; gửi, ghi thành công/thất bại, cho phép Staff xem việc lỗi.
-- **Nhánh/lỗi:** Nhà cung cấp lỗi/lặp → thử lại có giới hạn và nhận diện trùng; đơn vẫn hợp lệ; không bịa rằng khách đã nhận khi chưa có bằng chứng.
-- **Hậu điều kiện:** Việc gửi có kết quả hoặc trạng thái cần xử lý. **AT-05:** gây lỗi rồi phục hồi; đơn còn tồn tại, lịch sử thử và kết quả gửi đọc được.
+- **Actor/mục tiêu:** ACT-SYSTEM phục vụ ACT-CUST/GOAL-CUST-005; Staff theo dõi lỗi; BREQ-NOT-001, RULE-NOT-001/002; FR-NOT-01..03; J-02/J-03.
+- **Tiền điều kiện:** Đơn đã được nhận hoặc có chuyển trạng thái đơn/giao hợp lệ được phép công bố; kênh/liên hệ được phép theo OPEN-USR-009.
+- **Luồng chính:** (1) Tạo việc riêng khỏi thao tác nhận đơn/cập nhật trạng thái. (2) Tạo thông báo cho xác nhận đơn hoặc mốc trạng thái đủ điều kiện; nội dung chỉ phản ánh sự kiện đã xảy ra và mã đơn/trạng thái cần thiết. (3) Gửi qua kênh được duyệt, ghi kết quả và cho phép Staff theo dõi việc lỗi. Khách vẫn tra trạng thái đơn từ nguồn chuẩn.
+- **Nhánh/lỗi:** Provider lỗi/timeout → quyết định thử lại hữu hạn, ghi lỗi; đơn và trạng thái không đổi. Sự kiện trùng hoặc cũ không tạo thông báo logic trùng/sai thứ tự. Chuyển trạng thái không đủ điều kiện công bố không phát thông báo; không gọi đơn “đã giao” nếu chưa có chứng cứ.
+- **Hậu điều kiện:** Mỗi sự kiện đủ điều kiện có kết quả gửi hoặc việc cần xử lý; trạng thái nguồn vẫn có thể tra cứu. **AT-05:** xác nhận và cập nhật trạng thái, phát lại cùng sự kiện, gửi trạng thái cũ, provider lỗi rồi phục hồi; xác nhận không trùng/sai thứ tự, đơn và trạng thái không đổi, lịch sử thử/kết quả đọc được. Danh sách mốc cụ thể chờ OPEN-USR-006/OPEN-FUL-001; kênh chờ OPEN-USR-009.
 
 ## P1-UC09 — Quản trị và báo cáo cơ bản
 
@@ -92,7 +92,7 @@ Các mã `P1-UC01..09` tương ứng đúng 9 use case của Topics trang 4; `UC
 | AT-02 | Mô phỏng lỗi: không xác nhận giả, tiền/tồn đúng | Giữ AT-02; chi tiết giữ hàng chờ policy |
 | AT-03 | Hai lần gửi cùng ý định và gửi lại sau timeout: không đơn thứ hai | Giữ AT-03 |
 | AT-04 | Customer A không đọc đơn B; guest không vào Admin | Giữ AT-04 |
-| AT-05 | Nhà cung cấp thông báo lỗi rồi phục hồi; đơn vẫn hợp lệ | Giữ AT-05 |
+| AT-05 | Xác nhận đơn và các mốc trạng thái đủ điều kiện; phát lại cùng sự kiện/đến sai thứ tự; provider lỗi rồi phục hồi; đơn và trạng thái không đổi, không gửi trùng/sai mốc | Mở rộng AT-05 |
 | AT-06 | Mất cache/tìm kiếm: chỉ fallback có định nghĩa, không xác nhận đơn giả | Giữ nghĩa AT-06, bỏ phụ thuộc sản phẩm cache cụ thể |
 | AT-07 | Đo tải có dữ liệu/môi trường rõ; so với mục tiêu *đã duyệt* | Giữ AT-07; chưa chạy |
 | AT-08 | Khôi phục bản sao và đo dữ liệu mất/thời gian | Giữ AT-08; chưa chạy |
@@ -100,4 +100,4 @@ Các mã `P1-UC01..09` tương ứng đúng 9 use case của Topics trang 4; `UC
 | AT-19 | Đối chiếu kiểm tra mã/build, phiên bản môi trường thử, phát hành lại và quay lại bản trước; không mất dữ liệu đơn | Mới, P3/P4, chưa chạy |
 | AT-20 | Gây lỗi dịch vụ, checkout, job và backup thử; đối chiếu traffic/latency/error/saturation, correlation, cảnh báo và không lộ PII | Mới, P4, chưa chạy |
 
-Chưa có biên bản review hay kết quả AT. Quyết định guest, Staff/Admin, tồn khi hủy, giá đổi, trạng thái đơn, kênh thông báo và chỉ số báo cáo vẫn OPEN; người rà cần chốt trước khi coi use case hoàn tất.
+Chưa có biên bản review hay kết quả AT. Quyết định guest, Staff/Admin, tồn khi hủy, giá đổi, danh sách mốc đơn/giao được phép thông báo, kênh thông báo và chỉ số báo cáo vẫn OPEN; người rà cần chốt trước khi coi use case hoàn tất.

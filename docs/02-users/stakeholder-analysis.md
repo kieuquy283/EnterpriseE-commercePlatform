@@ -53,7 +53,7 @@ Nhân viên giả định tiếp nhận công việc xử lý đơn online, cầ
 |---|---|---|
 | BP-01 / OBJ-01,03 | STK-001, STK-002, STK-003 | Khách thấy đúng biến thể/giá; nhân viên kiểm tra nguồn hàng; quản trị viên kiểm soát công bố. BREQ-CAT-001, BREQ-PRICE-001, BREQ-INV-001; CAP-CAT-001, CAP-INV-001 |
 | BP-02 / OBJ-01,02 | STK-001, STK-002 | Khách biết chắc một ý định mua được nhận hay không; nhân viên không xử lý đơn trùng. BREQ-SALES-001, BREQ-ORD-001, BREQ-PAY-001; RULE-ORD-001 |
-| BP-03 / OBJ-04 | STK-001, STK-002 | Khách có cách biết đơn đã nhận dù thông báo chậm; vận hành biết việc cần liên lạc lại. BREQ-NOT-001; PROC-NOT-001 |
+| BP-03 / OBJ-04 | STK-001, STK-002 | Khách biết đơn được nhận và các mốc trạng thái đủ điều kiện dù thông báo chậm; vận hành biết việc cần liên lạc lại. BREQ-NOT-001; PROC-NOT-001 |
 | BP-04,05 / OBJ-07,08 | STK-004, STK-007, STK-008, STK-009 | Phát hiện và phục hồi gián đoạn, chứng minh kết quả; đây là mối quan tâm vận hành dự án, không ép thành hành trình khách. BREQ-REL-001 |
 | BP-06 / OBJ-05,06 | STK-001, STK-004, STK-009 | Hành trình xem/mua còn dùng được khi nhu cầu tăng; mục tiêu định lượng xác định sau. BREQ-CAP-001 |
 

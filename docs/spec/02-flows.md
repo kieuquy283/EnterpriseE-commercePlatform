@@ -140,28 +140,30 @@ stateDiagram-v2
 <a id="flow-08--customer-notification"></a>
 ## FLOW-08 — thông báo khách hàng
 
-**Mục đích / tác nhân:** FR-08; khách nhận xác nhận không chặn checkout; vận hành phục hồi lỗi.
+**Mục đích / tác nhân:** FR-08; khách nhận xác nhận đơn và cập nhật cho mốc trạng thái đơn/giao đủ điều kiện, không chặn thao tác thương mại; vận hành phục hồi lỗi.
 
-- **Kích hoạt/tiền điều kiện:** Sự kiện đơn đã chốt và provider/mẫu thông báo đã cấu hình. Địa chỉ khách lấy từ bối cảnh đơn được phép.
-- **Luồng chính:** Subscriber chuyển ca sử dụng thông báo sang xử lý nền; tạo tóm tắt/liên kết đơn tối thiểu; chống trùng theo đơn/sự kiện/kênh logic; gửi qua adapter provider; ghi lần gửi và kết quả quan sát được.
-- **Thay thế/thất bại:** Provider timeout/lỗi không đổi đơn; thử lại hữu hạn; hiển thị lỗi hết lượt cho vận hành phát lại. Sự kiện trùng không tạo thông báo logic trùng. Provider chấp nhận không chứng minh vào hộp thư; ghi bằng chứng chính xác. Không khẳng định gửi mạng exactly-once sau timeout mơ hồ.
+- **Kích hoạt/tiền điều kiện:** `OrderAccepted` hoặc chuyển trạng thái đơn/giao hợp lệ đã được duyệt công bố; kênh/liên hệ và mẫu đã cấu hình. Liên hệ lấy từ bối cảnh đơn được phép.
+- **Luồng chính:** Subscriber chuyển sự kiện sang xử lý nền; chỉ tạo thông báo cho xác nhận đơn hoặc mốc trạng thái đủ điều kiện; nội dung tối thiểu phản ánh đúng mã đơn/trạng thái sự kiện. Chống trùng theo event ID + phiên bản trạng thái/kênh/mẫu; gửi qua adapter trung lập với provider; ghi lần gửi và kết quả quan sát được. Khách tiếp tục tra trạng thái từ trang đơn có thẩm quyền.
+- **Thay thế/thất bại:** Provider timeout/lỗi không đổi đơn hay trạng thái nguồn; thử lại hữu hạn; hiển thị lỗi hết lượt cho vận hành xử lý. Event trùng/cũ không tạo thông báo trùng hoặc đảo mốc. Không thông báo trạng thái không được duyệt công bố hoặc “đã giao” khi thiếu chứng cứ. Provider chấp nhận không chứng minh khách đã nhận; không khẳng định gửi mạng exactly-once sau timeout mơ hồ.
 - **Dữ liệu/hậu điều kiện:** Trạng thái lần gửi/chống trùng phải bền vững; chỉ bộ nhớ tiến trình Redis không phải nguồn nghiệm thu có thẩm quyền. Payload giảm dữ liệu cá nhân; log chứa tham chiếu, không thông tin xác thực/địa chỉ đầy đủ.
-- **Nghiệm thu:** Email thử đến nơi, sự kiện trùng, provider gián đoạn, khởi động lại/thử lại và hiển thị hết lượt; checkout vẫn thành công. Đặc tả chưa xác lập provider email khách đã được triển khai.
+- **Nghiệm thu:** Kênh thử đã được chốt/cấu hình; xác minh đơn nhận và mốc trạng thái đủ điều kiện, event trùng/cũ, provider gián đoạn, khởi động lại/thử lại và hiển thị hết lượt; checkout/trạng thái nguồn không bị đổi do lỗi gửi. Chưa có kênh thông báo khách nào được xác nhận đã triển khai.
 
 ```mermaid
 sequenceDiagram
-  participant M as Medusa order flow
+  participant M as Order flow
+  participant F as Fulfillment status flow
   participant Q as Event infrastructure
   participant W as Worker notification use case
   participant D as Durable attempt state
-  participant E as Email provider adapter
+  participant E as Communication provider adapter
   M-->>Q: Committed order event
+  F-->>Q: Eligible order/fulfillment status event
   Q-->>W: Deliver event, possibly again
-  W->>D: Resolve logical notification and attempt
-  W->>E: Send confirmation with provider idempotency when supported
+  W->>D: Resolve notification by source event/version and attempt
+  W->>E: Send confirmation or eligible status update
   E-->>W: Accepted, failed or unknown
   W->>D: Persist outcome and bounded retry decision
-  Note over M,E: Email failure never reverses the committed order
+  Note over M,E: Notification failure never reverses committed order or status
 ```
 
 <a id="flow-09--administration-and-reporting"></a>
