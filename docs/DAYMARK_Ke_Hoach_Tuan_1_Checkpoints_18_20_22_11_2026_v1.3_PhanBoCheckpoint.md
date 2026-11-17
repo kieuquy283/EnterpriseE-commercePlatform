@@ -1,6 +1,6 @@
 # DAYMARK — KẾ HOẠCH THỰC HIỆN TUẦN 1
 **Feature Completion · Integration · Test Foundation**
-**Thời gian:** 16–22/11/2026 · **Phiên bản:** 1.2 · Checkpoint-based · Bổ sung Staff/Admin RBAC · **Baseline:** `main`/`084f229` (15/11/2026)
+**Thời gian:** 16–22/11/2026 · **Phiên bản:** 1.3 · Checkpoint chính theo task · Staff/Admin RBAC · **Baseline:** `main`/`084f229` (15/11/2026)
 **Mục tiêu:** chuyển hệ thống từ có code sang ứng viên Feature Complete trên môi trường tích hợp, làm cơ sở kiểm thử/staging Tuần 2.
 
 # 1. Tổng quan, phạm vi và mục tiêu
@@ -35,7 +35,7 @@
 
 # 2. Ba mốc kiểm tra tiến độ — 18, 20 và 22/11
 
-**Cách triển khai:** Các task ở Mục 3 được giao theo **work package**, không ấn định ngày bắt đầu/kết thúc cho từng task. Thành viên chủ động thực hiện song song trong tuần; nhóm chỉ **kiểm tra kết quả chính thức vào ba mốc** dưới đây. Task có thể xuất hiện tại nhiều lần check với mức hoàn thiện khác nhau; chỉ đánh dấu Done khi đạt điều kiện và có evidence.
+**Cách triển khai:** Các task ở Mục 3 được giao theo **work package**, không ấn định lịch thực hiện từng ngày. Mỗi task có **checkpoint chính** là mốc cần trình bày đầu ra ưu tiên, không phải tự động là ngày đóng task. Thành viên chủ động thực hiện song song trong tuần; nhóm chỉ **kiểm tra kết quả chính thức vào ba mốc** dưới đây. Task có thể xuất hiện tại nhiều lần check với mức hoàn thiện khác nhau; chỉ đánh dấu Done khi đạt điều kiện và có evidence.
 
 ## 2.1. Lịch check và exit gate
 
@@ -47,7 +47,7 @@
 
 ## 2.2. Checklist theo từng thành viên tại ba mốc
 
-**Quy tắc ghi nhận:** Dấu ☐ là mục cần kiểm, **không phải kết quả đã đạt**. Tại cuộc check, ghi `PASS / PARTIAL / FAIL / BLOCKED / NOT RUN`, kèm link PR, CI run, test report hoặc ảnh/trace và blocker. Mục 3 gồm 36 task (bổ sung BE-08) và điều kiện Done để đối chiếu.
+**Quy tắc ghi nhận:** Dấu ☐ là mục cần kiểm, **không phải kết quả đã đạt**. Tại cuộc check, ghi `PASS / PARTIAL / FAIL / BLOCKED / NOT RUN`, kèm link PR, CI run, test report hoặc ảnh/trace và blocker. Mục 3 gồm 36 task (bổ sung BE-08), mỗi task có một checkpoint chính và điều kiện Done; ngày 22/11 vẫn nghiệm thu tổng thể mọi P0.
 
 | Thành viên | Check 18/11 | Check 20/11 | Check 22/11 |
 | --- | --- | --- | --- |
@@ -56,6 +56,20 @@
 | **Hoàng** | ☐ BE-01/02 và **BE-08**: auth/cart, permission matrix + license feasibility | ☐ BE-02/03, BE-08: transaction; thử Staff/Admin allow/deny trên API test | ☐ BE-01..08: notification, Staff/Reporting + chứng cứ RBAC/blocked rõ ràng |
 | **Trung** | ☐ DATA-01/02: ERD, schema, fixture/seed baseline | ☐ DATA-02/03/04: dataset readback, stock/payment reconcile, report definitions | ☐ DATA-01..06: data-quality evidence, reconciliation, migration/rights register |
 | **Quân** | ☐ QA-01/02: RTM, fixture, AT-10 role matrix cho Customer/Staff/Admin | ☐ QA-04/05: test Staff/Admin allow/deny, lỗi 401/403 ở API và `/app` | ☐ QA-01..07: role regression có log, blocker/QA sign-off |
+
+### 2.2.1. Ma trận checkpoint chính của 36 task
+
+**Cách đọc:** Mỗi task chỉ được liệt kê ở **một checkpoint chính** trong bảng này. Task ở 18/11 hoặc 20/11 có thể tiếp tục sửa lỗi, tích hợp và phải được kiểm tra lại tại nghiệm thu chung 22/11. Task chưa đủ bằng chứng tại checkpoint chính ghi `PARTIAL/BLOCKED` với owner, không tự coi là Done.
+
+| Thành viên | Checkpoint chính 18/11 (8 task) | Checkpoint chính 20/11 (13 task) | Checkpoint chính 22/11 (15 task) |
+| --- | --- | --- | --- |
+| **Quý** | FE-01 | FE-02, FE-03, FE-04, TL-01 | FE-05, FE-06, FE-07 |
+| **Thắng** | OPS-01, OPS-05 | OPS-02, OPS-03, OPS-04 | OPS-06, OPS-07 |
+| **Hoàng** | BE-01 | BE-02, BE-08 | BE-03, BE-04, BE-05, BE-06, BE-07 |
+| **Trung** | DATA-01, DATA-02 | DATA-03, DATA-04 | DATA-05, DATA-06 |
+| **Quân** | QA-01, QA-02 | QA-03, QA-04 | QA-05, QA-06, QA-07 |
+
+**Đầu ra theo mốc:** **18/11** = baseline, môi trường, fixture, ma trận quyền, test plan; **20/11** = demo chức năng và tích hợp, RBAC allow/deny ban đầu, CI/Playwright; **22/11** = regression, rủi ro giao dịch, notification/Staff, báo cáo, RC1. Đây không phải lịch phát triển theo từng ngày.
 
 ## 2.3. Kỷ luật làm việc và cập nhật
 
@@ -72,56 +86,56 @@
 
 **Bàn giao chính:** Storefront feature-complete; UI screenshot set; frontend test-ready checklist; API contract/architecture update; PR review log.
 
-### FE-01 — Kiểm kê và smoke tất cả trang đã merge [P0; checkpoint 22/11]
+### FE-01 — Kiểm kê và smoke tất cả trang đã merge [P0; checkpoint chính 18/11]
 
 **Thực hiện:** Liệt kê route `/vn`, `/vn/store`, categories, collections, PDP, account/login/register/profile/addresses, cart, checkout, confirmation, orders/detail và trạng thái sai route. Xem lại nhánh code sau PR #14; kiểm điểm các link/nút, loading/empty/error, cookie/cache và route guard; không xây lại UI đã có.  
 **Điều kiện Done:** Có bảng route → trạng thái PASS/BUG/NOT RUN; danh sách bug P0/P1 có bước tái hiện; công bố baseline SHA.  
 **Phối hợp / phụ thuộc:** Quân cung cấp test matrix; Hoàng kiểm tra API trả dữ liệu.  
 **Bằng chứng / bàn giao:** Route inventory + screenshots + PR/issue links  
 
-### FE-02 — Catalog, Search, Collections và PDP [P0; checkpoint 22/11]
+### FE-02 — Catalog, Search, Collections và PDP [P0; checkpoint chính 20/11]
 
 **Thực hiện:** Sửa luồng tìm kiếm/filter/sort/pagination, đối chiếu published/channel/region, số sản phẩm có thể bán; variant size/màu, VND/stock, trạng thái hết hàng và ảnh lỗi. Không tự tính giá ở client; đối chiếu tập ≥120 sản phẩm nếu Trung cung cấp fixture.  
 **Điều kiện Done:** Khách duyệt/tìm/xem biến thể và thêm đúng SKU vào giỏ; tìm không ra có empty state; sort toàn bộ kết quả kiểm được; lỗi API không làm crash.  
 **Phối hợp / phụ thuộc:** Trung cung cấp fixture; Hoàng xác nhận catalog APIs; Quân chạy E2E.  
 **Bằng chứng / bàn giao:** Catalog/PDP PR + acceptance captures  
 
-### FE-03 — Account, authentication và dữ liệu riêng [P0; checkpoint 22/11]
+### FE-03 — Account, authentication và dữ liệu riêng [P0; checkpoint chính 20/11]
 
 **Thực hiện:** Chốt Register/Login/Logout, Profile/Addresses, account overview; form validation, sai mật khẩu, session hết hạn, tài khoản khác và trạng thái chưa đăng nhập. Thông báo lỗi rõ nhưng không lộ lỗi provider/raw token; giữ auth cookie an toàn.  
 **Điều kiện Done:** Guest được dẫn về login theo chính sách; khách A không xem dữ liệu B; update profile/addresses đọc lại đúng; không có đường dẫn giả.  
 **Phối hợp / phụ thuộc:** Hoàng xác nhận auth contract; Quân kiểm authz negative tests.  
 **Bằng chứng / bàn giao:** Account UI PR + form/error checklist  
 
-### FE-04 — Cart, Checkout và Order Confirmation [P0; checkpoint 22/11]
+### FE-04 — Cart, Checkout và Order Confirmation [P0; checkpoint chính 20/11]
 
 **Thực hiện:** Hoàn thiện add/update/delete, cart empty/reload, địa chỉ, shipping, chọn COD, review tổng tiền server, submit loading/disabled, lỗi payment và retry UX. Sau mất phản hồi không tự cho đặt đơn mới trước khi tra cứu trạng thái; không nói simulator là thanh toán thật.  
 **Điều kiện Done:** Một luồng COD hoàn chỉnh đến confirmation đọc được Order ID; double click không biểu diễn hai thành công; payment fail không hiện success; UI kiểm cả guest và member nếu chính sách cho phép.  
 **Phối hợp / phụ thuộc:** Phụ thuộc BE-02/03; Quân E2E; Trung đối soát order/stock.  
 **Bằng chứng / bàn giao:** Checkout UI PR + recorded run + screenshots  
 
-### FE-05 — Order history/detail/tracking và ngôn ngữ trạng thái [P0; checkpoint 22/11]
+### FE-05 — Order history/detail/tracking và ngôn ngữ trạng thái [P0; checkpoint chính 22/11]
 
 **Thực hiện:** Hiển thị order history/detail cùng nguồn Medusa, giao hàng thủ công/trạng thái COD đúng ngữ nghĩa đã duyệt; xử lý order 404, khách A/B, các mốc chưa được xác thực. Không dựng lịch sử vận chuyển giả hoặc nói đã thu tiền khi mới COD.  
 **Điều kiện Done:** Xem đơn của mình đúng tổng/trạng thái; ngoài quyền bị từ chối; trạng thái hiển thị khớp order/fulfillment event, không suy đoán.  
 **Phối hợp / phụ thuộc:** Hoàng chốt state contract, Trung data mapping, Quân negative E2E.  
 **Bằng chứng / bàn giao:** Order UI PR + status mapping  
 
-### FE-06 — Responsive, usability và design system [P0; checkpoint 22/11]
+### FE-06 — Responsive, usability và design system [P0; checkpoint chính 22/11]
 
 **Thực hiện:** Đối chiếu palette ngà–than–ô liu, typography Inter, button/field, focus states, layout 375/768/1440px; mobile menu/keyboard Escape/focus restore; ảnh hero và thương mại; no hydration error; reduced motion.  
 **Điều kiện Done:** Các trang mua hàng dùng được trên điện thoại/desktop, không có layout overflow hoặc chặn nút; screenshot/trace lưu trong evidence.  
 **Phối hợp / phụ thuộc:** Quân chạy `design-system.spec.ts` và `responsive-mobile.spec.ts`.  
 **Bằng chứng / bàn giao:** Visual checklist + responsive fixes  
 
-### FE-07 — Recommendation và fallback an toàn [P1; checkpoint 22/11]
+### FE-07 — Recommendation và fallback an toàn [P1; checkpoint chính 22/11]
 
 **Thực hiện:** Smoke Home/PDP khi feature flags ON/OFF, API 404/503/timeout, no-consent; khuyến nghị không chặn giá/giỏ/checkout; giữ mặc định OFF cho cá nhân hóa thiếu quyền dữ liệu.  
 **Điều kiện Done:** Core commerce dùng được khi recommendation tắt hoặc lỗi; không hiển thị dữ liệu khách sai quyền; test trạng thái OFF bắt buộc.  
 **Phối hợp / phụ thuộc:** Trung kiểm nguồn dữ liệu/rights; Hoàng API; Quân E2E.  
 **Bằng chứng / bàn giao:** Flag matrix + safe fallback evidence  
 
-### TL-01 — Integration, architecture và review PR [P0; checkpoint 22/11]
+### TL-01 — Integration, architecture và review PR [P0; checkpoint chính 20/11]
 
 **Thực hiện:** Chốt hợp đồng dữ liệu frontend–backend, các chính sách OPEN theo người có quyền quyết định; review PR của nhóm, tránh merge nhánh diverged toàn bộ; giải quyết bug blocker và cập nhật mapping UI→API→FR; tích hợp lên main qua CI.  
 **Điều kiện Done:** Mỗi PR có owner/reviewer/test/evidence; không có conflict/chênh lệch hợp đồng chưa ghi; backlog P0 rõ trạng thái cuối tuần.  
@@ -134,49 +148,49 @@
 
 **Bàn giao chính:** CI PR checks, isolated services, Playwright CI prototype, Docker smoke, audit triage, AWS read-only readiness & cost plan.
 
-### OPS-01 — Môi trường local/CI lặp lại được [P0; checkpoint 22/11]
+### OPS-01 — Môi trường local/CI lặp lại được [P0; checkpoint chính 18/11]
 
 **Thực hiện:** Đóng băng Node/npm versions; kiểm Docker Compose, PostgreSQL, Redis, backend API/admin/worker, storefront và fixture tối thiểu; env template không chứa secrets; tách local disposable DB với dữ liệu AWS.  
 **Điều kiện Done:** Từ checkout sạch có thể `npm ci`, cấu hình, migrate và chạy health; tài liệu làm rõ cách start/stop, cleanup đúng DB test.  
 **Phối hợp / phụ thuộc:** Trung dữ liệu mẫu, Hoàng cấu hình Medusa.  
 **Bằng chứng / bàn giao:** Environment README + start/stop transcript  
 
-### OPS-02 — CI gates: lint, unit, HTTP, build, IaC [P0; checkpoint 22/11]
+### OPS-02 — CI gates: lint, unit, HTTP, build, IaC [P0; checkpoint chính 20/11]
 
 **Thực hiện:** Rà `.github/workflows/ci.yml`, `api-tests.yml`: docs-check, format, typecheck, lint, Jest unit, HTTP integration với Postgres, Docker build, CloudFormation lint/Guard. Thêm/điều chỉnh điều kiện fail và lưu JUnit/log artifacts cho SHA; chạy Redis/worker smoke riêng nếu cần. **Đưa suite Staff/Admin role-negative của Quân/Hoàng vào CI** trên fixture tách biệt, kiểm tra test cấm trả 401/403; CI job đỏ nếu quyền sai. Không đưa license/secrets vào artifact.  
 **Điều kiện Done:** PR có trạng thái checks rõ PASS/FAIL; job lỗi thật chặn merge theo quy tắc bảo vệ branch; CI/HTTP không bỏ qua P0.  
 **Phối hợp / phụ thuộc:** Hoàng và Quân cung cấp suites/test commands.  
 **Bằng chứng / bàn giao:** CI PR + check matrix + sample failed/passed run  
 
-### OPS-03 — Đưa Playwright vào CI một cách ổn định [P0; checkpoint 22/11]
+### OPS-03 — Đưa Playwright vào CI một cách ổn định [P0; checkpoint chính 20/11]
 
 **Thực hiện:** Tạo job cài Chromium, chạy storefront với backend/DB/fixture cô lập, webServer readiness, `npm run test:e2e`, lưu HTML report, screenshot, trace/video khi thất bại. Giới hạn test data và cleanup, không dùng DB dùng chung.  
 **Điều kiện Done:** Playwright chạy tự động trên PR hoặc workflow bắt buộc theo policy; test có thể chạy lại cùng commit/config; thất bại làm job đỏ.  
 **Phối hợp / phụ thuộc:** Quân sở hữu nội dung Playwright, Quý sửa UI và selector.  
 **Bằng chứng / bàn giao:** Playwright workflow + artifacts + run links  
 
-### OPS-04 — Container build và deployment smoke contract [P0; checkpoint 22/11]
+### OPS-04 — Container build và deployment smoke contract [P0; checkpoint chính 20/11]
 
 **Thực hiện:** Kiểm Docker image backend/storefront, worker tách route API, health/readiness, cấu hình biến build, catalog/media smoke; xây script `smoke` không đổi dữ liệu hoặc chỉ ghi vào fixture test được cho phép. Chốt các bước migration trước traffic và dùng digest bất biến.  
 **Điều kiện Done:** Build sạch và kiểm API/UI/worker trên môi trường thử; có script exit khác 0 khi sai, log gọn và không rò secret.  
 **Phối hợp / phụ thuộc:** Hoàng và Quý định nghĩa endpoints; Quân xác nhận assertions.  
 **Bằng chứng / bàn giao:** Docker smoke checklist + build trace  
 
-### OPS-05 — Triage dependency security, pipeline policy [P0; checkpoint 22/11]
+### OPS-05 — Triage dependency security, pipeline policy [P0; checkpoint chính 18/11]
 
 **Thực hiện:** Chạy lại `npm audit --omit=dev` cho SHA hiện tại; ghi severity, dependency chain, reachability, owner và hướng fix. Đánh giá `continue-on-error: true` ở CI, đề xuất blocker đúng risk, không tắt kiểm tra hay dùng `audit fix --force`.  
 **Điều kiện Done:** Mỗi high/critical có disposition và owner; không tuyên bố “security pass” nếu còn high liên quan runtime chưa xử lý hoặc được phê duyệt rõ.  
 **Phối hợp / phụ thuộc:** Hoàng review Medusa upgrades, Quý review Next/Frontend risk.  
 **Bằng chứng / bàn giao:** Security triage matrix + gate decision  
 
-### OPS-06 — AWS readiness, chi phí và kế hoạch phát hành [P1; checkpoint 22/11]
+### OPS-06 — AWS readiness, chi phí và kế hoạch phát hành [P1; checkpoint chính 22/11]
 
 **Thực hiện:** Chỉ kiểm kê read-only trạng thái ECS/RDS/Redis/ALB/S3/DNS/cert/CloudWatch và lease/budget nếu có quyền; rà CloudFormation change set, role OIDC, previous digests, backups/rollback strategy. Không tự start/update tài nguyên tốn phí hay thay dữ liệu.  
 **Điều kiện Done:** Có checklist môi trường, yêu cầu phê duyệt, chi phí ước lượng/giờ và đường quay lại cho Tuần 2; mọi runtime “unknown” ghi NOT VERIFIED.  
 **Phối hợp / phụ thuộc:** Quý phê duyệt kế hoạch và ngân sách; Trung DB migration/backup.  
 **Bằng chứng / bàn giao:** AWS readiness inventory + cost/lease proposal  
 
-### OPS-07 — Observability và evidence CI [P1; checkpoint 22/11]
+### OPS-07 — Observability và evidence CI [P1; checkpoint chính 22/11]
 
 **Thực hiện:** Rà logs và correlation ID cho request/worker; xác định dashboard metrics health, queue, notification, error rate; thiết kế phép thử nhận alert và lưu artifact theo run-id. Chuẩn bị k6 load workloads cho Tuần 2; chưa công bố p95 cloud chưa đo.  
 **Điều kiện Done:** Có log/evidence schema và kế hoạch fault/load drill; GitHub CI report lưu nguồn chạy/revision; không lộ PII/token.  
@@ -189,56 +203,56 @@
 
 **Bàn giao chính:** Auth/cart boundary tests, transaction correctness, notification service baseline, staff lifecycle contract, backend integration evidence.
 
-### BE-01 — Auth/API boundary và cart integrity [P0; checkpoint 22/11]
+### BE-01 — Auth/API boundary và cart integrity [P0; checkpoint chính 18/11]
 
 **Thực hiện:** Rà native và legacy cart endpoints, xác thực customer/staff, ownership A/B, invalid/expired tokens, published/channel constraints, DTO projection; giữ guest cart semantics theo policy. Test cross-cart item deletion và invalid quantity.  
 **Điều kiện Done:** API từ chối thao tác vượt quyền; không truyền `customer_id` từ client làm nguồn auth; native/legacy không có lỗ hổng khác biệt đã biết.  
 **Phối hợp / phụ thuộc:** Quý account/cart UX, Quân negative tests.  
 **Bằng chứng / bàn giao:** API boundary regression + evidence  
 
-### BE-02 — Checkout/COD/Payment Simulator contract [P0; checkpoint 22/11]
+### BE-02 — Checkout/COD/Payment Simulator contract [P0; checkpoint chính 20/11]
 
 **Thực hiện:** Kiểm luồng cart → address → shipping → COD/simulator non-prod → complete → Order. Phân biệt authorized/accepted với collected, error scenario/stock rollback, idempotent collection/session; áp validation server và log lỗi an toàn.  
 **Điều kiện Done:** Payment fail không tạo order hợp lệ ngoài ý muốn/không báo đã thu; success có 1 order & correct totals, fulfillment chưa có không được tự đánh dấu shipped.  
 **Phối hợp / phụ thuộc:** Trung fixture và readback; Quý UI; Quân assertions.  
 **Bằng chứng / bàn giao:** Checkout integration tests + payment-state ADR  
 
-### BE-03 — Duplicate/retry/timeout và tranh chấp tồn [P0; checkpoint 22/11]
+### BE-03 — Duplicate/retry/timeout và tranh chấp tồn [P0; checkpoint chính 22/11]
 
 **Thực hiện:** Dựng tests cùng một intent complete 2 lần đồng thời, timeout sau commit, payload khác nhau; 20 concurrent attempts cho 5 đơn vị tồn cuối trên DB disposable. Chỉ thêm extension workflow/idempotency khi Medusa core chưa đáp ứng, không SQL ghi trực tiếp.  
 **Điều kiện Done:** Không có hai Order/Payment effects cho cùng intent; số đơn được chấp nhận không vượt tồn và reservation khớp; fail phân loại rõ, không chỉ kiểm HTTP status.  
 **Phối hợp / phụ thuộc:** Trung snapshot DB, Quân chạy độc lập, Quý chặn double-submit UI.  
 **Bằng chứng / bàn giao:** Concurrency test suite + reconciliation CSV/JSON  
 
-### BE-04 — Customer notifications async + retry/dedupe [P0; checkpoint 22/11]
+### BE-04 — Customer notifications async + retry/dedupe [P0; checkpoint chính 22/11]
 
 **Thực hiện:** Chốt mốc sự kiện theo quyết định nghiệp vụ. Thiết kế Medusa subscriber/notification provider sandbox, lưu outcome theo event/idempotency key, retry hữu hạn, xử lý duplicate/out-of-order, không làm rollback order/fulfillment nếu email lỗi.  
 **Điều kiện Done:** Tạo đơn → notification record → sandbox delivery; provider down/recover có attempt log, capped retry và non-duplicate theo event logic; error cuối quan sát được.  
 **Phối hợp / phụ thuộc:** Thắng Redis/worker runtime, Quân fault tests, Quý UI trạng thái.  
 **Bằng chứng / bàn giao:** Subscriber/provider + integration tests + event flow diagram  
 
-### BE-05 — Staff/Admin lifecycle, fulfillment, tracking và COD [P0; checkpoint 22/11]
+### BE-05 — Staff/Admin lifecycle, fulfillment, tracking và COD [P0; checkpoint chính 22/11]
 
 **Thực hiện:** Dùng Medusa Admin mặc định: invite/login staff; kiểm products/stock/orders; chạy nghiệp vụ nhập tồn → publish → order → fulfillment/tracking thủ công → cập nhật status/COD. Chốt các trạng thái an toàn, không bịa vận chuyển thật. **Việc triển khai/cấu hình quyền Staff khác Admin tách thành BE-08**; không coi một user nội bộ đăng nhập `/app` là đã được phân quyền.  
 **Điều kiện Done:** Một walkthrough end-to-end có ID đơn, actors, states và audit trail; staff trái quyền bị từ chối; customer thấy trạng thái đúng.  
 **Phối hợp / phụ thuộc:** Trung data checks, Quân kiểm chứng Staff/role, Quý hiển thị trạng thái.  
 **Bằng chứng / bàn giao:** Staff walkthrough + permission matrix + status contract  
 
-### BE-06 — Reporting API tối thiểu và contract [P1; checkpoint 22/11]
+### BE-06 — Reporting API tối thiểu và contract [P1; checkpoint chính 22/11]
 
 **Thực hiện:** Rà khả năng Admin mặc định; chỉ thêm aggregate/read-only endpoint nếu cần cho 9th use case. Tổng số/giá trị đơn theo kỳ/trạng thái, stock thấp; phân biệt order value và COD collected. Bảo vệ quyền Staff/Admin.  
 **Điều kiện Done:** Số liệu trả về đối soát được với fixture của Trung, phân quyền đúng, không cần viết dashboard mới nếu Medusa đã đáp ứng.  
 **Phối hợp / phụ thuộc:** Trung sở hữu định nghĩa data/SQL read-only, Quân report tests.  
 **Bằng chứng / bàn giao:** Minimal reporting contract + endpoint tests (if needed)  
 
-### BE-07 — Backend test, docs và code review [P0; checkpoint 22/11]
+### BE-07 — Backend test, docs và code review [P0; checkpoint chính 22/11]
 
 **Thực hiện:** Mỗi PR backend có unit/HTTP tests success-failure, auth negative, simulator nonprod, worker error; cập nhật API/error response, ADR idempotency và notification; xác minh migrations modules/DTO và giữ code Medusa extension points chuẩn.  
 **Điều kiện Done:** Lint/typecheck/unit/HTTP trên PR pass hoặc blocker ghi rõ; mọi thay đổi có code→test→requirement mapping và rollback/compatibility note.  
 **Phối hợp / phụ thuộc:** Thắng CI, Quân RTM, Trung DB.  
 **Bằng chứng / bàn giao:** Backend test evidence + API/ADR docs  
 
-### BE-08 — Phân quyền Staff / Admin thực tế (RBAC) [P0; checkpoint 22/11]
+### BE-08 — Phân quyền Staff / Admin thực tế (RBAC) [P0; checkpoint chính 20/11]
 
 **Hiện trạng / nguyên tắc:** SRS đã tách `ACT-CUST`, `ACT-STAFF`, `ACT-ADMIN` và có ma trận quyền **Draft**. Code hiện tại dùng Medusa `customer` cho Store API và `user` cho Medusa Admin; chưa thấy module RBAC được đăng ký trong `apps/backend/medusa-config.ts`, chưa có bằng chứng hai nhóm `Staff`/`Admin` có quyền tách biệt. Medusa Admin là UI có sẵn, **không đồng nghĩa Staff đã được giới hạn quyền**.
 
@@ -252,7 +266,7 @@
 
 **Bằng chứng / bàn giao:** Permission Matrix v1 + License/Feasibility Decision + ADR đường triển khai + PR cấu hình/guard (nếu được phép) + Role-negative HTTP/Browser Test Report + CI artifact.
 
-**Checkpoint:** **18/11** chốt ma trận quyền và tính khả dụng license; **20/11** kiểm tra cấu hình/guard trên DB test và thử quyền dương/âm; **22/11** nghiệm thu Staff/Admin riêng hoặc nêu blocker P0 rõ ràng.
+**Checkpoint phối hợp (BE-08 có checkpoint chính 20/11):** **18/11** chốt ma trận quyền và tính khả dụng license; **20/11** kiểm tra cấu hình/guard trên DB test và thử quyền dương/âm; **22/11** nghiệm thu Staff/Admin riêng hoặc nêu blocker P0 rõ ràng.
 
 **Tài liệu Medusa:** https://docs.medusajs.com/resources/enterprise/rbac · https://docs.medusajs.com/resources/enterprise/rbac/concepts · https://docs.medusajs.com/user-guide/settings/roles
 
@@ -262,42 +276,42 @@
 
 **Bàn giao chính:** Schema/ERD map, DAYMARK fixture verification, reconciliation queries/reports, report dataset, migration safety notes.
 
-### DATA-01 — Database baseline, ERD và Data Dictionary [P0; checkpoint 22/11]
+### DATA-01 — Database baseline, ERD và Data Dictionary [P0; checkpoint chính 18/11]
 
 **Thực hiện:** Đọc schema/migrations Medusa và module reco/personalization; ánh xạ Customer, Product, Variant, Price, Cart, Order, Payment, Inventory, Fulfillment, Notification target. Chốt owner dữ liệu và đâu là source of truth; không thay schema core bằng SQL tùy ý.  
 **Điều kiện Done:** ERD/Dictionary nêu đúng quan hệ/ID/đơn vị tiền/trạng thái/ownership; ghi rõ bảng/noti mới chưa triển khai nếu chưa có.  
 **Phối hợp / phụ thuộc:** Hoàng xác nhận workflow; Quân RTM; Thắng test database.  
 **Bằng chứng / bàn giao:** ERD v3 + data inventory + gap list  
 
-### DATA-02 — DAYMARK catalog, seed/import và media checks [P0; checkpoint 22/11]
+### DATA-02 — DAYMARK catalog, seed/import và media checks [P0; checkpoint chính 18/11]
 
 **Thực hiện:** Trên PostgreSQL dùng riêng: `seed-commerce`/DAYMARK importer theo runbook, dry-run/apply/rerun guard. Đối soát 30 products/230 SKU/3 collections/6 categories/2.554 units initial fixture; ảnh 30 + 4 editorial; thử duplicate SKU, owner conflict, broken media; không seed lại DB AWS.  
 **Điều kiện Done:** Data counts/identifiers/price VND/media đúng theo fixture; rerun không duplicate hoặc reset stock; mọi mismatch có report và bước khắc phục.  
 **Phối hợp / phụ thuộc:** Quý/Quân dùng seed test, Hoàng xác nhận Medusa workflow.  
 **Bằng chứng / bàn giao:** Seed validation report + fixture manifest + logs  
 
-### DATA-03 — Order–Payment–Inventory reconciliation [P0; checkpoint 22/11]
+### DATA-03 — Order–Payment–Inventory reconciliation [P0; checkpoint chính 20/11]
 
 **Thực hiện:** Chuẩn bị snapshot/readback qua API, query an toàn read-only hoặc report test fixture: stock before/after, reserved, order ID, payment collection/session, cancel/fulfillment. Cùng Hoàng chạy last-unit contention 20/5 và retry cases.  
 **Điều kiện Done:** Có bảng expected/actual cho success/failure/cancel/concurrent; không oversell hoặc duplicate effect được xác nhận bằng dữ liệu, không chỉ response HTTP.  
 **Phối hợp / phụ thuộc:** Hoàng test logic, Quân độc lập nghiệm thu.  
 **Bằng chứng / bàn giao:** Reconciliation scripts/reports + anomaly log  
 
-### DATA-04 — Reporting data definitions và fixtures [P1; checkpoint 22/11]
+### DATA-04 — Reporting data definitions và fixtures [P1; checkpoint chính 20/11]
 
 **Thực hiện:** Chốt đơn theo trạng thái, giá trị VND, thời gian, stock thấp, COD chưa/đã thu; soạn aggregation read-only và fixture đối soát. Không gọi giá trị đơn là doanh thu hoặc tiền thu thực tế.  
 **Điều kiện Done:** Mỗi chỉ số có công thức/nguồn/time zone, kết quả fixture expected; Hoàng có contract để sử dụng trong Admin/report API.  
 **Phối hợp / phụ thuộc:** Hoàng reporting API, Quân test report totals.  
 **Bằng chứng / bàn giao:** Reporting data dictionary + expected dataset  
 
-### DATA-05 — Migration, index và dữ liệu cloud an toàn [P1; checkpoint 22/11]
+### DATA-05 — Migration, index và dữ liệu cloud an toàn [P1; checkpoint chính 22/11]
 
 **Thực hiện:** Lập danh sách migration pending, backward-compatibility, backup/readback và rollback giới hạn; kiểm EXPLAIN cho sort/catalog trên 120 sản phẩm tổng hợp và điểm nghẽn DB ở mức local. Không thực hiện restore trên DB dùng chung.  
 **Điều kiện Done:** Có migration plan không phá dữ liệu, đề xuất index chỉ khi có số đo; rollback DB không tự động; AWS data verification nằm ở tuần sau.  
 **Phối hợp / phụ thuộc:** Thắng release/migration, Quý query UX, Hoàng Medusa modules.  
 **Bằng chứng / bàn giao:** DB readiness + migration plan + local query report  
 
-### DATA-06 — Recommendation source/consent guardrails [P2; checkpoint 22/11]
+### DATA-06 — Recommendation source/consent guardrails [P2; checkpoint chính 22/11]
 
 **Thực hiện:** Kiểm provenance DAYMARK vs H&M, quyền ảnh và version, consent/epoch/profile retention; không import bộ nghiên cứu có giới hạn lên public, không làm lại pipeline mới trong tuần này.  
 **Điều kiện Done:** Flag/data checklist nêu rõ phần cho phép và chưa cho phép; khi thiếu bằng chứng giữ personalization OFF.  
@@ -310,49 +324,49 @@
 
 **Bàn giao chính:** Requirement–test matrix, Playwright suites, negative tests, bug triage, evidence index, Week1 acceptance report.
 
-### QA-01 — RTM, test plan và tiêu chí chấp nhận [P0; checkpoint 22/11]
+### QA-01 — RTM, test plan và tiêu chí chấp nhận [P0; checkpoint chính 18/11]
 
 **Thực hiện:** Ánh xạ 9 nhóm nghiệp vụ FR/UC/AT → owner code → test ID → expected actual → evidence. Liệt kê ca dương/âm, authz A/B, simulator error, double complete, last stock, status/email fail. Chốt trạng thái `PASS/FAIL/BLOCKED/NOT RUN`.  
 **Điều kiện Done:** 100% các yêu cầu MUST có test case & owner, các policy OPEN ghi người quyết định; không tự đánh PASS trước khi chạy.  
 **Phối hợp / phụ thuộc:** Quý quyết định scope, Hoàng/Trung expected business/data.  
 **Bằng chứng / bàn giao:** QA Plan + RTM + acceptance matrix  
 
-### QA-02 — Test fixture/automation harness dùng riêng [P0; checkpoint 22/11]
+### QA-02 — Test fixture/automation harness dùng riêng [P0; checkpoint chính 18/11]
 
 **Thực hiện:** Rà suites Jest/HTTP và Playwright hiện hữu, tránh merge nhánh diverged nguyên lịch sử; dùng DB disposable/seed có checksum/IDs, tài khoản test riêng, locale `/vn`, Chromium. Chuẩn bị browser report/screenshot/trace.  
 **Điều kiện Done:** Test chạy lặp lại không ảnh hưởng DB dùng chung; dữ liệu test reset và test ID riêng; hướng dẫn run local ngắn.  
 **Phối hợp / phụ thuộc:** Trung fixture, Thắng CI env, Hoàng backend seed.  
 **Bằng chứng / bàn giao:** Test harness + fixture guide  
 
-### QA-03 — Playwright E2E toàn bộ customer journey [P0; checkpoint 22/11]
+### QA-03 — Playwright E2E toàn bộ customer journey [P0; checkpoint chính 20/11]
 
 **Thực hiện:** Viết/sửa tests Home, Catalog/Search, PDP variants, Auth/Account, Cart, Checkout COD, Order Confirmation/History/Tracking và mobile. Kiểm payment fail, loading/empty/error, keyboard/focus; dùng selector ổn định, không sửa logic UI thay Quý.  
 **Điều kiện Done:** Các flow trọng yếu pass hoặc có blocker tái hiện rõ; evidence gắn SHA; thất bại lưu trace/screenshot.  
 **Phối hợp / phụ thuộc:** Quý sửa UI; Thắng tích hợp CI.  
 **Bằng chứng / bàn giao:** Playwright suite + HTML report + defects  
 
-### QA-04 — API/security/transaction negative testing [P0; checkpoint 22/11]
+### QA-04 — API/security/transaction negative testing [P0; checkpoint chính 20/11]
 
 **Thực hiện:** Chạy với Hoàng/Trung HTTP scenarios login bad token, A/B order, cross-cart, invalid qty, simulator fail, retry/timeout, simultaneous completion, last-unit. **Bổ sung AT-10:** đăng nhập Customer/Staff/Admin bằng tài khoản test tách biệt; kiểm Staff không thể mời/quản lý user, sửa role, hoặc gọi API ngoài nhiệm vụ qua request trực tiếp; Admin và Staff hợp lệ chỉ được quyền đã chốt; kiểm tra 401/403 và không rò dữ liệu. Xác nhận trạng thái DB và payment/stock, không chỉ status code.  
 **Điều kiện Done:** P0 transaction/authz có expected/actual/readback; khi fail ghi BUG-P0 và chặn nghiệm thu.  
 **Phối hợp / phụ thuộc:** Hoàng code fixes, Trung reconciliation, Thắng CI.  
 **Bằng chứng / bàn giao:** Negative API matrix + concurrency evidence  
 
-### QA-05 — Notification và Staff/Admin acceptance [P0; checkpoint 22/11]
+### QA-05 — Notification và Staff/Admin acceptance [P0; checkpoint chính 22/11]
 
 **Thực hiện:** Kiểm event duplicate/out-of-order, sandbox inbox, provider fail/recover, bounded retries; Staff invite/login, nhận hàng, publish, fulfillment, tracking, COD, RBAC và report totals. **Role acceptance:** đối chiếu permission matrix đã chốt với quyền tại API và `/app`; test DENY bằng lời gọi trực tiếp, kiểm Super Admin có bị gán nhầm cho Staff hay không; nếu chưa triển khai RBAC an toàn thì đánh BLOCKED.  
 **Điều kiện Done:** Có witnessed walkthrough/recording và outcome theo AT-05/17/18; lỗi email không thay đổi đơn; không coi bản mock UI là chứng cứ chức năng.  
 **Phối hợp / phụ thuộc:** Hoàng flow, Trung counts, Thắng worker runtime.  
 **Bằng chứng / bàn giao:** Staff+Notification acceptance logs + screenshots  
 
-### QA-06 — Bug triage, CI evidence và regression [P0; checkpoint 22/11]
+### QA-06 — Bug triage, CI evidence và regression [P0; checkpoint chính 22/11]
 
 **Thực hiện:** Mỗi bug có severity, precondition, version, steps, expected/actual, screenshot/trace và owner. Duy trì regression theo lần merge, kiểm CI latest SHA, test flakiness; chỉ xác nhận FIXED khi chạy lại.  
 **Điều kiện Done:** Không có bug P0 bị đóng thiếu test; status định nghĩa rõ; QA dashboard cập nhật vào các mốc 18/20/22 và ngay khi có blocker P0.  
 **Phối hợp / phụ thuộc:** Tất cả owner; Thắng test artifacts.  
 **Bằng chứng / bàn giao:** Defect tracker + báo cáo QA tại các checkpoint 18/20/22  
 
-### QA-07 — Docs/test report và Week1 exit review [P0; checkpoint 22/11]
+### QA-07 — Docs/test report và Week1 exit review [P0; checkpoint chính 22/11]
 
 **Thực hiện:** Cập nhật SRS→RTM, API/use-case notes, risk register, open decisions, release candidate evidence index; soạn Week1 test summary và known limitations; tách local evidence với cloud historical.  
 **Điều kiện Done:** Báo cáo cuối tuần chỉ ra PASS/FAIL/BLOCKED/NOT RUN theo SHA, quyết định feature complete hoặc carry-over tuần 2; tất cả P0 có owner và ngày xử lý.  
