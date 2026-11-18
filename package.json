@@ -27,22 +27,17 @@
     "hooks:install": "husky",
     "hooks:verify": "lint-staged --hide-unstaged --concurrent false",
     "prepare": "node -e \"if (process.env.NODE_ENV !== 'production' && process.env.CI !== 'true' && require('node:fs').existsSync('.git')) import('husky').then(({default: husky}) => husky())\"",
-    "format": "oxfmt --write --config .oxfmtrc.json"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.0.5",
-      "@types/react-dom": "19.0.5",
-      "tsconfig-paths": "^4.2.0"
-    }
+    "format": "oxfmt --write --config .oxfmtrc.json",
+    "test:security": "node --test scripts/ci-audit.test.mjs"
   },
   "devDependencies": {
-    "@medusajs/eslint-plugin": "2.21.2",
+    "@medusajs/eslint-plugin": "2.22.7",
     "ajv": "^8.13.0",
     "eslint": "^9.39.4",
     "husky": "9.1.7",
     "jiti": "^2.7.0",
     "lint-staged": "16.4.0",
+    "next": "15.5.29",
     "oxfmt": "0.78.0",
     "react": "^19.0.5",
     "react-dom": "^19.0.5",
@@ -59,6 +54,7 @@
     },
     "@eslint/eslintrc": {
       "ajv": "^6.12.4"
-    }
+    },
+    "postcss": "8.5.33"
   }
 }
