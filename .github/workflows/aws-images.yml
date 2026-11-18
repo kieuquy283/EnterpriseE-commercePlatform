@@ -40,6 +40,19 @@ jobs:
         run: |
           [[ "$API_URL" == https://* ]] || { echo 'An HTTPS API URL is required'; exit 1; }
           [[ "$PUBLISHABLE_KEY" == pk_* && "$PUBLISHABLE_KEY" != pk_bootstrap ]] || { echo 'Seed and retrieve the publishable key first'; exit 1; }
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+      - name: Pin npm for security policy
+        run: npm install --global npm@11.12.1 --no-audit --no-fund
+      - name: Enforce security before obtaining AWS credentials
+        run: node scripts/ci-run.mjs release-security node scripts/ci-audit.mjs --enforce
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: release-security-${{ github.sha }}-${{ github.run_attempt }}
+          path: ci-evidence/
+          retention-days: 7
       - uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.AWS_IMAGE_PUBLISH_ROLE_ARN }}

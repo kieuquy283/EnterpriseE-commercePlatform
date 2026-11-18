@@ -51,3 +51,54 @@ jobs:
           name: api-tests-${{ github.sha }}-${{ github.run_attempt }}
           path: ci-evidence/
           retention-days: 7
+
+  load-failure-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DB_HOST: localhost
+      DB_PORT: "5432"
+      DB_USERNAME: commerce
+      DB_PASSWORD: commerce
+      DATABASE_URL: postgresql://commerce:commerce@localhost:5432/commerce
+      JWT_SECRET: ci-only-load-jwt
+      COOKIE_SECRET: ci-only-load-cookie
+      REDIS_URL: ""
+      RUN_LOCAL_K6: "true"
+      OPS_LOCAL_POSTGRES_CONTAINER: daymark-ops06-pg-${{ github.run_id }}-${{ github.run_attempt }}
+      OPS_EVIDENCE_DIR: ${{ github.workspace }}/ci-evidence/load
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: npm
+      - run: node scripts/ci-run.mjs npm-pin npm install --global npm@11.12.1 --no-audit --no-fund
+      - run: node scripts/ci-run.mjs install npm ci --no-fund
+      - name: Start this job's disposable PostgreSQL
+        run: |
+          docker run -d --name "$OPS_LOCAL_POSTGRES_CONTAINER" \
+            -e POSTGRES_USER=commerce -e POSTGRES_PASSWORD=commerce -e POSTGRES_DB=commerce \
+            -p 127.0.0.1:5432:5432 \
+            --health-cmd 'pg_isready -U commerce -d commerce' \
+            --health-interval 2s --health-timeout 3s --health-retries 30 postgres:16-alpine
+          for ((attempt=0; attempt<30; attempt++)); do
+            if [[ "$(docker inspect --format '{{.State.Health.Status}}' "$OPS_LOCAL_POSTGRES_CONTAINER")" == healthy ]]; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+      - name: Run bounded load, database fault/recovery and invalid-key checks
+        run: node scripts/ci-run.mjs bounded-load npm run test:integration:http --workspace=@dtc/backend -- --runTestsByPath integration-tests/http/load-smoke.spec.ts --json --outputFile=../../ci-evidence/load-http.json
+      - name: Remove only this job's database
+        if: always()
+        run: |
+          docker unpause "$OPS_LOCAL_POSTGRES_CONTAINER" >/dev/null 2>&1 || true
+          docker rm -f "$OPS_LOCAL_POSTGRES_CONTAINER" >/dev/null 2>&1 || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: load-failure-${{ github.sha }}-${{ github.run_attempt }}
+          path: ci-evidence/
+          retention-days: 7

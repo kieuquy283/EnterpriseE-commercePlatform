@@ -140,9 +140,9 @@ jobs:
           path: ci-evidence/
           retention-days: 7
 
-  security-audit-evidence:
-    # Findings are release blockers in the artifact/summary. Required merge policy
-    # and any scoped exception need Quý/CI owner approval; never infer a clean audit.
+  security-policy:
+    # Fail closed on unresolved security blockers; never infer approval from collection.
+    # Repository protection is applied separately by its owner.
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -151,8 +151,8 @@ jobs:
         with:
           node-version-file: ".nvmrc"
       - run: node scripts/ci-run.mjs npm-pin npm install --global npm@11.12.1 --no-audit --no-fund
-      - name: Collect pinned audit and classify release blockers
-        run: node scripts/ci-run.mjs audit-collection node scripts/ci-audit.mjs
+      - name: Enforce dependency security policy
+        run: node scripts/ci-run.mjs audit-policy node scripts/ci-audit.mjs --enforce
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -203,6 +203,6 @@ jobs:
             apps/storefront/test-results/
           retention-days: 7
 
-  # TODO(test): Integrate QA/BE Staff/Admin direct-API deny assertions —
-  # baseline HTTP suites do not prove AT-10 / BE-08 RBAC acceptance; OPS-02.
+  # HTTP CI includes persisted Staff deny, Admin allow and customer/session boundaries.
+  # Restricted Staff operations and assigned-order access remain separate BE-08 work.
   # Deployment and branch protection require separate owner authorization.
