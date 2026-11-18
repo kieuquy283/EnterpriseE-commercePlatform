@@ -5,6 +5,9 @@ on:
   push:
     branches: [main, Medusa]
 
+permissions:
+  contents: read
+
 jobs:
   integration-tests:
     runs-on: ubuntu-latest
@@ -24,6 +27,10 @@ jobs:
           --health-timeout 3s
           --health-retries 20
     env:
+      DB_HOST: localhost
+      DB_PORT: "5432"
+      DB_USERNAME: commerce
+      DB_PASSWORD: commerce
       DATABASE_URL: postgresql://commerce:commerce@localhost:5432/commerce
       JWT_SECRET: ci-jwt-secret
       COOKIE_SECRET: ci-cookie-secret
@@ -34,6 +41,13 @@ jobs:
         with:
           node-version-file: ".nvmrc"
           cache: npm
-      - run: npm ci --no-fund
+      - run: node scripts/ci-run.mjs npm-pin npm install --global npm@11.12.1 --no-audit --no-fund
+      - run: node scripts/ci-run.mjs install npm ci --no-fund
       - name: Run HTTP API integration tests
-        run: npm run test:integration:http --workspace=@dtc/backend
+        run: node scripts/ci-run.mjs http npm run test:integration:http --workspace=@dtc/backend -- --json --outputFile=../../ci-evidence/http.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-tests-${{ github.sha }}-${{ github.run_attempt }}
+          path: ci-evidence/
+          retention-days: 7
