@@ -64,7 +64,10 @@ export default async function Nav() {
   const regions: HttpTypes.StoreRegion[] = await listRegions()
   const [categories, collections] = await Promise.all([primaryLinks(), collectionLinks()])
 
-  const desktopLinks = [{ label: "Hàng mới", href: "/store" }, ...categories.slice(0, 3)]
+  const desktopLinks = [
+    { label: "Hàng mới", href: "/store" },
+    ...categories.filter((c) => c.href !== "/store").slice(0, 3),
+  ]
 
   return (
     <div className="sticky inset-x-0 top-0 z-50">
@@ -79,8 +82,8 @@ export default async function Nav() {
                 <SideMenu regions={regions} categories={categories} collections={collections} />
               </div>
               <ul className="hidden items-center gap-4 small:flex">
-                {desktopLinks.map((link) => (
-                  <li key={link.href}>
+                {desktopLinks.map((link, idx) => (
+                  <li key={`nav-${link.href}-${idx}`}>
                     <LocalizedClientLink
                       href={link.href}
                       className="dm-nav-link uppercase"

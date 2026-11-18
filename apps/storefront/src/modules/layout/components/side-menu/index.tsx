@@ -94,8 +94,8 @@ const SideMenu = ({ regions, categories = [], collections = [] }: SideMenuProps)
                   <nav aria-label="Điều hướng trên di động" className="mt-10">
                     <p className="dm-eyebrow">Cửa hàng</p>
                     <ul className="mt-3 flex flex-col gap-1">
-                      {shopLinks.map((link) => (
-                        <li key={link.href}>
+                      {shopLinks.map((link, idx) => (
+                        <li key={`${link.href}-${link.label}-${idx}`}>
                           <LocalizedClientLink
                             href={link.href}
                             onClick={close}
@@ -112,8 +112,8 @@ const SideMenu = ({ regions, categories = [], collections = [] }: SideMenuProps)
                       <>
                         <p className="dm-eyebrow mt-8">Bộ sưu tập</p>
                         <ul className="mt-3 flex flex-col gap-1">
-                          {collections.map((link) => (
-                            <li key={link.href}>
+                          {collections.map((link, idx) => (
+                            <li key={`col-${link.href}-${idx}`}>
                               <LocalizedClientLink
                                 href={link.href}
                                 onClick={close}
@@ -128,8 +128,8 @@ const SideMenu = ({ regions, categories = [], collections = [] }: SideMenuProps)
                     )}
 
                     <ul className="mt-8 flex flex-col gap-1 border-t border-line pt-6">
-                      {accountLinks.map((link) => (
-                        <li key={link.href}>
+                      {accountLinks.map((link, idx) => (
+                        <li key={`acc-${link.href}-${idx}`}>
                           <LocalizedClientLink
                             href={link.href}
                             onClick={close}
