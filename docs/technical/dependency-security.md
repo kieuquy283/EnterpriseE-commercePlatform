@@ -1,6 +1,6 @@
 # Kiểm soát rủi ro dependency
 
-Tài liệu thực hiện OPS-05 trong [kế hoạch checkpoint](../DAYMARK_Ke_Hoach_Tuan_1_Checkpoints_18_20_22_11_2026_v1.3_PhanBoCheckpoint.md), phục vụ bảo mật [vận hành](../spec/06-operations.md). Chính sách dưới đây là **đề xuất chờ Quý và người phụ trách CI duyệt**, chưa thay workflow hay cấp ngoại lệ phát hành. Hoàng review Medusa; Quý review storefront; Thắng quản lý triage; Quân cung cấp regression cô lập.
+Tài liệu thực hiện OPS-05 trong [kế hoạch checkpoint](../DAYMARK_Ke_Hoach_Tuan_1_Checkpoints_18_20_22_11_2026_v1.3_PhanBoCheckpoint.md), phục vụ bảo mật [vận hành](../spec/06-operations.md). Script policy dưới đây thực thi mặc định chặn khi còn finding chưa được chấp nhận; chủ sở hữu CI tích hợp kiểm thử vào workflow và branch protection. Không cấp ngoại lệ phát hành. Hoàng review Medusa; Quý review storefront; Thắng quản lý triage; Quân cung cấp regression cô lập.
 
 ## Quy trình duy trì
 
@@ -10,21 +10,55 @@ Rà call site, nguồn đầu vào không tin cậy, tiền điều kiện advis
 
 Hai [Dockerfile backend](../../apps/backend/Dockerfile) và [storefront](../../apps/storefront/Dockerfile) chạy `npm ci` toàn workspace, giữ dev dependencies và build tools trong image. Vì vậy audit `--omit=dev` là mức tối thiểu, không phải kiểm kê toàn bộ runtime image; cần audit đầy đủ/SBOM và scan image theo digest trước release. Không coi mọi gói tooling là không được ship.
 
-## Cổng CI và phát hành đề xuất
+## Cổng kiểm tra dependency
 
-[CI tại baseline `1b6a668`](../../.github/workflows/ci.yml) chạy `npm audit --omit=dev --audit-level=high` với `continue-on-error: true`; job xanh không có nghĩa đạt security gate. Trong checkout dùng chung, cộng tác viên đang thay bước này bằng `scripts/ci-run.mjs audit` và upload artifact, không còn `continue-on-error` tại lúc rà cuối; chưa chạy/duyệt thay đổi đó trong phạm vi OPS-05 này. Gate risk-based bên dưới vẫn cần owner CI tích hợp và kiểm thử.
+Chạy `node --test scripts/ci-audit.test.mjs` trước `node scripts/ci-audit.mjs` với Node `24.22.1` và npm `11.12.1`. Script mặc định audit **toàn bộ cây dependency** vì các Dockerfile hiện giữ công cụ build/dev trong image. `--production-only` chỉ cung cấp bằng chứng bổ sung cho cây production; không thay kiểm kê artifact được ship.
 
-1. Bước thu thập luôn lưu audit JSON, stderr đã làm sạch, exit code, SHA, lock SHA-256, Node/npm và UTC. Exit khác 0 do findings phải được phân biệt với lỗi mạng/JSON/schema; lỗi thu thập chặn cổng vì kết quả `UNKNOWN`.
-2. Bước policy bắt buộc, không `continue-on-error`: chặn mọi critical; mọi high mới/chưa triage; high runtime có thể tới hoặc `UNKNOWN`; ngoại lệ hết hạn hoặc không khớp package/version/path/GHSA. Với baseline hiện tại, release **BLOCKED**, không dùng số lượng cũ làm allowlist.
-3. High chỉ thuộc build hoặc advisory withdrawn có thể không chặn khi có bằng chứng phạm vi, đánh giá tác động tới build secrets/artifact và ngoại lệ được duyệt. Ngoại lệ phải có GHSA, package/path/version, SHA/digest áp dụng, owner, người duyệt, lý do, kiểm soát bù, issue sửa, hạn tối đa 7 ngày; rà lại mỗi release và mỗi lock diff. Chưa có ngoại lệ nào được duyệt ở tài liệu này.
-4. Moderate có owner/issue và hạn rà 14 ngày; nâng thành blocker nếu dẫn tới lộ bí mật, bypass quyền hoặc rủi ro giao dịch đã xác nhận. Không bỏ qua moderate bằng nhãn severity đơn thuần.
-5. PR có thể tiếp tục các job không phát hành để thu evidence; merge gate do nhóm phê duyệt, release gate bắt buộc đạt policy và regression. Lưu artifact cả khi fail; branch protection và nối gate vào image publish cần người sở hữu CI triển khai riêng.
+[Script policy](../../scripts/ci-audit.mjs) phân biệt kết quả thu thập và kết luận trong phạm vi audit:
 
-TODO(security): Tích hợp bước policy và artifact bắt buộc — baseline workflow chỉ cảnh báo; thay đổi CI đồng thời cần được kiểm chứng; OPS-05, Thắng/owner CI, cần Quý duyệt.
+- `UNKNOWN` / exit 1: sai pin, lệnh lỗi/timeout, JSON/schema không hợp lệ, số đếm không khớp danh sách package, cạnh `via` không hợp lệ hoặc exit code mâu thuẫn. Lỗi thu thập luôn chặn, kể cả chế độ chỉ thu thập.
+- `BLOCKED` / exit 1: còn finding bất kỳ mức độ nào và chưa có phê duyệt chấp nhận rủi ro. Không có allowlist, baseline exception, tự loại advisory withdrawn hoặc tự miễn trừ tooling. Policy bảo thủ này không suy ra mọi finding đều có thể khai thác.
+- `AUDIT_CLEAR` / exit 0: registry không trả finding trong phạm vi đã chọn. Không đồng nghĩa release được duyệt, không thay regression, kiểm kê/scan image theo digest hay rà quyền và bí mật.
+
+`--collect-only` cho phép lệnh thu thập hoàn chỉnh trả exit 0 khi còn finding, nhưng giữ nguyên verdict `BLOCKED` trong metadata. Chỉ dùng ở job bằng chứng không phát hành; không dùng làm security gate. Cờ `--enforce` tương thích với CI và luôn chặn finding, kể cả khi có thêm `--collect-only`. Owner CI cần gọi policy không có `--collect-only`, không `continue-on-error`, upload artifact cả khi fail và chạy bộ kiểm thử policy. Tệp workflow không thuộc thay đổi dependency này.
+
+Artifact trong `ci-evidence/` gồm audit JSON và stderr đã làm sạch, exit code, commit SHA, trạng thái dirty, lock SHA-256, scope, Node/npm và UTC bắt đầu/kết thúc. Giữ bản thô của mỗi lần chạy trước khi chạy lại; số package lan truyền không phải số advisory độc lập. Metadata ghi `dirty` là bằng chứng trên working tree, không được gán thành kết quả của commit sạch.
+
+Moderate/low vẫn cần xử lý hoặc quyết định rủi ro riêng; nhãn severity không là phê duyệt. Một cơ chế ngoại lệ tương lai cần task và đánh giá riêng, ràng buộc GHSA/package/version/path, SHA/digest, owner, người duyệt, lý do, kiểm soát bù, issue và hạn; tài liệu này không bật cơ chế đó.
+
+TODO(security): Owner CI nối policy mặc định và bộ kiểm thử vào gate bắt buộc — artifact collection không thay branch protection hoặc image release gate; OPS-05.
+
+## Hướng sửa tương thích và giới hạn
+
+Nhóm Medusa nâng đồng bộ lên `2.22.7`, kèm UI `4.2.14` theo peer dependency của draft-order. [Release chính thức](https://github.com/medusajs/medusa/releases/tag/v2.22.7) mô tả sửa Index Module và chuyển cross-module query sang join; cần regression catalog/query và migration trên DB dùng riêng trước tích hợp. Không chạy migration trên demo/shared DB từ việc đổi package. RBAC là dependency upstream đã có trong cây Medusa; thay đổi này không cài provider trả phí, không bật tính năng và không chứng minh quyền nhân viên.
+
+Các đường sửa phải kiểm từ lockfile **và cây đã cài**, không chỉ khai báo manifest:
+
+- Multer: [advisory upstream](https://github.com/expressjs/multer/security/advisories/GHSA-q7qp-rjg7-q26m) yêu cầu `>=2.5.0`; Medusa mới khai báo range tương ứng.
+- Zod: [bản vá upstream 4.6.6](https://github.com/colinhacks/zod/releases/tag/v4.6.6) và [advisory](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5); kiểm các bản lồng trong admin-sdk, draft-order và deps, không chỉ bản trực tiếp.
+- GraphQL Tools: [bản vá 12.0.2](https://github.com/ardatan/graphql-tools/releases/tag/@graphql-tools/utils@12.0.2) cho incremental merge; nâng theo các dependency được Medusa hỗ trợ, không ép major của utility cũ bằng override toàn cục.
+- Lodash: [advisory template](https://github.com/lodash/lodash/security/advisories/GHSA-r5fr-rjxr-66jc) sửa từ `4.18.0`; [array-path bypass](https://github.com/advisories/GHSA-f23m-r3pf-42rh) yêu cầu `4.18.1`.
+- PostCSS: giữ Next `15.5.29`, pin patch `8.5.33` bằng npm override và dependency trực tiếp, thay vì đổi Next major theo gợi ý audit. [Bản vá source map 8.5.23](https://github.com/advisories/GHSA-fxqj-rqcc-2cmp) sửa phần còn thiếu của bản vá trước. Root giữ thêm dev dependency Next cùng phiên bản để neo override qua ranh giới workspace theo [lỗi npm đã ghi nhận](https://github.com/npm/cli/issues/9659); không đổi phiên bản runtime. Override cần được chứng minh đã áp dụng cho nhánh Next lồng và kiểm build/render/CSS; khai báo override tự nó không chứng minh đã vá.
+
+[Picomatch GHSA-fc5q-39xc-vjpf](https://github.com/advisories/GHSA-fc5q-39xc-vjpf) có trạng thái withdrawn trên nguồn GitHub. Giữ nguyên raw audit và ghi riêng sự khác biệt theo thời điểm registry; không sửa số raw và không suy diễn tất cả glob an toàn. Nếu registry vẫn trả finding, policy tiếp tục chặn.
+
+## Rào cản cần quyết định hoặc sửa tiếp
+
+Không dùng ba advisory sau làm baseline exception. Policy tiếp tục chặn khi registry trả chúng:
+
+| Advisory / đường còn cần xử lý | Giới hạn tương thích và quyết định cần có |
+| --- | --- |
+| [AJV `$data` ReDoS](https://github.com/advisories/GHSA-2g4f-4pwh-qvx6): Rushstack node-core-library ghim `~8.13.0` | Bản vá `8.18.0` nằm ngoài range minor được upstream khai báo; cần nâng Rushstack tương thích hoặc kiểm thử một override có phạm vi, không coi bản AJV root đã vá là đủ |
+| [Minimatch globparts amplification](https://github.com/advisories/GHSA-g3hv-75wg-m249): typescript-estree dùng `^10.2.2` | Bản vá `11.0.1` đổi major; cần nâng chuỗi typescript-eslint tương thích ESLint/Next/TypeScript, không ép mọi Minimatch cũ sang major mới |
+| [UUID buffer bounds](https://github.com/advisories/GHSA-w5hq-g745-h8pq): BullMQ dùng UUID `^9.0.0` | Bản vá `11.1.1` nằm ngoài range; cần bản BullMQ được Medusa hỗ trợ hoặc thay đổi tương thích đã kiểm chứng với worker/retry/idempotency |
+
+Admin Cloud plugin vốn là dependency upstream của Medusa; khai báo trực tiếp cùng phiên bản giúp bundler phân giải entry Admin khi npm đặt core trong workspace. Các lệnh test/seed đặt `NODE_PATH` tới dependency của backend; lệnh start dùng đường tương ứng từ `.medusa/server`. Công cụ gọi CLI trực tiếp cũng phải gồm cả dependency backend và root trong đường phân giải; đường root đơn độc không đủ khi các workspace dùng React khác major.
+
+Khi tích hợp, owner kiểm thử phải cập nhật các option test-utils đã bị upstream bỏ (ví dụ `inApp`), giữ kiểm tra kiểu và chạy lại HTTP/flow. Không bỏ kiểm tra kiểu hoặc sửa file sinh để che bất tương thích. Ghi riêng kết quả `npm ls --all` và các peer conflict; build thành công không thay bằng chứng dependency graph hợp lệ.
 
 ## Ma trận nguyên nhân và hướng xử lý
 
-Các đường sau đọc từ dependency declarations trong lockfile; mũi tên thể hiện phụ thuộc, không khẳng định luồng thực thi. Tình trạng mặc định là chưa chấp nhận rủi ro.
+Ma trận dưới đây giữ bối cảnh triage ban đầu, không phải kết quả audit sau nâng cấp. Các đường sau đọc từ dependency declarations trong lockfile baseline; mũi tên thể hiện phụ thuộc, không khẳng định luồng thực thi. Tình trạng mặc định là chưa chấp nhận rủi ro.
 
 | Nhóm | Chuỗi và điều kiện tới được | Disposition / owner / xác minh trước đóng |
 | --- | --- | --- |
@@ -36,7 +70,7 @@ Các đường sau đọc từ dependency declarations trong lockfile; mũi tên
 
 Nguồn advisory: [Zod](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5), [Multer](https://github.com/advisories/GHSA-q7qp-rjg7-q26m), [GraphQL mergeDeep](https://github.com/advisories/GHSA-7mx3-vvmw-hjmv), [GraphQL incremental](https://github.com/advisories/GHSA-c4qx-w738-7hr3), [lodash template](https://github.com/advisories/GHSA-r5fr-rjxr-66jc), [picomatch](https://github.com/advisories/GHSA-fc5q-39xc-vjpf), [PostCSS source map](https://github.com/advisories/GHSA-6g55-p6wh-862q), [PostCSS path traversal](https://github.com/advisories/GHSA-r28c-9q8g-f849). Các bản vá nêu trên là ứng viên rà, không là phiên bản đã thử.
 
-TODO(security): Hoàng/Quý xác nhận call path và thử bản sửa trong nhánh riêng — runtime high chưa được miễn trừ; OPS-05.
+TODO(security): Hoàng/Quý rà các finding còn lại trên lock mới và regression artifact — audit clear trong một scope không thay nghiệm thu runtime; OPS-05.
 
 ## Phụ lục bằng chứng có ngày: 18/11/2026
 
