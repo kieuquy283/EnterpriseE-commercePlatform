@@ -3,10 +3,10 @@
 // process environment or a database.
 
 export type CatalogImportMode = "dry-run" | "apply"
-export type CatalogEnvironment = "local-disposable"
+export type CatalogEnvironment = "local-disposable" | "cloud-demo"
 
 export const ACCEPTED_MODES: CatalogImportMode[] = ["dry-run", "apply"]
-export const ACCEPTED_ENVIRONMENTS: CatalogEnvironment[] = ["local-disposable"]
+export const ACCEPTED_ENVIRONMENTS: CatalogEnvironment[] = ["local-disposable", "cloud-demo"]
 export const WRITE_FLAG_VALUE = "1"
 export const LOCAL_DATABASE_HOSTS = ["localhost", "127.0.0.1", "[::1]"]
 export const ALLOW_REMOTE_FLAG = "DAYMARK_CATALOG_ALLOW_REMOTE"
@@ -70,7 +70,7 @@ function parseMode(argv: readonly string[]): CatalogImportMode {
   return "dry-run"
 }
 
-export function parseImageMode(argv: readonly string[]): "none" | "manifest" | "demo" {
+export function parseImageMode(argv: readonly string[]): "none" | "manifest" | "demo" | "preview" {
   let value: string | undefined
   let seen = false
   for (const [index, argument] of argv.entries()) {
@@ -90,9 +90,9 @@ export function parseImageMode(argv: readonly string[]): "none" | "manifest" | "
   if (value === undefined) {
     return "none"
   }
-  if (value !== "none" && value !== "manifest" && value !== "demo") {
+  if (value !== "none" && value !== "manifest" && value !== "demo" && value !== "preview") {
     throw new CatalogImportRefused(
-      `Unknown --images value "${value}". Accepted values: none, manifest, demo`,
+      `Unknown --images value "${value}". Accepted values: none, manifest, demo, preview`,
     )
   }
   return value
@@ -147,7 +147,7 @@ export function assertImportGuard(input: GuardInput): GuardResult {
   const mode = parseMode(input.argv)
   const warnings: string[] = []
 
-  if (input.env.NODE_ENV === "production") {
+  if (input.env.NODE_ENV === "production" && input.env[ENVIRONMENT_FLAG] !== "cloud-demo") {
     throw new CatalogImportRefused(
       "Refusing to run the DAYMARK catalog importer with NODE_ENV=production",
     )
@@ -181,7 +181,25 @@ export function assertImportGuard(input: GuardInput): GuardResult {
 
   const hostname = new URL(databaseUrl).hostname
   const databaseIsLocal = LOCAL_DATABASE_HOSTS.includes(hostname)
-  const remoteOverride = false
+  const remoteOverride = rawEnvironment === "cloud-demo"
+  if (remoteOverride) {
+    const url = new URL(databaseUrl)
+    if (
+      input.env.NODE_ENV !== "production" ||
+      input.env.AWS_REGION !== "ap-southeast-2" ||
+      !/^[a-z0-9.-]+\.ap-southeast-2\.rds\.amazonaws\.com$/.test(hostname) ||
+      input.env.DAYMARK_CATALOG_TARGET_HOST !== hostname ||
+      input.env.DAYMARK_CATALOG_TARGET_DATABASE !== decodeURIComponent(url.pathname.slice(1)) ||
+      !input.env.DAYMARK_CATALOG_TARGET_DATABASE
+    ) {
+      throw new CatalogImportRefused(
+        "cloud-demo requires production, AWS_REGION=ap-southeast-2 and exact DAYMARK_CATALOG_TARGET_HOST/DAYMARK_CATALOG_TARGET_DATABASE matching the Sydney RDS target",
+      )
+    }
+    warnings.push(
+      "Cloud demo import: preserve existing stock/orders; this is not commercial catalog or media approval.",
+    )
+  }
 
   if (!databaseIsLocal && !remoteOverride) {
     throw new CatalogImportRefused(
@@ -197,7 +215,7 @@ export function assertImportGuard(input: GuardInput): GuardResult {
         `Refusing to write: set ${WRITE_FLAG}=${WRITE_FLAG_VALUE} to apply changes. Run without --apply for a dry run.`,
       )
     }
-    if (rawEnvironment !== "local-disposable") {
+    if (rawEnvironment !== "local-disposable" && rawEnvironment !== "cloud-demo") {
       throw new CatalogImportRefused(
         `Refusing to write: ${ENVIRONMENT_FLAG} must be set to "local-disposable". Accepted values: ${ACCEPTED_ENVIRONMENTS.join(
           ", ",
@@ -222,5 +240,36 @@ export function assertImportGuard(input: GuardInput): GuardResult {
     databaseIsLocal,
     remoteOverride,
     warnings,
+  }
+}
+
+/** Preview assets remain representative; never relabel them as exact product media. */
+export function assertCloudPreviewMediaGuard(env: Record<string, string | undefined>): void {
+  if (
+    env[ENVIRONMENT_FLAG] !== "cloud-demo" ||
+    env.DAYMARK_CATALOG_REPRESENTATIVE_PREVIEW !== "acknowledged" ||
+    env.S3_PUBLIC_IMAGE_PROXY !== "true" ||
+    !env.S3_BUCKET ||
+    env.DAYMARK_LOCAL_IMAGE_BACKEND_URL
+  ) {
+    throw new CatalogImportRefused(
+      "--images preview requires cloud-demo, DAYMARK_CATALOG_REPRESENTATIVE_PREVIEW=acknowledged and the configured S3 public-image proxy",
+    )
+  }
+  let base: URL
+  try {
+    base = new URL(env.S3_FILE_URL ?? "")
+  } catch {
+    throw new CatalogImportRefused("S3_FILE_URL must be an HTTPS public-image proxy")
+  }
+  if (
+    base.protocol !== "https:" ||
+    base.pathname !== "/product-images" ||
+    base.username ||
+    base.password ||
+    base.search ||
+    base.hash
+  ) {
+    throw new CatalogImportRefused("S3_FILE_URL must be an HTTPS public-image proxy")
   }
 }
