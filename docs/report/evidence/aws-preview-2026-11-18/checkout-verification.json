@@ -1,0 +1,38 @@
+{
+  "utc": "2026-11-18T16:44:32.986112+00:00",
+  "order_id": "order_01M7QRQ8E8Z2JY7EHQRX75JCD1",
+  "checks": [
+    {
+      "name": "test SKU available",
+      "passed": true
+    },
+    {
+      "name": "shipping option available",
+      "passed": true
+    },
+    {
+      "name": "COD creates order",
+      "passed": true
+    },
+    {
+      "name": "sequential retry returns same order",
+      "passed": true
+    },
+    {
+      "name": "order visible in Admin",
+      "passed": true
+    },
+    {
+      "name": "reservation reduces available stock by one",
+      "passed": true
+    },
+    {
+      "name": "test order canceled",
+      "passed": true
+    },
+    {
+      "name": "stock restored after cancellation",
+      "passed": true
+    }
+  ]
+}

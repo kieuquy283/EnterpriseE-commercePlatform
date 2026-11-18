@@ -1,0 +1,78 @@
+{
+  "utc": "2026-11-18T16:53:15.149063+00:00",
+  "api": "https://api.135791112.xyz",
+  "store": "https://135791112.xyz",
+  "published_total": 33,
+  "daymark_products": 30,
+  "daymark_variants": 230,
+  "checks": [
+    {
+      "name": "API HTTPS health",
+      "passed": true
+    },
+    {
+      "name": "/store/regions HTTP",
+      "passed": true
+    },
+    {
+      "name": "Vietnam/VND region",
+      "passed": true
+    },
+    {
+      "name": "/store/products HTTP",
+      "passed": true
+    },
+    {
+      "name": "30 published DAYMARK products",
+      "passed": true
+    },
+    {
+      "name": "230 DAYMARK variants",
+      "passed": true
+    },
+    {
+      "name": "30 DAYMARK thumbnails",
+      "passed": true
+    },
+    {
+      "name": "unique SKUs",
+      "passed": true
+    },
+    {
+      "name": "VND calculated prices",
+      "passed": true
+    },
+    {
+      "name": "S3 proxy raster read",
+      "passed": true
+    },
+    {
+      "name": "image nosniff",
+      "passed": true
+    },
+    {
+      "name": "unsigned S3 denied",
+      "passed": true
+    },
+    {
+      "name": "image boundary /product-images/private/secret.jpg",
+      "passed": true
+    },
+    {
+      "name": "image boundary /product-images/public-images/absent-preview-image.jpg",
+      "passed": true
+    },
+    {
+      "name": "preview Admin login",
+      "passed": true
+    },
+    {
+      "name": "preview Admin identity",
+      "passed": true
+    },
+    {
+      "name": "unauthenticated Admin denied",
+      "passed": true
+    }
+  ]
+}
