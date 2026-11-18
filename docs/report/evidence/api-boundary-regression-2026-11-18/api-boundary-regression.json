@@ -1,0 +1,92 @@
+{
+  "report_id": "BE-01",
+  "verification_date": "2026-11-18",
+  "result": "PASS",
+  "test_suite": {
+    "path": "apps/backend/integration-tests/http/auth-catalog-search.spec.ts",
+    "command": "npm run test:integration:http --workspace=@dtc/backend -- --runTestsByPath integration-tests/http/auth-catalog-search.spec.ts",
+    "status": "PASS",
+    "passed_suites": 1,
+    "passed_tests": 24,
+    "failed_tests": 0
+  },
+  "scenarios": [
+    {
+      "name": "customer identity and client-supplied customer_id",
+      "status": "PASS",
+      "observed": [
+        "Native and legacy carts created with a customer token use the authenticated customer identity.",
+        "Both APIs reject customer_id supplied by the client."
+      ],
+      "test": "associates only the verified customer identity; rejects identity, price or channel tampering"
+    },
+    {
+      "name": "staff actor separation and guest carts",
+      "status": "PASS",
+      "observed": [
+        "Staff token authenticates at /admin/users/me and is rejected at /store/customers/me.",
+        "Native and legacy carts created with that staff token remain guest carts without customer_id."
+      ],
+      "test": "accepts a staff invite and keeps customer authentication separate"
+    },
+    {
+      "name": "invalid and expired customer tokens",
+      "status": "PASS",
+      "observed": [
+        "Protected customer profile requests reject missing, invalid, and expired tokens with 401.",
+        "Guest carts created with invalid or expired customer tokens have no customer_id."
+      ],
+      "tests": [
+        "protects the customer profile and keeps invalid-token carts anonymous",
+        "does not associate carts with expired customer tokens"
+      ]
+    },
+    {
+      "name": "legacy cart response projection",
+      "status": "PASS",
+      "observed": [
+        "Cart response contains only id, region_id, currency_code, and items.",
+        "Each item contains only id, variant_id, and quantity; supplied contact email is not returned."
+      ],
+      "test": "preserves guest creation and projects public fields"
+    },
+    {
+      "name": "quantity validation",
+      "status": "PASS",
+      "inputs": [
+        0,
+        -1,
+        1.5,
+        "2",
+        null
+      ],
+      "observed": "Both native and legacy line-item endpoints reject every listed value with HTTP 400.",
+      "test": "rejects invalid quantity %j before invoking commerce"
+    },
+    {
+      "name": "cross-cart line-item deletion",
+      "status": "PASS",
+      "observed": [
+        "Deleting a line item through either API while naming another cart returns 404.",
+        "The original cart retains its line item.",
+        "Deleting from the matching cart succeeds through both APIs."
+      ],
+      "test": "does not delete a line belonging to a different cart"
+    },
+    {
+      "name": "published product and sales-channel constraints",
+      "status": "PASS",
+      "observed": [
+        "Native and legacy catalogs do not expose the draft product.",
+        "An isolated publishable-key channel sees no products linked to another channel.",
+        "Both cart APIs reject a channel outside the publishable key and a variant from another channel.",
+        "Both cart APIs reject adding an unpublished product."
+      ],
+      "tests": [
+        "scopes native and legacy catalog and carts to the publishable key channel",
+        "does not include unpublished products in the catalog"
+      ]
+    }
+  ],
+  "privacy": "No customer credentials, bearer tokens, publishable-key values, or production records are included."
+}
