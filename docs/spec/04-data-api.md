@@ -46,6 +46,8 @@ erDiagram
 
 Đây là sơ đồ khái niệm quyền sở hữu, không phải schema vật lý Medusa hoặc khẳng định lực lượng quan hệ chính xác cho mọi checkout tùy chọn. Link framework và schema sinh tự động có thẩm quyền triển khai. Không thêm join thủ công hoặc viết lại bảng lõi theo phác thảo này.
 
+[ERD v3 và từ điển triển khai DATA-01](../technical/database-baseline.md) ánh xạ mô hình logic này sang model, migration và link của Medusa tại một baseline có phiên bản.
+
 Với SKU kiểm soát, đối soát tồn đầu, điều chỉnh nhân viên, giữ chỗ hoạt động, lượng xuất giao và nhập lại được phép. Không giả định tạo đơn trừ ngay tồn vật lý; kiểm chứng vòng đời Medusa đã cài. Hủy trước fulfillment và trả sau giao có tác động tồn khác nhau.
 
 <a id="3-api-surface"></a>
