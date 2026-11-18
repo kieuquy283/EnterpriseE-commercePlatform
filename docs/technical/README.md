@@ -13,6 +13,8 @@
 | Kế hoạch kiểm thử hiệu năng, độ tin cậy, bảo mật và gợi ý | [Kiểm thử kỹ thuật](../spec/05-testing.md) |
 | Bảo mật AWS, phát hành, quay lui, khôi phục, giám sát và chi phí | [Vận hành](../spec/06-operations.md), [hướng dẫn triển khai](../../deploy/RUNBOOK.md) |
 | Khoảng trống triển khai và trình tự thực hiện | [Công việc còn lại](../spec/07-delivery.md) |
+| Ma trận quyền Staff/Admin | [Ma trận quyền](staff-admin-permission-matrix.md) |
+| License và tính khả thi Medusa Enterprise RBAC | [License/Feasibility Decision](staff-admin-rbac-license-feasibility.md) |
 | Môi trường phát triển | [Thiết lập](../setup.md), [quy ước đóng góp](../../CONTRIBUTING.md) |
 | Thành phần giao diện cơ bản và triển khai thiết kế | [Hệ thống thiết kế](../design-system/README.md) |
 | Dữ liệu mẫu và hành vi nhập danh mục | [Bộ dữ liệu danh mục](../catalog/DATASET.md) |
