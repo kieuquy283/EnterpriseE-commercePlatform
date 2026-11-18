@@ -32,7 +32,6 @@
   },
   "devDependencies": {
     "@medusajs/eslint-plugin": "2.22.7",
-    "ajv": "^8.13.0",
     "eslint": "^9.39.4",
     "husky": "9.1.7",
     "jiti": "^2.7.0",
@@ -41,7 +40,11 @@
     "oxfmt": "0.78.0",
     "react": "^19.0.5",
     "react-dom": "^19.0.5",
-    "turbo": "^2.0.14"
+    "turbo": "^2.0.14",
+    "@swc/helpers": "0.5.24",
+    "ajv-formats": "2.1.1",
+    "ajv": "6.15.0",
+    "picomatch": "3.0.2"
   },
   "workspaces": [
     "apps/**",
@@ -55,6 +58,16 @@
     "@eslint/eslintrc": {
       "ajv": "^6.12.4"
     },
-    "postcss": "8.5.33"
+    "postcss": "8.5.33",
+    "@rushstack/node-core-library": {
+      "ajv": "8.20.0"
+    },
+    "bullmq": "5.81.5",
+    "@medusajs/event-bus-redis": {
+      "bullmq": "5.81.5"
+    },
+    "@medusajs/workflow-engine-redis": {
+      "bullmq": "5.81.5"
+    }
   }
 }

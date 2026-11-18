@@ -1,6 +1,6 @@
 # Backend conventions
 
-Read the repository root AGENTS.md and docs/spec/03-architecture.md and 04-data-api.md first. This is Medusa 2.21.2, not a generic Express application.
+Read the repository root AGENTS.md and docs/spec/03-architecture.md and 04-data-api.md first. This is Medusa 2.22.7, not a generic Express application.
 
 - Routes: `src/api/.../route.ts` exports GET/POST/etc. Use file-based routing, framework middleware and runtime validation; inferred TypeScript DTOs alone are insufficient.
 - Authentication context supplies customer identity. Never trust a client `customer_id` as authorization. Public responses explicitly project permitted fields.
