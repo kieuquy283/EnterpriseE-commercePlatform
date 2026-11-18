@@ -5,10 +5,27 @@ test.describe("Private recommendation rails", () => {
     await page.goto("/vn")
     const popular = page.getByTestId("popular-products")
     if (process.env.RECOMMENDATIONS_EXPECT_ENABLED !== "true") {
-      await expect(popular).toHaveCount(0)
+      await expect(popular).toBeVisible()
+      await expect(
+        popular.getByRole("heading", { name: "Mới trong mùa này", exact: true }),
+      ).toBeVisible()
+      await expect(
+        popular.getByRole("heading", { name: "Gợi ý cho bạn", exact: true }),
+      ).toHaveCount(0)
+      const fallbackCards = popular.getByTestId("product-wrapper")
+      const fallbackCount = await fallbackCards.count()
+      expect(fallbackCount).toBeGreaterThan(0)
+      expect(fallbackCount).toBeLessThanOrEqual(4)
+      const fallbackHrefs = await popular
+        .locator('a[href*="/products/"]')
+        .evaluateAll((links) => links.map((link) => link.getAttribute("href")))
+      expect(new Set(fallbackHrefs).size).toBe(fallbackCount)
+      for (const card of await fallbackCards.all()) await expect(card).toContainText("₫")
       await page.goto("/vn/products/ao-thun-essential")
       await expect(page.getByTestId("similar-products")).toHaveCount(0)
-      await expect(page.getByRole("heading", { name: "Ao thun Essential", exact: true })).toBeVisible()
+      await expect(
+        page.getByRole("heading", { name: "Ao thun Essential", exact: true }),
+      ).toBeVisible()
       return
     }
     await expect(popular).toBeVisible()
@@ -21,9 +38,12 @@ test.describe("Private recommendation rails", () => {
     await expect(similar).toBeVisible()
     expect(await similar.getByTestId("product-wrapper").count()).toBeLessThanOrEqual(6)
     const current = new URL(page.url()).pathname
-    for (const link of await similar.locator("a").all()) expect(await link.getAttribute("href")).not.toBe(current)
+    for (const link of await similar.locator("a").all())
+      expect(await link.getAttribute("href")).not.toBe(current)
     await page.setViewportSize({ width: 360, height: 800 })
     await expect(similar).toBeVisible()
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true)
   })
 })
