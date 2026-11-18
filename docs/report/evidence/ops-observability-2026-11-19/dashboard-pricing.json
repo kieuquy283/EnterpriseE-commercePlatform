@@ -1,0 +1,27 @@
+{
+  "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonCloudWatch/current/index.json",
+  "publication_date": "2026-11-16T19:46:20Z",
+  "prices": [
+    {
+      "description": "$3.00 per Dashboard per Month",
+      "unit": "Dashboards",
+      "usd": "3.0000000000",
+      "begin": "0",
+      "end": "Inf"
+    },
+    {
+      "description": "Global",
+      "unit": "Dashboards",
+      "usd": "0.0000000000",
+      "begin": "0",
+      "end": "3"
+    },
+    {
+      "description": "$3.00 per Dashboard per Month (>50 metrics)",
+      "unit": "Dashboards",
+      "usd": "3.0000000000",
+      "begin": "0",
+      "end": "Inf"
+    }
+  ]
+}

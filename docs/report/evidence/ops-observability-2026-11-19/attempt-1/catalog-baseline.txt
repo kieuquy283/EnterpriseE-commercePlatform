@@ -1,0 +1,194 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: /scripts/catalog.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1 max VUs, 10m30s max duration (incl. graceful stop):
+              * catalog: 10 iterations shared among 1 VUs (maxDuration: 10m0s, gracefulStop: 30s)
+
+
+
+  █ THRESHOLDS 
+
+    checks
+    ✓ 'rate==1' rate=100.00%
+
+    dropped_iterations
+    ✓ 'count==0' count=0
+
+    http_req_duration{kind:catalog}
+    ✓ 'p(95)<600' p(95)=49.5ms
+
+    http_req_failed
+    ✓ 'rate<0.01' rate=0.00%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 10      20.084143/s
+    checks_succeeded...: 100.00% 10 out of 10
+    checks_failed......: 0.00%   0 out of 10
+
+    ✓ catalog status and product contract
+
+    HTTP
+    http_req_duration..............: avg=44.78ms med=41.31ms p(95)=66.95ms p(99)=80.76ms max=84.22ms
+      { expected_response:true }...: avg=44.78ms med=41.31ms p(95)=66.95ms p(99)=80.76ms max=84.22ms
+      { kind:catalog }.............: avg=40.84ms med=39.36ms p(95)=49.5ms  p(99)=49.64ms max=49.68ms
+    http_req_failed................: 0.00%  0 out of 11
+    http_reqs......................: 11     22.092557/s
+
+    EXECUTION
+    dropped_iterations.............: 0      0/s
+    iteration_duration.............: avg=41.24ms med=39.79ms p(95)=50.05ms p(99)=50.38ms max=50.46ms
+    iterations.....................: 10     20.084143/s
+
+    NETWORK
+    data_received..................: 52 kB  104 kB/s
+    data_sent......................: 2.1 kB 4.3 kB/s
+
+
+
+{
+    "metrics": {
+        "http_req_duration": {
+            "avg": 44.785324,
+            "med": 41.316504,
+            "p(95)": 66.954964,
+            "p(99)": 80.76985520000002,
+            "max": 84.223578
+        },
+        "http_req_tls_handshaking": {
+            "p(95)": 0,
+            "p(99)": 0,
+            "max": 0,
+            "avg": 0,
+            "med": 0
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 11,
+            "thresholds": {
+                "rate<0.01": false
+            },
+            "value": 0
+        },
+        "http_req_sending": {
+            "avg": 0.026322636363636364,
+            "med": 0.021122,
+            "p(95)": 0.060178,
+            "p(99)": 0.06958840000000001,
+            "max": 0.071941
+        },
+        "http_reqs": {
+            "count": 11,
+            "rate": 22.09255712154161
+        },
+        "http_req_waiting": {
+            "max": 84.031531,
+            "avg": 44.6593140909091,
+            "med": 41.202299,
+            "p(95)": 66.76849250000001,
+            "p(99)": 80.57892330000001
+        },
+        "http_req_duration{expected_response:true}": {
+            "max": 84.223578,
+            "avg": 44.785324,
+            "med": 41.316504,
+            "p(95)": 66.954964,
+            "p(99)": 80.76985520000002
+        },
+        "http_req_blocked": {
+            "avg": 0.05078999999999998,
+            "med": 0.00491,
+            "p(95)": 0.2588045,
+            "p(99)": 0.3259649,
+            "max": 0.342755
+        },
+        "checks": {
+            "passes": 10,
+            "fails": 0,
+            "thresholds": {
+                "rate==1": false
+            },
+            "value": 1
+        },
+        "http_req_connecting": {
+            "avg": 0.026259,
+            "med": 0,
+            "p(95)": 0.1444245,
+            "p(99)": 0.15959050000000002,
+            "max": 0.163382
+        },
+        "dropped_iterations": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count==0": false
+            }
+        },
+        "http_req_receiving": {
+            "avg": 0.09968727272727275,
+            "med": 0.095728,
+            "p(95)": 0.1262935,
+            "p(99)": 0.13124349999999999,
+            "max": 0.132481
+        },
+        "data_sent": {
+            "count": 2138,
+            "rate": 4293.989738714178
+        },
+        "data_received": {
+            "count": 51579,
+            "rate": 103592.00034290862
+        },
+        "iterations": {
+            "count": 10,
+            "rate": 20.0841428377651
+        },
+        "http_req_duration{kind:catalog}": {
+            "avg": 40.84149860000001,
+            "med": 39.3629235,
+            "p(95)": 49.5030326,
+            "p(99)": 49.649686519999996,
+            "max": 49.68635,
+            "thresholds": {
+                "p(95)<600": false
+            }
+        },
+        "iteration_duration": {
+            "avg": 41.2464385,
+            "med": 39.7965715,
+            "p(95)": 50.0509002,
+            "p(99)": 50.38068324,
+            "max": 50.463129
+        }
+    },
+    "setup_data": {
+        "id": "prod_01M7QTT0H6770AB57ZEQ6K76X8",
+        "query": "Tui canvas Daily"
+    },
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "catalog status and product contract": {
+                    "name": "catalog status and product contract",
+                    "path": "::catalog status and product contract",
+                    "id": "a0ca315430296716be60d9e289ddffcd",
+                    "passes": 10,
+                    "fails": 0
+                }
+            }
+    }
+}
+running (00m00.5s), 0/1 VUs, 10 complete and 0 interrupted iterations
+catalog ✓ [ 100% ] 1 VUs  00m00.4s/10m0s  10/10 shared iters

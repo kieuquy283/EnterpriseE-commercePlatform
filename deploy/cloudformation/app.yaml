@@ -29,6 +29,13 @@ Parameters:
   CertificateArn:
     Type: String
     AllowedPattern: arn:aws:acm:ap-southeast-2:[0-9]{12}:certificate/.+
+  ReleaseSha:
+    Type: String
+    Default: unversioned
+    MinLength: 1
+    MaxLength: 64
+    AllowedPattern: "[A-Za-z0-9][A-Za-z0-9._-]{0,63}"
+    Description: Source revision for API and worker logs; use immutable image source SHA
   BackendImage:
     Type: String
     AllowedPattern: '[0-9]{12}\.dkr\.ecr\.ap-southeast-2\.amazonaws\.com/.+'
@@ -276,6 +283,9 @@ Resources:
               Value: s3-iam-role
             - Name: S3_DISABLE_ACL
               Value: "true"
+            - Name: RELEASE_SHA
+              Value:
+                Ref: ReleaseSha
             - Name: WORKER_MODE
               Value: server
             - Name: ADMIN_DISABLED
@@ -404,6 +414,9 @@ Resources:
               Value: s3-iam-role
             - Name: S3_DISABLE_ACL
               Value: "true"
+            - Name: RELEASE_SHA
+              Value:
+                Ref: ReleaseSha
             - Name: WORKER_MODE
               Value: worker
             - Name: ADMIN_DISABLED
@@ -1066,14 +1079,189 @@ Resources:
         Fn::Sub: ${AWS::StackName}-demo
       DashboardBody:
         Fn::Sub:
-          '{"widgets": [{"type": "metric", "x": 0, "y": 0, "width": 12, "height": 6, "properties": {"title":
-          "API CPU and memory", "region": "${AWS::Region}", "metrics": [["AWS/ECS", "CPUUtilization", "ClusterName",
-          "${Cluster}", "ServiceName", "${ApiService.Name}"], ["AWS/ECS", "MemoryUtilization", "ClusterName", "${Cluster}",
-          "ServiceName", "${ApiService.Name}"]], "period": 60, "stat": "Average"}}, {"type": "metric", "x": 12,
-          "y": 0, "width": 12, "height": 6, "properties": {"title": "ALB latency and target errors", "region": "${AWS::Region}",
-          "metrics": [["AWS/ApplicationELB", "TargetResponseTime", "LoadBalancer", "${LoadBalancer.LoadBalancerFullName}",
-          {"stat": "p95"}], ["AWS/ApplicationELB", "HTTPCode_Target_5XX_Count", "LoadBalancer", "${LoadBalancer.LoadBalancerFullName}",
-          {"stat": "Sum", "yAxis": "right"}]], "period": 60}}]}'
+          - |
+            {
+              "widgets": [
+                {
+                  "type": "metric",
+                  "x": 0,
+                  "y": 0,
+                  "width": 12,
+                  "height": 6,
+                  "properties": {
+                    "title": "Api CPU and memory",
+                    "region": "${AWS::Region}",
+                    "metrics": [
+                      [
+                        "AWS/ECS",
+                        "CPUUtilization",
+                        "ClusterName",
+                        "${Cluster}",
+                        "ServiceName",
+                        "${ApiService.Name}"
+                      ],
+                      [
+                        "AWS/ECS",
+                        "MemoryUtilization",
+                        "ClusterName",
+                        "${Cluster}",
+                        "ServiceName",
+                        "${ApiService.Name}"
+                      ]
+                    ],
+                    "period": 60,
+                    "stat": "Average"
+                  }
+                },
+                {
+                  "type": "metric",
+                  "x": 12,
+                  "y": 0,
+                  "width": 12,
+                  "height": 6,
+                  "properties": {
+                    "title": "Worker CPU and memory",
+                    "region": "${AWS::Region}",
+                    "metrics": [
+                      [
+                        "AWS/ECS",
+                        "CPUUtilization",
+                        "ClusterName",
+                        "${Cluster}",
+                        "ServiceName",
+                        "${WorkerService.Name}"
+                      ],
+                      [
+                        "AWS/ECS",
+                        "MemoryUtilization",
+                        "ClusterName",
+                        "${Cluster}",
+                        "ServiceName",
+                        "${WorkerService.Name}"
+                      ]
+                    ],
+                    "period": 60,
+                    "stat": "Average"
+                  }
+                },
+                {
+                  "type": "metric",
+                  "x": 0,
+                  "y": 6,
+                  "width": 12,
+                  "height": 6,
+                  "properties": {
+                    "title": "Storefront CPU and memory",
+                    "region": "${AWS::Region}",
+                    "metrics": [
+                      [
+                        "AWS/ECS",
+                        "CPUUtilization",
+                        "ClusterName",
+                        "${Cluster}",
+                        "ServiceName",
+                        "${StorefrontService.Name}"
+                      ],
+                      [
+                        "AWS/ECS",
+                        "MemoryUtilization",
+                        "ClusterName",
+                        "${Cluster}",
+                        "ServiceName",
+                        "${StorefrontService.Name}"
+                      ]
+                    ],
+                    "period": 60,
+                    "stat": "Average"
+                  }
+                },
+                {
+                  "type": "metric",
+                  "x": 12,
+                  "y": 6,
+                  "width": 12,
+                  "height": 6,
+                  "properties": {
+                    "title": "ALB p95 latency and target errors",
+                    "region": "${AWS::Region}",
+                    "metrics": [
+                      [
+                        "AWS/ApplicationELB",
+                        "TargetResponseTime",
+                        "LoadBalancer",
+                        "${LoadBalancer.LoadBalancerFullName}",
+                        {
+                          "stat": "p95"
+                        }
+                      ],
+                      [
+                        "AWS/ApplicationELB",
+                        "HTTPCode_Target_5XX_Count",
+                        "LoadBalancer",
+                        "${LoadBalancer.LoadBalancerFullName}",
+                        {
+                          "stat": "Sum",
+                          "yAxis": "right"
+                        }
+                      ]
+                    ],
+                    "period": 60
+                  }
+                },
+                {
+                  "type": "metric",
+                  "x": 0,
+                  "y": 12,
+                  "width": 12,
+                  "height": 6,
+                  "properties": {
+                    "title": "RDS capacity headroom",
+                    "region": "${AWS::Region}",
+                    "metrics": [
+                      [
+                        "AWS/RDS",
+                        "CPUUtilization",
+                        "DBInstanceIdentifier",
+                        "${DatabaseIdentifier}"
+                      ],
+                      [
+                        "AWS/RDS",
+                        "DatabaseConnections",
+                        "DBInstanceIdentifier",
+                        "${DatabaseIdentifier}",
+                        {
+                          "yAxis": "right"
+                        }
+                      ],
+                      [
+                        "AWS/RDS",
+                        "FreeableMemory",
+                        "DBInstanceIdentifier",
+                        "${DatabaseIdentifier}",
+                        {
+                          "yAxis": "right"
+                        }
+                      ],
+                      [
+                        "AWS/RDS",
+                        "FreeStorageSpace",
+                        "DBInstanceIdentifier",
+                        "${DatabaseIdentifier}",
+                        {
+                          "yAxis": "right"
+                        }
+                      ]
+                    ],
+                    "period": 60,
+                    "stat": "Average"
+                  }
+                }
+              ]
+            }
+          - DatabaseIdentifier:
+              Fn::ImportValue:
+                Fn::Sub: ${DataStack}-DatabaseId
+
   StoreDns:
     Type: AWS::Route53::RecordSet
     Metadata:

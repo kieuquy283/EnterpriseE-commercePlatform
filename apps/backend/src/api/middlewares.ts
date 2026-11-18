@@ -3,6 +3,7 @@ import { authenticate, defineMiddlewares, validateAndTransformBody } from "@medu
 import { MedusaError, Modules } from "@medusajs/framework/utils"
 
 import { assertFullAdminAccess } from "../modules/staff-access/policy"
+import { requestObservability } from "../observability"
 
 import { CreateLegacyCart, AddLegacyCartItem } from "./store/cart/validators"
 import { LegacyCredentials } from "./store/auth/validators"
@@ -10,6 +11,10 @@ import { validateCartItemWorkflow } from "../workflows/delete-legacy-cart-item"
 
 export default defineMiddlewares({
   routes: [
+    {
+      matcher: "/*",
+      middlewares: [requestObservability],
+    },
     {
       matcher: "/admin*",
       middlewares: [

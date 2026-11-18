@@ -1,0 +1,62 @@
+{
+  "at_utc": "2026-11-18T17:33:49.751818+00:00",
+  "historical_source": "fargate-main389e855-2026-11-09/release.json",
+  "images": [
+    {
+      "historical_group": "images",
+      "role": "BackendImage",
+      "digest": "sha256:c3e1df7437167b9efe1c57ee1493b74881e588e5e0367b3bd228d25577ceb1c4",
+      "exit": 0,
+      "metadata": [
+        {
+          "digest": "sha256:c3e1df7437167b9efe1c57ee1493b74881e588e5e0367b3bd228d25577ceb1c4",
+          "pushed": "2026-11-09T09:32:18.143000+07:00",
+          "sizeBytes": 634817793
+        }
+      ],
+      "rollback_compatibility_verified": false
+    },
+    {
+      "historical_group": "images",
+      "role": "StorefrontImage",
+      "digest": "sha256:2f3749fd757dd5d341ef395a672671b07ce3002f62539b010bcb1a7d405552d7",
+      "exit": 0,
+      "metadata": [
+        {
+          "digest": "sha256:2f3749fd757dd5d341ef395a672671b07ce3002f62539b010bcb1a7d405552d7",
+          "pushed": "2026-11-09T09:33:19.083000+07:00",
+          "sizeBytes": 664592026
+        }
+      ],
+      "rollback_compatibility_verified": false
+    },
+    {
+      "historical_group": "previousImages",
+      "role": "BackendImage",
+      "digest": "sha256:ed6f80dcbad1b94d1653bdc850e4a787eda9e98f3a4391d5363bf57e0623e55f",
+      "exit": 0,
+      "metadata": [
+        {
+          "digest": "sha256:ed6f80dcbad1b94d1653bdc850e4a787eda9e98f3a4391d5363bf57e0623e55f",
+          "pushed": "2026-11-08T21:48:43.251000+07:00",
+          "sizeBytes": 626472816
+        }
+      ],
+      "rollback_compatibility_verified": false
+    },
+    {
+      "historical_group": "previousImages",
+      "role": "StorefrontImage",
+      "digest": "sha256:47d9ad93d8102e0cee50af8cc2130391723a868f7ecb7f1add515a08bf9acb95",
+      "exit": 0,
+      "metadata": [
+        {
+          "digest": "sha256:47d9ad93d8102e0cee50af8cc2130391723a868f7ecb7f1add515a08bf9acb95",
+          "pushed": "2026-11-08T22:14:50.331000+07:00",
+          "sizeBytes": 656238138
+        }
+      ],
+      "rollback_compatibility_verified": false
+    }
+  ]
+}

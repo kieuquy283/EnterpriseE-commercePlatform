@@ -1,0 +1,179 @@
+{
+  "sampled_at_utc": "2026-11-18T17:23:23.982848+00:00",
+  "region": "ap-southeast-2",
+  "profile": "aws-project",
+  "actions": "read-only",
+  "clock_note": "Session date is 2026-11-19; machine UTC date is 2026-11-18.",
+  "services": [
+    {
+      "name": "commerce-app-ApiService-Q4FiCPlJ9hjq",
+      "desired": 1,
+      "running": 1
+    },
+    {
+      "name": "commerce-app-WorkerService-ewcqlBD3WwpS",
+      "desired": 1,
+      "running": 1
+    },
+    {
+      "name": "commerce-app-StorefrontService-4OGao2XKyvbg",
+      "desired": 1,
+      "running": 1
+    }
+  ],
+  "rds": [
+    {
+      "status": "available",
+      "class": "db.t4g.micro",
+      "storageGiB": 20,
+      "retentionDays": 1,
+      "latestRestorable": "2026-11-18T17:20:41+00:00",
+      "encrypted": true
+    }
+  ],
+  "snapshots": [
+    {
+      "type": "manual",
+      "status": "available",
+      "time": "2026-11-09T02:31:07.030000+00:00",
+      "encrypted": true
+    },
+    {
+      "type": "automated",
+      "status": "available",
+      "time": "2026-10-30T13:27:05.126000+00:00",
+      "encrypted": true
+    },
+    {
+      "type": "automated",
+      "status": "available",
+      "time": "2026-11-08T08:11:45.995000+00:00",
+      "encrypted": true
+    },
+    {
+      "type": "automated",
+      "status": "available",
+      "time": "2026-11-16T06:55:03.917000+00:00",
+      "encrypted": true
+    },
+    {
+      "type": "automated",
+      "status": "available",
+      "time": "2026-11-18T16:15:41.382000+00:00",
+      "encrypted": true
+    }
+  ],
+  "volumes": [
+    {
+      "sizeGiB": 30,
+      "type": "gp3",
+      "encrypted": true
+    },
+    {
+      "sizeGiB": 8,
+      "type": "gp3",
+      "encrypted": true
+    }
+  ],
+  "instances": [
+    {
+      "type": "m7i-flex.large",
+      "state": "stopped"
+    },
+    {
+      "type": "t4g.micro",
+      "state": "running"
+    }
+  ],
+  "subscriptions": [],
+  "alarms": [
+    {
+      "metric": "CPUUtilization",
+      "state": "OK",
+      "actions": true
+    },
+    {
+      "metric": "CPUUtilization",
+      "state": "ALARM",
+      "actions": true
+    },
+    {
+      "metric": "Errors",
+      "state": "OK",
+      "actions": true
+    },
+    {
+      "metric": "Errors",
+      "state": "OK",
+      "actions": true
+    }
+  ],
+  "log_groups": [
+    {
+      "name": "commerce-app-ApiLogs-n2KCceUimU1M",
+      "retentionDays": 7,
+      "storedBytes": 0
+    },
+    {
+      "name": "commerce-app-StorefrontLogs-DOhk6GioT8Mv",
+      "retentionDays": 7,
+      "storedBytes": 0
+    },
+    {
+      "name": "commerce-app-WatchdogLogs-0zVs8kIpQ57a",
+      "retentionDays": 7,
+      "storedBytes": 617348
+    },
+    {
+      "name": "commerce-app-WorkerLogs-BjEKWq6Vmj6a",
+      "retentionDays": 7,
+      "storedBytes": 0
+    },
+    {
+      "name": "commerce-data-DataWatchdogLogs-ucXI6hVo1l94",
+      "retentionDays": 7,
+      "storedBytes": 612872
+    }
+  ],
+  "oidc": {
+    "error": "AccessDenied",
+    "exit_code": 254
+  },
+  "plan": {
+    "plan": "FREE",
+    "status": "ACTIVE"
+  },
+  "secret_count": 3,
+  "keys": [
+    {
+      "manager": "CUSTOMER",
+      "state": "Enabled",
+      "origin": "AWS_KMS"
+    },
+    {
+      "manager": "AWS",
+      "state": "Enabled",
+      "origin": "AWS_KMS"
+    },
+    {
+      "manager": "AWS",
+      "state": "Enabled",
+      "origin": "AWS_KMS"
+    },
+    {
+      "manager": "AWS",
+      "state": "Enabled",
+      "origin": "AWS_KMS"
+    },
+    {
+      "manager": "AWS",
+      "state": "Enabled",
+      "origin": "AWS_KMS"
+    },
+    {
+      "manager": "AWS",
+      "state": "Enabled",
+      "origin": "AWS_KMS"
+    }
+  ]
+}

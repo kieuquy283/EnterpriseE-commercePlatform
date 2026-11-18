@@ -1,0 +1,17 @@
+{
+  "at_utc": "2026-11-18T17:31:49.687405+00:00",
+  "containers": [
+    {
+      "owned_container": "daymark-ops06-pg-20261119",
+      "remove_exit": 0
+    },
+    {
+      "owned_container": "daymark-ops06-redis-20261119",
+      "remove_exit": 0
+    }
+  ],
+  "temporary_db_secret_file_removed": true,
+  "shared_resources_touched": false,
+  "aws_mutations": false,
+  "note": "Transient k6 image and isolated PyYAML venv retained as local tooling cache; no service running"
+}

@@ -1,0 +1,7 @@
+{
+  "order_count": 1,
+  "line_quantity": 1,
+  "inventory_nonnegative": true,
+  "available_before": 25,
+  "available_after": 24
+}

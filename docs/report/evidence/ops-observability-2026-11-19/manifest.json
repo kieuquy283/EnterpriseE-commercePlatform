@@ -1,0 +1,110 @@
+{
+  "base_commit": "13a9d25673ddd6f2c96889a2760e13b4c6bf093d",
+  "dirty_paths": [
+    " M .github/workflows/aws-images.yml",
+    " M .github/workflows/ci.yml",
+    " M apps/backend/src/api/middlewares.ts",
+    " M apps/backend/src/subscribers/personalization-order-events.ts",
+    " M deploy/cloudformation/app.yaml",
+    " M docs/technical/operations-readiness.md",
+    " M docs/technical/staff-admin-permission-matrix.md",
+    " M docs/technical/staff-admin-rbac-license-feasibility.md",
+    " M load/catalog.js",
+    " M load/checkout.js",
+    " M load/recommendations.js",
+    "?? .github/branch-protection/",
+    "?? apps/backend/integration-tests/http/load-smoke.spec.ts",
+    "?? apps/backend/integration-tests/http/staff-authorization.spec.ts",
+    "?? apps/backend/src/modules/staff-access/",
+    "?? apps/backend/src/observability/",
+    "?? apps/backend/src/workflows/create-blocked-staff.ts",
+    "?? docs/report/evidence/ops-observability-2026-11-19/",
+    "?? docs/report/ops-observability-2026-11-19.md",
+    "?? docs/technical/observability.md",
+    "?? docs/technical/staff-admin-authorization-evidence-2026-11-19.md"
+  ],
+  "package_lock_sha256": "e06987ac5de1a74d62b4cc55fa03302206c47e4e2d6976ebdeb1389df3181103",
+  "node": "24.22.1",
+  "initial_npm": "11.19.1",
+  "final_http_npm": "11.12.1 via isolated npm exec package",
+  "k6_image": "grafana/k6:1.4.2@sha256:3656673de3f30424e8ebcfa46acd9558d83b6a43612d0f668ffeac953950c6c7",
+  "sampled_at_utc": "2026-11-18T17:30:19.857097+00:00",
+  "targets": [
+    "fresh PostgreSQL container daymark-ops06-pg-20261119, loopback 15439",
+    "owned Redis container daymark-ops06-redis-20261119, loopback 16389; not used by HTTP runner",
+    "Medusa test runner creates per-suite databases, local fake Redis/event bus"
+  ],
+  "results": {
+    "unit": {
+      "suites": 17,
+      "passed": 155,
+      "npm": "11.12.1"
+    },
+    "selected_http_final": {
+      "suites": 2,
+      "passed": 5,
+      "npm": "11.12.1",
+      "seconds": 41.483
+    },
+    "lint": {
+      "exit": 0,
+      "npm": "11.12.1"
+    },
+    "typecheck": {
+      "exit": 0,
+      "npm": "11.12.1"
+    },
+    "build": {
+      "exit": 0,
+      "npm": "11.12.1"
+    },
+    "iac": {
+      "tests": 27,
+      "exit": 0
+    },
+    "production_logger_transport": {
+      "passed": 1
+    },
+    "docs": {
+      "exit": 0,
+      "markdown_files": 196,
+      "local_links": 682
+    },
+    "diff_check": {
+      "exit": 0
+    }
+  },
+  "commands": [
+    "npm run test:unit --workspace=@dtc/backend",
+    "npm run typecheck --workspace=@dtc/backend",
+    "npm run lint --workspace=@dtc/backend",
+    "npm run build --workspace=@dtc/backend",
+    "npm exec --yes --package=npm@11.12.1 -- npm run test:integration:http --workspace=@dtc/backend -- --runTestsByPath integration-tests/http/load-smoke.spec.ts integration-tests/http/checkout-order.spec.ts",
+    "python -m unittest discover -s deploy/cloudformation/tests -q (isolated venv with PyYAML)"
+  ],
+  "failures_preserved": [
+    "First HTTP attempt timed out; explicit DB settings then localhost required because Medusa test-utils enables TLS for non-localhost host strings",
+    "Attempt 1 k6 passed but server quantity assertion compared Medusa BigNumber to number; corrected Number conversion, attempt 2 passed",
+    "System Python lacked PyYAML; isolated venv run passed 27 tests"
+  ],
+  "unverified": [
+    "long baseline, 5x/10x, endurance",
+    "Redis outage, notification provider retries/final failure",
+    "concurrent checkout, last-unit stock contention, lost response",
+    "CloudWatch filter/alarm ingestion and alert delivery",
+    "restore/RPO/RTO/rollback",
+    "actual bill/spend limit balance, OIDC trust denied by SCP"
+  ],
+  "final_validation_npm": "11.12.1 via isolated npm exec package",
+  "workload_summary": "workload-summary.json",
+  "cleanup": "cleanup.json",
+  "changed_source_sha256": {
+    "apps/backend/src/observability/index.ts": "0de2947e50dccf07cbf56e0eb923d6dfe385170d5a00f333be598cc8d32141f1",
+    "apps/backend/src/subscribers/personalization-order-events.ts": "8c77d01abe0d5f1f303e700def1c973ec23c98d1f719b2f68db67b0a1c9de1b6",
+    "apps/backend/integration-tests/http/load-smoke.spec.ts": "a6ef3b3939ee8fb8151af13b6feb312b1446325f9565c7094cd7661342291253",
+    "load/catalog.js": "f9f5bde909851422532a70f66613a15d439b63030d3aecf3e0313dd21f271a65",
+    "load/checkout.js": "37580d94c8cac1426de079214d8ef2e87745e50b9a155ab634360129019e5cec",
+    "load/recommendations.js": "a6e93a8c2b60f378d8aebed58436c951a59ea3c40cc98aeba3310dc5b75e8d13",
+    "deploy/cloudformation/app.yaml": "8729fb5b6f90b1460b710f55a070a50b830959ec221c759f384ec2f1e20cd8de"
+  }
+}

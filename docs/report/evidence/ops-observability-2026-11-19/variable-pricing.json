@@ -1,0 +1,120 @@
+[
+  {
+    "service": "AmazonCloudWatch",
+    "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonCloudWatch/current/ap-southeast-2/index.json",
+    "publication_date": "2026-11-16T19:46:20Z",
+    "prices": [
+      {
+        "usage_type": "APS2-CW:PromQLAlarmMonitorUsage",
+        "description": "$0.10 per Alarm in Asia Pacific (Sydney)",
+        "unit": "Alarms",
+        "usd": "0.1000000000",
+        "begin": "0",
+        "end": "Inf"
+      },
+      {
+        "usage_type": "APS2-CW:LogAlarmMonitorUsage",
+        "description": "$0.10 per Alarm in Asia Pacific (Sydney)",
+        "unit": "Alarms",
+        "usd": "0.1000000000",
+        "begin": "0",
+        "end": "Inf"
+      },
+      {
+        "usage_type": "APS2-DataProcessing-Bytes",
+        "description": "$0.67 per GB custom log data ingested in Standard log class - Asia Pacific (Sydney)",
+        "unit": "GB",
+        "usd": "0.6700000000",
+        "begin": "0",
+        "end": "Inf"
+      },
+      {
+        "usage_type": "APS2-TimedStorage-ByteHrs",
+        "description": "$0.033 per GB-mo of log storage - Asia Pacific (Sydney)",
+        "unit": "GB-Mo",
+        "usd": "0.0330000000",
+        "begin": "0",
+        "end": "Inf"
+      },
+      {
+        "usage_type": "APS2-CW:AlarmMonitorUsage",
+        "description": "$0.10 per alarm metric month (standard resolution) - Asia Pacific (Sydney)",
+        "unit": "Alarms",
+        "usd": "0.1000000000",
+        "begin": "0",
+        "end": "Inf"
+      },
+      {
+        "usage_type": "APS2-CW:CompositeAlarmMonitorUsage",
+        "description": "$0.50 per composite alarm month - Asia Pacific (Sydney)",
+        "unit": "Alarms",
+        "usd": "0.5000000000",
+        "begin": "0",
+        "end": "Inf"
+      },
+      {
+        "usage_type": "Global-CW:AlarmMonitorUsage",
+        "description": "Global",
+        "unit": "Alarms",
+        "usd": "0.0000000000",
+        "begin": "0",
+        "end": "10"
+      },
+      {
+        "usage_type": "Global-DataProcessing-Bytes",
+        "description": "Global",
+        "unit": "GB",
+        "usd": "0.0000000000",
+        "begin": "0",
+        "end": "5"
+      },
+      {
+        "usage_type": "APS2-CW:HighResAlarmMonitorUsage",
+        "description": "$0.30 per alarm metric month (high resolution) - Asia Pacific (Sydney)",
+        "unit": "Alarms",
+        "usd": "0.3000000000",
+        "begin": "0",
+        "end": "Inf"
+      },
+      {
+        "usage_type": "Global-TimedStorage-ByteHrs",
+        "description": "Global",
+        "unit": "GB-Mo",
+        "usd": "0.0000000000",
+        "begin": "0",
+        "end": "5"
+      }
+    ]
+  },
+  {
+    "service": "AmazonS3",
+    "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonS3/current/ap-southeast-2/index.json",
+    "publication_date": "2026-11-18T16:18:49Z",
+    "prices": [
+      {
+        "usage_type": "APS2-TimedStorage-ByteHrs",
+        "description": "$0.025 per GB - first 50 TB / month of storage used",
+        "unit": "GB-Mo",
+        "usd": "0.0250000000",
+        "begin": "0",
+        "end": "51200"
+      },
+      {
+        "usage_type": "APS2-TimedStorage-ByteHrs",
+        "description": "$0.024 per GB - next 450 TB / month of storage used",
+        "unit": "GB-Mo",
+        "usd": "0.0240000000",
+        "begin": "51200",
+        "end": "512000"
+      },
+      {
+        "usage_type": "APS2-TimedStorage-ByteHrs",
+        "description": "$0.023 per GB - storage used / month over 500 TB",
+        "unit": "GB-Mo",
+        "usd": "0.0230000000",
+        "begin": "512000",
+        "end": "Inf"
+      }
+    ]
+  }
+]
