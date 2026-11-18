@@ -6,6 +6,7 @@ Các tài liệu này hỗ trợ [đặc tả hiện hành](../README.md), khôn
 <a id="historical-engineering-evidence"></a>
 ## Bằng chứng kỹ thuật lịch sử
 
+- [Regression API boundary auth/cart ngày 18 tháng 11](../report/api-boundary-regression-2026-11-18.md): HTTP negative cases, checkout compatibility và giới hạn kiểm chứng; không phải nghiệm thu production.
 - [Phát hành AWS từ main ngày 9 tháng 11](../report/aws-redeployment-main389e855-2026-11-09.md): migration, digest ảnh và 18 kiểm tra công khai; không khẳng định đã nghiệm thu chiến dịch tải, khôi phục hay nhân viên vận hành.
 - [Triển khai Fargate ban đầu](../report/aws-fargate-deployment-2026-11-08.md) và [diễn tập EC2](../report/aws-ec2-deployment-2026-11-06.md): giữ giới hạn theo ngày, bao gồm phân biệt checkout qua API với nghiệm thu trình duyệt.
 - [Thư mục bằng chứng](../report/evidence/): đầu ra đã làm sạch, bất biến của các lần chạy, gồm ảnh chụp tồn kho.
