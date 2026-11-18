@@ -115,6 +115,8 @@ jobs:
         run: node scripts/ci-run.mjs offline-fixture python -m unittest discover -s scripts/hm/tests -v
       - if: ${{ !cancelled() }}
         run: node scripts/ci-run.mjs unit npm run test:unit --workspace=@dtc/backend
+      - name: Security policy tests
+        run: npm run test:security
       - run: node scripts/ci-run.mjs compose-config docker compose config --quiet
       - if: ${{ !cancelled() }}
         run: node scripts/ci-run.mjs workspace-tests npm test

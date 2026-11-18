@@ -80,7 +80,7 @@ export REDIS_URL="redis://localhost:$redis_port"
 export DB_HOST=localhost DB_PORT="$pg_port" DB_USERNAME=daymark_test DB_PASSWORD=''
 export JWT_SECRET="$(node -e 'process.stdout.write(require("crypto").randomBytes(32).toString("hex"))')"
 export COOKIE_SECRET="$(node -e 'process.stdout.write(require("crypto").randomBytes(32).toString("hex"))')"
-export NODE_PATH="$root/node_modules"
+export NODE_PATH="$backend/node_modules:$root/node_modules"
 cd "$backend"
 if [[ $mode == http ]]; then
   step http npm run test:integration:http
