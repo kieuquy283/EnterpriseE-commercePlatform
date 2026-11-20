@@ -1,0 +1,97 @@
+DAYMARK DATA-02 — selected, sanitized runtime log
+Source SHA: 1b6a668d06a5956da0692c268a93b9e5124bf1c3
+Services: unique Docker Desktop containers, loopback only, disposable database and Redis
+v24.21.0
+11.12.1
+postgres (PostgreSQL) 17.10 (Debian 17.10-1.pgdg12+1)
+Redis server v=7.4.11 sha=00000000:0 malloc=jemalloc-5.3.0 bits=64 build=40ff01a501d8e4b6
+
+01-migrate | exit 0 | medusa db:migrate
+  187 Medusa Migrated markers
+  ✔ Migrated Migration20261103195231
+  ✔ Migrated Migration20261107144837
+  ✔ Migrated Migration20261107150232
+  ✔ Migrated Migration20261107151743
+  Migrations completed
+  Migration scripts completed
+
+02-seed-commerce | exit 0 | medusa exec ./src/scripts/seed-commerce.ts
+
+03-negative | exit 0 | Medusa exec negative probes before importing
+  {"suite":"data-02-negative","check":"duplicate_sku_in_fixture","status":"PASS","validatorRefused":true}
+  {"suite":"data-02-negative","check":"missing_image","status":"PASS","fixture":"dm-product-001.jpg","importerRefused":true,"catalogUnchanged":true}
+  {"suite":"data-02-negative","check":"wrong_image_checksum","status":"PASS","fixture":"dm-product-001.jpg","unchangedByteSize":true,"importerRefused":true,"catalogUnchanged":true}
+  {"suite":"data-02-negative","check":"sku_already_used_by_foreign_product","status":"PASS","blocker":"Conflict on dm-tee-core: DM-TEE-CORE-IVR-S is already used by \"data-02-negative-foreign-sku\"","importerRefused":true,"catalogUnchanged":true}
+  {"suite":"data-02-negative","check":"handle_owned_by_foreign_product","status":"PASS","blocker":"Conflict on dm-tee-heavy: handle exists without DAYMARK dataset ownership metadata","importerRefused":true,"catalogUnchanged":true}
+  {"suite":"data-02-negative","check":"negative_probe_cleanup","status":"PASS","activeCatalogRestored":true}
+
+04-baseline | exit 0 | Medusa readback of baseline
+  DATA-02 readback baseline {"ownedProducts":0,"ownedCollections":0,"ownedCategories":0,"ownedSkus":0,"linkedProductImages":0,"productAssets":30,"editorialAssets":4,"mediaFileBytesVerified":0,"inventoryItems":0,"inventoryLevels":0,"stockedUnits":0,"adjustedSku":null} checks 1/1
+
+05-dry-run | exit 0 | medusa exec ./src/scripts/seed-daymark-catalog.ts -- --dry-run --images demo
+  mode: dry-run
+  fixture version 1: 30 products, 230 variants, 3 collections, 6 categories
+  opening stock units: 2554; price range 249000-1290000 VND
+  collections: inserted 3, updated 0, skipped 0, conflict 0
+  categories: inserted 6, updated 0, skipped 0, conflict 0
+  products: inserted 30, updated 0, skipped 0, conflict 0
+  inventory levels: inserted 230, updated 0, skipped 0, conflict 0
+  product images: inserted 30, updated 0, skipped 0, conflict 0
+  - Dataset media: 34 asset(s), 4 editorial-only, 30 mapped to products.
+  Dry run: no writes were performed.
+
+06-after-dry-run | exit 0 | Medusa readback after dry run
+  DATA-02 readback after-dry-run {"ownedProducts":0,"ownedCollections":0,"ownedCategories":0,"ownedSkus":0,"linkedProductImages":0,"productAssets":30,"editorialAssets":4,"mediaFileBytesVerified":0,"inventoryItems":0,"inventoryLevels":0,"stockedUnits":0,"adjustedSku":null} checks 2/2
+  baseline snapshot digest == post-dry-run snapshot digest
+
+07-apply | exit 0 | medusa exec ./src/scripts/seed-daymark-catalog.ts -- --apply --images demo
+  mode: apply
+  fixture version 1: 30 products, 230 variants, 3 collections, 6 categories
+  opening stock units: 2554; price range 249000-1290000 VND
+  collections: inserted 3, updated 0, skipped 0, conflict 0
+  categories: inserted 6, updated 0, skipped 0, conflict 0
+  products: inserted 30, updated 0, skipped 0, conflict 0
+  inventory levels: inserted 230, updated 0, skipped 0, conflict 0
+  product images: inserted 30, updated 0, skipped 0, conflict 0
+  - Dataset media: 34 asset(s), 4 editorial-only, 30 mapped to products.
+  Applied
+  collections: inserted 3, updated 0, skipped 0, conflict 0
+  categories: inserted 6, updated 0, skipped 0, conflict 0
+  products: inserted 30, updated 0, skipped 0, conflict 0
+  inventory levels: inserted 230, updated 0, skipped 0, conflict 0
+  product images: inserted 30, updated 0, skipped 0, conflict 0
+  image uploads unavailable: 0, uploads performed: 30
+  re-run check (fresh state): products inserted 0, updated 0, conflict 0; inventory inserted 0, updated 0
+
+08-initial | exit 0 | Medusa readback after apply
+  DATA-02 readback initial {"ownedProducts":30,"ownedCollections":3,"ownedCategories":6,"ownedSkus":230,"linkedProductImages":30,"productAssets":30,"editorialAssets":4,"mediaFileBytesVerified":30,"inventoryItems":230,"inventoryLevels":230,"stockedUnits":2554,"adjustedSku":{"SKU":"DM-TEE-CORE-IVR-S","amountVnd":249000,"stocked":24,"reserved":0,"handle":"dm-tee-core"}} checks 269/269
+
+09-adjust | exit 0 | Medusa updateInventoryLevelsWorkflow and readback
+  DATA-02 readback adjust {"ownedProducts":30,"ownedCollections":3,"ownedCategories":6,"ownedSkus":230,"linkedProductImages":30,"productAssets":30,"editorialAssets":4,"mediaFileBytesVerified":30,"inventoryItems":230,"inventoryLevels":230,"stockedUnits":2557,"adjustedSku":{"SKU":"DM-TEE-CORE-IVR-S","amountVnd":249000,"stocked":27,"reserved":0,"handle":"dm-tee-core"}} checks 269/269
+
+10-rerun | exit 0 | medusa exec ./src/scripts/seed-daymark-catalog.ts -- --apply --images demo
+  mode: apply
+  fixture version 1: 30 products, 230 variants, 3 collections, 6 categories
+  opening stock units: 2554; price range 249000-1290000 VND
+  collections: inserted 0, updated 0, skipped 3, conflict 0
+  categories: inserted 0, updated 0, skipped 6, conflict 0
+  products: inserted 0, updated 0, skipped 30, conflict 0
+  inventory levels: inserted 0, updated 0, skipped 230, conflict 0
+  product images: inserted 0, updated 0, skipped 30, conflict 0
+  - Dataset media: 34 asset(s), 4 editorial-only, 30 mapped to products.
+  Applied
+  collections: inserted 0, updated 0, skipped 3, conflict 0
+  categories: inserted 0, updated 0, skipped 6, conflict 0
+  products: inserted 0, updated 0, skipped 30, conflict 0
+  inventory levels: inserted 0, updated 0, skipped 230, conflict 0
+  product images: inserted 0, updated 0, skipped 30, conflict 0
+  image uploads unavailable: 0, uploads performed: 0
+  re-run check (fresh state): products inserted 0, updated 0, conflict 0; inventory inserted 0, updated 0
+
+11-after-rerun | exit 0 | Medusa readback after rerun
+  DATA-02 readback after-rerun {"ownedProducts":30,"ownedCollections":3,"ownedCategories":6,"ownedSkus":230,"linkedProductImages":30,"productAssets":30,"editorialAssets":4,"mediaFileBytesVerified":30,"inventoryItems":230,"inventoryLevels":230,"stockedUnits":2557,"adjustedSku":{"SKU":"DM-TEE-CORE-IVR-S","amountVnd":249000,"stocked":27,"reserved":0,"handle":"dm-tee-core"}} checks 270/270
+  post-adjustment snapshot digest == post-rerun snapshot digest
+
+12-media-http | exit 0 | medusa start --host 127.0.0.1 followed by 30 GETs
+  30/30 Medusa /static GETs returned JPEG 200 with matching bytes and SHA-256
+
