@@ -43,8 +43,13 @@
     "turbo": "^2.0.14",
     "@swc/helpers": "0.5.24",
     "ajv-formats": "2.1.1",
-    "ajv": "6.15.0",
-    "picomatch": "3.0.2"
+    "ajv": "8.20.0",
+    "picomatch": "3.0.2",
+    "bullmq": "5.13.0",
+    "@rushstack/node-core-library": "5.13.0",
+    "@medusajs/event-bus-redis": "2.22.7",
+    "@medusajs/workflow-engine-redis": "2.22.7",
+    "ajv-keywords": "5.1.0"
   },
   "workspaces": [
     "apps/**",
@@ -62,12 +67,8 @@
     "@rushstack/node-core-library": {
       "ajv": "8.20.0"
     },
-    "bullmq": "5.81.5",
-    "@medusajs/event-bus-redis": {
-      "bullmq": "5.81.5"
-    },
-    "@medusajs/workflow-engine-redis": {
-      "bullmq": "5.81.5"
+    "bullmq": {
+      "uuid": "11.1.1"
     }
   }
 }
