@@ -26,7 +26,7 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Nav />
+      <Nav cart={cart} />
       {customer && cart && <CartMismatchBanner customer={customer} cart={cart} />}
 
       {cart && (
