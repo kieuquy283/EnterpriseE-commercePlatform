@@ -55,3 +55,13 @@ Thành phần logic thể hiện trách nhiệm; không hàm ý dịch vụ đ�
 Mỗi báo cáo kiểm chứng cần ghi phiên bản, môi trường, ngày, lệnh và kết quả. Mục tiêu không phải số đo; tuyến API đã có không đồng nghĩa luồng nghiệp vụ đã nghiệm thu; triển khai lịch sử không chứng minh dịch vụ hiện đang hoạt động. [Bằng chứng và nghiên cứu](reference/README.md) dẫn đến kết quả và quyết định quyền sử dụng dữ liệu. Nghiên cứu chuyên sâu không thay thế phạm vi nghiệp vụ hoặc cấp quyền công bố dữ liệu.
 
 Giữ kết quả kiểm chứng trong CI hoặc báo cáo nghiệm thu có phiên bản; không thêm nhật ký bàn giao, ghi chú dọn dẹp hoặc báo cáo tiến độ tạm thời vào tài liệu hướng dẫn lâu dài.
+
+### BE-08 — Staff/Admin RBAC (2026-11-20)
+
+Trạng thái hiện tại: **BLOCKED** — chưa có ma trận quyền được duyệt hoặc license Enterprise được xác minh; HTTP suite tổng quát đã chạy trên DB disposable nhưng chưa có kiểm thử allow/deny theo role đã duyệt hoặc browser walkthrough. Mỗi sản phẩm bàn giao được tách thành một file:
+
+- [Permission Matrix v1](technical/staff-admin-permission-matrix.md) — Draft, chờ chủ chính sách.
+- [License / Feasibility Decision](technical/staff-admin-rbac-license-feasibility.md) — entitlement chưa xác minh.
+- [ADR-011 — Staff/Admin RBAC](06-architecture/adr/ADR-011-staff-admin-rbac.md) — đề xuất và blocker, chưa được chấp thuận.
+- [Role-negative HTTP / Browser Test Report](report/be-08-role-negative-http-browser-test-report.md) — chưa chạy; không tuyên bố PASS.
+- [CI Artifact Status](report/be-08-ci-artifact.md) — artifact CI role-test chưa được tạo.
