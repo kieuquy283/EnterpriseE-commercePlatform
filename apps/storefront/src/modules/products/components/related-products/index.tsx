@@ -63,7 +63,7 @@ export default async function RelatedProducts({ product, countryCode }: RelatedP
         seen.add(item.id)
         return true
       })
-      .slice(0, 4)
+      .slice(0, 6)
 
   // Suggestions are an enhancement: any failure falls through to the catalog
   // query below so the page still offers somewhere to go next.
@@ -112,7 +112,7 @@ export default async function RelatedProducts({ product, countryCode }: RelatedP
     <ProductRow
       id="related-products-heading"
       testId="related-products"
-      heading="Cùng bộ sưu tập"
+      heading="Mới trong mùa này"
       products={products}
       region={region}
     />
