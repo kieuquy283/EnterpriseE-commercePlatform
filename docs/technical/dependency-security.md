@@ -1,6 +1,6 @@
 # Kiểm soát rủi ro dependency
 
-Tài liệu thực hiện OPS-05 trong [kế hoạch checkpoint](../DAYMARK_Ke_Hoach_Tuan_1_Checkpoints_18_20_22_11_2026_v1.3_PhanBoCheckpoint.md), phục vụ bảo mật [vận hành](../spec/06-operations.md). Script policy dưới đây thực thi mặc định chặn khi còn finding chưa được chấp nhận; chủ sở hữu CI tích hợp kiểm thử vào workflow và branch protection. Không cấp ngoại lệ phát hành. Hoàng review Medusa; Quý review storefront; Thắng quản lý triage; Quân cung cấp regression cô lập.
+Tài liệu thực hiện OPS-05 trong [kế hoạch checkpoint](../DAYMARK_Ke_Hoach_Tuan_1_Checkpoints_18_20_22_11_2026_v1.3_PhanBoCheckpoint.md), phục vụ bảo mật [vận hành](../spec/06-operations.md). Script policy dưới đây thực thi mặc định chặn khi còn finding chưa được chấp nhận; workflow chạy kiểm thử policy, chủ repository cấu hình branch protection. Không cấp ngoại lệ phát hành. Hoàng review Medusa; Quý review storefront; Thắng quản lý triage; Quân cung cấp regression cô lập.
 
 ## Quy trình duy trì
 
@@ -26,7 +26,7 @@ Artifact trong `ci-evidence/` gồm audit JSON và stderr đã làm sạch, exit
 
 Moderate/low vẫn cần xử lý hoặc quyết định rủi ro riêng; nhãn severity không là phê duyệt. Một cơ chế ngoại lệ tương lai cần task và đánh giá riêng, ràng buộc GHSA/package/version/path, SHA/digest, owner, người duyệt, lý do, kiểm soát bù, issue và hạn; tài liệu này không bật cơ chế đó.
 
-TODO(security): Owner CI nối policy mặc định và bộ kiểm thử vào gate bắt buộc — artifact collection không thay branch protection hoặc image release gate; OPS-05.
+CI chạy policy và bộ kiểm thử; workflow publish kiểm policy trước xác thực AWS. Chủ repository áp dụng branch protection theo [hợp đồng CI](ci-verification.md); cấu hình trong Git không chứng minh protection đã bật.
 
 ## Hướng sửa tương thích và giới hạn
 
@@ -42,19 +42,17 @@ Các đường sửa phải kiểm từ lockfile **và cây đã cài**, không 
 
 [Picomatch GHSA-fc5q-39xc-vjpf](https://github.com/advisories/GHSA-fc5q-39xc-vjpf) có trạng thái withdrawn trên nguồn GitHub. Giữ nguyên raw audit và ghi riêng sự khác biệt theo thời điểm registry; không sửa số raw và không suy diễn tất cả glob an toàn. Nếu registry vẫn trả finding, policy tiếp tục chặn.
 
-## Rào cản cần quyết định hoặc sửa tiếp
+## Override và kiểm chứng tương thích
 
-Không dùng ba advisory sau làm baseline exception. Policy tiếp tục chặn khi registry trả chúng:
+Giữ BullMQ `5.13.0` theo Medusa, chỉ override UUID của BullMQ sang `11.1.1` có CommonJS. Các call site BullMQ dùng `v4()` không truyền buffer; bản vá [GHSA-w5hq-g745-h8pq](https://github.com/advisories/GHSA-w5hq-g745-h8pq) nằm ở UUID 11.1.1. Kiểm queue/worker, retry, dedupe và seed có Redis trước khi phát hành; không suy từ một API UUID sang toàn bộ module đã tương thích.
 
-| Advisory / đường còn cần xử lý | Giới hạn tương thích và quyết định cần có |
-| --- | --- |
-| [AJV `$data` ReDoS](https://github.com/advisories/GHSA-2g4f-4pwh-qvx6): Rushstack node-core-library ghim `~8.13.0` | Bản vá `8.18.0` nằm ngoài range minor được upstream khai báo; cần nâng Rushstack tương thích hoặc kiểm thử một override có phạm vi, không coi bản AJV root đã vá là đủ |
-| [Minimatch globparts amplification](https://github.com/advisories/GHSA-g3hv-75wg-m249): typescript-estree dùng `^10.2.2` | Bản vá `11.0.1` đổi major; cần nâng chuỗi typescript-eslint tương thích ESLint/Next/TypeScript, không ép mọi Minimatch cũ sang major mới |
-| [UUID buffer bounds](https://github.com/advisories/GHSA-w5hq-g745-h8pq): BullMQ dùng UUID `^9.0.0` | Bản vá `11.1.1` nằm ngoài range; cần bản BullMQ được Medusa hỗ trợ hoặc thay đổi tương thích đã kiểm chứng với worker/retry/idempotency |
+Rushstack vẫn ở `5.13.0`, override riêng AJV lên `8.20.0`; các consumer AJV 6 giữ nhánh `6.15.0`. Không ép chung hai major. Các dependency root của Rushstack, event-bus/workflow-engine và BullMQ là neo phân giải npm workspace để override có hiệu lực, không thêm service. Cùng lý do với Next ở trên: kiểm mọi bản lồng trong lock và dependency thực cài; xóa neo chỉ sau khi clean install chứng minh vẫn đúng.
 
-Admin Cloud plugin vốn là dependency upstream của Medusa; khai báo trực tiếp cùng phiên bản giúp bundler phân giải entry Admin khi npm đặt core trong workspace. Các lệnh test/seed đặt `NODE_PATH` tới dependency của backend; lệnh start dùng đường tương ứng từ `.medusa/server`. Công cụ gọi CLI trực tiếp cũng phải gồm cả dependency backend và root trong đường phân giải; đường root đơn độc không đủ khi các workspace dùng React khác major.
+AJV/ajv-formats/ajv-keywords và SWC helpers ở root giữ các peer tương thích, cho phép consumer cũ có bản lồng đúng major. Audit không thay kiểm tra peer hoặc smoke artifact. Docker khai báo cả backend-local và root `NODE_PATH` cho lệnh CLI trực tiếp, không chỉ npm scripts.
 
-Khi tích hợp, owner kiểm thử phải cập nhật các option test-utils đã bị upstream bỏ (ví dụ `inApp`), giữ kiểm tra kiểu và chạy lại HTTP/flow. Không bỏ kiểm tra kiểu hoặc sửa file sinh để che bất tương thích. Ghi riêng kết quả `npm ls --all` và các peer conflict; build thành công không thay bằng chứng dependency graph hợp lệ.
+Bằng chứng có ngày, giới hạn npm optional-package inventory và các lượt regression nằm ở [báo cáo tích hợp](../report/ops-dependency-integration-2026-11-20.md). Không dùng số audit cũ phía dưới làm kết luận của revision mới.
+
+TODO(ops): Đối chiếu inventory optional Sharp/Emnapi trên clean image với npm ghim — npm ls toàn cây vẫn báo hai package extraneous dù không còn invalid peer; OPS-05.
 
 ## Ma trận nguyên nhân và hướng xử lý
 
@@ -70,7 +68,7 @@ Ma trận dưới đây giữ bối cảnh triage ban đầu, không phải kế
 
 Nguồn advisory: [Zod](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5), [Multer](https://github.com/advisories/GHSA-q7qp-rjg7-q26m), [GraphQL mergeDeep](https://github.com/advisories/GHSA-7mx3-vvmw-hjmv), [GraphQL incremental](https://github.com/advisories/GHSA-c4qx-w738-7hr3), [lodash template](https://github.com/advisories/GHSA-r5fr-rjxr-66jc), [picomatch](https://github.com/advisories/GHSA-fc5q-39xc-vjpf), [PostCSS source map](https://github.com/advisories/GHSA-6g55-p6wh-862q), [PostCSS path traversal](https://github.com/advisories/GHSA-r28c-9q8g-f849). Các bản vá nêu trên là ứng viên rà, không là phiên bản đã thử.
 
-TODO(security): Hoàng/Quý rà các finding còn lại trên lock mới và regression artifact — audit clear trong một scope không thay nghiệm thu runtime; OPS-05.
+Rà advisory mới và regression khi đổi lockfile; audit clear không thay nghiệm thu runtime hoặc scan image theo digest.
 
 ## Phụ lục bằng chứng có ngày: 18/11/2026
 
