@@ -26,6 +26,12 @@ type RequestConfig = {
   headers: Record<string, string>
 }
 
+type CheckoutOptions = {
+  providerId?: string
+  paymentData?: Record<string, unknown>
+  createPaymentSession?: boolean
+}
+
 function storeHeaders(publishableKey: string, token?: string) {
   return {
     "x-publishable-api-key": publishableKey,
@@ -39,8 +45,16 @@ async function prepareCheckout(
   api: ApiClient,
   headers: ReturnType<typeof storeHeaders>,
   email: string,
-  simulatedOutcome: boolean,
+  options: CheckoutOptions = {},
 ) {
+  const {
+    providerId = simulatorProviderId,
+    createPaymentSession = true,
+  } = options
+  const paymentData =
+    options.paymentData === undefined && providerId === simulatorProviderId
+      ? { simulated_outcome: true }
+      : options.paymentData
   const { data: regionResponse } = await api.get<{
     regions: Array<{ id: string; name: string }>
   }>("/store/regions", { headers })
@@ -101,14 +115,16 @@ async function prepareCheckout(
   const { data: paymentResponse } = await api.post<{
     payment_collection: { id: string }
   }>("/store/payment-collections", { cart_id: cartId }, { headers })
-  await api.post(
-    `/store/payment-collections/${paymentResponse.payment_collection.id}/payment-sessions`,
-    {
-      provider_id: simulatorProviderId,
-      data: { simulated_outcome: simulatedOutcome },
-    },
-    { headers },
-  )
+  if (createPaymentSession) {
+    await api.post(
+      `/store/payment-collections/${paymentResponse.payment_collection.id}/payment-sessions`,
+      {
+        provider_id: providerId,
+        ...(paymentData ? { data: paymentData } : {}),
+      },
+      { headers },
+    )
+  }
 
   return {
     cartId,
@@ -116,20 +132,18 @@ async function prepareCheckout(
   }
 }
 
-async function getSimulatorPaymentSession(container: MedusaContainer, paymentCollectionId: string) {
+async function getPaymentSessions(
+  container: MedusaContainer,
+  paymentCollectionId: string,
+) {
   const query = container.resolve(ContainerRegistrationKeys.QUERY)
   const { data: paymentSessions } = await query.graph({
     entity: "payment_session",
     fields: ["id", "provider_id", "data"],
     filters: { payment_collection_id: paymentCollectionId },
   })
-  const paymentSession = paymentSessions[0]
 
-  if (!paymentSession) {
-    throw new Error("Payment session was not created")
-  }
-
-  return paymentSession
+  return paymentSessions
 }
 
 async function getInventorySnapshot(container: MedusaContainer) {
@@ -245,13 +259,46 @@ medusaIntegrationTestRunner({
         { headers: customerHeaders },
       )
       const inventoryBefore = await getInventorySnapshot(getContainer())
-      const checkout = await prepareCheckout(storeApi, customerHeaders, email, true)
-      const paymentSession = await getSimulatorPaymentSession(
+      const checkout = await prepareCheckout(storeApi, customerHeaders, email, {
+        paymentData: { simulated_outcome: true },
+      })
+      const paymentSessions = await getPaymentSessions(
         getContainer(),
         checkout.paymentCollectionId,
       )
-      expect(paymentSession.provider_id).toBe(simulatorProviderId)
-      expect(paymentSession.data.simulated_outcome).toBe(true)
+      expect(paymentSessions).toHaveLength(1)
+      expect(paymentSessions[0].provider_id).toBe(simulatorProviderId)
+      expect(paymentSessions[0].data.simulated_outcome).toBe(true)
+
+      const { data: repeatedCollection } = await storeApi.post<{
+        payment_collection: { id: string }
+      }>(
+        "/store/payment-collections",
+        { cart_id: checkout.cartId },
+        { headers: customerHeaders },
+      )
+      expect(repeatedCollection.payment_collection.id).toBe(checkout.paymentCollectionId)
+      const { data: cartPaymentLinks } = await getContainer()
+        .resolve(ContainerRegistrationKeys.QUERY)
+        .graph({
+          entity: "cart_payment_collection",
+          fields: ["payment_collection_id"],
+          filters: { cart_id: checkout.cartId },
+        })
+      expect(cartPaymentLinks).toEqual([
+        { payment_collection_id: checkout.paymentCollectionId },
+      ])
+      await storeApi.post(
+        `/store/payment-collections/${checkout.paymentCollectionId}/payment-sessions`,
+        {
+          provider_id: simulatorProviderId,
+          data: { simulated_outcome: true },
+        },
+        { headers: customerHeaders },
+      )
+      expect(
+        await getPaymentSessions(getContainer(), checkout.paymentCollectionId),
+      ).toHaveLength(1)
 
       const { data: completion } = await storeApi.post<{
         type: string
@@ -282,11 +329,49 @@ medusaIntegrationTestRunner({
       })
 
       const orderId = completion.order.id
+      const query = getContainer().resolve(ContainerRegistrationKeys.QUERY)
+      const { data: orderStates } = await query.graph({
+        entity: "order",
+        fields: [
+          "id",
+          "currency_code",
+          "total",
+          "item_total",
+          "shipping_total",
+        ],
+        filters: { id: orderId },
+      })
+      expect(orderStates).toHaveLength(1)
+      expect(orderStates[0]).toMatchObject({
+        currency_code: "vnd",
+      })
+      expect(Number(orderStates[0].total)).toBe(279000)
+      expect(Number(orderStates[0].item_total)).toBe(249000)
+      expect(Number(orderStates[0].shipping_total)).toBe(30000)
+
       const { data: orderResponse } = await storeApi.get<{
-        order: { id: string; items: unknown[] }
-      }>(`/store/orders/${orderId}`, { headers })
+        order: {
+          id: string
+          items: unknown[]
+          total: number
+          currency_code: string
+          payment_status: string
+          fulfillment_status: string
+          fulfillments: unknown[]
+        }
+      }>(
+        `/store/orders/${orderId}?fields=total,currency_code,items,payment_status,fulfillment_status,fulfillments`,
+        { headers },
+      )
       expect(orderResponse.order.id).toBe(orderId)
       expect(orderResponse.order.items).toHaveLength(1)
+      expect(orderResponse.order).toMatchObject({
+        total: 279000,
+        currency_code: "vnd",
+        fulfillment_status: "not_fulfilled",
+      })
+      expect(orderResponse.order.payment_status).not.toBe("captured")
+      expect(orderResponse.order.fulfillments).toHaveLength(0)
 
       const { data: historyResponse } = await storeApi.get<{
         orders: Array<{ id: string }>
@@ -352,14 +437,14 @@ medusaIntegrationTestRunner({
     it("does not create an order or change inventory when simulated payment fails", async () => {
       const headers = storeHeaders(publishableKey)
       const email = `payment-failure-${Date.now()}@example.test`
-      const checkout = await prepareCheckout(storeApi, headers, email, false)
+      const checkout = await prepareCheckout(storeApi, headers, email, {
+        paymentData: { simulated_outcome: false },
+      })
       const container = getContainer()
-      const paymentSession = await getSimulatorPaymentSession(
-        container,
-        checkout.paymentCollectionId,
-      )
-      expect(paymentSession.provider_id).toBe(simulatorProviderId)
-      expect(paymentSession.data.simulated_outcome).toBe(false)
+      const paymentSessions = await getPaymentSessions(container, checkout.paymentCollectionId)
+      expect(paymentSessions).toHaveLength(1)
+      expect(paymentSessions[0].provider_id).toBe(simulatorProviderId)
+      expect(paymentSessions[0].data.simulated_outcome).toBe(false)
 
       const inventoryBefore = await getInventorySnapshot(container)
       await expect(
@@ -375,7 +460,99 @@ medusaIntegrationTestRunner({
         filters: { cart_id: checkout.cartId },
       })
       expect(orderLinks).toHaveLength(0)
+      const { data: paymentCollections } = await query.graph({
+        entity: "payment_collection",
+        fields: ["status"],
+        filters: { id: checkout.paymentCollectionId },
+      })
+      expect(paymentCollections[0].status).not.toBe("captured")
       expect(await getInventorySnapshot(container)).toEqual(inventoryBefore)
+    })
+
+    it("accepts COD without marking payment collected or order fulfilled", async () => {
+      const headers = storeHeaders(publishableKey)
+      const checkout = await prepareCheckout(
+        storeApi,
+        headers,
+        `cod-${Date.now()}@example.test`,
+        { providerId: "pp_system_default", paymentData: undefined },
+      )
+      const paymentSessions = await getPaymentSessions(
+        getContainer(),
+        checkout.paymentCollectionId,
+      )
+      expect(paymentSessions).toHaveLength(1)
+      expect(paymentSessions[0].provider_id).toBe("pp_system_default")
+
+      const { data: completion } = await storeApi.post<{
+        type: string
+        order: { id: string }
+      }>(`/store/carts/${checkout.cartId}/complete`, {}, { headers })
+      expect(completion.type).toBe("order")
+
+      const query = getContainer().resolve(ContainerRegistrationKeys.QUERY)
+      const { data: paymentCollections } = await query.graph({
+        entity: "payment_collection",
+        fields: ["status", "amount", "currency_code"],
+        filters: { id: checkout.paymentCollectionId },
+      })
+      expect(paymentCollections[0]).toMatchObject({
+        status: "authorized",
+        amount: 279000,
+        currency_code: "vnd",
+      })
+      const { data: orders } = await query.graph({
+        entity: "order",
+        fields: ["id"],
+        filters: { id: completion.order.id },
+      })
+      expect(orders).toHaveLength(1)
+      const { data: orderResponse } = await storeApi.get<{
+        order: {
+          payment_status: string
+          fulfillment_status: string
+          fulfillments: unknown[]
+        }
+      }>(
+        `/store/orders/${completion.order.id}?fields=payment_status,fulfillment_status,fulfillments`,
+        { headers },
+      )
+      expect(orderResponse.order.payment_status).not.toBe("captured")
+      expect(orderResponse.order.fulfillment_status).toBe("not_fulfilled")
+      expect(orderResponse.order.fulfillments).toHaveLength(0)
+    })
+
+    it("rejects malformed simulator data without creating a payment session", async () => {
+      const headers = storeHeaders(publishableKey)
+      const checkout = await prepareCheckout(
+        storeApi,
+        headers,
+        `invalid-payment-${Date.now()}@example.test`,
+        { createPaymentSession: false },
+      )
+      const sensitiveMarker = "simulator-input-must-not-be-echoed"
+      const result = await storeApi
+        .post(
+          `/store/payment-collections/${checkout.paymentCollectionId}/payment-sessions`,
+          {
+            provider_id: simulatorProviderId,
+            data: { simulated_outcome: sensitiveMarker },
+          },
+          { headers },
+        )
+        .then(
+          () => ({ status: 200, body: undefined }),
+          (error: { response?: { status?: number; data?: unknown } }) => ({
+            status: error.response?.status,
+            body: error.response?.data,
+          }),
+        )
+
+      expect(result.status).toBe(400)
+      expect(JSON.stringify(result.body)).not.toContain(sensitiveMarker)
+      expect(
+        await getPaymentSessions(getContainer(), checkout.paymentCollectionId),
+      ).toHaveLength(0)
     })
   },
 })
