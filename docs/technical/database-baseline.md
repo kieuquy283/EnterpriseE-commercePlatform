@@ -6,7 +6,7 @@ ERD v3 và từ điển dưới đây mô tả schema từ model, migration và 
 
 - **Phạm vi** gồm FR-01 đến FR-09 và dữ liệu gợi ý/cá nhân hóa. Dùng [RTM](../03-requirements/requirements-traceability.md) để xác định ca nghiệm thu theo yêu cầu.
 - **Nguồn dữ liệu có thẩm quyền** là module sở hữu bản ghi trên PostgreSQL. Luồng ghi xuyên module đi qua workflow, service và link Medusa. Redis hỗ trợ cache, sự kiện, workflow và khóa. Storefront giữ tham chiếu phiên, giỏ và bản đọc phục vụ hiển thị. Byte ảnh thuộc file provider, còn URL và mô tả sản phẩm thuộc Product. [Hợp đồng dữ liệu/API](../spec/04-data-api.md)
-- **Đơn vị tiền** lấy từ `currency_code` của bản ghi. VND của fixture là số nguyên đồng, ví dụ `279000` biểu thị 279.000 ₫. Order giữ đơn giá lúc mua và dữ liệu tổng hợp của đơn. Payment giữ số tiền đã authorize, capture hoặc refund. [Fixture danh mục](../catalog/DATASET.md) · [Đối soát VND trong test](../../apps/backend/integration-tests/http/checkout-order.spec.ts#L274-L286)
+- **Đơn vị tiền** lấy từ `currency_code` của bản ghi. VND của fixture là số nguyên đồng, ví dụ `279000` biểu thị 279.000 ₫. Order giữ đơn giá lúc mua và dữ liệu tổng hợp của đơn. Payment giữ số tiền đã authorize, capture hoặc refund. [Fixture danh mục](../catalog/DATASET.md) · [Đối soát VND trong test](../../apps/backend/integration-tests/http/checkout-order.spec.ts#L281-L299)
 
 <a id="erd-v3"></a>
 ## ERD v3
@@ -65,7 +65,7 @@ erDiagram
   FULFILLMENT ||--o{ FULFILLMENT_LABEL : "fk fulfillment_id"
 ```
 
-Link biến thể–inventory item giữ `required_quantity`. Mỗi mức tồn đang hoạt động có cặp `inventory_item_id, location_id` duy nhất. `available_quantity` được tính từ `stocked_quantity − reserved_quantity`. Khi checkout tạo reservation cho dòng đơn, `line_item_id` tham chiếu ID `ordli_`. `fulfillment_item` cũng có các tham chiếu dòng và inventory item tùy chọn, còn tracking đi qua `fulfillment_label`. Đối soát giữ chỗ, tồn vật lý và fulfillment theo từng mốc của workflow. [Test checkout hiện có](../../apps/backend/integration-tests/http/checkout-order.spec.ts#L217) · [ADR nhất quán đơn và tồn](../06-architecture/adr/ADR-003-order-inventory-consistency.md)
+Link biến thể–inventory item giữ `required_quantity`. Mỗi mức tồn đang hoạt động có cặp `inventory_item_id, location_id` duy nhất. `available_quantity` được tính từ `stocked_quantity − reserved_quantity`. Khi checkout tạo reservation cho dòng đơn, `line_item_id` tham chiếu ID `ordli_`. `fulfillment_item` cũng có các tham chiếu dòng và inventory item tùy chọn, còn tracking đi qua `fulfillment_label`. Đối soát giữ chỗ, tồn vật lý và fulfillment theo từng mốc của workflow. [Test checkout hiện có](../../apps/backend/integration-tests/http/checkout-order.spec.ts#L372) · [ADR nhất quán đơn và tồn](../06-architecture/adr/ADR-003-order-inventory-consistency.md)
 
 ### Gợi ý và cá nhân hóa
 
@@ -132,7 +132,7 @@ Các link Medusa trong bảng nằm dưới `link-modules/dist/definitions/`. C�
 | --- | --- | --- |
 | Schema đang áp dụng trên database test | Đã đối chiếu mã và package. Phiên rà soát này chưa xác minh database đang chạy. | Trung và Thắng đối chiếu migration đã áp dụng, bảng/link và ràng buộc trên PostgreSQL test riêng. Quân ghi môi trường và SHA vào RTM. |
 | Ranh giới guest và tra cứu đơn · OPEN-USR-001/002 | Schema hỗ trợ Customer tùy chọn ở Cart/Order. Chính sách checkout và xác minh quyền tra đơn đang mở. | Hoàng xác nhận workflow và readback. Quân chạy ca Customer A/B và guest theo chính sách được duyệt. |
-| Checkout, COD và tồn · DATA-03, BE-02/03 | Test hiện có cho simulator thành công/thất bại và hủy trước fulfillment. Cần bằng chứng trên bản tích hợp cho retry, tranh tồn cuối và thu COD. | Hoàng và Trung lưu `order_cart`, Order ID, collection/session, capture nếu có, mức tồn và reservation trước/sau. Quân đối chiếu AT-01/02/03/14/15. |
+| Checkout, COD và tồn · DATA-03, BE-02/03 | Lượt PostgreSQL test 20/11 đạt các ca simulator, hủy trước fulfillment, gửi lại cùng giỏ, tranh tồn 20/5 và capture kỹ thuật COD trên một tiến trình. [Báo cáo và snapshot DATA-03](../report/checkout-reconciliation-2026-11-20.md) | Hoàng và Quân đối chiếu lại trên bản tích hợp, kiểm timeout và xác nhận thu COD theo quy trình Staff. |
 | Quyền Staff và tracking · BE-05/08 | Dữ liệu fulfillment và tracking có model. Quyền ghi thực tế, trạng thái công bố và quy trình thu COD cần duyệt và chạy walkthrough. | Hoàng xác nhận các bước được phép, Quân kiểm allow/deny trực tiếp và đối chiếu trạng thái khách thấy với Order/Fulfillment. [Ma trận quyền](staff-admin-permission-matrix.md) |
 | Dữ liệu thông báo · FR-NOT-01..03, BE-04 | `NotificationIntent` và luồng gửi giao dịch còn là mục tiêu. Kênh, mốc được công bố và vòng đời dữ liệu chờ OPEN-USR-006/009 và OPEN-FUL-001. | Hoàng và Thắng thu bằng chứng provider sandbox, event trùng/sai thứ tự, retry và lỗi cuối. Quân dùng AT-05 để kiểm lỗi gửi không đổi đơn. |
 | Dữ liệu gợi ý và consent | Model/migration và workflow hiện diện. Cấu hình kích hoạt, lượt active, dữ liệu có quyền sử dụng và vòng đời revoke cần bằng chứng theo môi trường. | Trung đối chiếu DATA-06. Hoàng xác nhận epoch và vòng đời dữ liệu dẫn xuất. Quân ghi phạm vi nghiệm thu trong RTM. |

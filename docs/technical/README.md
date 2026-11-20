@@ -11,6 +11,8 @@
 | Công nghệ, ranh giới thành phần/mã và quyết định triển khai | [Kiến trúc](../spec/03-architecture.md) |
 | Quyền sở hữu Medusa, lưu trữ và hợp đồng API cụ thể | [Ánh xạ dữ liệu và API](../spec/04-data-api.md) |
 | Baseline schema Medusa, ERD v3, từ điển và khoảng trống dữ liệu | [DATA-01](database-baseline.md) |
+| Đối soát checkout, thanh toán và tồn kho | [Báo cáo DATA-03](../report/checkout-reconciliation-2026-11-20.md) |
+| Định nghĩa chỉ số đơn hàng, tồn thấp và COD, kèm dữ liệu mẫu | [DATA-04](reporting-data-definitions.md) |
 | Regression auth/API boundary của cart, kèm bằng chứng ngày 18/11/2026 | [Báo cáo BE-01](../report/api-boundary-regression-2026-11-18.md) |
 | Kế hoạch kiểm thử hiệu năng, độ tin cậy, bảo mật và gợi ý | [Kiểm thử kỹ thuật](../spec/05-testing.md) |
 | Bảo mật AWS, phát hành, quay lui, khôi phục, giám sát và chi phí | [Vận hành](../spec/06-operations.md), [hướng dẫn triển khai](../../deploy/RUNBOOK.md) |

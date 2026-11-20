@@ -1,11 +1,13 @@
 import { randomUUID } from "node:crypto"
 import type { MedusaContainer } from "@medusajs/framework/types"
-import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
+import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
 import {
-  createApiKeysWorkflow,
   cancelOrderWorkflow,
+  capturePaymentWorkflow,
+  createApiKeysWorkflow,
   createShippingProfilesWorkflow,
   linkSalesChannelsToApiKeyWorkflow,
+  updateInventoryLevelsWorkflow,
 } from "@medusajs/medusa/core-flows"
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils"
 import seedCommerce from "../../src/scripts/seed-commerce"
@@ -19,7 +21,7 @@ type ApiClient = {
     path: string,
     body: Record<string, unknown>,
     config: RequestConfig,
-  ) => Promise<{ data: T }>
+  ) => Promise<{ data: T; status: number }>
 }
 
 type RequestConfig = {
@@ -34,12 +36,41 @@ function storeHeaders(publishableKey: string, token?: string) {
 }
 
 const simulatorProviderId = "pp_simulator_simulator"
+const codProviderId = "pp_system_default"
+
+type Completion = {
+  type: string
+  order?: { id: string }
+}
+
+async function completeCheckout(api: ApiClient, headers: RequestConfig["headers"], cartId: string) {
+  return api.post<Completion>(`/store/carts/${cartId}/complete`, {}, { headers })
+}
+
+async function attemptCheckout(api: ApiClient, headers: RequestConfig["headers"], cartId: string) {
+  try {
+    const { data, status } = await completeCheckout(api, headers, cartId)
+    return { cartId, status, type: data.type, orderId: data.order?.id }
+  } catch (error) {
+    const { response } = error as {
+      response?: { status: number; data?: { type?: string; message?: string } }
+    }
+    return {
+      cartId,
+      status: response?.status ?? null,
+      type: response?.data?.type,
+      orderId: undefined,
+      insufficientStock: response?.data?.message?.startsWith("Not enough stock available for item ") ?? false,
+    }
+  }
+}
 
 async function prepareCheckout(
   api: ApiClient,
   headers: ReturnType<typeof storeHeaders>,
   email: string,
   simulatedOutcome: boolean,
+  providerId = simulatorProviderId,
 ) {
   const { data: regionResponse } = await api.get<{
     regions: Array<{ id: string; name: string }>
@@ -104,8 +135,10 @@ async function prepareCheckout(
   await api.post(
     `/store/payment-collections/${paymentResponse.payment_collection.id}/payment-sessions`,
     {
-      provider_id: simulatorProviderId,
-      data: { simulated_outcome: simulatedOutcome },
+      provider_id: providerId,
+      ...(providerId === simulatorProviderId
+        ? { data: { simulated_outcome: simulatedOutcome } }
+        : {}),
     },
     { headers },
   )
@@ -132,6 +165,8 @@ async function getSimulatorPaymentSession(container: MedusaContainer, paymentCol
   return paymentSession
 }
 
+type Checkout = Awaited<ReturnType<typeof prepareCheckout>>
+
 async function getInventorySnapshot(container: MedusaContainer) {
   const query = container.resolve(ContainerRegistrationKeys.QUERY)
   const { data: inventoryItems } = await query.graph({
@@ -145,18 +180,138 @@ async function getInventorySnapshot(container: MedusaContainer) {
     throw new Error("Seed inventory item is not available")
   }
 
-  const { data: inventoryLevels } = await query.graph({
-    entity: "inventory_level",
-    fields: ["id", "location_id", "stocked_quantity", "reserved_quantity"],
-    filters: { inventory_item_id: inventoryItem.id },
-  })
+  const inventory = container.resolve(Modules.INVENTORY)
+  const filter = { inventory_item_id: inventoryItem.id }
+  const [levels, reservations] = await Promise.all([
+    inventory.listInventoryLevels(filter, { take: null, order: { id: "ASC" } }),
+    inventory.listReservationItems(filter, { take: null, order: { id: "ASC" } }),
+  ])
+  return {
+    levels: levels.map((level) => ({
+      id: level.id,
+      inventory_item_id: level.inventory_item_id,
+      location_id: level.location_id,
+      stocked_quantity: Number(level.stocked_quantity),
+      reserved_quantity: Number(level.reserved_quantity),
+    })),
+    reservations: reservations.map((reservation) => ({
+      id: reservation.id,
+      location_id: reservation.location_id,
+      line_item_id: reservation.line_item_id,
+      quantity: Number(reservation.quantity),
+    })),
+  }
+}
 
-  return inventoryLevels.map((level) => ({
-    id: level.id,
-    location_id: level.location_id,
-    stocked_quantity: level.stocked_quantity,
-    reserved_quantity: level.reserved_quantity,
-  }))
+async function getCheckoutReadback(container: MedusaContainer, checkouts: Checkout[]) {
+  const query = container.resolve(ContainerRegistrationKeys.QUERY)
+  const order = container.resolve(Modules.ORDER)
+  const payment = container.resolve(Modules.PAYMENT)
+  const collectionIds = checkouts.map(({ paymentCollectionId }) => paymentCollectionId)
+  const [cartLinks, paymentLinks, collections, orders, inventory] = await Promise.all([
+    query.graph({
+      entity: "order_cart",
+      fields: ["cart_id", "order_id"],
+      filters: { cart_id: checkouts.map(({ cartId }) => cartId) },
+    }),
+    query.graph({
+      entity: "order_payment_collection",
+      fields: ["order_id", "payment_collection_id"],
+      filters: { payment_collection_id: collectionIds },
+    }),
+    payment.listPaymentCollections({ id: collectionIds }, {
+      take: null,
+      order: { id: "ASC" },
+      relations: ["payment_sessions", "payments.payment_session", "payments.captures", "payments.refunds"],
+    }),
+    order.listOrders({}, { take: null, order: { id: "ASC" }, relations: ["items"] }),
+    getInventorySnapshot(container),
+  ])
+  const fulfillmentLinks = orders.length
+    ? (await query.graph({
+      entity: "order_fulfillment",
+      fields: ["order_id", "fulfillment_id"],
+      filters: { order_id: orders.map(({ id }) => id) },
+    })).data
+    : []
+
+  return {
+    cartLinks: cartLinks.data.map(({ cart_id, order_id }) => ({ cart_id, order_id }))
+      .sort((left, right) => left.cart_id.localeCompare(right.cart_id)),
+    paymentLinks: paymentLinks.data.map(({ order_id, payment_collection_id }) => ({
+      order_id, payment_collection_id,
+    })).sort((left, right) => left.payment_collection_id.localeCompare(right.payment_collection_id)),
+    orders: orders.map((row) => ({
+      id: row.id,
+      status: row.status,
+      currency_code: row.currency_code,
+      items: row.items?.map(({ id, quantity }) => ({ id, quantity: Number(quantity) })),
+    })),
+    fulfillmentLinks: fulfillmentLinks.map(({ order_id, fulfillment_id }) => ({ order_id, fulfillment_id })),
+    collections: collections.map((collection) => ({
+      id: collection.id,
+      status: collection.status,
+      amount: Number(collection.amount),
+      currency_code: collection.currency_code,
+      authorized_amount: Number(collection.authorized_amount ?? 0),
+      captured_amount: Number(collection.captured_amount ?? 0),
+      sessions: collection.payment_sessions?.map(({ id, status, provider_id }) => ({
+        id, status, provider_id,
+      })) ?? [],
+      payments: collection.payments?.map((row) => ({
+        id: row.id,
+        payment_session_id: row.payment_session?.id,
+        canceled: Boolean(row.canceled_at),
+        captures: row.captures?.map(({ id, amount }) => ({ id, amount: Number(amount) })) ?? [],
+        refunds: row.refunds?.map(({ id, amount }) => ({ id, amount: Number(amount) })) ?? [],
+      })) ?? [],
+    })),
+    ...inventory,
+  }
+}
+
+function recordReadback(scenario: string, evidence: object) {
+  if (process.env.DAYMARK_DATA_03_EVIDENCE === "1") {
+    console.log(`DATA-03 ${JSON.stringify({ scenario, ...evidence })}`)
+  }
+}
+
+type CheckoutReadback = Awaited<ReturnType<typeof getCheckoutReadback>>
+
+function expectAuthorized(
+  collection: CheckoutReadback["collections"][number],
+  providerId = simulatorProviderId,
+) {
+  expect(collection).toMatchObject({
+    status: "authorized",
+    amount: 279000,
+    currency_code: "vnd",
+    authorized_amount: 279000,
+    captured_amount: 0,
+    sessions: [{ provider_id: providerId, status: "authorized" }],
+  })
+  expect(collection.payments).toMatchObject([{
+    payment_session_id: collection.sessions[0].id,
+    canceled: false,
+    captures: [],
+    refunds: [],
+  }])
+}
+
+function expectOrderReservation(readback: CheckoutReadback, checkout: Checkout, orderId: string) {
+  expect(readback.cartLinks.filter(({ cart_id }) => cart_id === checkout.cartId)).toEqual([
+    { cart_id: checkout.cartId, order_id: orderId },
+  ])
+  expect(readback.paymentLinks.filter(({ order_id }) => order_id === orderId)).toEqual([
+    { order_id: orderId, payment_collection_id: checkout.paymentCollectionId },
+  ])
+  const order = readback.orders.find(({ id }) => id === orderId)
+  expect(order).toMatchObject({ status: "pending", currency_code: "vnd", items: [{ quantity: 1 }] })
+  const lineItemId = order?.items?.[0]?.id
+  expect(lineItemId).toBeDefined()
+  expect(readback.reservations.filter(({ line_item_id }) => line_item_id === lineItemId))
+    .toEqual([expect.objectContaining({ location_id: readback.levels[0].location_id, quantity: 1 })])
+  expect(readback.fulfillmentLinks.filter(({ order_id }) => order_id === orderId)).toEqual([])
 }
 
 medusaIntegrationTestRunner({
@@ -261,27 +416,18 @@ medusaIntegrationTestRunner({
       expect(completion.order.id).toBeDefined()
       expect(completion.order.items).toHaveLength(1)
 
-      const inventoryReserved = await getInventorySnapshot(getContainer())
-      expect(inventoryReserved).toEqual(
-        inventoryBefore.map((level) => ({
+      const orderId = completion.order.id
+      const readback = await getCheckoutReadback(getContainer(), [checkout])
+      recordReadback("simulator_success", { inventoryBefore, readback })
+      expect(readback.levels).toEqual(
+        inventoryBefore.levels.map((level) => ({
           ...level,
-          reserved_quantity: Number(level.reserved_quantity) + 1,
+          reserved_quantity: level.reserved_quantity + 1,
         })),
       )
-      const { data: paymentCollections } = await getContainer()
-        .resolve(ContainerRegistrationKeys.QUERY)
-        .graph({
-          entity: "payment_collection",
-          fields: ["status", "amount", "currency_code"],
-          filters: { id: checkout.paymentCollectionId },
-        })
-      expect(paymentCollections[0]).toMatchObject({
-        status: "authorized",
-        amount: 279000,
-        currency_code: "vnd",
-      })
-
-      const orderId = completion.order.id
+      expect(readback.orders).toHaveLength(1)
+      expectOrderReservation(readback, checkout, orderId)
+      expectAuthorized(readback.collections[0])
       const { data: orderResponse } = await storeApi.get<{
         order: { id: string; items: unknown[] }
       }>(`/store/orders/${orderId}`, { headers })
@@ -312,7 +458,19 @@ medusaIntegrationTestRunner({
         orderSignals.filter((row) => row.event_key.startsWith(`order_placed:${orderId}:`)),
       ).toHaveLength(1)
       await cancelOrderWorkflow(getContainer()).run({ input: { order_id: orderId } })
-      expect(await getInventorySnapshot(getContainer())).toEqual(inventoryBefore)
+      const canceled = await getCheckoutReadback(getContainer(), [checkout])
+      recordReadback("cancel_before_fulfillment", { inventoryBefore, readback: canceled })
+      expect(canceled.levels).toEqual(inventoryBefore.levels)
+      expect(canceled.reservations).toEqual(inventoryBefore.reservations)
+      expect(canceled.orders).toMatchObject([{ id: orderId, status: "canceled" }])
+      expect(canceled.cartLinks).toEqual(readback.cartLinks)
+      expect(canceled.paymentLinks).toEqual(readback.paymentLinks)
+      expect(canceled.fulfillmentLinks).toEqual([])
+      expect(canceled.collections).toMatchObject([{
+        id: checkout.paymentCollectionId,
+        captured_amount: 0,
+        payments: [{ id: readback.collections[0].payments[0].id, canceled: true, captures: [] }],
+      }])
       let canceledSignals = await personalization.listRecommendationEvents({
         event_type: "order_canceled",
       })
@@ -362,20 +520,154 @@ medusaIntegrationTestRunner({
       expect(paymentSession.data.simulated_outcome).toBe(false)
 
       const inventoryBefore = await getInventorySnapshot(container)
-      await expect(
-        storeApi.post(`/store/carts/${checkout.cartId}/complete`, {}, { headers }),
-      ).rejects.toMatchObject({
-        response: { status: 400 },
-      })
+      const attempt = await attemptCheckout(storeApi, headers, checkout.cartId)
+      const readback = await getCheckoutReadback(container, [checkout])
+      recordReadback("simulator_decline", { attempt, inventoryBefore, readback })
+      expect(attempt.status).toBe(400)
+      expect(readback.cartLinks).toEqual([])
+      expect(readback.orders).toEqual([])
+      expect(readback.paymentLinks).toEqual([])
+      expect(readback.levels).toEqual(inventoryBefore.levels)
+      expect(readback.reservations).toEqual(inventoryBefore.reservations)
+      expect(readback.collections).toMatchObject([{
+        id: checkout.paymentCollectionId,
+        authorized_amount: 0,
+        captured_amount: 0,
+        sessions: [{ id: paymentSession.id, status: "error" }],
+        payments: [],
+      }])
+    })
 
-      const query = container.resolve(ContainerRegistrationKeys.QUERY)
-      const { data: orderLinks } = await query.graph({
-        entity: "order_cart",
-        fields: ["id"],
-        filters: { cart_id: checkout.cartId },
+    it("reconciles a same-cart retry to a single order, payment, and reservation", async () => {
+      const container = getContainer()
+      const headers = storeHeaders(publishableKey)
+      const checkout = await prepareCheckout(storeApi, headers, "same-cart-retry@example.test", true)
+      const inventoryBefore = await getInventorySnapshot(container)
+      const concurrentAttempts = await Promise.all([
+        attemptCheckout(storeApi, headers, checkout.cartId),
+        attemptCheckout(storeApi, headers, checkout.cartId),
+      ])
+      const first = await getCheckoutReadback(container, [checkout])
+      const retry = await attemptCheckout(storeApi, headers, checkout.cartId)
+      const afterRetry = await getCheckoutReadback(container, [checkout])
+
+      recordReadback("same_cart_retry", { inventoryBefore, concurrentAttempts, first, retry, afterRetry })
+      expect(first.orders).toHaveLength(1)
+      const orderId = first.orders[0].id
+      const successfulAttempts = concurrentAttempts.filter(({ type }) => type === "order")
+      expect(successfulAttempts.length).toBeGreaterThan(0)
+      for (const attempt of concurrentAttempts) {
+        expect(attempt.status === 409 || (attempt.status === 200 && attempt.orderId === orderId)).toBe(true)
+      }
+      expect(retry).toMatchObject({ status: 200, type: "order", orderId })
+      expect(afterRetry).toEqual(first)
+      expectOrderReservation(afterRetry, checkout, orderId)
+      expectAuthorized(afterRetry.collections[0])
+      expect(afterRetry.levels).toEqual(inventoryBefore.levels.map((level) => ({
+        ...level,
+        reserved_quantity: level.reserved_quantity + 1,
+      })))
+      expect(afterRetry.reservations).toHaveLength(inventoryBefore.reservations.length + 1)
+    })
+
+    it("reconciles 20 checkout attempts against five units of stock", async () => {
+      const container = getContainer()
+      const headers = storeHeaders(publishableKey)
+      const stock = await getInventorySnapshot(container)
+      expect(stock.levels).toHaveLength(1)
+      expect(stock.reservations).toEqual([])
+      const level = stock.levels[0]
+      await updateInventoryLevelsWorkflow(container).run({
+        input: {
+          updates: [{
+            id: level.id,
+            inventory_item_id: level.inventory_item_id,
+            location_id: level.location_id,
+            stocked_quantity: 5,
+          }],
+        },
       })
-      expect(orderLinks).toHaveLength(0)
+      const inventoryBefore = await getInventorySnapshot(container)
+      expect(inventoryBefore.levels[0]).toMatchObject({ stocked_quantity: 5, reserved_quantity: 0 })
+
+      const checkouts: Checkout[] = []
+      for (let batchStart = 0; batchStart < 20; batchStart += 5) {
+        const batch = await Promise.all(Array.from({ length: 5 }, (_, index) =>
+          prepareCheckout(storeApi, headers, `last-stock-${batchStart + index}@example.test`, true),
+        ))
+        checkouts.push(...batch)
+      }
       expect(await getInventorySnapshot(container)).toEqual(inventoryBefore)
+
+      const attempts = await Promise.all(checkouts.map(({ cartId }) =>
+        attemptCheckout(storeApi, headers, cartId),
+      ))
+      const readback = await getCheckoutReadback(container, checkouts)
+      recordReadback("last_five_units", { inventoryBefore, attempts, readback })
+
+      const accepted = attempts.filter(({ type }) => type === "order")
+      expect(accepted).toHaveLength(5)
+      expect(new Set(accepted.map(({ orderId }) => orderId)).size).toBe(5)
+      const rejected = attempts.filter(({ type }) => type !== "order")
+      expect(rejected).toHaveLength(15)
+      for (const attempt of rejected) {
+        expect(attempt).toMatchObject({ status: 400, insufficientStock: true })
+      }
+      expect(readback.orders).toHaveLength(5)
+      expect(readback.cartLinks).toHaveLength(5)
+      expect(readback.paymentLinks).toHaveLength(5)
+      expect(readback.reservations).toHaveLength(5)
+      expect(readback.levels).toEqual([{ ...inventoryBefore.levels[0], reserved_quantity: 5 }])
+      expect(readback.collections).toHaveLength(20)
+
+      for (const [index, checkout] of checkouts.entries()) {
+        const attempt = attempts[index]
+        const collection = readback.collections.find(({ id }) => id === checkout.paymentCollectionId)!
+        if (attempt.orderId) {
+          expect(attempt.status).toBe(200)
+          expectOrderReservation(readback, checkout, attempt.orderId)
+          expectAuthorized(collection)
+        } else {
+          expect(readback.cartLinks.some(({ cart_id }) => cart_id === checkout.cartId)).toBe(false)
+          expect(readback.paymentLinks.some(({ payment_collection_id }) =>
+            payment_collection_id === checkout.paymentCollectionId,
+          )).toBe(false)
+          expect(collection).toMatchObject({
+            authorized_amount: 0,
+            captured_amount: 0,
+            sessions: [{ provider_id: simulatorProviderId, status: "pending" }],
+            payments: [],
+          })
+        }
+      }
+    })
+
+    it("separates COD checkout authorization from technical capture", async () => {
+      const container = getContainer()
+      const headers = storeHeaders(publishableKey)
+      const checkout = await prepareCheckout(storeApi, headers, "cod-readback@example.test", true, codProviderId)
+      const inventoryBefore = await getInventorySnapshot(container)
+      const completion = await attemptCheckout(storeApi, headers, checkout.cartId)
+      const authorized = await getCheckoutReadback(container, [checkout])
+      recordReadback("cod_checkout_authorization", { inventoryBefore, completion, readback: authorized })
+      expect(completion).toMatchObject({ status: 200, type: "order", orderId: expect.any(String) })
+      expectOrderReservation(authorized, checkout, completion.orderId!)
+      expectAuthorized(authorized.collections[0], codProviderId)
+
+      const payment = authorized.collections[0].payments[0]
+      await capturePaymentWorkflow(container).run({ input: { payment_id: payment.id } })
+      const captured = await getCheckoutReadback(container, [checkout])
+      recordReadback("cod_technical_capture", { readback: captured })
+      expect(captured.levels).toEqual(authorized.levels)
+      expect(captured.reservations).toEqual(authorized.reservations)
+      expect(captured.orders).toEqual(authorized.orders)
+      expect(captured.fulfillmentLinks).toEqual([])
+      expect(captured.collections).toMatchObject([{
+        id: checkout.paymentCollectionId,
+        status: "completed",
+        captured_amount: 279000,
+        payments: [{ id: payment.id, captures: [{ amount: 279000 }] }],
+      }])
     })
   },
 })
