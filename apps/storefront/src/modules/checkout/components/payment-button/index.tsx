@@ -4,7 +4,7 @@ import { placeOrder } from "@lib/data/cart"
 import { isSupportedCheckoutPaymentProvider } from "@lib/util/checkout-payment"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@modules/common/components/ui"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import ErrorMessage from "../error-message"
 
 export default function PaymentButton({
@@ -15,6 +15,7 @@ export default function PaymentButton({
   "data-testid": string
 }) {
   const [submitting, setSubmitting] = useState(false)
+  const submittingRef = useRef(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const paymentSession = cart.payment_collection?.payment_sessions?.find(
     (session) =>
@@ -29,7 +30,8 @@ export default function PaymentButton({
   )
 
   const handlePayment = async () => {
-    if (!ready || submitting) return
+    if (!ready || submittingRef.current) return
+    submittingRef.current = true
     setSubmitting(true)
     setErrorMessage(null)
     try {
@@ -39,6 +41,7 @@ export default function PaymentButton({
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : String(error))
     } finally {
+      submittingRef.current = false
       setSubmitting(false)
     }
   }

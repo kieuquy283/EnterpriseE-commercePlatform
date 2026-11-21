@@ -2,6 +2,19 @@ import { test, expect } from "@playwright/test"
 import { DEFAULT_PRODUCT_HANDLE, DEFAULT_PRODUCT_TITLE } from "./test-helpers"
 
 test.describe("E2E-01: Catalog and Product Detail Page", () => {
+  test("finds Vietnamese category names with or without accents and explains empty results", async ({
+    page,
+  }) => {
+    for (const query of ["áo sơ mi", "ao so mi"]) {
+      await page.goto(`/vn/store?q=${encodeURIComponent(query)}`)
+      await expect(page.getByTestId("products-list").locator("li").first()).toBeVisible()
+    }
+
+    await page.goto("/vn/store?q=xyzabc")
+    await expect(page.getByText("Không tìm thấy sản phẩm phù hợp với từ khóa")).toBeVisible()
+    await expect(page.getByRole("link", { name: "Xem tất cả sản phẩm" })).toBeVisible()
+  })
+
   test("displays catalog products and allows viewing and selecting product variants", async ({
     page,
   }) => {

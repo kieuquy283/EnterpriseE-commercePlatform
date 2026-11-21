@@ -3,7 +3,7 @@
 import { sdk } from "@lib/config"
 import medusaError from "@lib/util/medusa-error"
 import { HttpTypes } from "@medusajs/types"
-import { revalidateTag } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import { redirect } from "next/navigation"
 import {
   getAuthHeaders,
@@ -33,10 +33,6 @@ export async function retrieveCart(cartId?: string, fields?: string) {
     ...(await getAuthHeaders()),
   }
 
-  const next = {
-    ...(await getCacheOptions("carts")),
-  }
-
   return await sdk.client
     .fetch<HttpTypes.StoreCartResponse>(`/store/carts/${id}`, {
       method: "GET",
@@ -44,8 +40,7 @@ export async function retrieveCart(cartId?: string, fields?: string) {
         fields,
       },
       headers,
-      next,
-      cache: "force-cache",
+      cache: "no-store",
     })
     .then(({ cart }: { cart: HttpTypes.StoreCart }) => cart)
     .catch(() => null)
@@ -65,11 +60,7 @@ export async function getOrSetCart(countryCode: string) {
   }
 
   if (!cart) {
-    const cartResp = await sdk.store.cart.create(
-      { region_id: region.id },
-      {},
-      headers
-    )
+    const cartResp = await sdk.store.cart.create({ region_id: region.id }, {}, headers)
     cart = cartResp.cart
 
     await setCartId(cart.id)
@@ -143,7 +134,7 @@ export async function addToCart({
         quantity,
       },
       {},
-      headers
+      headers,
     )
     .then(async () => {
       const cartCacheTag = await getCacheTag("carts")
@@ -151,17 +142,12 @@ export async function addToCart({
 
       const fulfillmentCacheTag = await getCacheTag("fulfillment")
       revalidateTag(fulfillmentCacheTag)
+      revalidatePath(`/${countryCode}`, "layout")
     })
     .catch(medusaError)
 }
 
-export async function updateLineItem({
-  lineId,
-  quantity,
-}: {
-  lineId: string
-  quantity: number
-}) {
+export async function updateLineItem({ lineId, quantity }: { lineId: string; quantity: number }) {
   if (!lineId) {
     throw new Error("Missing lineItem ID when updating line item")
   }
@@ -237,7 +223,7 @@ export async function setShippingMethod({
 
 export async function initiatePaymentSession(
   cart: HttpTypes.StoreCart,
-  data: HttpTypes.StoreInitializePaymentSession
+  data: HttpTypes.StoreInitializePaymentSession,
 ) {
   const headers = {
     ...(await getAuthHeaders()),
@@ -276,10 +262,7 @@ export async function applyPromotions(codes: string[]) {
     .catch(medusaError)
 }
 
-export async function submitPromotionForm(
-  _currentState: unknown,
-  formData: FormData
-) {
+export async function submitPromotionForm(_currentState: unknown, formData: FormData) {
   const code = formData.get("code") as string
   try {
     await applyPromotions([code])
@@ -300,6 +283,16 @@ export async function setAddresses(_currentState: unknown, formData: FormData) {
     }
 
     const field = (name: string) => String(formData.get(name) || "")
+    if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field("email")) ||
+      !field("shipping_address.first_name").trim() ||
+      !field("shipping_address.last_name").trim() ||
+      !field("shipping_address.address_1").trim() ||
+      !field("shipping_address.city").trim() ||
+      !/^0\d{9}$/.test(field("shipping_address.phone"))
+    ) {
+      return "Vui lòng nhập đầy đủ email, tên, địa chỉ và số điện thoại hợp lệ."
+    }
     const data: HttpTypes.StoreUpdateCart = {
       shipping_address: {
         first_name: field("shipping_address.first_name"),
@@ -337,9 +330,7 @@ export async function setAddresses(_currentState: unknown, formData: FormData) {
     return e instanceof Error ? e.message : String(e)
   }
 
-  redirect(
-    `/${formData.get("shipping_address.country_code")}/checkout?step=delivery`
-  )
+  redirect(`/${formData.get("shipping_address.country_code")}/checkout?step=delivery`)
 }
 
 /**
@@ -366,8 +357,7 @@ export async function placeOrder(cartId?: string) {
     .catch(medusaError)
 
   if (cartRes?.type === "order") {
-    const countryCode =
-      cartRes.order.shipping_address?.country_code?.toLowerCase()
+    const countryCode = cartRes.order.shipping_address?.country_code?.toLowerCase()
 
     const orderCacheTag = await getCacheTag("orders")
     revalidateTag(orderCacheTag)
@@ -376,7 +366,9 @@ export async function placeOrder(cartId?: string) {
     redirect(`/${countryCode}/order/${cartRes?.order.id}/confirmed`)
   }
 
-  throw new Error(cartRes?.error?.message || "Unable to place this order. Please review your cart and try again.")
+  throw new Error(
+    cartRes?.error?.message || "Unable to place this order. Please review your cart and try again.",
+  )
 }
 
 /**

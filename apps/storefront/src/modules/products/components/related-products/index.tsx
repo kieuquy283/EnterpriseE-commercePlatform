@@ -20,10 +20,6 @@ type SectionProps = {
 }
 
 function ProductRow({ id, heading, note, products, region, testId }: SectionProps) {
-  if (!products.length) {
-    return null
-  }
-
   return (
     <section aria-labelledby={id} data-testid={testId}>
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -32,18 +28,24 @@ function ProductRow({ id, heading, note, products, region, testId }: SectionProp
             {heading}
           </h2>
         </div>
-        <LocalizedClientLink href="/store" className="dm-link text-dm-small">
-          Tất cả sản phẩm
-        </LocalizedClientLink>
       </div>
       {note && <p className="dm-small mt-3 max-w-dm-prose text-ink-muted">{note}</p>}
-      <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 small:grid-cols-3 medium:grid-cols-4 small:gap-x-6">
-        {products.map((item) => (
-          <li key={item.id}>
-            <Product region={region} product={item} />
-          </li>
-        ))}
-      </ul>
+      {products.length ? (
+        <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 small:grid-cols-3 medium:grid-cols-4 small:gap-x-6">
+          {products.map((item) => (
+            <li key={item.id}>
+              <Product region={region} product={item} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-6 text-dm-small text-ink-muted">
+          Chưa có sản phẩm phù hợp lúc này.{" "}
+          <LocalizedClientLink href="/store" className="dm-link">
+            Xem toàn bộ cửa hàng
+          </LocalizedClientLink>
+        </p>
+      )}
     </section>
   )
 }
@@ -63,7 +65,7 @@ export default async function RelatedProducts({ product, countryCode }: RelatedP
         seen.add(item.id)
         return true
       })
-      .slice(0, 4)
+      .slice(0, 6)
 
   // Suggestions are an enhancement: any failure falls through to the catalog
   // query below so the page still offers somewhere to go next.
@@ -101,18 +103,24 @@ export default async function RelatedProducts({ product, countryCode }: RelatedP
     queryParams.collection_id = [product.collection_id]
   }
 
-  const products = await listProducts({
+  let products = await listProducts({
     queryParams,
     countryCode,
   })
     .then(({ response }) => uniqueProducts(response.products))
     .catch(() => [])
 
+  if (!products.length && product.collection_id) {
+    products = await listProducts({ countryCode, queryParams: { is_giftcard: false } })
+      .then(({ response }) => uniqueProducts(response.products))
+      .catch(() => [])
+  }
+
   return (
     <ProductRow
       id="related-products-heading"
       testId="related-products"
-      heading="Cùng bộ sưu tập"
+      heading="Mới trong mùa này"
       products={products}
       region={region}
     />

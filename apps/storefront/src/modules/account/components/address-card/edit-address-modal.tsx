@@ -1,6 +1,10 @@
 "use client"
 
-import { deleteCustomerAddress, updateCustomerAddress } from "@lib/data/customer"
+import {
+  deleteCustomerAddress,
+  setDefaultShippingAddress,
+  updateCustomerAddress,
+} from "@lib/data/customer"
 import useToggleState from "@lib/hooks/use-toggle-state"
 import { PencilSquare as Edit, Trash } from "@medusajs/icons"
 import { HttpTypes } from "@medusajs/types"
@@ -10,6 +14,7 @@ import Modal from "@modules/common/components/modal"
 import { Alert, Button, Heading, Input, Text, clx } from "@modules/common/components/ui"
 import Spinner from "@modules/common/icons/spinner"
 import React, { useCallback, useActionState, useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 type EditAddressProps = {
   region: HttpTypes.StoreRegion
@@ -19,6 +24,9 @@ type EditAddressProps = {
 
 const EditAddress: React.FC<EditAddressProps> = ({ region, address, isActive = false }) => {
   const [removing, setRemoving] = useState(false)
+  const [settingDefault, setSettingDefault] = useState(false)
+  const [actionError, setActionError] = useState<string | null>(null)
+  const router = useRouter()
   const [successState, setSuccessState] = useState(false)
   const { state, open, close: closeModal } = useToggleState(false)
 
@@ -46,8 +54,28 @@ const EditAddress: React.FC<EditAddressProps> = ({ region, address, isActive = f
 
   const removeAddress = async () => {
     setRemoving(true)
-    await deleteCustomerAddress(address.id)
-    setRemoving(false)
+    setActionError(null)
+    try {
+      await deleteCustomerAddress(address.id)
+      router.refresh()
+    } catch {
+      setActionError("Không thể xóa địa chỉ. Vui lòng thử lại.")
+    } finally {
+      setRemoving(false)
+    }
+  }
+
+  const makeDefault = async () => {
+    setSettingDefault(true)
+    setActionError(null)
+    try {
+      await setDefaultShippingAddress(address.id)
+      router.refresh()
+    } catch {
+      setActionError("Không thể chọn địa chỉ mặc định. Vui lòng thử lại.")
+    } finally {
+      setSettingDefault(false)
+    }
   }
 
   return (
@@ -62,6 +90,9 @@ const EditAddress: React.FC<EditAddressProps> = ({ region, address, isActive = f
         data-testid="address-container"
       >
         <div className="flex flex-col gap-y-1">
+          {address.is_default_shipping && (
+            <span className="dm-caption text-accent">Địa chỉ giao hàng mặc định</span>
+          )}
           <Heading
             level="h3"
             className="text-left text-dm-small font-semibold text-ink"
@@ -89,6 +120,17 @@ const EditAddress: React.FC<EditAddressProps> = ({ region, address, isActive = f
           </Text>
         </div>
         <div className="flex items-center gap-x-4 border-t border-line pt-3">
+          {!address.is_default_shipping && (
+            <button
+              type="button"
+              className="dm-action-link"
+              onClick={makeDefault}
+              disabled={settingDefault}
+              data-testid="address-default-button"
+            >
+              {settingDefault ? "Đang chọn" : "Đặt mặc định"}
+            </button>
+          )}
           <button
             type="button"
             className="dm-action-link"
@@ -110,6 +152,7 @@ const EditAddress: React.FC<EditAddressProps> = ({ region, address, isActive = f
             Xoá
           </button>
         </div>
+        {actionError && <Alert tone="error">{actionError}</Alert>}
       </div>
 
       <Modal isOpen={state} close={close} data-testid="edit-address-modal">
@@ -158,9 +201,10 @@ const EditAddress: React.FC<EditAddressProps> = ({ region, address, isActive = f
                 </div>
                 <div className="xsmall:col-span-2">
                   <Input
-                    label="Căn hộ, số tầng (không bắt buộc)"
+                    label="Phường / Xã"
                     name="address_2"
                     autoComplete="address-line2"
+                    required
                     defaultValue={address.address_2 || undefined}
                     data-testid="address-2-input"
                   />
@@ -170,11 +214,13 @@ const EditAddress: React.FC<EditAddressProps> = ({ region, address, isActive = f
                   name="postal_code"
                   autoComplete="postal-code"
                   required
+                  pattern="[0-9]{6}"
+                  title="Nhập đúng 6 chữ số."
                   defaultValue={address.postal_code || undefined}
                   data-testid="postal-code-input"
                 />
                 <Input
-                  label="Tỉnh / Thành phố"
+                  label="Quận / Huyện"
                   name="city"
                   autoComplete="address-level2"
                   required
@@ -182,9 +228,10 @@ const EditAddress: React.FC<EditAddressProps> = ({ region, address, isActive = f
                   data-testid="city-input"
                 />
                 <Input
-                  label="Quận / Huyện"
+                  label="Tỉnh / Thành phố"
                   name="province"
                   autoComplete="address-level1"
+                  required
                   defaultValue={address.province || undefined}
                   data-testid="state-input"
                 />
@@ -202,6 +249,7 @@ const EditAddress: React.FC<EditAddressProps> = ({ region, address, isActive = f
                     name="phone"
                     type="tel"
                     autoComplete="tel"
+                    pattern="0[0-9]{9}"
                     defaultValue={address.phone || undefined}
                     data-testid="phone-input"
                   />

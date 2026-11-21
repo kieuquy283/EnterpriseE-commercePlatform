@@ -76,9 +76,9 @@ const OrderCard = ({ order }: OrderCardProps) => {
             </div>
           )
         })}
-        {numberOfProducts > 4 && (
+        {numberOfProducts > 3 && (
           <div className="flex h-full flex-col items-center justify-center text-dm-caption text-ink-faint">
-            <span className="tabular-nums">+ {numberOfLines - 4}</span>
+            <span className="tabular-nums">+ {numberOfProducts - 3}</span>
             <span>món khác</span>
           </div>
         )}
