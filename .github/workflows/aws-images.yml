@@ -93,6 +93,44 @@ jobs:
           build-args: |
             NEXT_PUBLIC_MEDUSA_BACKEND_URL=${{ inputs.api_url }}
             NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=${{ inputs.publishable_key }}
+      - name: Enforce ECR image findings before approving release references
+        env:
+          BACKEND_REPO: ${{ steps.repos.outputs.backend }}
+          STOREFRONT_REPO: ${{ steps.repos.outputs.storefront }}
+          BACKEND_DIGEST: ${{ steps.backend.outputs.digest }}
+          STOREFRONT_DIGEST: ${{ steps.storefront.outputs.digest }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib, subprocess
+          from deploy.cloudformation.manage import validate_image_scan
+          output = pathlib.Path('ci-evidence')
+          output.mkdir(exist_ok=True)
+          blocked = []
+          scanned = 0
+          for name in ['BACKEND', 'STOREFRONT']:
+              digest = os.environ[name + '_DIGEST']
+              if not digest:
+                  continue
+              scanned += 1
+              repo = os.environ[name + '_REPO'].split('/', 1)[1]
+              args = ['--repository-name', repo, '--image-id', 'imageDigest=' + digest]
+              subprocess.run(['aws', 'ecr', 'wait', 'image-scan-complete', *args], check=True)
+              report = json.loads(subprocess.check_output(
+                  ['aws', 'ecr', 'describe-image-scan-findings', *args, '--output', 'json']))
+              (output / (name.lower() + '-ecr-scan.json')).write_text(json.dumps(report, indent=2))
+              try:
+                  validate_image_scan(report)
+              except RuntimeError as error:
+                  blocked.append(name + ': ' + str(error))
+          if not scanned or blocked:
+              raise SystemExit('Image release blocked: ' + ', '.join(blocked or ['no scans']))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ecr-image-security-${{ github.sha }}-${{ github.run_attempt }}
+          path: ci-evidence/*-ecr-scan.json
+          retention-days: 7
       - name: Record immutable release references
         env:
           BACKEND_REPO: ${{ steps.repos.outputs.backend }}

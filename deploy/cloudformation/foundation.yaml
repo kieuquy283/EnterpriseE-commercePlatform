@@ -440,6 +440,7 @@ Resources:
                   - ecr:PutImage
                   - ecr:BatchGetImage
                   - ecr:GetDownloadUrlForLayer
+                  - ecr:DescribeImageScanFindings
                 Resource:
                   - Fn::GetAtt:
                       - BackendRepository
