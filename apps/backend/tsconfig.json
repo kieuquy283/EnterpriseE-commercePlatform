@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "target": "ES2021",
+    "target": "ES2022",
+    "strict": false,
+    "types": ["node", "jest"],
     "esModuleInterop": true,
     "module": "Node16",
     "moduleResolution": "Node16",
@@ -22,15 +24,6 @@
   "ts-node": {
     "swc": true
   },
-  "include": [
-    "**/*",
-    ".medusa/types/*"
-  ],
-  "exclude": [
-    "node_modules",
-    ".medusa/server",
-    ".medusa/admin",
-    ".cache",
-    "eslint.config.*",
-  ]
+  "include": ["**/*", ".medusa/types/*"],
+  "exclude": ["node_modules", ".medusa/server", ".medusa/admin", ".cache", "eslint.config.*"]
 }

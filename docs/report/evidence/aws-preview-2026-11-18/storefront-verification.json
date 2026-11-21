@@ -1,0 +1,20 @@
+[
+  {
+    "path": "/vn",
+    "status": 200,
+    "expected_text": "DAYMARK",
+    "passed": true
+  },
+  {
+    "path": "/vn/store",
+    "status": 200,
+    "expected_text": "DAYMARK",
+    "passed": true
+  },
+  {
+    "path": "/vn/products/dm-tee-core",
+    "status": 200,
+    "expected_text": "Core Cotton Tee",
+    "passed": true
+  }
+]

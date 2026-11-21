@@ -1,0 +1,13 @@
+{
+  "utc": "2026-11-18T17:40:14.793093+00:00",
+  "target": "existing AWS preview",
+  "users_returned": 1,
+  "users_total": 1,
+  "staff_marked": 0,
+  "api_keys_by_type": {
+    "publishable": 2,
+    "secret": 0
+  },
+  "api_keys_total": 2,
+  "no_user_or_key_values_persisted": true
+}

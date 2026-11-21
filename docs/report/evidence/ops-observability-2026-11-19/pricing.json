@@ -1,0 +1,190 @@
+[
+  {
+    "service": "AmazonECS",
+    "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonECS/current/ap-southeast-2/index.json",
+    "publication_date": "2026-11-11T23:46:23Z",
+    "prices": [
+      {
+        "usage_type": "APS2-Fargate-GB-Hours",
+        "family": "Compute",
+        "description": "AWS Fargate - Memory - Asia Pacific (Sydney)",
+        "unit": "hours",
+        "usd": "0.0053200000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-Fargate-vCPU-Hours:perCPU",
+        "family": "Compute",
+        "description": "AWS Fargate - vCPU - Asia Pacific (Sydney)",
+        "unit": "hours",
+        "usd": "0.0485600000",
+        "begin": "0"
+      }
+    ]
+  },
+  {
+    "service": "AWSELB",
+    "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AWSELB/current/ap-southeast-2/index.json",
+    "publication_date": "2026-11-11T15:36:21Z",
+    "prices": [
+      {
+        "usage_type": "APS2-ReservedLCUUsage",
+        "family": "Load Balancer-Network",
+        "description": "$0.006 per reserved Network load balancer capacity unit-hour",
+        "unit": "ReservedLCU-Hr",
+        "usd": "0.0060000000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-LCUUsage",
+        "family": "Load Balancer-Gateway",
+        "description": "$0.0040 per used Gateway load balancer capacity unit-hour (or partial hour) in Asia Pacific (Sydney)",
+        "unit": "LCU-Hrs",
+        "usd": "0.0040000000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-Outposts-LCUUsage",
+        "family": "Load Balancer-Application",
+        "description": "$0.0 per LCU-Hrs for Outposts-LCUUsage:LoadBalancing:Application in Asia Pacific (Sydney)",
+        "unit": "LCU-Hrs",
+        "usd": "0.0000000000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-LoadBalancerUsage",
+        "family": "Load Balancer-Application",
+        "description": "$0.0252 per Application LoadBalancer-hour (or partial hour)",
+        "unit": "Hrs",
+        "usd": "0.0252000000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-ReservedLCUUsage",
+        "family": "Load Balancer-Application",
+        "description": "$0.008 per reserved Application load balancer capacity unit-hour",
+        "unit": "ReservedLCU-Hr",
+        "usd": "0.0080000000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-LoadBalancerUsage",
+        "family": "Load Balancer-Network",
+        "description": "$0.0252 per Network LoadBalancer-hour (or partial hour)",
+        "unit": "Hrs",
+        "usd": "0.0252000000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-ReservedLCUUsage",
+        "family": "Load Balancer-Gateway",
+        "description": "$0.004 per ReservedLCU-Hr gateway load balancer capacity unit-hour",
+        "unit": "ReservedLCU-Hr",
+        "usd": "0.0040000000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-TS-LoadBalancerUsage",
+        "family": "Load Balancer-Application",
+        "description": "$0.0056 per associated Application load balancer Trust Store unit-hour ",
+        "unit": "Hrs",
+        "usd": "0.0056000000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-Outposts-LoadBalancerUsage",
+        "family": "Load Balancer-Application",
+        "description": "$0.0252 per Hrs for Outposts-LoadBalancerUsage:LoadBalancing:Application in Asia Pacific (Sydney)",
+        "unit": "Hrs",
+        "usd": "0.0252000000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-LoadBalancerUsage",
+        "family": "Load Balancer-Gateway",
+        "description": "$0.0140 per Gateway LoadBalancer-hour (or partial hour) in Asia Pacific (Sydney)",
+        "unit": "Hrs",
+        "usd": "0.0140000000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-LCUUsage",
+        "family": "Load Balancer-Network",
+        "description": "$0.006 per used Network load balancer capacity unit-hour (or partial hour)",
+        "unit": "LCU-Hrs",
+        "usd": "0.0060000000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-LoadBalancerUsage",
+        "family": "Load Balancer",
+        "description": "$0.028 per LoadBalancer-hour (or partial hour)",
+        "unit": "Hrs",
+        "usd": "0.0280000000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-LCUUsage",
+        "family": "Load Balancer-Application",
+        "description": "$0.008 per used Application load balancer capacity unit-hour (or partial hour)",
+        "unit": "LCU-Hrs",
+        "usd": "0.0080000000",
+        "begin": "0"
+      }
+    ]
+  },
+  {
+    "service": "AmazonRDS",
+    "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonRDS/current/ap-southeast-2/index.json",
+    "publication_date": "2026-11-17T22:55:03Z",
+    "prices": [
+      {
+        "usage_type": "APS2-RDS:GP3-Storage",
+        "family": "Database Storage",
+        "description": "$0.138 per GB-month of provisioned GP3 storage running PostgreSQL",
+        "unit": "GB-Mo",
+        "usd": "0.1380000000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-InstanceUsage:db.t4g.micro",
+        "family": "Database Instance",
+        "description": "$ 0.025 per RDS db.t4g.micro Single-AZ instance hour (or partial hour) running PostgreSQL",
+        "unit": "Hrs",
+        "usd": "0.0250000000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-UnusedBox:db.t4g.micro",
+        "family": "Database Instance",
+        "description": "$ 0.025 per RDS db.t4g.micro Single-AZ unused capacity reservation hour (or partial hour) for PostgreSQL",
+        "unit": "Hrs",
+        "usd": "0.0250000000",
+        "begin": "0"
+      }
+    ]
+  },
+  {
+    "service": "AmazonEC2",
+    "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonEC2/current/ap-southeast-2/index.json",
+    "publication_date": "2026-11-18T02:04:24Z",
+    "prices": [
+      {
+        "usage_type": "APS2-BoxUsage:t4g.micro",
+        "family": "Compute Instance",
+        "description": "$0.0106 per On Demand Linux t4g.micro Instance Hour",
+        "unit": "Hrs",
+        "usd": "0.0106000000",
+        "begin": "0"
+      },
+      {
+        "usage_type": "APS2-EBS:VolumeUsage.gp3",
+        "family": "Storage",
+        "description": "$0.096 per GB-month of General Purpose (gp3) provisioned storage - Asia Pacific (Sydney)",
+        "unit": "GB-Mo",
+        "usd": "0.0960000000",
+        "begin": "0"
+      }
+    ]
+  }
+]

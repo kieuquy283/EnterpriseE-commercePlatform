@@ -115,6 +115,37 @@ class ManagementTests(unittest.TestCase):
                 manage.start(4)
         start_data.assert_not_called()
 
+    def test_image_findings_block_before_any_compute_or_lease_change(self):
+        with patch.object(manage, "outputs", return_value={}), \
+             patch.object(manage, "verify_release_images", side_effect=RuntimeError("Image has unresolved HIGH findings")), \
+             patch.object(manage, "start_data") as start_data, patch.object(manage, "scaling") as scaling:
+            with self.assertRaisesRegex(RuntimeError, "HIGH"):
+                manage.start(2)
+        start_data.assert_not_called()
+        scaling.assert_not_called()
+
+    def test_release_scan_uses_stack_digest_and_foundation_repository(self):
+        repository = "123.dkr.ecr.ap-southeast-2.amazonaws.com/backend"
+        digest = "sha256:" + "a" * 64
+        parameters = {"Parameters": [{"ParameterKey": "BackendImage", "ParameterValue": repository + "@" + digest}]}
+        clean = {"imageScanStatus": {"status": "COMPLETE"}, "imageScanFindings": {"findingSeverityCounts": {}}}
+        with patch.object(manage, "stack", return_value=parameters), \
+             patch.object(manage, "outputs", return_value={"BackendRepositoryUri": repository}), \
+             patch.object(manage, "aws", return_value=clean) as aws:
+            manage.verify_release_images()
+        self.assertIn("imageDigest=" + digest, aws.call_args.args)
+        self.assertIn("backend", aws.call_args.args)
+
+    def test_mutable_release_reference_cannot_start(self):
+        repository = "123.dkr.ecr.ap-southeast-2.amazonaws.com/backend"
+        parameters = {"Parameters": [{"ParameterKey": "BackendImage", "ParameterValue": repository + ":latest"}]}
+        with patch.object(manage, "stack", return_value=parameters), \
+             patch.object(manage, "outputs", return_value={"BackendRepositoryUri": repository}), \
+             patch.object(manage, "aws") as aws:
+            with self.assertRaisesRegex(RuntimeError, "immutable"):
+                manage.verify_release_images()
+        aws.assert_not_called()
+
     def test_zero_hour_start_is_rejected(self):
         with patch.object(manage, "aws") as aws:
             with self.assertRaises(ValueError):

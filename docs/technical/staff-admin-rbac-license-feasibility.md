@@ -55,3 +55,13 @@ Cho tới khi có bằng chứng, trạng thái entitlement vẫn **unverified**
 - [Medusa RBAC Module](https://docs.medusajs.com/resources/enterprise/rbac)
 - [Medusa RBAC Concepts](https://docs.medusajs.com/resources/enterprise/rbac/concepts)
 - [Medusa RBAC Scopes](https://docs.medusajs.com/resources/enterprise/rbac/scopes)
+
+## 6. Ranh giới không dùng license
+
+Chính sách NO-GO ở trên được triển khai bằng marker `User.metadata.daymark_admin_access = "blocked_staff"` và kiểm tra User service Medusa trên từng request `/admin*` đã xác thực bằng user. Marker tồn tại với giá trị không nhận diện cũng bị từ chối. Không tin role trong JWT, header hay metadata do đăng ký gửi lên; JWT/phiên cũ không bỏ qua việc đọc lại trạng thái user. Customer và user chưa liên kết vẫn chịu middleware xác thực chuẩn của Medusa.
+
+`createBlockedStaffWorkflow` là điểm gọi backend tin cậy, không có route công khai. Workflow chỉ tạo user mới đã bị chặn, kiểm tra auth identity chưa liên kết và khớp email trước khi gắn identity bằng bước chuẩn Medusa. Nó không chuyển Admin hiện hữu thành Staff hoặc đặt lại thông tin đăng nhập. Không dùng invite Admin thông thường để cấp Staff: invite đó tạo user Admin không có marker. Bootstrap Admin không đổi.
+
+Đây là ranh giới chặn toàn bộ Admin API cho Staff được provision đúng workflow, không phải RBAC phân quyền chi tiết. Trang `/app` là shell công khai của Medusa; tải được tài sản tĩnh không cấp quyền API. Không công bố restricted Staff surface hoặc nghiệm thu lifecycle Staff. Admin không có marker và secret API key vẫn giữ semantics chuẩn; cần kiểm kê tài khoản/các khóa đã cấp trước khi phân loại Staff, không coi marker là cơ chế thu hồi khóa bí mật đã bị sao chép. Admin còn có quyền sửa metadata user qua API chuẩn; chỉ người quản trị tin cậy được giữ quyền Admin rộng. Không suy ra các ô H/D trong ma trận đã được enforce cho Admin.
+
+TODO(impl): Hoàn thiện provisioning/revocation Staff với kiểm kê user/identity/secret key và surface giới hạn theo assignment — ranh giới chặn chưa triển khai luồng công việc nhân viên; BE-08, PERM-004/005.

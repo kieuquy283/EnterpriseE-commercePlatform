@@ -1,13 +1,10 @@
-import { ShoppingBag } from "@medusajs/icons"
-import { Suspense } from "react"
-
 import { listCategories } from "@lib/data/categories"
 import { listCollections } from "@lib/data/collections"
 import { listRegions } from "@lib/data/regions"
 import { HttpTypes } from "@medusajs/types"
 import BrandLogo from "@modules/common/components/brand-logo"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import CartButton from "@modules/layout/components/cart-button"
+import CartDropdown from "@modules/layout/components/cart-dropdown"
 import Search from "@modules/layout/components/search"
 import SideMenu from "@modules/layout/components/side-menu"
 
@@ -60,7 +57,7 @@ async function collectionLinks(): Promise<{ label: string; href: string }[]> {
   }
 }
 
-export default async function Nav() {
+export default async function Nav({ cart }: { cart: HttpTypes.StoreCart | null }) {
   const regions: HttpTypes.StoreRegion[] = await listRegions()
   const [categories, collections] = await Promise.all([primaryLinks(), collectionLinks()])
 
@@ -121,23 +118,7 @@ export default async function Nav() {
                 </li>
               </ul>
               <Search />
-              <Suspense
-                fallback={
-                  <LocalizedClientLink
-                    className="dm-nav-link uppercase"
-                    style={{ letterSpacing: "0.08em" }}
-                    href="/cart"
-                    data-testid="nav-cart-link"
-                  >
-                    <span className="hidden small:inline">Giỏ hàng (0)</span>
-                    <span className="inline-flex items-center gap-1.5 small:hidden">
-                      <ShoppingBag />0
-                    </span>
-                  </LocalizedClientLink>
-                }
-              >
-                <CartButton />
-              </Suspense>
+              <CartDropdown cart={cart} />
             </div>
           </nav>
         </header>

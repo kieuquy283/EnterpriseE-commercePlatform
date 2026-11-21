@@ -1,0 +1,40 @@
+{
+  "source": "6f796d11867cf6ee537ee2beaa10b81285257482",
+  "images": {
+    "backend": "695496430984.dkr.ecr.ap-southeast-2.amazonaws.com/commerce-foundation-backendrepository-5whzaxxdofo6@sha256:4fe732c353bad47be073b5cc8b3c9aa2f05d91a138a7578a48c1674078795df6",
+    "storefront": "695496430984.dkr.ecr.ap-southeast-2.amazonaws.com/commerce-foundation-storefrontrepository-tvt82ngmbqnk@sha256:32d6d04665a084ba21994600924031c7a941bd7cc2b7f351a1b6e93bd66c8b82"
+  },
+  "scans": {
+    "backend": {
+      "status": "COMPLETE",
+      "counts": {},
+      "completedAt": "2026-11-21T20:07:25+07:00",
+      "vulnerabilitySourceUpdatedAt": "2026-11-21T20:07:25+07:00"
+    },
+    "storefront": {
+      "status": "COMPLETE",
+      "counts": {},
+      "completedAt": "2026-11-21T20:29:03+07:00",
+      "vulnerabilitySourceUpdatedAt": "2026-11-21T20:29:03+07:00"
+    }
+  },
+  "ci": {
+    "run": 44907077379,
+    "head": "6f796d11867cf6ee537ee2beaa10b81285257482",
+    "checks": "7 passed",
+    "browser": {
+      "passed": 18,
+      "skipped": 6
+    },
+    "scans": {
+      "backend-image-scan.json": {
+        "high": 0,
+        "critical": 0
+      },
+      "storefront-image-scan.json": {
+        "high": 0,
+        "critical": 0
+      }
+    }
+  }
+}

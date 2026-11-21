@@ -18,7 +18,7 @@ related_documents:
 
 ## 1. Mục đích và trạng thái
 
-Tài liệu này đề xuất ma trận quyền tối thiểu cho `Customer`, `Staff` và `Admin`. Đây là đầu ra tài liệu cho BE-08; **không** bật RBAC, thay đổi cấu hình, chạy migration, xác nhận quyền đã hoạt động hay nghiệm thu API/UI. Quyết định license và tính khả thi Medusa Enterprise RBAC được ghi riêng trong [License/Feasibility Decision](staff-admin-rbac-license-feasibility.md).
+Tài liệu này đề xuất ma trận quyền tối thiểu cho `Customer`, `Staff` và `Admin`. Đây là ma trận mục tiêu cho BE-08; **không** bật Enterprise RBAC hay xác nhận các quyền chi tiết đã hoạt động. Ranh giới chặn Staff khỏi Admin API được mô tả riêng ở mục 6, không phải nghiệm thu API/UI nhân viên. Quyết định license và tính khả thi Medusa Enterprise RBAC được ghi riêng trong [License/Feasibility Decision](staff-admin-rbac-license-feasibility.md).
 
 Ma trận là đề xuất để chủ chính sách và người rà bảo mật duyệt. `OPEN-USR-003`, `OPEN-USR-004`, `OPEN-USR-011`, `OPEN-FUL-001` và các quyết định nghiệp vụ liên quan vẫn mở; vì vậy những quyền phụ thuộc vào chúng chưa được cấp. Khi chưa có phê duyệt và kiểm thử server-side, mục tiêu Staff hạn chế vẫn **BLOCKED**.
 
@@ -75,7 +75,7 @@ Ma trận là đề xuất để chủ chính sách và người rà bảo mật
 | Admin nào được mời/quản lý user và gán role? Có được xuất dữ liệu khách không? | Chủ chính sách và người rà bảo mật | OPEN-USR-004, PERM-005 |
 | Staff/Admin được xem nhóm báo cáo và trường dữ liệu nào? | Vận hành và quản trị | OPEN-USR-011, OPEN-REPORT-001 |
 
-Cho tới khi các quyết định trên được ghi với ngày, người/vai trò phê duyệt và liên kết bằng chứng, trạng thái tài liệu vẫn là **Proposed**. Không dùng nội dung này để tuyên bố đã có RBAC hoặc Staff đã bị giới hạn.
+Cho tới khi các quyết định trên được ghi với ngày, người/vai trò phê duyệt và liên kết bằng chứng, trạng thái tài liệu vẫn là **Proposed**. Không dùng ma trận đề xuất để tuyên bố đã có RBAC hoặc Staff có quyền thao tác giới hạn; ranh giới chặn toàn bộ Admin API cần bằng chứng kiểm thử riêng.
 
 ## 5. Tham chiếu
 
@@ -88,3 +88,7 @@ Cho tới khi các quyết định trên được ghi với ngày, người/vai 
 - [Medusa RBAC Module](https://docs.medusajs.com/resources/enterprise/rbac)
 - [Medusa RBAC Concepts](https://docs.medusajs.com/resources/enterprise/rbac/concepts)
 - [Medusa RBAC Scopes](https://docs.medusajs.com/resources/enterprise/rbac/scopes)
+
+## 6. Ánh xạ ranh giới triển khai không dùng license
+
+Theo [ranh giới không dùng license](staff-admin-rbac-license-feasibility.md#6-ranh-giới-không-dùng-license), Staff được tạo qua workflow backend tin cậy bị từ chối toàn bộ Admin API. Các quyền Staff A* trong ma trận vẫn là mục tiêu của surface giới hạn chưa triển khai; không được diễn giải thành ALLOW trên Admin API chuẩn. User Admin thông thường không tự trở thành Staff vì tên hiển thị hoặc email có chữ “staff”. Bằng chứng kiểm thử phải phân biệt actor Admin không có marker với Staff có trạng thái lưu ở server. Trạng thái phê duyệt ma trận và entitlement không đổi bởi kiểm thử kỹ thuật.

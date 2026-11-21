@@ -7,6 +7,7 @@ import {
   WRITE_FLAG,
   ENVIRONMENT_FLAG,
   assertLocalImagePreviewGuard,
+  assertCloudPreviewMediaGuard,
 } from "../daymark-catalog/guards"
 
 const LOCAL_URL = "postgresql://daymark:secret@127.0.0.1:5432/daymark_local"
@@ -185,5 +186,67 @@ describe("DAYMARK malformed invocation refusal", () => {
         env: baseEnv({ DATABASE_URL: "postgresql://[::1]/daymark_local" }),
       }).databaseIsLocal,
     ).toBe(true)
+  })
+})
+
+describe("explicit cloud demo target", () => {
+  const cloud = {
+    NODE_ENV: "production",
+    AWS_REGION: "ap-southeast-2",
+    DATABASE_URL:
+      "postgresql://user:secret@demo.example.ap-southeast-2.rds.amazonaws.com:5432/commerce",
+    DAYMARK_CATALOG_ENVIRONMENT: "cloud-demo",
+    DAYMARK_CATALOG_TARGET_HOST: "demo.example.ap-southeast-2.rds.amazonaws.com",
+    DAYMARK_CATALOG_TARGET_DATABASE: "commerce",
+    DAYMARK_CATALOG_WRITE: "1",
+  }
+  it("permits only the exact explicitly selected Sydney RDS demo target", () => {
+    const result = assertImportGuard({ argv: ["--apply"], env: cloud })
+    expect(result.environment).toBe("cloud-demo")
+    expect(result.remoteOverride).toBe(true)
+    expect(JSON.stringify(result)).not.toContain("secret")
+  })
+  it.each([
+    { DAYMARK_CATALOG_TARGET_HOST: "other.ap-southeast-2.rds.amazonaws.com" },
+    { DAYMARK_CATALOG_TARGET_DATABASE: "other" },
+    { DAYMARK_CATALOG_TARGET_DATABASE: undefined },
+    { AWS_REGION: "us-east-1" },
+    { NODE_ENV: "test" },
+    { DATABASE_URL: REMOTE_URL },
+    { DATABASE_URL: LOCAL_URL },
+  ])("refuses target mismatch even for dry-run %j", (override) => {
+    expect(() => assertImportGuard({ argv: [], env: { ...cloud, ...override } })).toThrow(
+      CatalogImportRefused,
+    )
+  })
+  it("still requires the write flag", () => {
+    expect(() =>
+      assertImportGuard({ argv: ["--apply"], env: { ...cloud, DAYMARK_CATALOG_WRITE: undefined } }),
+    ).toThrow(/DAYMARK_CATALOG_WRITE=1/)
+  })
+  const preview = {
+    ...cloud,
+    S3_BUCKET: "demo-media",
+    S3_PUBLIC_IMAGE_PROXY: "true",
+    S3_FILE_URL: "https://api.example.test/product-images",
+    DAYMARK_CATALOG_REPRESENTATIVE_PREVIEW: "acknowledged",
+  }
+  it("requires explicit representative acknowledgement and proxy for cloud preview photos", () => {
+    expect(parseImageMode(["--images", "preview"])).toBe("preview")
+    expect(() => assertCloudPreviewMediaGuard(preview)).not.toThrow()
+  })
+  it.each([
+    { DAYMARK_CATALOG_REPRESENTATIVE_PREVIEW: undefined },
+    { DAYMARK_CATALOG_ENVIRONMENT: "local-disposable" },
+    { S3_BUCKET: undefined },
+    { S3_PUBLIC_IMAGE_PROXY: "false" },
+    { S3_FILE_URL: "https://bucket.s3.amazonaws.com" },
+    { S3_FILE_URL: "http://api.example.test/product-images" },
+    { S3_FILE_URL: "https://api.example.test/product-images?token=x" },
+    { DAYMARK_LOCAL_IMAGE_BACKEND_URL: "http://localhost:9000" },
+  ])("refuses unapproved or invalid cloud media configuration %j", (override) => {
+    expect(() => assertCloudPreviewMediaGuard({ ...preview, ...override })).toThrow(
+      CatalogImportRefused,
+    )
   })
 })

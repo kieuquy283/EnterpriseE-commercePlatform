@@ -1,0 +1,24 @@
+{
+  "sha": "a082d43950db1ebc06c4535f856c01ddb1fad15a",
+  "dirty": true,
+  "run": null,
+  "attempt": null,
+  "lockSha256": "0b81bdd24f7b4dd57db4fe9cdb19756df52ec79a7131dc29ba70c50d74da54fc",
+  "node": "v24.22.1",
+  "npm": "11.12.1",
+  "started": "2026-11-20T15:17:20.077Z",
+  "scope": "all-dependencies",
+  "releaseVerdict": "AUDIT_CLEAR",
+  "collection": "PASS",
+  "auditExitCode": 0,
+  "counts": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "reason": "No findings reported in this audit scope; shipped-image and regression review remain required",
+  "finished": "2026-11-20T15:17:22.553Z"
+}

@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto"
 import type { ExecArgs } from "@medusajs/framework/types"
 import { ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { applyImportPlan } from "./daymark-catalog/apply"
@@ -5,6 +6,7 @@ import { DAYMARK_CATALOG_FIXTURE } from "./daymark-catalog/fixture"
 import {
   assertImportGuard,
   assertLocalImagePreviewGuard,
+  assertCloudPreviewMediaGuard,
   parseImageMode,
   CatalogImportRefused,
 } from "./daymark-catalog/guards"
@@ -38,12 +40,12 @@ export default async function seedDaymarkCatalog({ container, args }: ExecArgs) 
         "Flags:",
         "  --dry-run            Print the plan without writing (default).",
         "  --apply              Apply the plan through Medusa workflows.",
-        "  --images none|manifest|demo",
-        "                       Use exact product media or explicit local demo photos (default none).",
+        "  --images none|manifest|demo|preview",
+        "                       Use exact product media or explicit local/cloud preview photos (default none).",
         "",
         "Required for --apply:",
         "  DAYMARK_CATALOG_WRITE=1",
-        "  DAYMARK_CATALOG_ENVIRONMENT=local-disposable",
+        "  DAYMARK_CATALOG_ENVIRONMENT=local-disposable or reviewed cloud-demo",
         "",
       ].join("\n"),
     )
@@ -53,6 +55,7 @@ export default async function seedDaymarkCatalog({ container, args }: ExecArgs) 
   const guard = assertImportGuard({ argv, env: process.env })
   const imageMode = parseImageMode(argv)
   if (imageMode === "demo") assertLocalImagePreviewGuard(process.env)
+  if (imageMode === "preview") assertCloudPreviewMediaGuard(process.env)
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
 
   const fixtureValidation = validateFixture(DAYMARK_CATALOG_FIXTURE)
@@ -69,8 +72,20 @@ export default async function seedDaymarkCatalog({ container, args }: ExecArgs) 
       `The DAYMARK image dataset is invalid:\n  - ${dataset.errors.join("\n  - ")}`,
     )
   }
+  const datasetHash = createHash("sha256")
+    .update(JSON.stringify({ fixture: DAYMARK_CATALOG_FIXTURE, manifest: dataset.manifest }))
+    .digest("hex")
+  process.stdout.write(`DAYMARK dataset SHA-256: ${datasetHash}\n`)
+  if (
+    guard.environment === "cloud-demo" &&
+    process.env.DAYMARK_CATALOG_DATASET_SHA256 !== datasetHash
+  ) {
+    throw new CatalogImportRefused(
+      "cloud-demo requires DAYMARK_CATALOG_DATASET_SHA256 matching the reviewed fixture and manifest hash printed above",
+    )
+  }
   const imagesEnabled = imageMode !== "none"
-  const includeRepresentativeImages = imageMode === "demo"
+  const includeRepresentativeImages = imageMode === "demo" || imageMode === "preview"
 
   const snapshot = await readCatalogSnapshot(container)
   const plan = buildImportPlan({

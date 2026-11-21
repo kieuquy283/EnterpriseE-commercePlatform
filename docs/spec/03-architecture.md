@@ -91,6 +91,8 @@ Template cấu hình API từ **một đến hai task**, mục tiêu **CPU trung
 | ADR-10 | Ảnh đại diện xem thử chỉ gắn qua chế độ local file provider Medusa tường minh, chỉ loopback; ảnh nhập production phải đúng sản phẩm qua provider cấu hình | Coi ảnh minh họa là sản phẩm/biến thể xác thực hoặc công bố lên S3 | Người dùng cho phép xem thử danh mục ngày 15 tháng 11 năm 2026. Giữ định danh sản phẩm và tồn hiện có. |
 | [ADR-11 — Staff/Admin RBAC](../06-architecture/adr/ADR-011-staff-admin-rbac.md) | Đề xuất chưa bật RBAC hoặc cấp quyền Staff khi policy/license chưa được xác minh; giữ Staff **BLOCKED** | Bật Admin API mặc định rồi chỉ ẩn menu; tự suy quyền từ actor `user` | **Proposed / BLOCKED**, chưa được duyệt. Cần policy owner, xác minh license hoặc duyệt bề mặt Staff giới hạn, và kiểm thử trên DB disposable. Xem [Permission Matrix](../technical/staff-admin-permission-matrix.md) và [license decision](../technical/staff-admin-rbac-license-feasibility.md). |
 
+| ADR-11 | Image Node 24 trên Alpine 3.24, cập nhật bản vá distro và quét image trước phát hành | Debian Bookworm slim với các finding OS chưa vá; đổi framework hoặc cloud | Loại nhóm package Debian gây chặn triển khai nhưng đổi glibc sang musl; phải kiểm build, Sharp/SWC, API/worker/Admin, media và browser trên image thật. Giữ image cũ làm bằng chứng, không dùng rollback có finding HIGH/CRITICAL chưa xử lý. |
+
 Các quyết định xác định hướng chọn; migration/tái cấu trúc còn ở [công việc](07-delivery.md). [Quyết định AWS lịch sử](../architecture/adr/0001-aws-cloud-stack.md) ghi bối cảnh triển khai, không chứng minh uptime hiện tại.
 
 <a id="6-observed-gaps-to-close-before-architecture-acceptance"></a>

@@ -1,15 +1,22 @@
+import { logOperation, orderOperationId } from "../observability"
+import type { Logger } from "@medusajs/framework/types"
 import type { SubscriberArgs, SubscriberConfig } from "@medusajs/framework"
-import { Modules } from "@medusajs/framework/utils"
+import { ContainerRegistrationKeys, Modules } from "@medusajs/framework/utils"
 import PersonalizationModuleService from "../modules/personalization/service"
 import { rebuildPersonalizationProfileWorkflow } from "../workflows/personalization/rebuild-profile"
 
 type OrderSignal = { id: string }
 
-export default async function personalizationOrderEvents({ event, container }: SubscriberArgs<OrderSignal>) {
-  if (process.env.ENABLE_PERSONALIZED_RECOMMENDATIONS !== "true" ||
-    process.env.ENABLE_PERSONALIZATION_ORDER_EVENTS !== "true") return
+async function handleOrderEvent({ event, container }: SubscriberArgs<OrderSignal>) {
+  if (
+    process.env.ENABLE_PERSONALIZED_RECOMMENDATIONS !== "true" ||
+    process.env.ENABLE_PERSONALIZATION_ORDER_EVENTS !== "true"
+  )
+    return
   if (event.name !== "order.placed" && event.name !== "order.canceled") return
-  const order = await container.resolve(Modules.ORDER).retrieveOrder(event.data.id, { relations: ["items"] })
+  const order = await container
+    .resolve(Modules.ORDER)
+    .retrieveOrder(event.data.id, { relations: ["items"] })
   if (!order.customer_id || !order.items?.length) return
   const service: PersonalizationModuleService = container.resolve("personalization")
   const [consent] = await service.listRecommendationConsents({ customer_id: order.customer_id })
@@ -23,9 +30,13 @@ export default async function personalizationOrderEvents({ event, container }: S
     if (existing) continue
     try {
       const created = await service.createRecommendationEvents({
-        event_key: eventKey, customer_id: order.customer_id, consent_epoch: consent.epoch,
-        event_type: eventType, product_id: item.product_id,
-        order_line_key: orderLineKey, placement: null,
+        event_key: eventKey,
+        customer_id: order.customer_id,
+        consent_epoch: consent.epoch,
+        event_type: eventType,
+        product_id: item.product_id,
+        order_line_key: orderLineKey,
+        placement: null,
         occurred_at: eventType === "order_placed" ? new Date(order.created_at) : new Date(),
       })
       const [current] = await service.listRecommendationConsents({ customer_id: order.customer_id })
@@ -37,7 +48,27 @@ export default async function personalizationOrderEvents({ event, container }: S
       if (!duplicate) throw error
     }
   }
-  await rebuildPersonalizationProfileWorkflow(container).run({ input: { customerId: order.customer_id } })
+  await rebuildPersonalizationProfileWorkflow(container).run({
+    input: { customerId: order.customer_id },
+  })
+}
+
+export default async function personalizationOrderEvents(args: SubscriberArgs<OrderSignal>) {
+  if (
+    process.env.ENABLE_PERSONALIZED_RECOMMENDATIONS !== "true" ||
+    process.env.ENABLE_PERSONALIZATION_ORDER_EVENTS !== "true"
+  )
+    return
+  const logger = args.container.resolve<Logger>(ContainerRegistrationKeys.LOGGER)
+  const operationId = orderOperationId(args.event.data.id)
+  logOperation(logger, { event: "order.event.started", operation_id: operationId })
+  try {
+    await handleOrderEvent(args)
+    logOperation(logger, { event: "order.event.completed", operation_id: operationId })
+  } catch (error) {
+    logOperation(logger, { event: "order.event.failed", operation_id: operationId })
+    throw error
+  }
 }
 
 export const config: SubscriberConfig = {
