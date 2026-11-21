@@ -18,7 +18,7 @@ CLEAN = {'imageScanStatus': {'status': 'COMPLETE'}, 'imageScanFindings': {'findi
 
 
 class ImageSecurityTests(unittest.TestCase):
-    def execute_gate(self, report, digests=True, wait_error=False):
+    def execute_gate(self, report, digests=True, wait_error=False, registration_delay=False):
         environment = {
             role + suffix: value
             for role in ['BACKEND', 'STOREFRONT']
@@ -28,9 +28,11 @@ class ImageSecurityTests(unittest.TestCase):
             previous = os.getcwd()
             try:
                 os.chdir(directory)
-                with patch.dict(os.environ, environment), patch('subprocess.run') as wait, patch('subprocess.check_output', return_value=json.dumps(report).encode()):
+                with patch.dict(os.environ, environment), patch('subprocess.run') as wait, patch('time.sleep'), patch('subprocess.check_output', return_value=json.dumps(report).encode()):
                     if wait_error:
                         wait.side_effect = subprocess.CalledProcessError(1, ['aws', 'ecr', 'wait'])
+                    elif registration_delay:
+                        wait.side_effect = [subprocess.CalledProcessError(255, ['aws'], stderr='ScanNotFoundException'), None, None]
                     exec(compile(CODE, '<release-image-gate>', 'exec'), {})
                 return len(list(Path('ci-evidence').glob('*-ecr-scan.json')))
             finally:
@@ -45,6 +47,9 @@ class ImageSecurityTests(unittest.TestCase):
             report['imageScanFindings']['findingSeverityCounts'][severity] = 1
             with self.subTest(severity=severity), self.assertRaises(SystemExit):
                 self.execute_gate(report)
+
+    def test_scan_registration_delay_is_retried(self):
+        self.assertEqual(self.execute_gate(CLEAN, registration_delay=True), 2)
 
     def test_missing_counts_fail_closed(self):
         with self.assertRaises(SystemExit):

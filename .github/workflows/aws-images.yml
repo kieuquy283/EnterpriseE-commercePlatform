@@ -101,7 +101,7 @@ jobs:
           STOREFRONT_DIGEST: ${{ steps.storefront.outputs.digest }}
         run: |
           python3 - <<'PY'
-          import json, os, pathlib, subprocess
+          import json, os, pathlib, subprocess, time
           from deploy.cloudformation.manage import validate_image_scan
           output = pathlib.Path('ci-evidence')
           output.mkdir(exist_ok=True)
@@ -114,7 +114,15 @@ jobs:
               scanned += 1
               repo = os.environ[name + '_REPO'].split('/', 1)[1]
               args = ['--repository-name', repo, '--image-id', 'imageDigest=' + digest]
-              subprocess.run(['aws', 'ecr', 'wait', 'image-scan-complete', *args], check=True)
+              for attempt in range(7):
+                  try:
+                      subprocess.run(['aws', 'ecr', 'wait', 'image-scan-complete', *args],
+                                     check=True, capture_output=True, text=True)
+                      break
+                  except subprocess.CalledProcessError as error:
+                      if 'ScanNotFoundException' not in (error.stderr or '') or attempt == 6:
+                          raise
+                      time.sleep(5)
               report = json.loads(subprocess.check_output(
                   ['aws', 'ecr', 'describe-image-scan-findings', *args, '--output', 'json']))
               (output / (name.lower() + '-ecr-scan.json')).write_text(json.dumps(report, indent=2))
