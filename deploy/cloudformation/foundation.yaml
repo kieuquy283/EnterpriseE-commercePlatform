@@ -1,31 +1,31 @@
-AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Commerce foundation: two-AZ networking and retained image repositories; no hourly NAT resources.'
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Commerce foundation: two-AZ networking and retained image repositories; no hourly NAT resources."
 Metadata:
   AWSToolsMetrics:
     AWSAgentToolkit: aws-cloudformation@3
   com.aws.cloudformation.Context:
     must:
-    - Deploy only in ap-southeast-2
-    - No NAT gateways; public application ENIs have ALB-only ingress
+      - Deploy only in ap-southeast-2
+      - No NAT gateways; public application ENIs have ALB-only ingress
     ref:
-    - README.md
+      - README.md
 Parameters:
   GitHubRepository:
     Type: String
-    Default: ''
-    AllowedPattern: '[a-zA-Z0-9_.-]*/[a-zA-Z0-9_.-]*|^$'
+    Default: ""
+    AllowedPattern: "[a-zA-Z0-9_.-]*/[a-zA-Z0-9_.-]*|^$"
   GitHubOidcProviderArn:
     Type: String
-    Default: ''
+    Default: ""
   StoreDomain:
     Type: String
-    Default: ''
+    Default: ""
   ApiDomain:
     Type: String
-    Default: ''
+    Default: ""
   HostedZoneId:
     Type: String
-    Default: ''
+    Default: ""
 Resources:
   Vpc:
     Type: AWS::EC2::VPC
@@ -38,10 +38,10 @@ Resources:
       EnableDnsSupport: true
       EnableDnsHostnames: true
       Tags:
-      - Key: Project
-        Value: commerce-demo
-      - Key: ManagedBy
-        Value: CloudFormation
+        - Key: Project
+          Value: commerce-demo
+        - Key: ManagedBy
+          Value: CloudFormation
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Metadata:
@@ -50,10 +50,10 @@ Resources:
         must: []
     Properties:
       Tags:
-      - Key: Project
-        Value: commerce-demo
-      - Key: ManagedBy
-        Value: CloudFormation
+        - Key: Project
+          Value: commerce-demo
+        - Key: ManagedBy
+          Value: CloudFormation
   GatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
     Metadata:
@@ -75,10 +75,10 @@ Resources:
       VpcId:
         Ref: Vpc
       Tags:
-      - Key: Project
-        Value: commerce-demo
-      - Key: ManagedBy
-        Value: CloudFormation
+        - Key: Project
+          Value: commerce-demo
+        - Key: ManagedBy
+          Value: CloudFormation
   DefaultRoute:
     Type: AWS::EC2::Route
     Metadata:
@@ -104,14 +104,14 @@ Resources:
       CidrBlock: 10.42.0.0/24
       AvailabilityZone:
         Fn::Select:
-        - 0
-        - Fn::GetAZs: ''
+          - 0
+          - Fn::GetAZs: ""
       MapPublicIpOnLaunch: false
       Tags:
-      - Key: Project
-        Value: commerce-demo
-      - Key: ManagedBy
-        Value: CloudFormation
+        - Key: Project
+          Value: commerce-demo
+        - Key: ManagedBy
+          Value: CloudFormation
   PublicSubnet1Route:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Metadata:
@@ -135,14 +135,14 @@ Resources:
       CidrBlock: 10.42.10.0/24
       AvailabilityZone:
         Fn::Select:
-        - 0
-        - Fn::GetAZs: ''
+          - 0
+          - Fn::GetAZs: ""
       MapPublicIpOnLaunch: false
       Tags:
-      - Key: Project
-        Value: commerce-demo
-      - Key: ManagedBy
-        Value: CloudFormation
+        - Key: Project
+          Value: commerce-demo
+        - Key: ManagedBy
+          Value: CloudFormation
   PublicSubnet2:
     Type: AWS::EC2::Subnet
     Metadata:
@@ -155,14 +155,14 @@ Resources:
       CidrBlock: 10.42.1.0/24
       AvailabilityZone:
         Fn::Select:
-        - 1
-        - Fn::GetAZs: ''
+          - 1
+          - Fn::GetAZs: ""
       MapPublicIpOnLaunch: false
       Tags:
-      - Key: Project
-        Value: commerce-demo
-      - Key: ManagedBy
-        Value: CloudFormation
+        - Key: Project
+          Value: commerce-demo
+        - Key: ManagedBy
+          Value: CloudFormation
   PublicSubnet2Route:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Metadata:
@@ -186,78 +186,78 @@ Resources:
       CidrBlock: 10.42.11.0/24
       AvailabilityZone:
         Fn::Select:
-        - 1
-        - Fn::GetAZs: ''
+          - 1
+          - Fn::GetAZs: ""
       MapPublicIpOnLaunch: false
       Tags:
-      - Key: Project
-        Value: commerce-demo
-      - Key: ManagedBy
-        Value: CloudFormation
+        - Key: Project
+          Value: commerce-demo
+        - Key: ManagedBy
+          Value: CloudFormation
   AlbGroup:
     Type: AWS::EC2::SecurityGroup
     Metadata:
       com.aws.cloudformation.Context:
         why: Public HTTPS entry
         must:
-        - Keep database, Redis and task ports closed to public ingress
+          - Keep database, Redis and task ports closed to public ingress
     Properties:
       VpcId:
         Ref: Vpc
       GroupDescription: Public HTTPS entry
       Tags:
-      - Key: Project
-        Value: commerce-demo
-      - Key: ManagedBy
-        Value: CloudFormation
+        - Key: Project
+          Value: commerce-demo
+        - Key: ManagedBy
+          Value: CloudFormation
   AppGroup:
     Type: AWS::EC2::SecurityGroup
     Metadata:
       com.aws.cloudformation.Context:
         why: Application and migration tasks
         must:
-        - Keep database, Redis and task ports closed to public ingress
+          - Keep database, Redis and task ports closed to public ingress
     Properties:
       VpcId:
         Ref: Vpc
       GroupDescription: Application and migration tasks
       Tags:
-      - Key: Project
-        Value: commerce-demo
-      - Key: ManagedBy
-        Value: CloudFormation
+        - Key: Project
+          Value: commerce-demo
+        - Key: ManagedBy
+          Value: CloudFormation
   RedisGroup:
     Type: AWS::EC2::SecurityGroup
     Metadata:
       com.aws.cloudformation.Context:
         why: Private Redis traffic
         must:
-        - Keep database, Redis and task ports closed to public ingress
+          - Keep database, Redis and task ports closed to public ingress
     Properties:
       VpcId:
         Ref: Vpc
       GroupDescription: Private Redis traffic
       Tags:
-      - Key: Project
-        Value: commerce-demo
-      - Key: ManagedBy
-        Value: CloudFormation
+        - Key: Project
+          Value: commerce-demo
+        - Key: ManagedBy
+          Value: CloudFormation
   DatabaseGroup:
     Type: AWS::EC2::SecurityGroup
     Metadata:
       com.aws.cloudformation.Context:
         why: Private PostgreSQL traffic
         must:
-        - Keep database, Redis and task ports closed to public ingress
+          - Keep database, Redis and task ports closed to public ingress
     Properties:
       VpcId:
         Ref: Vpc
       GroupDescription: Private PostgreSQL traffic
       Tags:
-      - Key: Project
-        Value: commerce-demo
-      - Key: ManagedBy
-        Value: CloudFormation
+        - Key: Project
+          Value: commerce-demo
+        - Key: ManagedBy
+          Value: CloudFormation
   StoreIngress:
     Type: AWS::EC2::SecurityGroupIngress
     Metadata:
@@ -353,14 +353,15 @@ Resources:
       EncryptionConfiguration:
         EncryptionType: AES256
       LifecyclePolicy:
-        LifecyclePolicyText: '{"rules": [{"rulePriority": 1, "description": "Expire untagged build layers after
+        LifecyclePolicyText:
+          '{"rules": [{"rulePriority": 1, "description": "Expire untagged build layers after
           one day", "selection": {"tagStatus": "untagged", "countType": "sinceImagePushed", "countUnit": "days",
           "countNumber": 1}, "action": {"type": "expire"}}]}'
       Tags:
-      - Key: Project
-        Value: commerce-demo
-      - Key: ManagedBy
-        Value: CloudFormation
+        - Key: Project
+          Value: commerce-demo
+        - Key: ManagedBy
+          Value: CloudFormation
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
   StorefrontRepository:
@@ -376,14 +377,15 @@ Resources:
       EncryptionConfiguration:
         EncryptionType: AES256
       LifecyclePolicy:
-        LifecyclePolicyText: '{"rules": [{"rulePriority": 1, "description": "Expire untagged build layers after
+        LifecyclePolicyText:
+          '{"rules": [{"rulePriority": 1, "description": "Expire untagged build layers after
           one day", "selection": {"tagStatus": "untagged", "countType": "sinceImagePushed", "countUnit": "days",
           "countNumber": 1}, "action": {"type": "expire"}}]}'
       Tags:
-      - Key: Project
-        Value: commerce-demo
-      - Key: ManagedBy
-        Value: CloudFormation
+        - Key: Project
+          Value: commerce-demo
+        - Key: ManagedBy
+          Value: CloudFormation
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
   GitHubProvider:
@@ -395,7 +397,7 @@ Resources:
     Properties:
       Url: https://token.actions.githubusercontent.com
       ClientIdList:
-      - sts.amazonaws.com
+        - sts.amazonaws.com
     Condition: CreateGitHubProvider
   GitHubPublisherRole:
     Type: AWS::IAM::Role
@@ -405,82 +407,83 @@ Resources:
         must: []
     Properties:
       AssumeRolePolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
-        - Effect: Allow
-          Principal:
-            Federated:
-              Fn::If:
-              - CreateGitHubProvider
-              - Ref: GitHubProvider
-              - Ref: GitHubOidcProviderArn
-          Action: sts:AssumeRoleWithWebIdentity
-          Condition:
-            StringEquals:
-              token.actions.githubusercontent.com:aud: sts.amazonaws.com
-              token.actions.githubusercontent.com:sub:
-                Fn::Sub: repo:${GitHubRepository}:environment:aws-demo
+          - Effect: Allow
+            Principal:
+              Federated:
+                Fn::If:
+                  - CreateGitHubProvider
+                  - Ref: GitHubProvider
+                  - Ref: GitHubOidcProviderArn
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+                token.actions.githubusercontent.com:sub:
+                  Fn::Sub: repo:${GitHubRepository}:environment:aws-demo
       Policies:
-      - PolicyName: PublishImagesOnly
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-          - Effect: Allow
-            Action:
-            - ecr:GetAuthorizationToken
-            Resource: '*'
-          - Effect: Allow
-            Action:
-            - ecr:BatchCheckLayerAvailability
-            - ecr:InitiateLayerUpload
-            - ecr:UploadLayerPart
-            - ecr:CompleteLayerUpload
-            - ecr:PutImage
-            - ecr:BatchGetImage
-            - ecr:GetDownloadUrlForLayer
-            Resource:
-            - Fn::GetAtt:
-              - BackendRepository
-              - Arn
-            - Fn::GetAtt:
-              - StorefrontRepository
-              - Arn
-          - Effect: Allow
-            Action:
-            - cloudformation:DescribeStacks
-            Resource:
-              Ref: AWS::StackId
+        - PolicyName: PublishImagesOnly
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ecr:GetAuthorizationToken
+                Resource: "*"
+              - Effect: Allow
+                Action:
+                  - ecr:BatchCheckLayerAvailability
+                  - ecr:InitiateLayerUpload
+                  - ecr:UploadLayerPart
+                  - ecr:CompleteLayerUpload
+                  - ecr:PutImage
+                  - ecr:BatchGetImage
+                  - ecr:GetDownloadUrlForLayer
+                Resource:
+                  - Fn::GetAtt:
+                      - BackendRepository
+                      - Arn
+                  - Fn::GetAtt:
+                      - StorefrontRepository
+                      - Arn
+              - Effect: Allow
+                Action:
+                  - cloudformation:DescribeStacks
+                Resource:
+                  Ref: AWS::StackId
     Condition: HasGitHub
   WebCertificate:
     Type: AWS::CertificateManager::Certificate
     Metadata:
       com.aws.cloudformation.Context:
-        why: Standard non-exportable public certificate in Sydney; external DNS requires manual validation before
+        why:
+          Standard non-exportable public certificate in Sydney; external DNS requires manual validation before
           stack completion
         must: []
     Properties:
       DomainName:
         Ref: StoreDomain
       SubjectAlternativeNames:
-      - Ref: ApiDomain
+        - Ref: ApiDomain
       ValidationMethod: DNS
       DomainValidationOptions:
         Fn::If:
-        - HasHostedZone
-        - - DomainName:
-              Ref: StoreDomain
-            HostedZoneId:
-              Ref: HostedZoneId
-          - DomainName:
-              Ref: ApiDomain
-            HostedZoneId:
-              Ref: HostedZoneId
-        - Ref: AWS::NoValue
+          - HasHostedZone
+          - - DomainName:
+                Ref: StoreDomain
+              HostedZoneId:
+                Ref: HostedZoneId
+            - DomainName:
+                Ref: ApiDomain
+              HostedZoneId:
+                Ref: HostedZoneId
+          - Ref: AWS::NoValue
       Tags:
-      - Key: Project
-        Value: commerce-demo
-      - Key: ManagedBy
-        Value: CloudFormation
+        - Key: Project
+          Value: commerce-demo
+        - Key: ManagedBy
+          Value: CloudFormation
     Condition: HasDomains
 Outputs:
   Vpc:
@@ -550,8 +553,8 @@ Outputs:
     Description: Docker push destination
     Value:
       Fn::GetAtt:
-      - BackendRepository
-      - RepositoryUri
+        - BackendRepository
+        - RepositoryUri
     Export:
       Name:
         Fn::Sub: ${AWS::StackName}-BackendRepositoryUri
@@ -559,8 +562,8 @@ Outputs:
     Description: Repository for scoped GitHub publishing permissions
     Value:
       Fn::GetAtt:
-      - BackendRepository
-      - Arn
+        - BackendRepository
+        - Arn
     Export:
       Name:
         Fn::Sub: ${AWS::StackName}-BackendRepositoryArn
@@ -568,8 +571,8 @@ Outputs:
     Description: Docker push destination
     Value:
       Fn::GetAtt:
-      - StorefrontRepository
-      - RepositoryUri
+        - StorefrontRepository
+        - RepositoryUri
     Export:
       Name:
         Fn::Sub: ${AWS::StackName}-StorefrontRepositoryUri
@@ -577,8 +580,8 @@ Outputs:
     Description: Repository for scoped GitHub publishing permissions
     Value:
       Fn::GetAtt:
-      - StorefrontRepository
-      - Arn
+        - StorefrontRepository
+        - Arn
     Export:
       Name:
         Fn::Sub: ${AWS::StackName}-StorefrontRepositoryArn
@@ -586,8 +589,8 @@ Outputs:
     Description: Set AWS_IMAGE_PUBLISH_ROLE_ARN in the aws-demo GitHub environment
     Value:
       Fn::GetAtt:
-      - GitHubPublisherRole
-      - Arn
+        - GitHubPublisherRole
+        - Arn
     Condition: HasGitHub
   CertificateArn:
     Description: Use for application HTTPS
@@ -597,30 +600,30 @@ Outputs:
 Conditions:
   HasGitHub:
     Fn::Not:
-    - Fn::Equals:
-      - Ref: GitHubRepository
-      - ''
+      - Fn::Equals:
+          - Ref: GitHubRepository
+          - ""
   CreateGitHubProvider:
     Fn::And:
-    - Fn::Not:
+      - Fn::Not:
+          - Fn::Equals:
+              - Ref: GitHubRepository
+              - ""
       - Fn::Equals:
-        - Ref: GitHubRepository
-        - ''
-    - Fn::Equals:
-      - Ref: GitHubOidcProviderArn
-      - ''
+          - Ref: GitHubOidcProviderArn
+          - ""
   HasDomains:
     Fn::And:
-    - Fn::Not:
-      - Fn::Equals:
-        - Ref: StoreDomain
-        - ''
-    - Fn::Not:
-      - Fn::Equals:
-        - Ref: ApiDomain
-        - ''
+      - Fn::Not:
+          - Fn::Equals:
+              - Ref: StoreDomain
+              - ""
+      - Fn::Not:
+          - Fn::Equals:
+              - Ref: ApiDomain
+              - ""
   HasHostedZone:
     Fn::Not:
-    - Fn::Equals:
-      - Ref: HostedZoneId
-      - ''
+      - Fn::Equals:
+          - Ref: HostedZoneId
+          - ""
