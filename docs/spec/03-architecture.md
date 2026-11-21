@@ -90,6 +90,8 @@ Template cấu hình API từ **một đến hai task**, mục tiêu **CPU trung
 | ADR-09 | Token/thành phần storefront tái sử dụng, Motion tăng cường; workflow Medusa upsert danh mục cục bộ có sở hữu | Kiểu riêng từng trang và đặt lại demo phá dữ liệu | Phạm vi storefront/danh mục được người dùng cho phép ngày 15 tháng 11 năm 2026. Nhận diện/hướng thiết kế được duyệt theo [quyết định thương hiệu](../brand/README.md#approval--15-november-2026); không suy ra duyệt nghiệp vụ. Giữ tồn hiện có, kiểm chứng seed trên dịch vụ cục bộ dùng riêng. |
 | ADR-10 | Ảnh đại diện xem thử chỉ gắn qua chế độ local file provider Medusa tường minh, chỉ loopback; ảnh nhập production phải đúng sản phẩm qua provider cấu hình | Coi ảnh minh họa là sản phẩm/biến thể xác thực hoặc công bố lên S3 | Người dùng cho phép xem thử danh mục ngày 15 tháng 11 năm 2026. Giữ định danh sản phẩm và tồn hiện có. |
 
+| ADR-11 | Image Node 24 trên Alpine 3.24, cập nhật bản vá distro và quét image trước phát hành | Debian Bookworm slim với các finding OS chưa vá; đổi framework hoặc cloud | Loại nhóm package Debian gây chặn triển khai nhưng đổi glibc sang musl; phải kiểm build, Sharp/SWC, API/worker/Admin, media và browser trên image thật. Giữ image cũ làm bằng chứng, không dùng rollback có finding HIGH/CRITICAL chưa xử lý. |
+
 Các quyết định xác định hướng chọn; migration/tái cấu trúc còn ở [công việc](07-delivery.md). [Quyết định AWS lịch sử](../architecture/adr/0001-aws-cloud-stack.md) ghi bối cảnh triển khai, không chứng minh uptime hiện tại.
 
 <a id="6-observed-gaps-to-close-before-architecture-acceptance"></a>

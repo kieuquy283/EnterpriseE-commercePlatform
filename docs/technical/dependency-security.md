@@ -42,6 +42,14 @@ Các đường sửa phải kiểm từ lockfile **và cây đã cài**, không 
 
 [Picomatch GHSA-fc5q-39xc-vjpf](https://github.com/advisories/GHSA-fc5q-39xc-vjpf) có trạng thái withdrawn trên nguồn GitHub. Giữ nguyên raw audit và ghi riêng sự khác biệt theo thời điểm registry; không sửa số raw và không suy diễn tất cả glob an toàn. Nếu registry vẫn trả finding, policy tiếp tục chặn.
 
+## Cổng image và hệ điều hành
+
+Npm audit không quét hệ điều hành. Image dùng Node 24 trên Alpine 3.24, áp dụng `apk upgrade --no-cache` trước khi cài dependency. Alpine dùng musl thay glibc nên phải kiểm native addon và runtime; không chỉ đổi tag để báo đã vá. [Alpine xác nhận zlib 1.3.2-r1 sửa CVE-2026-85091](https://security.alpinelinux.org/vuln/CVE-2026-85091); [Node có image Alpine chính thức](https://github.com/nodejs/docker-node#nodealpine).
+
+CI `browser-container` quét OS và library trong cả hai image bằng Trivy, chặn HIGH/CRITICAL kể cả chưa có fix; không ignore hay allowlist. Report JSON nằm trong artifact CI. Job công bố AWS chờ ECR scan hoàn tất theo digest, từ chối scan lỗi/không hỗ trợ/thiếu số đếm hoặc HIGH/CRITICAL, rồi mới xuất release references. Quyền đọc scan chỉ thuộc hai ECR repository trong policy nguồn của publisher; thay đổi IaC không chứng minh role thực đã cập nhật.
+
+Với phát hành thủ công, áp dụng cùng cổng ECR theo digest và lưu report trước khi đổi settings hoặc tăng task count. Medium/low vẫn được ghi và triage; không suy PASS của cổng này thành không có mọi loại rủi ro. Lệnh `manage.py start` kiểm scan của digest trong stack hiện hành trước khi đổi lease hoặc khởi động compute; chỉ chấp nhận repository của foundation, không tag mutable. Traffic tiếp tục tắt khi scan hoặc nghiệm thu runtime chưa đạt. Không tự gia hạn demo lease đã hết hạn chỉ để quét image.
+
 ## Override và kiểm chứng tương thích
 
 Giữ BullMQ `5.13.0` theo Medusa, chỉ override UUID của BullMQ sang `11.1.1` có CommonJS. Các call site BullMQ dùng `v4()` không truyền buffer; bản vá [GHSA-w5hq-g745-h8pq](https://github.com/advisories/GHSA-w5hq-g745-h8pq) nằm ở UUID 11.1.1. Kiểm queue/worker, retry, dedupe và seed có Redis trước khi phát hành; không suy từ một API UUID sang toàn bộ module đã tương thích.

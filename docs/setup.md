@@ -110,7 +110,7 @@ npm run build --workspace=@dtc/backend
 npm run start --workspace=@dtc/backend
 ```
 
-`medusa build` sinh backend và Admin tại `apps/backend/.medusa/server`, với HTML/asset trong `public/admin`. Script `start` đổi thư mục vào gói này trước khi chạy CLI; Docker dùng chính script đó. Medusa production phục vụ `public/admin` tương đối với thư mục gói. Không chạy production CLI tại thư mục nguồn, không thêm symlink `apps/backend/public/admin`, không dùng wrapper preview và không sửa đầu ra sinh tự động. `medusa develop` là đường chạy phát triển với bundler của framework.
+`medusa build` sinh backend và Admin tại `apps/backend/.medusa/server`, với HTML/asset trong `public/admin`. Script `start` đổi thư mục vào gói này trước khi chạy CLI; Docker chạy Node CLI tương đương trong thư mục gói, không giữ npm/Yarn global trong runtime image. Medusa production phục vụ `public/admin` tương đối với thư mục gói. Không chạy production CLI tại thư mục nguồn, không thêm symlink `apps/backend/public/admin`, không dùng wrapper preview và không sửa đầu ra sinh tự động. `medusa develop` là đường chạy phát triển với bundler của framework.
 
 `start` đọc tệp cấu hình riêng `apps/backend/.env` nếu có; các biến đã cung cấp bởi môi trường tiến trình được giữ. Kiểm tra đích DB/Redis trước mọi lệnh migration hoặc onboarding. Migration là thao tác riêng, không nằm trong startup.
 
