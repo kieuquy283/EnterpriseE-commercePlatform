@@ -14,7 +14,7 @@
 | `npx playwright test --list --reporter=list e2e/design-system.spec.ts e2e/pdp-similar-products.spec.ts` | PASS bước khám phá: 8 ca thiết kế được nhận diện; ca PDP phụ thuộc cờ môi trường nên không được chọn ở cấu hình hiện tại. Không chạy trình duyệt. |
 | E2E account, responsive, COD và recommendation | **Chưa chạy trong lượt này.** `127.0.0.1:8000/9000` không phản hồi, Docker Desktop service dừng; thử khởi động service không thành công. Cần PostgreSQL/Redis và fixture dùng riêng trước khi chạy. |
 
-Tệp `apps/storefront/test-results/.last-run.json` hiện ghi `failed` với ba mã ca, nhưng không có thông tin đủ để quy kết nguyên nhân hoặc gắn kết quả đó với một commit. Báo cáo HTML hiện tại cũng chưa phải bằng chứng của ứng viên RC1. Các sửa đổi chưa commit đã có từ trước trong bài E2E và `src/lib/data/orders.ts` được giữ nguyên để cộng tác viên đối soát; riêng thay đổi `+customer_id` cần có trong commit ứng viên trước khi nghiệm thu quyền sở hữu đơn.
+Tệp `apps/storefront/test-results/.last-run.json` hiện ghi `failed` với ba mã ca, nhưng không có thông tin đủ để quy kết nguyên nhân hoặc gắn kết quả đó với một commit. Báo cáo HTML hiện tại cũng chưa phải bằng chứng của ứng viên RC1. Các sửa đổi chưa commit đã có từ trước trong bài E2E được giữ nguyên để cộng tác viên đối soát. Trường `+customer_id` đã được bổ sung vào truy vấn chi tiết đơn trong ứng viên mã; quyền sở hữu A/B vẫn phải được thử trên backend riêng.
 
 ## Độ phủ yêu cầu và trạng thái
 
@@ -39,4 +39,4 @@ Theo [ma trận truy vết](../03-requirements/requirements-traceability.md), li
 - Quý/QA: dựng stack test dùng riêng, chạy cùng một SHA cho account A/B, catalog, cart, COD, 375/768/1440 px và recommendation OFF/lỗi; lưu lệnh, kết quả, trace/video và báo cáo HTML mới.
 - Quý/Design: đối chiếu màu mực nêu trong kế hoạch (`#1A1A1A`) với token hiện hành (`#1B1D1A`) trước khi đổi palette; không suy rằng build đạt là màu đã được duyệt.
 - Backend/QA: xác nhận Medusa trả `customer_id` cho đơn, xử lý trùng ý định, tồn kho và notification worker độc lập với kết quả đặt hàng.
-- Quý: đối chiếu các thay đổi chưa commit của cộng tác viên và cập nhật báo cáo sau khi có SHA ứng viên cùng E2E. Chưa kết luận `FEATURE COMPLETE` hoặc phát hành RC1.
+- Quý: đối chiếu các thay đổi E2E chưa commit của cộng tác viên và cập nhật báo cáo sau khi có E2E trên SHA ứng viên. Chưa kết luận `FEATURE COMPLETE` hoặc phát hành RC1.
