@@ -18,7 +18,7 @@ Phạm vi: khắc phục image của PR #18 trước khi bật traffic; không c
 | Backend unit chạy bên trong Alpine | PASS: 17 suite, 155 test |
 | Native SWC transform; Sharp PNG resize sang WebP | PASS |
 | Npm audit toàn cây với pin Node/npm và --enforce | PASS: AUDIT_CLEAR, 0 finding |
-| IaC và release workflow policy tests | PASS: 38 test; lỗi/missing counts, scan không hỗ trợ, wait failure, mutable digest và từ chối trước compute |
+| IaC và release workflow policy tests | PASS: 39 test; lỗi/missing counts, scan không hỗ trợ, wait failure, mutable digest và từ chối trước compute |
 | actionlint, docs và diff checks | PASS |
 | Guard đọc trạng thái AWS thật | PASS: từ chối digest đang staged có HIGH trước đổi lease/capacity |
 
@@ -29,3 +29,17 @@ Phạm vi: khắc phục image của PR #18 trước khi bật traffic; không c
 CI browser-container quét cả OS/library sau build và kiểm browser/runtime. Workflow công bố image chờ ECR scan và dùng chung validator với `manage.py start`; guard startup đọc digest của stack hiện hành và chỉ nhận repository foundation. Không được tăng task count khi gate lỗi. Policy publisher nguồn thêm quyền đọc scan cho đúng hai repository; chưa tự áp dụng thay đổi role/IaC lên AWS.
 
 Lượt kiểm trạng thái 21/11: app stack tồn tại nhưng cả API/worker/storefront desired/running đều 0; RDS/Redis stopped; lease trước đã hết hạn. ALB và tài nguyên giữ lại vẫn có phí. Không khẳng định preview đã hoạt động, không gia hạn demo trong tác vụ khắc phục image. Kiểm thử cloud/browser trên source/digest cuối được đối chiếu qua artifact/PR, không suy từ build hoặc scan đơn lẻ.
+
+## Kiểm chứng CI
+
+[CI run 44907077379](https://github.com/kieuquy283/EnterpriseE-commercePlatform/actions/runs/44907077379) cho PR head `6f796d11867cf6ee537ee2beaa10b81285257482` đạt cả 7 check. Job browser-container chạy trên merge ref của GitHub: build, migrate/seed trên dịch vụ tạm, smoke và Chromium đạt 18 test; 6 test H&M được skip theo phạm vi. Hai bước Trivy OS/library đều đạt gate HIGH/CRITICAL, không dùng ngoại lệ. Kết quả này không thay nghiệm thu ECS/cloud.
+
+Workflow publisher bổ sung retry có giới hạn riêng cho `ScanNotFoundException`: ECR có thể chưa đăng ký scan ngay sau khi push. Các lỗi khác vẫn dừng; scan phải COMPLETE và qua cùng validator. Test bao gồm phục hồi registration delay và từ chối lỗi waiter.
+
+## Image đã công bố
+
+Hai image từ source `6f796d11867cf6ee537ee2beaa10b81285257482` đã push với tag `secure-6f796d11867c`. ECR scan COMPLETE, 0 HIGH/CRITICAL ở cả hai digest; [bằng chứng đã rút gọn](evidence/runtime-images-2026-11-21/published-scan-summary.json) ghi digest và kết quả. Source này không gồm bản vá retry workflow tiếp theo; bản vá đó không đổi runtime image.
+
+## Staging không bật traffic
+
+Change set `review-5a1abc72b740` đã áp dụng thành công cho `commerce-app`: task definitions dùng hai digest đã qua ECR; `Running=false`. Không thay foundation/data stack, không thay thế RDS/S3 hoặc tạo Admin/seed. Guard startup đọc reference mới từ stack và đạt kiểm tra ECR thật; không gọi start/renew. Lease cũ giữ nguyên, không cấp thêm thời gian demo.
