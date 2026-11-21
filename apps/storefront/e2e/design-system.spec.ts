@@ -163,7 +163,8 @@ test("skip link and side menu work with a keyboard", async ({ page }) => {
   await expect(page).toHaveURL(/#daymark-main$/)
 
   await page.getByTestId("nav-menu-button").click()
-  await expect(page.getByRole("dialog", { name: "Danh mục" })).toBeVisible()
+  await expect(page.getByTestId("nav-menu-popup")).toBeVisible()
+  await expect(page.getByRole("dialog", { name: "Danh mục" })).toHaveAttribute("data-open", "")
   await page.keyboard.press("Escape")
   await expect(page.getByRole("dialog", { name: "Danh mục" })).toHaveCount(0)
 })

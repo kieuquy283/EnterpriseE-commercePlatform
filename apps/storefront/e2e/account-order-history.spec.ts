@@ -72,14 +72,11 @@ test.describe("Account & Order History (E2E-04, E2E-07, E2E-11)", () => {
     const joinBtn = registerPage.locator('button[type="submit"]')
     await joinBtn.click()
 
-    // Wait for registration to complete and refresh account overview
-    await page.waitForTimeout(2000)
-    await page.goto("/vn/account")
-
-    // Check if registered and logged in
+    // Wait for the signup action and account refresh before continuing.
     await expect(page.locator('[data-testid="overview-page-wrapper"]')).toBeVisible({
-      timeout: 15_000,
+      timeout: 20_000,
     })
+
     await expect(page.locator('[data-testid="customer-email"]')).toContainText(testEmail)
 
     // 2. Add product to cart and checkout
