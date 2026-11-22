@@ -65,6 +65,14 @@ Các đầu ra được tách riêng theo loại tài liệu. Backend runtime v�
 - [Status contract fulfillment/tracking/COD](technical/be-05-status-contract.md) — Proposed; chưa nghiệm thu runtime.
 - [Permission Matrix Staff/Admin](technical/staff-admin-permission-matrix.md) — tài liệu BE-08 riêng, Proposed; không phải bằng chứng quyền đã enforce.
 
+### BE-07 — Backend test, docs và code review (2026-11-22)
+
+Trạng thái hiện tại: **PARTIAL** — đã có evidence riêng cho API boundary, concurrency và notification; chưa có gói test evidence đồng revision cho full backend PR gate, role-negative hoặc worker-error.
+
+- [BE-07 backend test evidence](report/be-07-backend-test-evidence.md) — kết quả, mapping và coverage gap.
+- [BE-07 API/ADR handover](technical/be-07-api-adr-handover.md) — API/error, migration/DTO, compatibility và rollback.
+- [ADR-012 idempotency và notification](06-architecture/adr/ADR-012-backend-test-idempotency-notification.md) — Proposed; chưa thay thế evidence từng luồng.
+
 ### BE-08 — Staff/Admin RBAC (2026-11-20)
 
 Trạng thái hiện tại: **BLOCKED** — chưa có ma trận quyền được duyệt hoặc license Enterprise được xác minh; HTTP suite tổng quát đã chạy trên DB disposable nhưng chưa có kiểm thử allow/deny theo role đã duyệt hoặc browser walkthrough. Mỗi sản phẩm bàn giao được tách thành một file:

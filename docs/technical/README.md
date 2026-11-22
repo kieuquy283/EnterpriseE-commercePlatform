@@ -17,6 +17,9 @@
 | BE-05 — hợp đồng trạng thái fulfillment, tracking và COD | [Status contract](be-05-status-contract.md) |
 | BE-05 — kết quả walkthrough staff | [Báo cáo walkthrough](../report/be-05-staff-walkthrough.md) |
 | BE-05 — evidence record và audit trail | [Evidence record](../report/be-05-evidence-record.md) |
+| BE-07 — bằng chứng kiểm thử backend | [Test evidence](../report/be-07-backend-test-evidence.md) |
+| BE-07 — API/error/compatibility/rollback | [API và ADR handover](be-07-api-adr-handover.md) |
+| BE-07 — quyết định idempotency và notification | [ADR-012](../06-architecture/adr/ADR-012-backend-test-idempotency-notification.md) |
 | Ma trận quyền Staff/Admin | [Ma trận quyền](staff-admin-permission-matrix.md) |
 | License và tính khả thi Medusa Enterprise RBAC | [License/Feasibility Decision](staff-admin-rbac-license-feasibility.md) |
 | Môi trường phát triển | [Thiết lập](../setup.md), [quy ước đóng góp](../../CONTRIBUTING.md) |
