@@ -56,6 +56,14 @@ Mỗi báo cáo kiểm chứng cần ghi phiên bản, môi trường, ngày, l�
 
 Giữ kết quả kiểm chứng trong CI hoặc báo cáo nghiệm thu có phiên bản; không thêm nhật ký bàn giao, ghi chú dọn dẹp hoặc báo cáo tiến độ tạm thời vào tài liệu hướng dẫn lâu dài.
 
+### BE-05 — Staff/Admin lifecycle, fulfillment, tracking và COD (2026-11-22)
+
+Các đầu ra được tách riêng theo loại tài liệu. Walkthrough đang **BLOCKED** vì Docker chưa khả dụng trong Ubuntu WSL; quyền Staff khác Admin thuộc BE-08 và chưa được chứng minh:
+
+- [Staff walkthrough và bằng chứng nghiệm thu](report/be-05-staff-walkthrough.md) — BLOCKED; chưa có order ID/audit trail thực.
+- [Status contract fulfillment/tracking/COD](technical/be-05-status-contract.md) — Proposed; chưa nghiệm thu runtime.
+- [Permission Matrix Staff/Admin](technical/staff-admin-permission-matrix.md) — tài liệu BE-08 riêng, Proposed; không phải bằng chứng quyền đã enforce.
+
 ### BE-08 — Staff/Admin RBAC (2026-11-20)
 
 Trạng thái hiện tại: **BLOCKED** — chưa có ma trận quyền được duyệt hoặc license Enterprise được xác minh; HTTP suite tổng quát đã chạy trên DB disposable nhưng chưa có kiểm thử allow/deny theo role đã duyệt hoặc browser walkthrough. Mỗi sản phẩm bàn giao được tách thành một file:
