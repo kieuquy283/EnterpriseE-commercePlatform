@@ -16,6 +16,7 @@
 | Khoảng trống triển khai và trình tự thực hiện | [Công việc còn lại](../spec/07-delivery.md) |
 | BE-05 — hợp đồng trạng thái fulfillment, tracking và COD | [Status contract](be-05-status-contract.md) |
 | BE-05 — kết quả walkthrough staff | [Báo cáo walkthrough](../report/be-05-staff-walkthrough.md) |
+| BE-05 — evidence record và audit trail | [Evidence record](../report/be-05-evidence-record.md) |
 | Ma trận quyền Staff/Admin | [Ma trận quyền](staff-admin-permission-matrix.md) |
 | License và tính khả thi Medusa Enterprise RBAC | [License/Feasibility Decision](staff-admin-rbac-license-feasibility.md) |
 | Môi trường phát triển | [Thiết lập](../setup.md), [quy ước đóng góp](../../CONTRIBUTING.md) |

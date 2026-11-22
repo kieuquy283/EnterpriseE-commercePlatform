@@ -11,6 +11,7 @@ related_documents:
   - ../spec/06-operations.md
   - staff-admin-permission-matrix.md
   - ../report/be-05-staff-walkthrough.md
+  - ../report/be-05-evidence-record.md
 ---
 
 # BE-05 — Hợp đồng trạng thái fulfillment, tracking và COD
@@ -70,7 +71,8 @@ Storefront phải hiển thị trạng thái fulfillment và payment riêng; kh�
 
 ## 6. Khoảng trống triển khai cần nghiệm thu
 
-- Walkthrough runtime nhập tồn → publish → order COD → fulfillment → tracking thủ công → customer status → COD reconciliation chưa chạy; xem [báo cáo walkthrough BE-05](../report/be-05-staff-walkthrough.md).
+- Backend cart-to-order đã chạy trong DB Docker disposable và PASS 24/24: inventory trước/sau, reservation, order readback và một số order/payment IDs được ghi tại [manifest BE-05](../report/evidence/inventory-order-ts-be05-20261122-c/manifest.json).
+- Walkthrough nhập tồn bằng Admin → publish → COD → fulfillment → tracking thủ công → customer status → COD reconciliation chưa chạy end-to-end; xem [báo cáo walkthrough BE-05](../report/be-05-staff-walkthrough.md).
 - Storefront hiện đọc và hiển thị hai thuộc tính `fulfillment_status` và `payment_status`; chưa có bằng chứng browser rằng tracking number/URL được trả và hiển thị cho khách.
 - Quyền Staff khác Admin, ma trận được duyệt và test allow/deny thuộc BE-08; hiện chưa được chứng minh.
 - Chưa có audit trail walkthrough với order/fulfillment IDs, actors và thời điểm thực. Không đánh dấu contract hoặc BE-05 là VERIFIED cho tới khi các mục này có bằng chứng.

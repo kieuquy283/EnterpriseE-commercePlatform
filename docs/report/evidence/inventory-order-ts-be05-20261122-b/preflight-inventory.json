@@ -1,0 +1,39 @@
+{
+  "run_id": "ts-be05-20261122-b",
+  "captured_at": "2026-11-22T13:00:56.826Z",
+  "fixture": {
+    "run_id": "ts-be05-20261122-b",
+    "product_id": "prod_01M81N482MT9KFRYP8QTKF0MYH",
+    "handle": "ao-thun-essential",
+    "variant_id": "variant_01M81N486SAKZDPZ3K5SPMRCAB",
+    "sku": "TEE-ESSENTIAL-BLK",
+    "manage_inventory": true,
+    "allow_backorder": false,
+    "required_quantity": 1,
+    "inventory_item_id": "iitem_01M81N487NMFE3AP4BR0GEA6MG",
+    "inventory_level_id": "ilev_01M81N48B3W5HD6GWSAYGA62JJ",
+    "location_id": "sloc_01M81N47TK9SXVRSK5Q39K9ZXF",
+    "region_id": "reg_01M81N47R98S8TQZDXXVJYRZRR",
+    "sales_channel_id": "sc_01M81N47M0A5VFV6ZXM0JDVQ3T",
+    "currency_code": "vnd",
+    "quantity": 2,
+    "calculated_unit_price": 249000,
+    "payment_provider_id": "pp_system_default"
+  },
+  "product_status": "published",
+  "product_in_channel": true,
+  "location_in_channel": true,
+  "inventory_link_count": 1,
+  "inventory_level_count": 1,
+  "levels": [
+    {
+      "id": "ilev_01M81N48B3W5HD6GWSAYGA62JJ",
+      "inventory_item_id": "iitem_01M81N487NMFE3AP4BR0GEA6MG",
+      "location_id": "sloc_01M81N47TK9SXVRSK5Q39K9ZXF",
+      "stocked_quantity": 25,
+      "reserved_quantity": 0,
+      "incoming_quantity": 0,
+      "available_quantity": 25
+    }
+  ]
+}

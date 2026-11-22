@@ -1,0 +1,20 @@
+[
+  {
+    "operation": "GET /health",
+    "started_at": "2026-11-22T13:00:56.368Z",
+    "outcome": "success",
+    "completed_at": "2026-11-22T13:00:56.436Z"
+  },
+  {
+    "operation": "GET /store/products (fixture price)",
+    "started_at": "2026-11-22T13:00:56.601Z",
+    "outcome": "success",
+    "completed_at": "2026-11-22T13:00:56.787Z"
+  },
+  {
+    "operation": "GET /store/payment-providers",
+    "started_at": "2026-11-22T13:00:56.788Z",
+    "outcome": "success",
+    "completed_at": "2026-11-22T13:00:56.824Z"
+  }
+]

@@ -58,9 +58,10 @@ Giữ kết quả kiểm chứng trong CI hoặc báo cáo nghiệm thu có phi�
 
 ### BE-05 — Staff/Admin lifecycle, fulfillment, tracking và COD (2026-11-22)
 
-Các đầu ra được tách riêng theo loại tài liệu. Walkthrough đang **BLOCKED** vì Docker chưa khả dụng trong Ubuntu WSL; quyền Staff khác Admin thuộc BE-08 và chưa được chứng minh:
+Các đầu ra được tách riêng theo loại tài liệu. Backend runtime và inventory/order đã chạy PASS trong DB disposable; toàn bộ walkthrough còn **PARTIAL/BLOCKED** cho fulfillment/COD/customer browser/RBAC:
 
-- [Staff walkthrough và bằng chứng nghiệm thu](report/be-05-staff-walkthrough.md) — BLOCKED; chưa có order ID/audit trail thực.
+- [Staff walkthrough BE-05](report/be-05-staff-walkthrough.md) — BLOCKED; chưa có order ID/audit trail thực.
+- [Evidence record và audit trail BE-05](report/be-05-evidence-record.md) — mẫu bắt buộc; chưa có dữ liệu runtime.
 - [Status contract fulfillment/tracking/COD](technical/be-05-status-contract.md) — Proposed; chưa nghiệm thu runtime.
 - [Permission Matrix Staff/Admin](technical/staff-admin-permission-matrix.md) — tài liệu BE-08 riêng, Proposed; không phải bằng chứng quyền đã enforce.
 

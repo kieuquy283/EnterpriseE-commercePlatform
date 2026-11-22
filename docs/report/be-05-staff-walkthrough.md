@@ -1,33 +1,49 @@
-# BE-05 — Staff walkthrough và bằng chứng nghiệm thu
+---
+document_id: REPORT-BE-05-WALKTHROUGH-01
+title: BE-05 Staff walkthrough
+version: 1.0.0
+status: BLOCKED
+owner: Backend
+last_updated: 2026-11-22
+related_documents:
+  - be-05-evidence-record.md
+  - ../technical/be-05-status-contract.md
+  - ../technical/staff-admin-permission-matrix.md
+---
+
+# BE-05 — Staff walkthrough
 
 ## Trạng thái
 
-**BLOCKED — chưa chạy walkthrough end-to-end; không có order ID hoặc audit trail thực để báo cáo.** Không dùng dữ liệu production/demo dùng chung và không tạo trạng thái vận chuyển/COD giả.
+**PARTIAL — backend có order ID và audit trail thực trong DB disposable; walkthrough end-to-end, fulfillment/tracking/COD và role-negative vẫn chưa hoàn tất.** Không dùng dữ liệu production/demo dùng chung và không tạo trạng thái vận chuyển/COD giả.
 
 ## Nền và môi trường
 
 - Ngày kiểm tra: 2026-11-22
 - Revision trước khi ghi tài liệu: `b9660ea`
 - Medusa theo manifest: `2.21.2`
-- Runtime yêu cầu: Ubuntu WSL; Docker CLI/WSL integration hiện không khả dụng.
-- Kiểm tra môi trường: `wsl.exe -d Ubuntu -- bash -lc 'docker --version; docker info --format "Server={{.ServerVersion}} OperatingSystem={{.OperatingSystem}}"'`
-- Kết quả: Docker Desktop báo `docker` không khả dụng trong distro và yêu cầu bật WSL integration.
-- Node trong Ubuntu WSL: chưa cài (`node: command not found`); npm thấy trong distro là `11.19.1`, khác phiên bản npm 11.12.1 được repository yêu cầu.
-- Database/Admin/storefront: chưa khởi động; không tạo staff, customer, order hoặc thay đổi tồn.
+- Chỉ yêu cầu Docker Engine và Docker Compose v2 để chạy walkthrough. Không yêu cầu môi trường hoặc distro phụ.
+- Kiểm tra môi trường: `docker --version`; `docker compose version`; `docker info`
+- Docker runtime đã khởi thành công project riêng `be05-20261122`, gồm PostgreSQL, Redis, migrate, backend, worker và storefront. Backend `/health` trả `200`.
+- Commerce seed đã chạy trong DB disposable; store regions trả `200`, 3 sản phẩm published được đọc qua Store API.
+- Đã tạo lời mời staff fixture trong DB disposable; không ghi email, password, invite token hoặc cookie vào tài liệu.
+- Đã chạy backend cart-to-order fixture; reservation tăng từ 0 lên 2 và 24/24 kiểm tra nhất quán PASS.
+- Order thực trong run disposable: `order_01M81NJ89K1CYCJ9QD0N1NW5T5`, trạng thái ban đầu `pending`; cart `cart_01M81NJ4KK188GN31T74ZKABT8`.
+- Chưa chạy fulfillment, cập nhật trạng thái shipped/delivered, tracking carrier thật, reconciliation COD, customer browser hoặc role-negative.
 
-Không chuyển sang Docker engine phía Windows vì yêu cầu chạy Docker từ Ubuntu WSL. Cần bật Docker Desktop > Settings > Resources > WSL Integration cho distro Ubuntu, sau đó xác nhận `docker info` thành công. Cần Node `24.22.1` và npm `11.12.1` trong WSL nếu chạy test từ host. Mọi DB phục vụ walkthrough phải là môi trường disposable cô lập, không dùng volume hoặc dữ liệu chia sẻ.
+Mọi DB phục vụ walkthrough phải là môi trường disposable cô lập, không dùng volume hoặc dữ liệu chia sẻ.
 
 ## Kết quả theo điều kiện Done
 
 | Hạng mục | Kết quả | Căn cứ |
 |---|---|---|
-| Invite/login actor vận hành | NOT RUN | Chưa có DB/Admin runtime. Không tạo hoặc ghi token lời mời. |
-| Nhập tồn → publish sản phẩm | NOT RUN | Chưa có fixture và snapshot tồn trước/sau. |
-| Customer đặt COD | NOT RUN | Chưa có customer, order ID hoặc trạng thái payment thực. |
+| Invite/login actor vận hành | PARTIAL | Đã tạo lời mời fixture trong DB disposable; chưa hoàn tất accept/login và actor không được xác nhận role. |
+| Nhập tồn → publish sản phẩm | PARTIAL | Seed tạo 3 sản phẩm published và warehouse; preflight/full audit xác nhận SKU inventory. Chưa thay đổi tồn thủ công qua walkthrough Admin. |
+| Customer đặt COD | PARTIAL | Đã tạo order Store API qua payment default, không xác nhận COD thực hoặc trạng thái COD đã thu. |
 | Fulfillment và tracking thủ công | NOT RUN | Chưa có fulfillment ID, tracking carrier hoặc bằng chứng bàn giao. |
-| Customer nhìn thấy trạng thái đúng | NOT RUN trên browser | Source storefront đọc riêng `fulfillment_status`/`payment_status`; E2E order history có sẵn nhưng chưa chạy cho revision này. |
+| Customer nhìn thấy trạng thái đúng | NOT RUN trên browser | Backend store order readback PASS; storefront browser E2E chưa hoàn tất. |
 | Staff trái quyền bị từ chối | BLOCKED bởi BE-08 | Ma trận quyền hiện là Proposed; chưa có role policy được duyệt hoặc kiểm thử server-side allow/deny. |
-| Audit trail end-to-end | NOT RUN | Không có actor/order/fulfillment IDs, timestamp hoặc state transition thực để đối chiếu. |
+| Audit trail end-to-end | PARTIAL | Có order/cart/fixture/snapshot/24 checks; thiếu actor/user và fulfillment/COD transitions. |
 
 ### Đã kiểm tra source (không phải walkthrough)
 
@@ -36,26 +52,15 @@ Không chuyển sang Docker engine phía Windows vì yêu cầu chạy Docker t�
 - Storefront order history có E2E đăng ký customer, đặt COD và kiểm tra đơn; chưa kiểm tra thủ công/automated các chuyển trạng thái Admin, tracking link hoặc COD reconciliation.
 - [Permission Matrix Staff/Admin](../technical/staff-admin-permission-matrix.md) là tài liệu BE-08 trạng thái Proposed, không chứng minh Staff đã bị giới hạn.
 
-## Dữ liệu bắt buộc khi chạy lại
+## Bằng chứng khi chạy lại
 
-Chỉ ghi dữ liệu tổng hợp/tối thiểu; không lưu email, địa chỉ, số điện thoại, mật khẩu, token mời hoặc cookie.
+Các trường bắt buộc, định dạng đã che định danh và mẫu audit trail nằm trong [BE-05 evidence record](be-05-evidence-record.md). Không lưu email, địa chỉ, số điện thoại, mật khẩu, token mời hoặc cookie trong walkthrough hoặc báo cáo.
 
-| Bằng chứng | Giá trị cần ghi |
-|---|---|
-| Revision và runtime | Commit SHA, Medusa/Node/npm versions, Ubuntu distro, project Compose name |
-| Actor | ID nội bộ đã giả danh, loại actor, thao tác; không ghi credential |
-| Sản phẩm/tồn | Product/variant/location IDs, SKU fixture, số lượng trước/sau và reservation |
-| Đơn | Medusa order ID và display ID, timestamp tạo, COD provider/payment status |
-| Fulfillment | Fulfillment ID, items/quantities, status trước/sau, actor ID, timestamp |
-| Tracking | Chỉ carrier reference thật nếu được phép lưu; nếu không có thì ghi `not provided` |
-| COD | Số tiền đối soát, tham chiếu chứng cứ đã che, actor xác minh, trạng thái payment trước/sau |
-| Customer view | Customer actor giả danh, fulfillment/payment labels thấy trên browser, kết quả truy cập đơn khách khác |
-| Role-negative | Staff actor/permission policy được duyệt, request bị từ chối, HTTP status và xác nhận state không đổi |
-| Audit | Event/history IDs, actor, timestamp, state transition; redacted screenshot/log nếu cần |
+Bằng chứng runtime backend hiện có tại [inventory-order-ts-be05-20261122-c](evidence/inventory-order-ts-be05-20261122-c/manifest.json), gồm manifest, readback, 24 validation checks, snapshot T0/T1/T2 và CSV timeline.
 
 ## Trình tự nghiệm thu tiếp theo
 
-1. Bật Docker Desktop WSL integration cho Ubuntu và xác nhận Docker engine truy cập được từ chính distro.
+1. Khởi động Docker Engine và xác nhận `docker info` cùng `docker compose version` thành công.
 2. Chuẩn bị PostgreSQL/Redis disposable bằng Compose project/volume riêng; xác nhận không trỏ tới DB dùng chung. Chỉ seed fixture được phép.
 3. Tạo tài khoản Admin qua quy trình invite an toàn trong [hướng dẫn setup](../setup.md); không đưa token vào log hoặc báo cáo.
 4. Thực hiện nhập tồn và publish SKU fixture; lưu snapshot tồn/giữ chỗ trước và sau.
