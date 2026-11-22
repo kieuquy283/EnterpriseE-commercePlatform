@@ -20,5 +20,5 @@ export const TEST_ADDRESS = {
   phone: "0901234567",
 }
 
-export const DEFAULT_PRODUCT_HANDLE = "dm-tee-core"
-export const DEFAULT_PRODUCT_TITLE = "Core Cotton Tee"
+export const DEFAULT_PRODUCT_HANDLE = "ao-thun-essential"
+export const DEFAULT_PRODUCT_TITLE = "Ao thun Essential"

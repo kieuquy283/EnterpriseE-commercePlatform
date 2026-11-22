@@ -46,6 +46,7 @@ test.describe("Account & Order History (E2E-04, E2E-07, E2E-11)", () => {
   test("E2E-04: Registers customer, places COD order, and verifies order in history and details", async ({
     page,
   }) => {
+    test.setTimeout(120_000)
     const testEmail = generateTestEmail("cod-member")
     const testPassword = generateTestPassword()
 

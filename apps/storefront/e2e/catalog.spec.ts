@@ -5,7 +5,7 @@ test.describe("E2E-01: Catalog and Product Detail Page", () => {
   test("finds Vietnamese category names with or without accents and explains empty results", async ({
     page,
   }) => {
-    for (const query of ["áo sơ mi", "ao so mi"]) {
+    for (const query of ["áo thun", "ao thun"]) {
       await page.goto(`/vn/store?q=${encodeURIComponent(query)}`)
       await expect(page.getByTestId("products-list").locator("li").first()).toBeVisible()
     }
