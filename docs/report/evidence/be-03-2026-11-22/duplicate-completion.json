@@ -1,0 +1,40 @@
+{
+  "run_id": "b2342358-1911-4cc7-989b-26fde417338f",
+  "attempts": [
+    {
+      "attempt": 1,
+      "cart_id": "cart_01M817KPEPMS6XNSMJ0WK7DB5H",
+      "outcome": "accepted",
+      "order_id": "order_01M817KRKQ7P1YNWECY5AMQWN4",
+      "payment_collection_id": "pay_col_01M817KRBYSZJTPFYTJDH44T4G"
+    },
+    {
+      "attempt": 2,
+      "cart_id": "cart_01M817KPEPMS6XNSMJ0WK7DB5H",
+      "outcome": "idempotent_replay",
+      "order_id": "order_01M817KRKQ7P1YNWECY5AMQWN4",
+      "payment_collection_id": "pay_col_01M817KRBYSZJTPFYTJDH44T4G"
+    }
+  ],
+  "effects": {
+    "orders": [
+      {
+        "id": "order_01M817KRKQ7P1YNWECY5AMQWN4"
+      }
+    ],
+    "payments": [
+      {
+        "id": "pay_col_01M817KRBYSZJTPFYTJDH44T4G",
+        "status": "authorized"
+      }
+    ],
+    "reservations": [
+      {
+        "id": "resitem_01M817KRQ2G62FSQDPHSDRD437",
+        "quantity": 1,
+        "line_item_id": "ordli_01M817KRKSKNM2WFKZDWHZYN6R"
+      }
+    ]
+  },
+  "verdict": "PASS"
+}

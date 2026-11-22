@@ -1,0 +1,48 @@
+{
+  "run_id": "b2342358-1911-4cc7-989b-26fde417338f",
+  "intent": "same-cart-post-commit-recovery",
+  "attempts": [
+    {
+      "attempt": 1,
+      "cart_id": "cart_01M817KW8XHE290MS53KVPW5Z2",
+      "outcome": "accepted",
+      "order_id": "order_01M817KY3EPYPC8HACYKARJHXF",
+      "payment_collection_id": "pay_col_01M817KXX03SMFZZ1PCH46VTD3"
+    },
+    {
+      "attempt": 2,
+      "cart_id": "cart_01M817KW8XHE290MS53KVPW5Z2",
+      "outcome": "idempotent_replay",
+      "failure_class": "timeout_after_commit",
+      "order_id": "order_01M817KY3EPYPC8HACYKARJHXF"
+    },
+    {
+      "attempt": 3,
+      "cart_id": "cart_01M817KW8XHE290MS53KVPW5Z2",
+      "outcome": "payload_conflict_unenforced",
+      "failure_class": "payload_mismatch_unenforced",
+      "order_id": "order_01M817KY3EPYPC8HACYKARJHXF"
+    }
+  ],
+  "effects": {
+    "orders": [
+      {
+        "id": "order_01M817KY3EPYPC8HACYKARJHXF"
+      }
+    ],
+    "payments": [
+      {
+        "id": "pay_col_01M817KXX03SMFZZ1PCH46VTD3",
+        "status": "authorized"
+      }
+    ],
+    "reservations": [
+      {
+        "id": "resitem_01M817KY74HAFJCNDYVRG4YC63",
+        "quantity": 1,
+        "line_item_id": "ordli_01M817KY3FP6QJ02PVA13X3DVY"
+      }
+    ]
+  },
+  "verdict": "FAIL_PAYLOAD_MISMATCH_UNENFORCED"
+}

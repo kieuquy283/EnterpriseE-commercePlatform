@@ -1,0 +1,193 @@
+{
+  "run_id": "b2342358-1911-4cc7-989b-26fde417338f",
+  "fixture": {
+    "target_available_units": 5,
+    "attempted_orders": 20,
+    "baseline_stocked_quantity": 25,
+    "baseline_reserved_quantity": 0
+  },
+  "accepted_count": 5,
+  "rejected_count": 15,
+  "attempts": [
+    {
+      "attempt": 1,
+      "cart_id": "cart_01M817M0RNTVTMEN0XGKD1T7JF",
+      "outcome": "accepted",
+      "order_id": "order_01M817MY7E6CTVDA4HDFSWTR9W",
+      "payment_collection_id": "pay_col_01M817M2ZM7PWZM13CEPZKJMZQ"
+    },
+    {
+      "attempt": 2,
+      "cart_id": "cart_01M817M38P8GDN7WDVX18EAKVJ",
+      "outcome": "rejected",
+      "failure_class": "stock_conflict",
+      "http_status": 400,
+      "error_type": "not_allowed",
+      "error_message": "Not enough stock available for item iitem_01M817KMYHMT2H98A8ZVY4VFZN at location sloc_01M817KMMKJ9BMGPBS8JCZH1YV"
+    },
+    {
+      "attempt": 3,
+      "cart_id": "cart_01M817M5B6CBP2PHY3F154SQXY",
+      "outcome": "accepted",
+      "order_id": "order_01M817MYCE56V7VSTMS7C9JX8N",
+      "payment_collection_id": "pay_col_01M817M7DGWVSMCQ0PWY176MG9"
+    },
+    {
+      "attempt": 4,
+      "cart_id": "cart_01M817M7P3TH89QR7E7VSGSMAJ",
+      "outcome": "rejected",
+      "failure_class": "stock_conflict",
+      "http_status": 400,
+      "error_type": "not_allowed",
+      "error_message": "Not enough stock available for item iitem_01M817KMYHMT2H98A8ZVY4VFZN at location sloc_01M817KMMKJ9BMGPBS8JCZH1YV"
+    },
+    {
+      "attempt": 5,
+      "cart_id": "cart_01M817M9CAZQXX1AAAXT2QRJA7",
+      "outcome": "rejected",
+      "failure_class": "stock_conflict",
+      "http_status": 400,
+      "error_type": "not_allowed",
+      "error_message": "Not enough stock available for item iitem_01M817KMYHMT2H98A8ZVY4VFZN at location sloc_01M817KMMKJ9BMGPBS8JCZH1YV"
+    },
+    {
+      "attempt": 6,
+      "cart_id": "cart_01M817MAY6S5QJ1PEH4K4QKTBZ",
+      "outcome": "rejected",
+      "failure_class": "stock_conflict",
+      "http_status": 400,
+      "error_type": "not_allowed",
+      "error_message": "Not enough stock available for item iitem_01M817KMYHMT2H98A8ZVY4VFZN at location sloc_01M817KMMKJ9BMGPBS8JCZH1YV"
+    },
+    {
+      "attempt": 7,
+      "cart_id": "cart_01M817MC58K641JE3N4VWYM0DB",
+      "outcome": "rejected",
+      "failure_class": "stock_conflict",
+      "http_status": 400,
+      "error_type": "not_allowed",
+      "error_message": "Not enough stock available for item iitem_01M817KMYHMT2H98A8ZVY4VFZN at location sloc_01M817KMMKJ9BMGPBS8JCZH1YV"
+    },
+    {
+      "attempt": 8,
+      "cart_id": "cart_01M817MDKNDGY2V97T7ACRY6AS",
+      "outcome": "rejected",
+      "failure_class": "stock_conflict",
+      "http_status": 400,
+      "error_type": "not_allowed",
+      "error_message": "Not enough stock available for item iitem_01M817KMYHMT2H98A8ZVY4VFZN at location sloc_01M817KMMKJ9BMGPBS8JCZH1YV"
+    },
+    {
+      "attempt": 9,
+      "cart_id": "cart_01M817MESNSR9TYYTW76PDTS80",
+      "outcome": "rejected",
+      "failure_class": "stock_conflict",
+      "http_status": 400,
+      "error_type": "not_allowed",
+      "error_message": "Not enough stock available for item iitem_01M817KMYHMT2H98A8ZVY4VFZN at location sloc_01M817KMMKJ9BMGPBS8JCZH1YV"
+    },
+    {
+      "attempt": 10,
+      "cart_id": "cart_01M817MFYEV0D1PG0J7AN560CB",
+      "outcome": "rejected",
+      "failure_class": "stock_conflict",
+      "http_status": 400,
+      "error_type": "not_allowed",
+      "error_message": "Not enough stock available for item iitem_01M817KMYHMT2H98A8ZVY4VFZN at location sloc_01M817KMMKJ9BMGPBS8JCZH1YV"
+    },
+    {
+      "attempt": 11,
+      "cart_id": "cart_01M817MH752Q1FNWYK0QHYW9CX",
+      "outcome": "accepted",
+      "order_id": "order_01M817MYCH4344QKJRADFXPXN7",
+      "payment_collection_id": "pay_col_01M817MJ8E7F9MN3JGEVXN9C63"
+    },
+    {
+      "attempt": 12,
+      "cart_id": "cart_01M817MJCZPC69DKTRFK85ZC57",
+      "outcome": "accepted",
+      "order_id": "order_01M817MYBGFNMNYKVBT1TADFQ3",
+      "payment_collection_id": "pay_col_01M817MKHW180S36ZN2EBSRA4W"
+    },
+    {
+      "attempt": 13,
+      "cart_id": "cart_01M817MKP46D28EZSQQM371BYS",
+      "outcome": "rejected",
+      "failure_class": "stock_conflict",
+      "http_status": 400,
+      "error_type": "not_allowed",
+      "error_message": "Not enough stock available for item iitem_01M817KMYHMT2H98A8ZVY4VFZN at location sloc_01M817KMMKJ9BMGPBS8JCZH1YV"
+    },
+    {
+      "attempt": 14,
+      "cart_id": "cart_01M817MMSWKQX0HS0V082WRFDM",
+      "outcome": "rejected",
+      "failure_class": "stock_conflict",
+      "http_status": 400,
+      "error_type": "not_allowed",
+      "error_message": "Not enough stock available for item iitem_01M817KMYHMT2H98A8ZVY4VFZN at location sloc_01M817KMMKJ9BMGPBS8JCZH1YV"
+    },
+    {
+      "attempt": 15,
+      "cart_id": "cart_01M817MP0A4QZZ299XJE89QK30",
+      "outcome": "accepted",
+      "order_id": "order_01M817MY8DHSVQ2NQRPSHGG253",
+      "payment_collection_id": "pay_col_01M817MPZNERZDKJ8WPVZ9Z01P"
+    },
+    {
+      "attempt": 16,
+      "cart_id": "cart_01M817MQ48HVGHKS67DGQKYTVM",
+      "outcome": "rejected",
+      "failure_class": "stock_conflict",
+      "http_status": 400,
+      "error_type": "not_allowed",
+      "error_message": "Not enough stock available for item iitem_01M817KMYHMT2H98A8ZVY4VFZN at location sloc_01M817KMMKJ9BMGPBS8JCZH1YV"
+    },
+    {
+      "attempt": 17,
+      "cart_id": "cart_01M817MR86TXZ5KKEQQW9RD1TB",
+      "outcome": "rejected",
+      "failure_class": "stock_conflict",
+      "http_status": 400,
+      "error_type": "not_allowed",
+      "error_message": "Not enough stock available for item iitem_01M817KMYHMT2H98A8ZVY4VFZN at location sloc_01M817KMMKJ9BMGPBS8JCZH1YV"
+    },
+    {
+      "attempt": 18,
+      "cart_id": "cart_01M817MSBS1M5YDDR4Y37HCAVJ",
+      "outcome": "rejected",
+      "failure_class": "stock_conflict",
+      "http_status": 400,
+      "error_type": "not_allowed",
+      "error_message": "Not enough stock available for item iitem_01M817KMYHMT2H98A8ZVY4VFZN at location sloc_01M817KMMKJ9BMGPBS8JCZH1YV"
+    },
+    {
+      "attempt": 19,
+      "cart_id": "cart_01M817MTERCP18T1W9Y3ZHA2CH",
+      "outcome": "rejected",
+      "failure_class": "stock_conflict",
+      "http_status": 400,
+      "error_type": "not_allowed",
+      "error_message": "Not enough stock available for item iitem_01M817KMYHMT2H98A8ZVY4VFZN at location sloc_01M817KMMKJ9BMGPBS8JCZH1YV"
+    },
+    {
+      "attempt": 20,
+      "cart_id": "cart_01M817MVJ20VA1N219KTZKMVH7",
+      "outcome": "rejected",
+      "failure_class": "stock_conflict",
+      "http_status": 400,
+      "error_type": "not_allowed",
+      "error_message": "Not enough stock available for item iitem_01M817KMYHMT2H98A8ZVY4VFZN at location sloc_01M817KMMKJ9BMGPBS8JCZH1YV"
+    }
+  ],
+  "reconciliation": {
+    "order_count": 5,
+    "payment_count": 5,
+    "reservation_count": 5,
+    "accepted_reservation_quantity": 5,
+    "reserved_quantity_before": 0,
+    "reserved_quantity_after": 5,
+    "available_quantity_after": 0
+  },
+  "verdict": "PASS"
+}
