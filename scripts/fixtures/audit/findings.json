@@ -1,0 +1,29 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "example": {
+      "name": "example",
+      "severity": "high",
+      "via": [
+        {
+          "source": 123,
+          "name": "example",
+          "title": "Synthetic policy fixture",
+          "range": "<2",
+          "severity": "high",
+          "url": "https://github.com/advisories/GHSA-aaaa-bbbb-cccc"
+        }
+      ],
+      "nodes": ["apps/backend/node_modules/example"]
+    },
+    "parent": {
+      "name": "parent",
+      "severity": "high",
+      "via": ["example"],
+      "nodes": ["node_modules/parent"]
+    }
+  },
+  "metadata": {
+    "vulnerabilities": { "info": 0, "low": 0, "moderate": 0, "high": 2, "critical": 0, "total": 2 }
+  }
+}

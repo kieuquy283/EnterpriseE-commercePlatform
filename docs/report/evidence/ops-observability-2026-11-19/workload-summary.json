@@ -1,0 +1,236 @@
+{
+  "catalog-baseline": {
+    "checks": {
+      "passes": 10,
+      "fails": 0,
+      "thresholds": {
+        "rate==1": false
+      },
+      "value": 1
+    },
+    "http_reqs": {
+      "count": 11,
+      "rate": 16.96427489956047
+    },
+    "http_req_failed": {
+      "passes": 0,
+      "fails": 11,
+      "thresholds": {
+        "rate<0.01": false
+      },
+      "value": 0
+    },
+    "iterations": {
+      "count": 10,
+      "rate": 15.422068090509516
+    },
+    "dropped_iterations": {
+      "count": 0,
+      "rate": 0,
+      "thresholds": {
+        "count==0": false
+      }
+    },
+    "http_req_duration{kind:catalog}": {
+      "p(99)": 66.96823577,
+      "max": 67.087778,
+      "avg": 53.0478126,
+      "med": 51.276533,
+      "p(95)": 66.49006684999999,
+      "thresholds": {
+        "p(95)<600": false
+      }
+    }
+  },
+  "checkout-baseline": {
+    "checks": {
+      "passes": 4,
+      "fails": 0,
+      "thresholds": {
+        "rate==1": false
+      },
+      "value": 1
+    },
+    "http_reqs": {
+      "rate": 3.8655070916946794,
+      "count": 10
+    },
+    "http_req_failed": {
+      "passes": 0,
+      "fails": 10,
+      "thresholds": {
+        "rate<0.01": false
+      },
+      "value": 0
+    },
+    "iterations": {
+      "count": 1,
+      "rate": 0.38655070916946793
+    },
+    "dropped_iterations": {
+      "count": 0,
+      "rate": 0,
+      "thresholds": {
+        "count==0": false
+      }
+    },
+    "http_req_duration{step:complete}": {
+      "p(90)": 423.932239,
+      "p(95)": 423.932239,
+      "avg": 423.932239,
+      "min": 423.932239,
+      "med": 423.932239,
+      "max": 423.932239,
+      "thresholds": {
+        "p(95)<1500": false
+      }
+    },
+    "checkout_intent_duration": {
+      "p(95)": 2587,
+      "avg": 2587,
+      "min": 2587,
+      "med": 2587,
+      "max": 2587,
+      "p(90)": 2587,
+      "thresholds": {
+        "p(95)<10000": false
+      }
+    },
+    "checkout_reconciled": {
+      "passes": 1,
+      "fails": 0,
+      "thresholds": {
+        "rate==1": false
+      },
+      "value": 1
+    },
+    "checkout_completed_intents": {
+      "count": 1,
+      "rate": 0.38655070916946793,
+      "thresholds": {
+        "count>0": false
+      }
+    }
+  },
+  "catalog-recovery": {
+    "checks": {
+      "passes": 10,
+      "fails": 0,
+      "thresholds": {
+        "rate==1": false
+      },
+      "value": 1
+    },
+    "http_reqs": {
+      "count": 11,
+      "rate": 22.84740556587267
+    },
+    "http_req_failed": {
+      "passes": 0,
+      "fails": 11,
+      "thresholds": {
+        "rate<0.01": false
+      },
+      "value": 0
+    },
+    "iterations": {
+      "count": 10,
+      "rate": 20.770368696247882
+    },
+    "dropped_iterations": {
+      "count": 0,
+      "rate": 0,
+      "thresholds": {
+        "count==0": false
+      }
+    },
+    "http_req_duration{kind:catalog}": {
+      "med": 39.9793945,
+      "p(95)": 53.12954224999999,
+      "p(99)": 54.67651805,
+      "max": 55.063262,
+      "avg": 41.8559471,
+      "thresholds": {
+        "p(95)<600": false
+      }
+    }
+  },
+  "catalog-database-fault": {
+    "checks": {
+      "passes": 0,
+      "fails": 0,
+      "thresholds": {
+        "rate==1": false
+      },
+      "value": 0
+    },
+    "http_reqs": {
+      "rate": 0.199918458498642,
+      "count": 1
+    },
+    "http_req_failed": {
+      "passes": 1,
+      "fails": 0,
+      "thresholds": {
+        "rate<0.01": true
+      },
+      "value": 1
+    },
+    "dropped_iterations": {
+      "rate": 0,
+      "count": 0,
+      "thresholds": {
+        "count==0": false
+      }
+    },
+    "http_req_duration{kind:catalog}": {
+      "avg": 0,
+      "med": 0,
+      "p(95)": 0,
+      "p(99)": 0,
+      "max": 0,
+      "thresholds": {
+        "p(95)<600": false
+      }
+    }
+  },
+  "catalog-negative": {
+    "checks": {
+      "passes": 0,
+      "fails": 0,
+      "thresholds": {
+        "rate==1": false
+      },
+      "value": 0
+    },
+    "http_reqs": {
+      "count": 1,
+      "rate": 24.731683492620213
+    },
+    "http_req_failed": {
+      "fails": 0,
+      "passes": 1,
+      "thresholds": {
+        "rate<0.01": true
+      },
+      "value": 1
+    },
+    "dropped_iterations": {
+      "count": 0,
+      "rate": 0,
+      "thresholds": {
+        "count==0": false
+      }
+    },
+    "http_req_duration{kind:catalog}": {
+      "avg": 0,
+      "med": 0,
+      "p(95)": 0,
+      "p(99)": 0,
+      "max": 0,
+      "thresholds": {
+        "p(95)<600": false
+      }
+    }
+  }
+}

@@ -9,7 +9,7 @@ import Divider from "@modules/common/components/divider"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import OptionSelect from "@modules/products/components/product-actions/option-select"
 import { isEqual } from "lodash"
-import { useParams, usePathname, useSearchParams } from "next/navigation"
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useRef, useState } from "react"
 import ProductPrice from "../product-price"
 import MobileActions from "./mobile-actions"
@@ -54,6 +54,7 @@ function variantAvailability(variant?: HttpTypes.StoreProductVariant): {
 }
 
 export default function ProductActions({ product, disabled }: ProductActionsProps) {
+  const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
@@ -139,6 +140,8 @@ export default function ProductActions({ product, disabled }: ProductActionsProp
         quantity: 1,
         countryCode,
       })
+      // Refresh the server-rendered cart after mutation; private cart reads are uncached.
+      router.refresh()
       setFeedback({
         tone: "success",
         message: "Đã thêm vào giỏ hàng.",

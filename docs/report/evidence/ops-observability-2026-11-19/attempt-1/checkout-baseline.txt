@@ -1,0 +1,283 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: /scripts/checkout.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1 max VUs, 10m30s max duration (incl. graceful stop):
+              * checkout: 1 iterations shared among 1 VUs (maxDuration: 10m0s, gracefulStop: 30s)
+
+
+running (00m01.0s), 1/1 VUs, 0 complete and 0 interrupted iterations
+checkout   [   0% ] 1 VUs  00m01.0s/10m0s  0/1 shared iters
+
+running (00m02.0s), 1/1 VUs, 0 complete and 0 interrupted iterations
+checkout   [   0% ] 1 VUs  00m02.0s/10m0s  0/1 shared iters
+time="2026-11-18T17:20:59Z" level=info msg="{\"kind\":\"checkout_reconciliation\",\"operation_id\":\"load-1-0\",\"cart_id\":\"cart_01M7QTT2FQ8SEPDY7ZH8RW1JWX\",\"order_id\":\"order_01M7QTT41EWRS70WYSCSD7M2C1\",\"total\":279000,\"reconciled\":true}" source=console
+{
+    "metrics": {
+        "checkout_completed_intents": {
+            "count": 1,
+            "rate": 0.48812272952183483,
+            "thresholds": {
+                "count>0": false
+            }
+        },
+        "http_req_tls_handshaking": {
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0
+        },
+        "http_req_receiving": {
+            "avg": 0.09446400000000002,
+            "min": 0.067994,
+            "med": 0.0969555,
+            "max": 0.119696,
+            "p(90)": 0.11515009999999999,
+            "p(95)": 0.11742304999999999
+        },
+        "http_req_sending": {
+            "p(90)": 0.0451267,
+            "p(95)": 0.05363934999999998,
+            "avg": 0.029988900000000002,
+            "min": 0.016893,
+            "med": 0.025104500000000002,
+            "max": 0.062152
+        },
+        "dropped_iterations": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count==0": false
+            }
+        },
+        "http_reqs": {
+            "count": 10,
+            "rate": 4.881227295218348
+        },
+        "vus": {
+            "value": 1,
+            "min": 1,
+            "max": 1
+        },
+        "http_req_duration": {
+            "avg": 204.48409519999998,
+            "min": 35.823878,
+            "med": 171.782028,
+            "max": 437.240481,
+            "p(90)": 412.2590487,
+            "p(95)": 424.74976484999996
+        },
+        "checkout_reconciled": {
+            "passes": 1,
+            "fails": 0,
+            "thresholds": {
+                "rate==1": false
+            },
+            "value": 1
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 10,
+            "thresholds": {
+                "rate<0.01": false
+            },
+            "value": 0
+        },
+        "vus_max": {
+            "value": 1,
+            "min": 1,
+            "max": 1
+        },
+        "data_received": {
+            "count": 36267,
+            "rate": 17702.747031568386
+        },
+        "http_req_blocked": {
+            "avg": 0.029356800000000006,
+            "min": 0.003827,
+            "med": 0.0046195,
+            "max": 0.253018,
+            "p(90)": 0.03008079999999991,
+            "p(95)": 0.14154939999999974
+        },
+        "data_sent": {
+            "count": 3285,
+            "rate": 1603.4831664792275
+        },
+        "http_req_connecting": {
+            "max": 0.122461,
+            "p(90)": 0.012246099999999956,
+            "p(95)": 0.06735354999999987,
+            "avg": 0.0122461,
+            "min": 0,
+            "med": 0
+        },
+        "iterations": {
+            "count": 1,
+            "rate": 0.48812272952183483
+        },
+        "http_req_duration{step:complete}": {
+            "max": 325.919649,
+            "p(90)": 325.919649,
+            "p(95)": 325.919649,
+            "avg": 325.919649,
+            "min": 325.919649,
+            "med": 325.919649,
+            "thresholds": {
+                "p(95)<1500": false
+            }
+        },
+        "http_req_duration{expected_response:true}": {
+            "p(95)": 424.74976484999996,
+            "avg": 204.48409519999998,
+            "min": 35.823878,
+            "med": 171.782028,
+            "max": 437.240481,
+            "p(90)": 412.2590487
+        },
+        "iteration_duration": {
+            "avg": 2048.54886,
+            "min": 2048.54886,
+            "med": 2048.54886,
+            "max": 2048.54886,
+            "p(90)": 2048.54886,
+            "p(95)": 2048.54886
+        },
+        "checkout_intent_duration": {
+            "med": 2049,
+            "max": 2049,
+            "p(90)": 2049,
+            "p(95)": 2049,
+            "avg": 2049,
+            "min": 2049,
+            "thresholds": {
+                "p(95)<10000": false
+            }
+        },
+        "http_req_waiting": {
+            "p(90)": 412.13357399999995,
+            "p(95)": 424.63647299999997,
+            "avg": 204.3596423,
+            "min": 35.704643,
+            "med": 171.62129099999999,
+            "max": 437.139372
+        },
+        "checks": {
+            "passes": 4,
+            "fails": 0,
+            "thresholds": {
+                "rate==1": false
+            },
+            "value": 1
+        }
+    },
+    "root_group": {
+        "checks": {
+            "order created": {
+                "fails": 0,
+                "name": "order created",
+                "path": "::order created",
+                "id": "5e7ce872bb14a562c4b9054c8eda7170",
+                "passes": 1
+            },
+            "retry returns same order": {
+                "name": "retry returns same order",
+                "path": "::retry returns same order",
+                "id": "393052a3fea7221b1f43c70a1cda1f15",
+                "passes": 1,
+                "fails": 0
+            },
+            "completed cart and totals reconcile": {
+                "passes": 1,
+                "fails": 0,
+                "name": "completed cart and totals reconcile",
+                "path": "::completed cart and totals reconcile",
+                "id": "7ab56e63428ab2600be7f0e30bffefb8"
+            },
+            "one expected order line": {
+                "name": "one expected order line",
+                "path": "::one expected order line",
+                "id": "58d2dae73c9207f20c7dc2544a080519",
+                "passes": 1,
+                "fails": 0
+            }
+        },
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {}
+    }
+}
+
+  █ THRESHOLDS 
+
+    checkout_completed_intents
+    ✓ 'count>0' count=1
+
+    checkout_intent_duration
+    ✓ 'p(95)<10000' p(95)=2.04s
+
+    checkout_reconciled
+    ✓ 'rate==1' rate=100.00%
+
+    checks
+    ✓ 'rate==1' rate=100.00%
+
+    dropped_iterations
+    ✓ 'count==0' count=0
+
+    http_req_duration{step:complete}
+    ✓ 'p(95)<1500' p(95)=325.91ms
+
+    http_req_failed
+    ✓ 'rate<0.01' rate=0.00%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 4       1.952491/s
+    checks_succeeded...: 100.00% 4 out of 4
+    checks_failed......: 0.00%   0 out of 4
+
+    ✓ order created
+    ✓ retry returns same order
+    ✓ completed cart and totals reconcile
+    ✓ one expected order line
+
+    CUSTOM
+    checkout_completed_intents.....: 1       0.488123/s
+    checkout_intent_duration.......: avg=2.04s    min=2.04s    med=2.04s    max=2.04s    p(90)=2.04s    p(95)=2.04s   
+    checkout_reconciled............: 100.00% 1 out of 1
+
+    HTTP
+    http_req_duration..............: avg=204.48ms min=35.82ms  med=171.78ms max=437.24ms p(90)=412.25ms p(95)=424.74ms
+      { expected_response:true }...: avg=204.48ms min=35.82ms  med=171.78ms max=437.24ms p(90)=412.25ms p(95)=424.74ms
+      { step:complete }............: avg=325.91ms min=325.91ms med=325.91ms max=325.91ms p(90)=325.91ms p(95)=325.91ms
+    http_req_failed................: 0.00%   0 out of 10
+    http_reqs......................: 10      4.881227/s
+
+    EXECUTION
+    dropped_iterations.............: 0       0/s
+    iteration_duration.............: avg=2.04s    min=2.04s    med=2.04s    max=2.04s    p(90)=2.04s    p(95)=2.04s   
+    iterations.....................: 1       0.488123/s
+    vus............................: 1       min=1       max=1
+    vus_max........................: 1       min=1       max=1
+
+    NETWORK
+    data_received..................: 36 kB   18 kB/s
+    data_sent......................: 3.3 kB  1.6 kB/s
+
+
+
+
+running (00m02.0s), 0/1 VUs, 1 complete and 0 interrupted iterations
+checkout ✓ [ 100% ] 1 VUs  00m02.0s/10m0s  1/1 shared iters

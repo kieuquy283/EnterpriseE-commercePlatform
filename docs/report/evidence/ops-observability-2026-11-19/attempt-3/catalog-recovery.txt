@@ -1,0 +1,194 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: /scripts/catalog.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1 max VUs, 10m30s max duration (incl. graceful stop):
+              * catalog: 10 iterations shared among 1 VUs (maxDuration: 10m0s, gracefulStop: 30s)
+
+
+
+  █ THRESHOLDS 
+
+    checks
+    ✓ 'rate==1' rate=100.00%
+
+    dropped_iterations
+    ✓ 'count==0' count=0
+
+    http_req_duration{kind:catalog}
+    ✓ 'p(95)<600' p(95)=87.32ms
+
+    http_req_failed
+    ✓ 'rate<0.01' rate=0.00%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 10      15.626527/s
+    checks_succeeded...: 100.00% 10 out of 10
+    checks_failed......: 0.00%   0 out of 10
+
+    ✓ catalog status and product contract
+
+    HTTP
+    http_req_duration..............: avg=57.66ms med=55.49ms p(95)=85.43ms p(99)=100.62ms max=104.42ms
+      { expected_response:true }...: avg=57.66ms med=55.49ms p(95)=85.43ms p(99)=100.62ms max=104.42ms
+      { kind:catalog }.............: avg=57.68ms med=54.09ms p(95)=87.32ms p(99)=101ms    max=104.42ms
+    http_req_failed................: 0.00%  0 out of 11
+    http_reqs......................: 11     17.18918/s
+
+    EXECUTION
+    dropped_iterations.............: 0      0/s
+    iteration_duration.............: avg=58.1ms  med=54.42ms p(95)=87.69ms p(99)=101.39ms max=104.81ms
+    iterations.....................: 10     15.626527/s
+
+    NETWORK
+    data_received..................: 52 kB  81 kB/s
+    data_sent......................: 2.1 kB 3.3 kB/s
+
+
+
+{
+    "metrics": {
+        "http_req_receiving": {
+            "med": 0.108872,
+            "p(95)": 0.19642199999999999,
+            "p(99)": 0.2120124,
+            "max": 0.21591,
+            "avg": 0.12090227272727269
+        },
+        "dropped_iterations": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count==0": false
+            }
+        },
+        "http_req_tls_handshaking": {
+            "med": 0,
+            "p(95)": 0,
+            "p(99)": 0,
+            "max": 0,
+            "avg": 0
+        },
+        "iterations": {
+            "count": 10,
+            "rate": 15.626527248874089
+        },
+        "http_req_blocked": {
+            "avg": 0.06175399999999998,
+            "med": 0.005501,
+            "p(95)": 0.312974,
+            "p(99)": 0.3338668,
+            "max": 0.33909
+        },
+        "http_req_waiting": {
+            "p(95)": 85.311767,
+            "p(99)": 100.48989260000002,
+            "max": 104.284424,
+            "avg": 57.51626645454546,
+            "med": 55.394162
+        },
+        "http_req_connecting": {
+            "med": 0,
+            "p(95)": 0.1911115,
+            "p(99)": 0.2552839,
+            "max": 0.271327,
+            "avg": 0.034747545454545455
+        },
+        "data_received": {
+            "rate": 80625.06734056586,
+            "count": 51595
+        },
+        "http_req_duration": {
+            "p(99)": 100.62208000000001,
+            "max": 104.420027,
+            "avg": 57.666177999999995,
+            "med": 55.491171,
+            "p(95)": 85.43029200000001
+        },
+        "data_sent": {
+            "rate": 3344.076831259055,
+            "count": 2140
+        },
+        "checks": {
+            "passes": 10,
+            "fails": 0,
+            "thresholds": {
+                "rate==1": false
+            },
+            "value": 1
+        },
+        "http_req_sending": {
+            "med": 0.021111,
+            "p(95)": 0.064716,
+            "p(99)": 0.06984560000000001,
+            "max": 0.071128,
+            "avg": 0.029009272727272727
+        },
+        "http_req_duration{kind:catalog}": {
+            "avg": 57.683476899999995,
+            "med": 54.091468500000005,
+            "p(95)": 87.32926549999996,
+            "p(99)": 101.0018747,
+            "max": 104.420027,
+            "thresholds": {
+                "p(95)<600": false
+            }
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 11,
+            "thresholds": {
+                "rate<0.01": false
+            },
+            "value": 0
+        },
+        "http_req_duration{expected_response:true}": {
+            "avg": 57.666177999999995,
+            "med": 55.491171,
+            "p(95)": 85.43029200000001,
+            "p(99)": 100.62208000000001,
+            "max": 104.420027
+        },
+        "iteration_duration": {
+            "avg": 58.10761499999999,
+            "med": 54.427928,
+            "p(95)": 87.69133474999995,
+            "p(99)": 101.39254055,
+            "max": 104.817842
+        },
+        "http_reqs": {
+            "count": 11,
+            "rate": 17.189179973761497
+        }
+    },
+    "setup_data": {
+        "id": "prod_01M7QV0WYNJ5XWMFAYC3HY4QQ8",
+        "query": "Ao thun Essential"
+    },
+    "root_group": {
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "catalog status and product contract": {
+                    "name": "catalog status and product contract",
+                    "path": "::catalog status and product contract",
+                    "id": "a0ca315430296716be60d9e289ddffcd",
+                    "passes": 10,
+                    "fails": 0
+                }
+            },
+        "name": ""
+    }
+}
+running (00m00.6s), 0/1 VUs, 10 complete and 0 interrupted iterations
+catalog ✓ [ 100% ] 1 VUs  00m00.6s/10m0s  10/10 shared iters

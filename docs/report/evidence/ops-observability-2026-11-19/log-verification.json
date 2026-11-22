@@ -1,0 +1,9 @@
+{
+  "http_records": 60,
+  "order_event_completed": 2,
+  "joined_business_operations": 1,
+  "release_sha_present": true,
+  "top_level_fields": true,
+  "database_fault_observed_aborted": false,
+  "source": "actual Medusa integration runner stdout; raw bodies/framework logs excluded"
+}

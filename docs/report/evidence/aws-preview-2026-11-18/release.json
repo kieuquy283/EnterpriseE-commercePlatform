@@ -1,0 +1,32 @@
+{
+  "base_commit": "1b6a668d06a5956da0692c268a93b9e5124bf1c3",
+  "uncommitted_changes": true,
+  "backend_image": "695496430984.dkr.ecr.ap-southeast-2.amazonaws.com/commerce-foundation-backendrepository-5whzaxxdofo6@sha256:8de9c9014f66a05ae2c97bd300266982fb68fd60d042c9e4a19dff99c8379bbc",
+  "storefront_image": "695496430984.dkr.ecr.ap-southeast-2.amazonaws.com/commerce-foundation-storefrontrepository-tvt82ngmbqnk@sha256:c3c756b96cc76c8166b948c4622e6789229cbeb3ce15e43b0ea82bd47a0cf4ab",
+  "dataset_sha256": "c1d044ec5b9ec498f1f08d90b6eaae3c32352237369ff93d5c8d7dfeb2e65c53",
+  "temporary_bootstrap_resources_removed": true,
+  "local_tests": {
+    "backend_unit": {
+      "passed": 144,
+      "suites": 14
+    },
+    "backend_http": {
+      "passed": 30,
+      "suites": 6
+    },
+    "production_browser": {
+      "passed": 18,
+      "skipped": 6,
+      "failed": 0
+    },
+    "focused_cart_regressions": {
+      "passed": 3,
+      "failed": 0
+    }
+  },
+  "release_status": "TIMED PREVIEW VERIFIED; production security acceptance remains blocked",
+  "application_source_commit": "bae01ce5eb036652fd0432e5596350f1303d7a10",
+  "runtime_source_files_match_images": true,
+  "compute_lease_expires_utc": "2026-11-18T20:48:00+00:00",
+  "iac_unit_tests_passed": 27
+}

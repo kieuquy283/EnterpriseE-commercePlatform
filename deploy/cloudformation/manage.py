@@ -4,6 +4,7 @@
 import argparse
 import datetime
 import json
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -270,8 +271,38 @@ def stop_operations(app):
         aws("ecs", "wait", "tasks-stopped", "--cluster", app["Cluster"], "--tasks", *tasks[offset:offset + 100])
 
 
+def validate_image_scan(report):
+    try:
+        status = report["imageScanStatus"]["status"]
+        counts = report["imageScanFindings"]["findingSeverityCounts"]
+    except (KeyError, TypeError) as error:
+        raise RuntimeError("Image scan report is incomplete") from error
+    if status != "COMPLETE":
+        raise RuntimeError("Image scan is incomplete or unsupported")
+    if not isinstance(counts, dict) or any(type(v) is not int or v < 0 for v in counts.values()):
+        raise RuntimeError("Invalid image scan counts")
+    if counts.get("HIGH", 0) or counts.get("CRITICAL", 0):
+        raise RuntimeError("Image has unresolved HIGH/CRITICAL findings")
+
+
+def verify_release_images():
+    parameters = {p["ParameterKey"]: p.get("ParameterValue") for p in stack("app")["Parameters"]}
+    repositories = outputs("foundation")
+    names = ["Backend"] + (["Storefront"] if parameters.get("StorefrontEnabled") == "true" else [])
+    for name in names:
+        repository = repositories[name + "RepositoryUri"]
+        reference = parameters.get(name + "Image", "")
+        prefix = repository + "@"
+        if not reference.startswith(prefix) or not re.fullmatch(r"sha256:[0-9a-f]{64}", reference[len(prefix):]):
+            raise RuntimeError("Release images must use immutable digests from this foundation")
+        report = aws("ecr", "describe-image-scan-findings", "--repository-name", repository.split("/", 1)[1],
+                     "--image-id", "imageDigest=" + reference[len(prefix):])
+        validate_image_scan(report)
+
+
 def start(hours):
     app = outputs("app")
+    verify_release_images()
     start_data(hours)
     # Pause application compute before migrations even if a previous session was running.
     scaling(app, False)

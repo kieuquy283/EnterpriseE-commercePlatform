@@ -40,6 +40,8 @@ export async function retrieveCart(cartId?: string, fields?: string) {
         fields,
       },
       headers,
+      // Cart state is private and changes during checkout. Read the authority on
+      // every request so guest mutations cannot reuse a stale empty-cart entry.
       cache: "no-store",
     })
     .then(({ cart }: { cart: HttpTypes.StoreCart }) => cart)
@@ -142,6 +144,7 @@ export async function addToCart({
 
       const fulfillmentCacheTag = await getCacheTag("fulfillment")
       revalidateTag(fulfillmentCacheTag)
+      // The header lives in a shared layout, outside the product page subtree.
       revalidatePath(`/${countryCode}`, "layout")
     })
     .catch(medusaError)

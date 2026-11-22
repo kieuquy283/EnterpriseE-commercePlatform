@@ -1,8 +1,9 @@
-import { randomUUID } from "node:crypto"
+import { createHmac, randomUUID } from "node:crypto"
 import {
   createApiKeysWorkflow,
   createInvitesWorkflow,
   createProductsWorkflow,
+  createSalesChannelsWorkflow,
   createShippingProfilesWorkflow,
   linkSalesChannelsToApiKeyWorkflow,
 } from "@medusajs/medusa/core-flows"
@@ -33,12 +34,36 @@ function storeHeaders(publishableKey: string, token?: string) {
   }
 }
 
+function expireJwtToken(token: string, secret: Parameters<typeof createHmac>[1]) {
+  const [encodedHeader, encodedPayload, signature, extra] = token.split(".")
+  if (!encodedHeader || !encodedPayload || !signature || extra) {
+    throw new Error("Expected a signed JWT")
+  }
+
+  const header = JSON.parse(
+    Buffer.from(encodedHeader, "base64url").toString("utf8"),
+  ) as Record<string, unknown>
+  if (header.alg !== "HS256") {
+    throw new Error("Expected an HS256 JWT")
+  }
+
+  const payload = JSON.parse(
+    Buffer.from(encodedPayload, "base64url").toString("utf8"),
+  ) as Record<string, unknown>
+  payload.exp = Math.floor(Date.now() / 1000) - 60
+
+  const signingInput = `${encodedHeader}.${Buffer.from(JSON.stringify(payload)).toString("base64url")}`
+  const expiredSignature = createHmac("sha256", secret).update(signingInput).digest("base64url")
+  return `${signingInput}.${expiredSignature}`
+}
+
 medusaIntegrationTestRunner({
   env: { REDIS_URL: "" },
   testSuite: ({ api, getContainer }) => {
     const storeApi: ApiClient = api
     let publishableKey: string
     let draftProductId: string
+    let draftVariantId: string
 
     beforeAll(async () => {
       const container = getContainer()
@@ -107,6 +132,7 @@ medusaIntegrationTestRunner({
         },
       })
       draftProductId = draftProduct.id
+      draftVariantId = draftProduct.variants[0].id
     })
 
     describe("Admin onboarding", () => {
@@ -140,6 +166,28 @@ medusaIntegrationTestRunner({
             headers: storeHeaders(publishableKey, login.token),
           }),
         ).rejects.toMatchObject({ response: { status: 401 } })
+        const { data: regions } = await storeApi.get<{ regions: { id: string }[] }>(
+          "/store/regions",
+          { headers: storeHeaders(publishableKey) },
+        )
+        const { data: nativeGuestCart } = await storeApi.post<{ cart: { id: string } }>(
+          "/store/carts",
+          { region_id: regions.regions[0].id },
+          { headers: storeHeaders(publishableKey, login.token) },
+        )
+        const { data: legacyGuestCart } = await storeApi.post<{ cart: { id: string } }>(
+          "/store/cart",
+          { region_id: regions.regions[0].id },
+          { headers: storeHeaders(publishableKey, login.token) },
+        )
+        const query = getContainer().resolve(ContainerRegistrationKeys.QUERY)
+        const { data: carts } = await query.graph({
+          entity: "cart",
+          fields: ["customer_id"],
+          filters: { id: [nativeGuestCart.cart.id, legacyGuestCart.cart.id] },
+        })
+        expect(carts).toHaveLength(2)
+        expect(carts.every((cart) => !cart.customer_id)).toBe(true)
         await expect(
           storeApi.post(
             `/admin/invites/accept?token=${encodeURIComponent(invite.token)}`,
@@ -198,21 +246,31 @@ medusaIntegrationTestRunner({
     })
 
     describe("Legacy cart trust boundary", () => {
-      async function createGuestCart() {
+      async function createGuestCart(email?: string) {
         const headers = storeHeaders(publishableKey)
         const { data } = await storeApi.get<{ regions: { id: string }[] }>("/store/regions", {
           headers,
         })
         return storeApi.post<{ cart: { id: string } }>(
           "/store/cart",
-          { region_id: data.regions[0].id },
+          { region_id: data.regions[0].id, ...(email ? { email } : {}) },
           { headers },
         )
       }
 
       it("preserves guest creation and projects public fields", async () => {
-        const { data, status } = await createGuestCart()
+        const { data, status } = await createGuestCart("guest-private@example.test")
         expect(status).toBe(201)
+        const { data: products } = await storeApi.get<{
+          products: { variants: { id: string }[] }[]
+        }>("/store/products?handle=ao-thun-essential", {
+          headers: storeHeaders(publishableKey),
+        })
+        await storeApi.post(
+          `/store/cart/${data.cart.id}/items`,
+          { variant_id: products.products[0].variants[0].id, quantity: 1 },
+          { headers: storeHeaders(publishableKey) },
+        )
         const response = await storeApi.get<{ cart: Record<string, unknown> }>(
           `/store/cart?cart_id=${data.cart.id}`,
           { headers: storeHeaders(publishableKey) },
@@ -223,6 +281,9 @@ medusaIntegrationTestRunner({
           "items",
           "region_id",
         ])
+        expect(Object.keys((response.data.cart.items as Record<string, unknown>[])[0]).sort()).toEqual(
+          ["id", "quantity", "variant_id"],
+        )
       })
 
       it("associates only the verified customer identity", async () => {
@@ -253,13 +314,22 @@ medusaIntegrationTestRunner({
           { region_id: regions.regions[0].id },
           { headers: storeHeaders(publishableKey, login.token) },
         )
+        const { data: nativeCart } = await storeApi.post<{ cart: { id: string } }>(
+          "/store/carts",
+          { region_id: regions.regions[0].id },
+          { headers: storeHeaders(publishableKey, login.token) },
+        )
         const query = getContainer().resolve(ContainerRegistrationKeys.QUERY)
         const { data: carts } = await query.graph({
           entity: "cart",
           fields: ["customer_id"],
-          filters: { id: data.cart.id },
+          filters: { id: [data.cart.id, nativeCart.cart.id] },
         })
-        expect(carts[0].customer_id).toBe(created.customer.id)
+        expect(carts).toHaveLength(2)
+        expect(carts.map((cart) => cart.customer_id)).toEqual([
+          created.customer.id,
+          created.customer.id,
+        ])
       })
 
       it.each([{ customer_id: "cus_other" }, { total: 1 }, { sales_channel_id: "sc_other" }])(
@@ -272,6 +342,9 @@ medusaIntegrationTestRunner({
           await expect(
             storeApi.post("/store/cart", { region_id: data.regions[0].id, ...extra }, { headers }),
           ).rejects.toMatchObject({ response: { status: 400 } })
+          await expect(
+            storeApi.post("/store/carts", { region_id: data.regions[0].id, ...extra }, { headers }),
+          ).rejects.toMatchObject({ response: { status: 400 } })
         },
       )
 
@@ -281,6 +354,13 @@ medusaIntegrationTestRunner({
           await expect(
             storeApi.post(
               "/store/cart/cart_missing/items",
+              { variant_id: "variant_missing", quantity },
+              { headers: storeHeaders(publishableKey) },
+            ),
+          ).rejects.toMatchObject({ response: { status: 400 } })
+          await expect(
+            storeApi.post(
+              "/store/carts/cart_missing/line-items",
               { variant_id: "variant_missing", quantity },
               { headers: storeHeaders(publishableKey) },
             ),
@@ -343,6 +423,107 @@ medusaIntegrationTestRunner({
       })
     })
 
+    it("scopes native and legacy catalog and carts to the publishable key channel", async () => {
+      const container = getContainer()
+      const { result: [isolatedChannel] } = await createSalesChannelsWorkflow(container).run({
+        input: { salesChannelsData: [{ name: `Isolated ${randomUUID()}` }] },
+      })
+      const {
+        result: [isolatedKey],
+      } = await createApiKeysWorkflow(container).run({
+        input: {
+          api_keys: [
+            {
+              title: "Isolated channel integration test",
+              type: "publishable",
+              created_by: "",
+            },
+          ],
+        },
+      })
+      await linkSalesChannelsToApiKeyWorkflow(container).run({
+        input: { id: isolatedKey.id, add: [isolatedChannel.id] },
+      })
+
+      const isolatedHeaders = storeHeaders(isolatedKey.token)
+      const { data: nativeCatalog } = await storeApi.get<{ products: unknown[] }>(
+        "/store/products",
+        { headers: isolatedHeaders },
+      )
+      const { data: legacyCatalog } = await storeApi.get<{ products: unknown[] }>(
+        "/store/catalog",
+        { headers: isolatedHeaders },
+      )
+      expect(nativeCatalog.products).toEqual([])
+      expect(legacyCatalog.products).toEqual([])
+
+      const { data: regions } = await storeApi.get<{ regions: { id: string }[] }>(
+        "/store/regions",
+        { headers: isolatedHeaders },
+      )
+      const { data: nativeCart } = await storeApi.post<{ cart: { id: string } }>(
+        "/store/carts",
+        { region_id: regions.regions[0].id },
+        { headers: isolatedHeaders },
+      )
+      const { data: legacyCart } = await storeApi.post<{ cart: { id: string } }>(
+        "/store/cart",
+        { region_id: regions.regions[0].id },
+        { headers: isolatedHeaders },
+      )
+      const { data: mainProducts } = await storeApi.get<{
+        products: { variants: { id: string }[] }[]
+      }>("/store/products?handle=ao-thun-essential", {
+        headers: storeHeaders(publishableKey),
+      })
+      const mainVariantId = mainProducts.products[0].variants[0].id
+      await expect(
+        storeApi.post(
+          `/store/carts/${nativeCart.cart.id}/line-items`,
+          { variant_id: mainVariantId, quantity: 1 },
+          { headers: isolatedHeaders },
+        ),
+      ).rejects.toMatchObject({ response: { status: 400 } })
+      await expect(
+        storeApi.post(
+          `/store/cart/${legacyCart.cart.id}/items`,
+          { variant_id: mainVariantId, quantity: 1 },
+          { headers: isolatedHeaders },
+        ),
+      ).rejects.toMatchObject({ response: { status: 400 } })
+      const query = container.resolve(ContainerRegistrationKeys.QUERY)
+      const { data: carts } = await query.graph({
+        entity: "cart",
+        fields: ["sales_channel_id"],
+        filters: { id: [nativeCart.cart.id, legacyCart.cart.id] },
+      })
+      expect(carts).toHaveLength(2)
+      expect(carts.map((cart) => cart.sales_channel_id)).toEqual([
+        isolatedChannel.id,
+        isolatedChannel.id,
+      ])
+
+      const mainHeaders = storeHeaders(publishableKey)
+      const { data: mainRegions } = await storeApi.get<{ regions: { id: string }[] }>(
+        "/store/regions",
+        { headers: mainHeaders },
+      )
+      await expect(
+        storeApi.post(
+          "/store/carts",
+          { region_id: mainRegions.regions[0].id, sales_channel_id: isolatedChannel.id },
+          { headers: mainHeaders },
+        ),
+      ).rejects.toMatchObject({ response: { status: 400 } })
+      await expect(
+        storeApi.post(
+          "/store/cart",
+          { region_id: mainRegions.regions[0].id, sales_channel_id: isolatedChannel.id },
+          { headers: mainHeaders },
+        ),
+      ).rejects.toMatchObject({ response: { status: 400 } })
+    })
+
     describe("Catalog and search", () => {
       it("does not include unpublished products in the catalog", async () => {
         const { data, status } = await storeApi.get<{
@@ -353,6 +534,40 @@ medusaIntegrationTestRunner({
         expect(status).toBe(200)
         expect(data.count).toBeGreaterThan(0)
         expect(data.products.map((product) => product.id)).not.toContain(draftProductId)
+        const { data: nativeData } = await storeApi.get<{ products: { id: string }[] }>(
+          `/store/products?id=${draftProductId}`,
+          { headers: storeHeaders(publishableKey) },
+        )
+        expect(nativeData.products.map((product) => product.id)).not.toContain(draftProductId)
+
+        const { data: regions } = await storeApi.get<{ regions: { id: string }[] }>(
+          "/store/regions",
+          { headers: storeHeaders(publishableKey) },
+        )
+        const { data: legacyCart } = await storeApi.post<{ cart: { id: string } }>(
+          "/store/cart",
+          { region_id: regions.regions[0].id },
+          { headers: storeHeaders(publishableKey) },
+        )
+        const { data: nativeCart } = await storeApi.post<{ cart: { id: string } }>(
+          "/store/carts",
+          { region_id: regions.regions[0].id },
+          { headers: storeHeaders(publishableKey) },
+        )
+        await expect(
+          storeApi.post(
+            `/store/cart/${legacyCart.cart.id}/items`,
+            { variant_id: draftVariantId, quantity: 1 },
+            { headers: storeHeaders(publishableKey) },
+          ),
+        ).rejects.toMatchObject({ response: { status: 400 } })
+        await expect(
+          storeApi.post(
+            `/store/carts/${nativeCart.cart.id}/line-items`,
+            { variant_id: draftVariantId, quantity: 1 },
+            { headers: storeHeaders(publishableKey) },
+          ),
+        ).rejects.toMatchObject({ response: { status: 400 } })
       })
 
       it("returns matching published products for a search query", async () => {
@@ -420,7 +635,10 @@ medusaIntegrationTestRunner({
         expect(data.customer.email).toBe(email)
       })
 
-      it("does not expose the current customer profile without a valid token", async () => {
+      it("protects the customer profile and keeps invalid-token carts anonymous", async () => {
+        const { data: regions } = await storeApi.get<{ regions: { id: string }[] }>("/store/regions", {
+          headers: storeHeaders(publishableKey),
+        })
         await expect(
           storeApi.get("/store/customers/me", {
             headers: storeHeaders(publishableKey),
@@ -436,6 +654,69 @@ medusaIntegrationTestRunner({
         ).rejects.toMatchObject({
           response: { status: 401 },
         })
+
+        const { data: nativeGuestCart } = await storeApi.post<{ cart: { id: string } }>(
+          "/store/carts",
+          { region_id: regions.regions[0].id },
+          { headers: storeHeaders(publishableKey, "invalid.integration.token") },
+        )
+        const { data: legacyGuestCart } = await storeApi.post<{ cart: { id: string } }>(
+          "/store/cart",
+          { region_id: regions.regions[0].id },
+          { headers: storeHeaders(publishableKey, "invalid.integration.token") },
+        )
+        const query = getContainer().resolve(ContainerRegistrationKeys.QUERY)
+        const { data: carts } = await query.graph({
+          entity: "cart",
+          fields: ["customer_id"],
+          filters: { id: [nativeGuestCart.cart.id, legacyGuestCart.cart.id] },
+        })
+        expect(carts).toHaveLength(2)
+        expect(carts.every((cart) => !cart.customer_id)).toBe(true)
+      })
+
+      it("does not associate carts with expired customer tokens", async () => {
+        const headers = storeHeaders(publishableKey)
+        const email = `expired-${randomUUID()}@example.test`
+        const password = `${randomUUID()}aA1!`
+        const { data: registration } = await storeApi.post<{ token: string }>(
+          "/store/auth/register",
+          { email, password },
+          { headers },
+        )
+        const config = getContainer().resolve(ContainerRegistrationKeys.CONFIG_MODULE)
+        const jwtSecret = config.projectConfig.http.jwtSecret
+        if (typeof jwtSecret !== "string" && !Buffer.isBuffer(jwtSecret)) {
+          throw new Error("A string or Buffer JWT secret is required for the integration test")
+        }
+        const expiredToken = expireJwtToken(registration.token, jwtSecret)
+        const { data: regions } = await storeApi.get<{ regions: { id: string }[] }>("/store/regions", {
+          headers,
+        })
+        await expect(
+          storeApi.get("/store/customers/me", {
+            headers: storeHeaders(publishableKey, expiredToken),
+          }),
+        ).rejects.toMatchObject({ response: { status: 401 } })
+
+        const { data: nativeGuestCart } = await storeApi.post<{ cart: { id: string } }>(
+          "/store/carts",
+          { region_id: regions.regions[0].id },
+          { headers: storeHeaders(publishableKey, expiredToken) },
+        )
+        const { data: legacyGuestCart } = await storeApi.post<{ cart: { id: string } }>(
+          "/store/cart",
+          { region_id: regions.regions[0].id },
+          { headers: storeHeaders(publishableKey, expiredToken) },
+        )
+        const query = getContainer().resolve(ContainerRegistrationKeys.QUERY)
+        const { data: carts } = await query.graph({
+          entity: "cart",
+          fields: ["customer_id"],
+          filters: { id: [nativeGuestCart.cart.id, legacyGuestCart.cart.id] },
+        })
+        expect(carts).toHaveLength(2)
+        expect(carts.every((cart) => !cart.customer_id)).toBe(true)
       })
     })
   },

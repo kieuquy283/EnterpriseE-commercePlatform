@@ -33,9 +33,9 @@ DAYMARK_CATALOG_WRITE=1 DAYMARK_CATALOG_ENVIRONMENT=local-disposable \
   npm run seed:daymark-catalog --workspace=@dtc/backend -- --apply
 ```
 
-Script package cung cấp dấu phân cách `--` của Medusa. Công cụ nhập nhận các đối số bên dưới, mặc định dry-run và từ chối production, cờ chế độ không rõ/không hợp lệ, URL kết nối thiếu/sai/không phải PostgreSQL và máy chủ từ xa. Apply cần cả hai biến cho phép ở trên. Biến ghi đè từ xa cũ không có hiệu lực. Báo cáo không chứa thông tin xác thực cơ sở dữ liệu.
+Script package cung cấp dấu phân cách `--` của Medusa. Công cụ nhập nhận các đối số bên dưới, mặc định dry-run; chế độ local từ chối production, cờ chế độ không rõ/không hợp lệ, URL kết nối thiếu/sai/không phải PostgreSQL và máy chủ từ xa. Apply cần cả hai biến cho phép ở trên. Biến ghi đè từ xa cũ không có hiệu lực. Báo cáo không chứa thông tin xác thực cơ sở dữ liệu.
 
-Tùy chọn `--images none|manifest|demo` mặc định `none`. `manifest` nhận ánh xạ ảnh đúng sản phẩm. `demo` chỉ gắn ảnh đại diện khi `NODE_ENV=test`, `DAYMARK_LOCAL_IMAGE_BACKEND_URL` là URL loopback và không cấu hình S3 provider. `DAYMARK_CATALOG_ASSET_DIR` có thể trỏ đến thư mục dữ liệu mẫu cục bộ. Kiểm tra kích thước tệp, checksum và ánh xạ sản phẩm trước khi ghi. Không coi ảnh đại diện là ảnh hàng hóa chính xác.
+Tùy chọn `--images none|manifest|demo|preview` mặc định `none`. `manifest` nhận ánh xạ ảnh đúng sản phẩm. `demo` chỉ gắn ảnh đại diện khi `NODE_ENV=test`, `DAYMARK_LOCAL_IMAGE_BACKEND_URL` là URL loopback và không cấu hình S3 provider. `DAYMARK_CATALOG_ASSET_DIR` có thể trỏ đến thư mục dữ liệu mẫu cục bộ. Kiểm tra kích thước tệp, checksum và ánh xạ sản phẩm trước khi ghi. Không coi ảnh đại diện là ảnh hàng hóa chính xác.
 
 <a id="ownership-repeatability-and-stock-preservation"></a>
 ## Quyền sở hữu, chạy lặp và bảo toàn tồn kho
@@ -49,7 +49,7 @@ Chỉ khởi tạo tồn đầu kỳ khi chưa có mức tồn; **không đặt 
 <a id="media-delivery"></a>
 ## Phân phối nội dung đa phương tiện
 
-Nội dung đi qua file provider Medusa được cấu hình. Chế độ demo cục bộ tường minh chỉ dùng local file provider và URL loopback. Trong chế độ proxy S3, `S3_FILE_URL` phải trỏ `https://<backend>/product-images`, còn provider thêm tiền tố khóa `public-images/`. Công cụ nhập kiểm tra URL trả về theo ranh giới provider đã cấu hình và từ chối URL bucket trực tiếp/khóa lồng. Xem thử học tập không bao gồm tải tài sản lên cloud.
+Nội dung đi qua file provider Medusa được cấu hình. Chế độ demo cục bộ tường minh chỉ dùng local file provider và URL loopback. Trong chế độ proxy S3, `S3_FILE_URL` phải trỏ `https://<backend>/product-images`, còn provider thêm tiền tố khóa `public-images/`. Công cụ nhập kiểm tra URL trả về theo ranh giới provider đã cấu hình và từ chối URL bucket trực tiếp/khóa lồng. Chế độ `cloud-demo` dành riêng cho preview được duyệt: target Sydney RDS và DB phải khớp chính xác, fixture/manifest có SHA-256 được rà, apply cần cờ ghi rõ. `--images preview` yêu cầu xác nhận ảnh minh họa và S3 proxy; không đổi nhãn ảnh thành chính xác. Xem [runbook AWS](../../deploy/RUNBOOK.md) cho asset directory trong artifact, dry-run/apply và xác minh. Không chạy seed từ startup.
 
 ## Kiểm chứng quy trình nhập
 

@@ -1,0 +1,189 @@
+
+         /\      Grafana   /‾‾/  
+    /\  /  \     |\  __   /  /   
+   /  \/    \    | |/ /  /   ‾‾\ 
+  /          \   |   (  |  (‾)  |
+ / __________ \  |_|\_\  \_____/ 
+
+     execution: local
+        script: /scripts/catalog.js
+        output: -
+
+     scenarios: (100.00%) 1 scenario, 1 max VUs, 10m30s max duration (incl. graceful stop):
+              * catalog: 10 iterations shared among 1 VUs (maxDuration: 10m0s, gracefulStop: 30s)
+
+
+Run       [ 100% ] setup()
+catalog   [   0% ]
+
+Run       [ 100% ] setup()
+catalog   [   0% ]
+
+Run       [ 100% ] setup()
+catalog   [   0% ]
+
+Run       [ 100% ] setup()
+catalog   [   0% ]
+
+Run       [ 100% ] setup()
+catalog   [   0% ]
+time="2026-11-18T17:28:17Z" level=warning msg="Request Failed" error="Get \"http://localhost:38287/store/products?limit=20\": request timeout"
+
+
+  █ THRESHOLDS 
+
+    checks
+    ✓ 'rate==1' rate=0.00%
+
+    dropped_iterations
+    ✓ 'count==0' count=0
+
+    http_req_duration{kind:catalog}
+    ✓ 'p(95)<600' p(95)=0s
+
+    http_req_failed
+    ✗ 'rate<0.01' rate=100.00%
+
+
+  █ TOTAL RESULTS 
+
+    checks_total.......: 0     0/s
+    checks_succeeded...: 0.00% 0 out of 0
+    checks_failed......: 0.00% 0 out of 0
+
+
+    HTTP
+    http_req_duration....: avg=5s med=5s p(95)=5s p(99)=5s max=5s
+      { kind:catalog }...: avg=0s med=0s p(95)=0s p(99)=0s max=0s
+    http_req_failed......: 100.00% 1 out of 1
+    http_reqs............: 1       0.199918/s
+
+    EXECUTION
+    dropped_iterations...: 0       0/s
+    vus..................: 0       min=0      max=0
+    vus_max..............: 1       min=1      max=1
+
+    NETWORK
+    data_received........: 0 B     0 B/s
+    data_sent............: 186 B   37 B/s
+
+
+
+{
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {}
+    },
+    "metrics": {
+        "vus_max": {
+            "value": 1,
+            "min": 1,
+            "max": 1
+        },
+        "dropped_iterations": {
+            "rate": 0,
+            "count": 0,
+            "thresholds": {
+                "count==0": false
+            }
+        },
+        "http_req_connecting": {
+            "avg": 0.118049,
+            "med": 0.118049,
+            "p(95)": 0.118049,
+            "p(99)": 0.118049,
+            "max": 0.118049
+        },
+        "http_req_sending": {
+            "avg": 0.049465,
+            "med": 0.049465,
+            "p(95)": 0.049465,
+            "p(99)": 0.049465,
+            "max": 0.049465
+        },
+        "http_req_tls_handshaking": {
+            "p(95)": 0,
+            "p(99)": 0,
+            "max": 0,
+            "avg": 0,
+            "med": 0
+        },
+        "data_received": {
+            "count": 0,
+            "rate": 0
+        },
+        "http_reqs": {
+            "rate": 0.199918458498642,
+            "count": 1
+        },
+        "http_req_failed": {
+            "passes": 1,
+            "fails": 0,
+            "thresholds": {
+                "rate<0.01": true
+            },
+            "value": 1
+        },
+        "http_req_blocked": {
+            "p(95)": 0.27445,
+            "p(99)": 0.27445,
+            "max": 0.27445,
+            "avg": 0.27445,
+            "med": 0.27445
+        },
+        "http_req_waiting": {
+            "avg": 5000.950415,
+            "med": 5000.950415,
+            "p(95)": 5000.950415,
+            "p(99)": 5000.950415,
+            "max": 5000.950415
+        },
+        "http_req_receiving": {
+            "avg": 0,
+            "med": 0,
+            "p(95)": 0,
+            "p(99)": 0,
+            "max": 0
+        },
+        "checks": {
+            "passes": 0,
+            "fails": 0,
+            "thresholds": {
+                "rate==1": false
+            },
+            "value": 0
+        },
+        "data_sent": {
+            "count": 186,
+            "rate": 37.18483328074741
+        },
+        "vus": {
+            "value": 0,
+            "min": 0,
+            "max": 0
+        },
+        "http_req_duration": {
+            "avg": 5000.99988,
+            "med": 5000.99988,
+            "p(95)": 5000.99988,
+            "p(99)": 5000.99988,
+            "max": 5000.99988
+        },
+        "http_req_duration{kind:catalog}": {
+            "avg": 0,
+            "med": 0,
+            "p(95)": 0,
+            "p(99)": 0,
+            "max": 0,
+            "thresholds": {
+                "p(95)<600": false
+            }
+        }
+    }
+}
+Run       [ 100% ] setup()
+catalog   [   0% ]
+time="2026-11-18T17:28:17Z" level=error msg="Error: Catalog setup HTTP 0\n\tat setup (file:///scripts/catalog.js:19:36(31))\n" hint="script exception"

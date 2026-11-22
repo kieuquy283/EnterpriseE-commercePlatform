@@ -1,0 +1,944 @@
+{
+  "sourceCommit": "1b6a668d06a5956da0692c268a93b9e5124bf1c3",
+  "source": {
+    "fixture": "apps/backend/src/scripts/daymark-catalog/fixture.ts",
+    "fixtureSha256": "68166ba9699efb24ce9ef013429f2ab8472cc196f9d6f7602418305b3c43fe7a",
+    "mediaManifest": "apps/backend/assets/daymark-catalog/manifest.json",
+    "mediaManifestSha256": "9bcc32c0364e308a4a32544698ebbbc6d46d0c2a5e56d4c94755dcce9f3a3c57"
+  },
+  "fixtureVersion": 1,
+  "mediaManifestVersion": 2,
+  "currencyCode": "vnd",
+  "collections": [
+    {
+      "handle": "dm-daily-essentials",
+      "title": "Daily Essentials"
+    },
+    {
+      "handle": "dm-workday",
+      "title": "Workday"
+    },
+    {
+      "handle": "dm-off-hours",
+      "title": "Off Hours"
+    }
+  ],
+  "categories": [
+    {
+      "handle": "dm-tees",
+      "name": "Áo thun"
+    },
+    {
+      "handle": "dm-shirts",
+      "name": "Áo sơ mi"
+    },
+    {
+      "handle": "dm-trousers",
+      "name": "Quần"
+    },
+    {
+      "handle": "dm-outerwear",
+      "name": "Áo khoác"
+    },
+    {
+      "handle": "dm-knitwear",
+      "name": "Đồ dệt kim"
+    },
+    {
+      "handle": "dm-bags",
+      "name": "Túi xách"
+    }
+  ],
+  "products": [
+    {
+      "handle": "dm-tee-core",
+      "title": "Core Cotton Tee",
+      "collection": "dm-daily-essentials",
+      "category": "dm-tees",
+      "priceVnd": 249000,
+      "stockPerVariant": 24,
+      "image": "dm-product-001.jpg",
+      "skus": [
+        "DM-TEE-CORE-IVR-S",
+        "DM-TEE-CORE-IVR-M",
+        "DM-TEE-CORE-IVR-L",
+        "DM-TEE-CORE-IVR-XL",
+        "DM-TEE-CORE-BLK-S",
+        "DM-TEE-CORE-BLK-M",
+        "DM-TEE-CORE-BLK-L",
+        "DM-TEE-CORE-BLK-XL",
+        "DM-TEE-CORE-OLV-S",
+        "DM-TEE-CORE-OLV-M",
+        "DM-TEE-CORE-OLV-L",
+        "DM-TEE-CORE-OLV-XL"
+      ]
+    },
+    {
+      "handle": "dm-tee-heavy",
+      "title": "Heavyweight Cotton Tee",
+      "collection": "dm-daily-essentials",
+      "category": "dm-tees",
+      "priceVnd": 349000,
+      "stockPerVariant": 18,
+      "image": "dm-product-002.jpg",
+      "skus": [
+        "DM-TEE-HVY-IVR-S",
+        "DM-TEE-HVY-IVR-M",
+        "DM-TEE-HVY-IVR-L",
+        "DM-TEE-HVY-IVR-XL",
+        "DM-TEE-HVY-CHR-S",
+        "DM-TEE-HVY-CHR-M",
+        "DM-TEE-HVY-CHR-L",
+        "DM-TEE-HVY-CHR-XL"
+      ]
+    },
+    {
+      "handle": "dm-tee-pocket",
+      "title": "Pocket Cotton Tee",
+      "collection": "dm-daily-essentials",
+      "category": "dm-tees",
+      "priceVnd": 299000,
+      "stockPerVariant": 18,
+      "image": "dm-product-003.jpg",
+      "skus": [
+        "DM-TEE-PKT-NAT-S",
+        "DM-TEE-PKT-NAT-M",
+        "DM-TEE-PKT-NAT-L",
+        "DM-TEE-PKT-NAT-XL",
+        "DM-TEE-PKT-OLV-S",
+        "DM-TEE-PKT-OLV-M",
+        "DM-TEE-PKT-OLV-L",
+        "DM-TEE-PKT-OLV-XL"
+      ]
+    },
+    {
+      "handle": "dm-tee-longsleeve",
+      "title": "Long Sleeve Cotton Tee",
+      "collection": "dm-daily-essentials",
+      "category": "dm-tees",
+      "priceVnd": 399000,
+      "stockPerVariant": 14,
+      "image": "dm-product-004.jpg",
+      "skus": [
+        "DM-TEE-LSV-IVR-S",
+        "DM-TEE-LSV-IVR-M",
+        "DM-TEE-LSV-IVR-L",
+        "DM-TEE-LSV-IVR-XL",
+        "DM-TEE-LSV-BLK-S",
+        "DM-TEE-LSV-BLK-M",
+        "DM-TEE-LSV-BLK-L",
+        "DM-TEE-LSV-BLK-XL"
+      ]
+    },
+    {
+      "handle": "dm-shirt-linen",
+      "title": "Everyday Linen Shirt",
+      "collection": "dm-daily-essentials",
+      "category": "dm-shirts",
+      "priceVnd": 799000,
+      "stockPerVariant": 12,
+      "image": "dm-product-007.jpg",
+      "skus": [
+        "DM-SHT-LIN-IVR-S",
+        "DM-SHT-LIN-IVR-M",
+        "DM-SHT-LIN-IVR-L",
+        "DM-SHT-LIN-IVR-XL",
+        "DM-SHT-LIN-SKY-S",
+        "DM-SHT-LIN-SKY-M",
+        "DM-SHT-LIN-SKY-L",
+        "DM-SHT-LIN-SKY-XL"
+      ]
+    },
+    {
+      "handle": "dm-shirt-oxford",
+      "title": "Oxford Button-Down",
+      "collection": "dm-daily-essentials",
+      "category": "dm-shirts",
+      "priceVnd": 749000,
+      "stockPerVariant": 12,
+      "image": "dm-product-008.jpg",
+      "skus": [
+        "DM-SHT-OXF-WHT-S",
+        "DM-SHT-OXF-WHT-M",
+        "DM-SHT-OXF-WHT-L",
+        "DM-SHT-OXF-WHT-XL",
+        "DM-SHT-OXF-BLU-S",
+        "DM-SHT-OXF-BLU-M",
+        "DM-SHT-OXF-BLU-L",
+        "DM-SHT-OXF-BLU-XL"
+      ]
+    },
+    {
+      "handle": "dm-trousers-relaxed",
+      "title": "Relaxed Cotton Trouser",
+      "collection": "dm-daily-essentials",
+      "category": "dm-trousers",
+      "priceVnd": 699000,
+      "stockPerVariant": 10,
+      "image": "dm-product-012.jpg",
+      "skus": [
+        "DM-TRS-RLX-STN-28",
+        "DM-TRS-RLX-STN-30",
+        "DM-TRS-RLX-STN-32",
+        "DM-TRS-RLX-STN-34",
+        "DM-TRS-RLX-BLK-28",
+        "DM-TRS-RLX-BLK-30",
+        "DM-TRS-RLX-BLK-32",
+        "DM-TRS-RLX-BLK-34"
+      ]
+    },
+    {
+      "handle": "dm-trousers-crop",
+      "title": "Cropped Utility Trouser",
+      "collection": "dm-daily-essentials",
+      "category": "dm-trousers",
+      "priceVnd": 759000,
+      "stockPerVariant": 10,
+      "image": "dm-product-013.jpg",
+      "skus": [
+        "DM-TRS-CRP-OLV-28",
+        "DM-TRS-CRP-OLV-30",
+        "DM-TRS-CRP-OLV-32",
+        "DM-TRS-CRP-OLV-34",
+        "DM-TRS-CRP-CHR-28",
+        "DM-TRS-CRP-CHR-30",
+        "DM-TRS-CRP-CHR-32",
+        "DM-TRS-CRP-CHR-34"
+      ]
+    },
+    {
+      "handle": "dm-trousers-jersey",
+      "title": "Jersey Relax Trouser",
+      "collection": "dm-daily-essentials",
+      "category": "dm-trousers",
+      "priceVnd": 649000,
+      "stockPerVariant": 10,
+      "image": "dm-product-014.jpg",
+      "skus": [
+        "DM-TRS-JRS-CHR-28",
+        "DM-TRS-JRS-CHR-30",
+        "DM-TRS-JRS-CHR-32",
+        "DM-TRS-JRS-CHR-34",
+        "DM-TRS-JRS-OLV-28",
+        "DM-TRS-JRS-OLV-30",
+        "DM-TRS-JRS-OLV-32",
+        "DM-TRS-JRS-OLV-34"
+      ]
+    },
+    {
+      "handle": "dm-knit-crew",
+      "title": "Cotton Crew Knit",
+      "collection": "dm-daily-essentials",
+      "category": "dm-knitwear",
+      "priceVnd": 899000,
+      "stockPerVariant": 9,
+      "image": "dm-product-019.jpg",
+      "skus": [
+        "DM-KNT-CRW-OAT-S",
+        "DM-KNT-CRW-OAT-M",
+        "DM-KNT-CRW-OAT-L",
+        "DM-KNT-CRW-OAT-XL",
+        "DM-KNT-CRW-CHR-S",
+        "DM-KNT-CRW-CHR-M",
+        "DM-KNT-CRW-CHR-L",
+        "DM-KNT-CRW-CHR-XL"
+      ]
+    },
+    {
+      "handle": "dm-bag-canvas",
+      "title": "Canvas Day Tote",
+      "collection": "dm-daily-essentials",
+      "category": "dm-bags",
+      "priceVnd": 399000,
+      "stockPerVariant": 16,
+      "image": "dm-product-022.jpg",
+      "skus": [
+        "DM-BAG-DAY-NAT-TU",
+        "DM-BAG-DAY-BLK-TU"
+      ]
+    },
+    {
+      "handle": "dm-bag-crossbody",
+      "title": "Everyday Crossbody",
+      "collection": "dm-daily-essentials",
+      "category": "dm-bags",
+      "priceVnd": 559000,
+      "stockPerVariant": 12,
+      "image": "dm-product-023.jpg",
+      "skus": [
+        "DM-BAG-XBD-CHR-TU",
+        "DM-BAG-XBD-BLK-TU"
+      ]
+    },
+    {
+      "handle": "dm-shirt-poplin",
+      "title": "Poplin Work Shirt",
+      "collection": "dm-workday",
+      "category": "dm-shirts",
+      "priceVnd": 849000,
+      "stockPerVariant": 12,
+      "image": "dm-product-009.jpg",
+      "skus": [
+        "DM-SHT-POP-WHT-S",
+        "DM-SHT-POP-WHT-M",
+        "DM-SHT-POP-WHT-L",
+        "DM-SHT-POP-WHT-XL",
+        "DM-SHT-POP-NVY-S",
+        "DM-SHT-POP-NVY-M",
+        "DM-SHT-POP-NVY-L",
+        "DM-SHT-POP-NVY-XL"
+      ]
+    },
+    {
+      "handle": "dm-shirt-camp",
+      "title": "Camp Collar Shirt",
+      "collection": "dm-workday",
+      "category": "dm-shirts",
+      "priceVnd": 799000,
+      "stockPerVariant": 12,
+      "image": "dm-product-010.jpg",
+      "skus": [
+        "DM-SHT-CMP-SLT-S",
+        "DM-SHT-CMP-SLT-M",
+        "DM-SHT-CMP-SLT-L",
+        "DM-SHT-CMP-SLT-XL",
+        "DM-SHT-CMP-OLV-S",
+        "DM-SHT-CMP-OLV-M",
+        "DM-SHT-CMP-OLV-L",
+        "DM-SHT-CMP-OLV-XL"
+      ]
+    },
+    {
+      "handle": "dm-shirt-stripe",
+      "title": "Stripe Poplin Shirt",
+      "collection": "dm-workday",
+      "category": "dm-shirts",
+      "priceVnd": 849000,
+      "stockPerVariant": 10,
+      "image": "dm-product-011.jpg",
+      "skus": [
+        "DM-SHT-STR-STR-S",
+        "DM-SHT-STR-STR-M",
+        "DM-SHT-STR-STR-L",
+        "DM-SHT-STR-STR-XL",
+        "DM-SHT-STR-BLU-S",
+        "DM-SHT-STR-BLU-M",
+        "DM-SHT-STR-BLU-L",
+        "DM-SHT-STR-BLU-XL"
+      ]
+    },
+    {
+      "handle": "dm-trousers-pleated",
+      "title": "Pleated Wool Trouser",
+      "collection": "dm-workday",
+      "category": "dm-trousers",
+      "priceVnd": 1190000,
+      "stockPerVariant": 8,
+      "image": "dm-product-015.jpg",
+      "skus": [
+        "DM-TRS-PLT-CHR-28",
+        "DM-TRS-PLT-CHR-30",
+        "DM-TRS-PLT-CHR-32",
+        "DM-TRS-PLT-CHR-34",
+        "DM-TRS-PLT-NVY-28",
+        "DM-TRS-PLT-NVY-30",
+        "DM-TRS-PLT-NVY-32",
+        "DM-TRS-PLT-NVY-34"
+      ]
+    },
+    {
+      "handle": "dm-trousers-tapered",
+      "title": "Tapered Twill Trouser",
+      "collection": "dm-workday",
+      "category": "dm-trousers",
+      "priceVnd": 899000,
+      "stockPerVariant": 10,
+      "image": "dm-product-016.jpg",
+      "skus": [
+        "DM-TRS-TPR-BLK-28",
+        "DM-TRS-TPR-BLK-30",
+        "DM-TRS-TPR-BLK-32",
+        "DM-TRS-TPR-BLK-34",
+        "DM-TRS-TPR-STN-28",
+        "DM-TRS-TPR-STN-30",
+        "DM-TRS-TPR-STN-32",
+        "DM-TRS-TPR-STN-34"
+      ]
+    },
+    {
+      "handle": "dm-trousers-wide",
+      "title": "Wide Leg Trouser",
+      "collection": "dm-workday",
+      "category": "dm-trousers",
+      "priceVnd": 949000,
+      "stockPerVariant": 8,
+      "image": "dm-product-017.jpg",
+      "skus": [
+        "DM-TRS-WDE-CHR-28",
+        "DM-TRS-WDE-CHR-30",
+        "DM-TRS-WDE-CHR-32",
+        "DM-TRS-WDE-CHR-34",
+        "DM-TRS-WDE-OLV-28",
+        "DM-TRS-WDE-OLV-30",
+        "DM-TRS-WDE-OLV-32",
+        "DM-TRS-WDE-OLV-34"
+      ]
+    },
+    {
+      "handle": "dm-outer-blazer",
+      "title": "Soft Wool Blazer",
+      "collection": "dm-workday",
+      "category": "dm-outerwear",
+      "priceVnd": 1290000,
+      "stockPerVariant": 6,
+      "image": "dm-product-025.jpg",
+      "skus": [
+        "DM-OUT-BLZ-CHR-S",
+        "DM-OUT-BLZ-CHR-M",
+        "DM-OUT-BLZ-CHR-L",
+        "DM-OUT-BLZ-CHR-XL",
+        "DM-OUT-BLZ-NVY-S",
+        "DM-OUT-BLZ-NVY-M",
+        "DM-OUT-BLZ-NVY-L",
+        "DM-OUT-BLZ-NVY-XL"
+      ]
+    },
+    {
+      "handle": "dm-outer-overshirt",
+      "title": "Cotton Overshirt",
+      "collection": "dm-workday",
+      "category": "dm-outerwear",
+      "priceVnd": 949000,
+      "stockPerVariant": 9,
+      "image": "dm-product-026.jpg",
+      "skus": [
+        "DM-OUT-OVS-OLV-S",
+        "DM-OUT-OVS-OLV-M",
+        "DM-OUT-OVS-OLV-L",
+        "DM-OUT-OVS-OLV-XL",
+        "DM-OUT-OVS-STN-S",
+        "DM-OUT-OVS-STN-M",
+        "DM-OUT-OVS-STN-L",
+        "DM-OUT-OVS-STN-XL"
+      ]
+    },
+    {
+      "handle": "dm-outer-trench",
+      "title": "Light Trench Coat",
+      "collection": "dm-workday",
+      "category": "dm-outerwear",
+      "priceVnd": 1250000,
+      "stockPerVariant": 5,
+      "image": "dm-product-027.jpg",
+      "skus": [
+        "DM-OUT-TRN-STN-S",
+        "DM-OUT-TRN-STN-M",
+        "DM-OUT-TRN-STN-L",
+        "DM-OUT-TRN-STN-XL",
+        "DM-OUT-TRN-BLK-S",
+        "DM-OUT-TRN-BLK-M",
+        "DM-OUT-TRN-BLK-L",
+        "DM-OUT-TRN-BLK-XL"
+      ]
+    },
+    {
+      "handle": "dm-knit-polo",
+      "title": "Knit Polo",
+      "collection": "dm-workday",
+      "category": "dm-knitwear",
+      "priceVnd": 899000,
+      "stockPerVariant": 9,
+      "image": "dm-product-020.jpg",
+      "skus": [
+        "DM-KNT-PLO-OAT-S",
+        "DM-KNT-PLO-OAT-M",
+        "DM-KNT-PLO-OAT-L",
+        "DM-KNT-PLO-OAT-XL",
+        "DM-KNT-PLO-NVY-S",
+        "DM-KNT-PLO-NVY-M",
+        "DM-KNT-PLO-NVY-L",
+        "DM-KNT-PLO-NVY-XL"
+      ]
+    },
+    {
+      "handle": "dm-tee-boxy",
+      "title": "Boxy Fit Tee",
+      "collection": "dm-off-hours",
+      "category": "dm-tees",
+      "priceVnd": 299000,
+      "stockPerVariant": 16,
+      "image": "dm-product-005.jpg",
+      "skus": [
+        "DM-TEE-BXY-OLV-S",
+        "DM-TEE-BXY-OLV-M",
+        "DM-TEE-BXY-OLV-L",
+        "DM-TEE-BXY-OLV-XL",
+        "DM-TEE-BXY-CHR-S",
+        "DM-TEE-BXY-CHR-M",
+        "DM-TEE-BXY-CHR-L",
+        "DM-TEE-BXY-CHR-XL",
+        "DM-TEE-BXY-IVR-S",
+        "DM-TEE-BXY-IVR-M",
+        "DM-TEE-BXY-IVR-L",
+        "DM-TEE-BXY-IVR-XL"
+      ]
+    },
+    {
+      "handle": "dm-tee-rugby",
+      "title": "Rugby Stripe Tee",
+      "collection": "dm-off-hours",
+      "category": "dm-tees",
+      "priceVnd": 449000,
+      "stockPerVariant": 12,
+      "image": "dm-product-006.jpg",
+      "skus": [
+        "DM-TEE-RGB-STR-S",
+        "DM-TEE-RGB-STR-M",
+        "DM-TEE-RGB-STR-L",
+        "DM-TEE-RGB-STR-XL",
+        "DM-TEE-RGB-OLV-S",
+        "DM-TEE-RGB-OLV-M",
+        "DM-TEE-RGB-OLV-L",
+        "DM-TEE-RGB-OLV-XL"
+      ]
+    },
+    {
+      "handle": "dm-outer-hoodie",
+      "title": "Brushed Fleece Hoodie",
+      "collection": "dm-off-hours",
+      "category": "dm-outerwear",
+      "priceVnd": 799000,
+      "stockPerVariant": 10,
+      "image": "dm-product-028.jpg",
+      "skus": [
+        "DM-OUT-HOD-GRY-S",
+        "DM-OUT-HOD-GRY-M",
+        "DM-OUT-HOD-GRY-L",
+        "DM-OUT-HOD-GRY-XL",
+        "DM-OUT-HOD-BLK-S",
+        "DM-OUT-HOD-BLK-M",
+        "DM-OUT-HOD-BLK-L",
+        "DM-OUT-HOD-BLK-XL"
+      ]
+    },
+    {
+      "handle": "dm-outer-coach",
+      "title": "Light Coach Jacket",
+      "collection": "dm-off-hours",
+      "category": "dm-outerwear",
+      "priceVnd": 949000,
+      "stockPerVariant": 7,
+      "image": "dm-product-029.jpg",
+      "skus": [
+        "DM-OUT-CCH-OLV-S",
+        "DM-OUT-CCH-OLV-M",
+        "DM-OUT-CCH-OLV-L",
+        "DM-OUT-CCH-OLV-XL",
+        "DM-OUT-CCH-BLK-S",
+        "DM-OUT-CCH-BLK-M",
+        "DM-OUT-CCH-BLK-L",
+        "DM-OUT-CCH-BLK-XL"
+      ]
+    },
+    {
+      "handle": "dm-knit-cardigan",
+      "title": "Ribbed Cardigan",
+      "collection": "dm-off-hours",
+      "category": "dm-knitwear",
+      "priceVnd": 1090000,
+      "stockPerVariant": 6,
+      "image": "dm-product-021.jpg",
+      "skus": [
+        "DM-KNT-CDG-OAT-S",
+        "DM-KNT-CDG-OAT-M",
+        "DM-KNT-CDG-OAT-L",
+        "DM-KNT-CDG-OAT-XL",
+        "DM-KNT-CDG-CHR-S",
+        "DM-KNT-CDG-CHR-M",
+        "DM-KNT-CDG-CHR-L",
+        "DM-KNT-CDG-CHR-XL"
+      ]
+    },
+    {
+      "handle": "dm-trousers-cargo",
+      "title": "Washed Cargo Trouser",
+      "collection": "dm-off-hours",
+      "category": "dm-trousers",
+      "priceVnd": 849000,
+      "stockPerVariant": 8,
+      "image": "dm-product-018.jpg",
+      "skus": [
+        "DM-TRS-CRG-OLV-28",
+        "DM-TRS-CRG-OLV-30",
+        "DM-TRS-CRG-OLV-32",
+        "DM-TRS-CRG-OLV-34",
+        "DM-TRS-CRG-STN-28",
+        "DM-TRS-CRG-STN-30",
+        "DM-TRS-CRG-STN-32",
+        "DM-TRS-CRG-STN-34"
+      ]
+    },
+    {
+      "handle": "dm-bag-weekend",
+      "title": "Weekend Holdall",
+      "collection": "dm-off-hours",
+      "category": "dm-bags",
+      "priceVnd": 1090000,
+      "stockPerVariant": 5,
+      "image": "dm-product-024.jpg",
+      "skus": [
+        "DM-BAG-WKD-NAT-TU",
+        "DM-BAG-WKD-CHR-TU"
+      ]
+    },
+    {
+      "handle": "dm-outer-vest",
+      "title": "Quilted Liner Vest",
+      "collection": "dm-off-hours",
+      "category": "dm-outerwear",
+      "priceVnd": 999000,
+      "stockPerVariant": 6,
+      "image": "dm-product-030.jpg",
+      "skus": [
+        "DM-OUT-VST-OLV-S",
+        "DM-OUT-VST-OLV-M",
+        "DM-OUT-VST-OLV-L",
+        "DM-OUT-VST-OLV-XL",
+        "DM-OUT-VST-BLK-S",
+        "DM-OUT-VST-BLK-M",
+        "DM-OUT-VST-BLK-L",
+        "DM-OUT-VST-BLK-XL"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "filename": "dm-product-001.jpg",
+      "role": "product",
+      "bytes": 16727,
+      "sha256": "aebff72c3d61a925e7e6374e3d928154eab9e2a774d2600d602e4f60428b3782",
+      "productHandles": [
+        "dm-tee-core"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-002.jpg",
+      "role": "product",
+      "bytes": 68457,
+      "sha256": "39a4742e6be24fb07774ac9865a4e566fbca5a93a24c0c0ddc83ffe22aaaf40a",
+      "productHandles": [
+        "dm-tee-heavy"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-003.jpg",
+      "role": "product",
+      "bytes": 129716,
+      "sha256": "91d31d93bd761934219378e130ebd85d4d5ae752cce74623f6df4383ebbe36dd",
+      "productHandles": [
+        "dm-tee-pocket"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-004.jpg",
+      "role": "product",
+      "bytes": 17238,
+      "sha256": "4c2a13d91756e407ca597383057c80be553bb018970ef5fddcbde7fc6f9dfc91",
+      "productHandles": [
+        "dm-tee-longsleeve"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-005.jpg",
+      "role": "product",
+      "bytes": 66853,
+      "sha256": "20fb9e406caa4f97afdc19b159662f575fa43a20b84a59e0f076ce116caa0168",
+      "productHandles": [
+        "dm-tee-boxy"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-006.jpg",
+      "role": "product",
+      "bytes": 40799,
+      "sha256": "a609f3df30d0202c4a82c7dd4db796f0871d827bc84a083fafd8b85464a5be7b",
+      "productHandles": [
+        "dm-tee-rugby"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-007.jpg",
+      "role": "product",
+      "bytes": 159261,
+      "sha256": "fe42604c0d3bce3a8c3e9d082c1873b5883181831562b9c05f5bfc447e6bae8d",
+      "productHandles": [
+        "dm-shirt-linen"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-008.jpg",
+      "role": "product",
+      "bytes": 60116,
+      "sha256": "abe10799e8445db704a7ed561ff6ef7a9cabf4fe536dde37b1dd2de9700ce095",
+      "productHandles": [
+        "dm-shirt-oxford"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-009.jpg",
+      "role": "product",
+      "bytes": 75507,
+      "sha256": "c5a120ccee8d6a8d43b9919f7da11f606c77ffa4207fb5069c64a19c3d4aab2b",
+      "productHandles": [
+        "dm-shirt-poplin"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-010.jpg",
+      "role": "product",
+      "bytes": 131791,
+      "sha256": "f7022654c3f698925475e41c2db9cdadbdb9e2d35d7a19df9731ce1c65196845",
+      "productHandles": [
+        "dm-shirt-camp"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-011.jpg",
+      "role": "product",
+      "bytes": 57928,
+      "sha256": "9a34e269a9e45f079c4c6d37effb0afd805e54b72b9c035e1b6aafa47fa5cedd",
+      "productHandles": [
+        "dm-shirt-stripe"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-012.jpg",
+      "role": "product",
+      "bytes": 77555,
+      "sha256": "8805bee21c34111c4f7f645987bba87d21b104da73531a0dfd157051d7be9e53",
+      "productHandles": [
+        "dm-trousers-relaxed"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-013.jpg",
+      "role": "product",
+      "bytes": 92857,
+      "sha256": "a83352bd965b3ff3d69ce83532a1eeca516234eaf5ad48b20cb097e37b16cb33",
+      "productHandles": [
+        "dm-trousers-crop"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-014.jpg",
+      "role": "product",
+      "bytes": 204597,
+      "sha256": "392b033e00c02812805b2dbac743c31c04c5766ce453bc74e5731fe7064a972e",
+      "productHandles": [
+        "dm-trousers-jersey"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-015.jpg",
+      "role": "product",
+      "bytes": 101213,
+      "sha256": "acd0539daf720c3c3e4279d0b9c00b8f2c81f285d32454761f0caaac970cac1d",
+      "productHandles": [
+        "dm-trousers-pleated"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-016.jpg",
+      "role": "product",
+      "bytes": 290858,
+      "sha256": "e0ec4948c84499390f3cc32d9688b1ea8c7116278a386a2c13b89a418fbf92da",
+      "productHandles": [
+        "dm-trousers-tapered"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-017.jpg",
+      "role": "product",
+      "bytes": 228978,
+      "sha256": "15844fef23c1b6712e75867dfb326fc1b041164e00b6eb772342d546b7beb514",
+      "productHandles": [
+        "dm-trousers-wide"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-018.jpg",
+      "role": "product",
+      "bytes": 177164,
+      "sha256": "9ba60b244d06458765a0b2168a972b75af6da4018f57e02428d09430a2dd0d2f",
+      "productHandles": [
+        "dm-trousers-cargo"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-019.jpg",
+      "role": "product",
+      "bytes": 213321,
+      "sha256": "65de9c6de24af756c8372b98d71437ed8ac96a66a41dc96f3f035384a61febae",
+      "productHandles": [
+        "dm-knit-crew"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-020.jpg",
+      "role": "product",
+      "bytes": 69984,
+      "sha256": "45f70a523c9a17ccb755bc9014cf52ed8daa8ea348fa6bb78b4b1c89737a6d23",
+      "productHandles": [
+        "dm-knit-polo"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-021.jpg",
+      "role": "product",
+      "bytes": 362753,
+      "sha256": "d0a38b9b2b7e4b40bd8304a50e79c2b440e356480b3c0b5ef4c3305400004dac",
+      "productHandles": [
+        "dm-knit-cardigan"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-022.jpg",
+      "role": "product",
+      "bytes": 151048,
+      "sha256": "6ea82ab107d291cda0b2dc8b426cb4c3bd2815009439e2fe7d2e134dea33ca88",
+      "productHandles": [
+        "dm-bag-canvas"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-023.jpg",
+      "role": "product",
+      "bytes": 166884,
+      "sha256": "f18e55292d487ec8713b42eab3009176314b258c8e3d2ecb5ec04f145b867b35",
+      "productHandles": [
+        "dm-bag-crossbody"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-024.jpg",
+      "role": "product",
+      "bytes": 192789,
+      "sha256": "f716b34d7d430552c1e6b14bb81265508876ae07d3cf2253605ad653e86308c9",
+      "productHandles": [
+        "dm-bag-weekend"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-025.jpg",
+      "role": "product",
+      "bytes": 44325,
+      "sha256": "c9e2671c6e514eeba5cc46200ee255dbd8e28fb76a0b21f9954f866aa155f954",
+      "productHandles": [
+        "dm-outer-blazer"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-026.jpg",
+      "role": "product",
+      "bytes": 91574,
+      "sha256": "704e5d532f2646cab7554f927692654e9c8f6e5cae800d906508c9d3beb9da48",
+      "productHandles": [
+        "dm-outer-overshirt"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-027.jpg",
+      "role": "product",
+      "bytes": 220365,
+      "sha256": "6bd9206fd19acb5d18206e1dd4045b4e45afb42488c57dec638e60a5e31fab6a",
+      "productHandles": [
+        "dm-outer-trench"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-028.jpg",
+      "role": "product",
+      "bytes": 63709,
+      "sha256": "24142fac807a665bb1049eb9798e8955c3c29769bd1c0fc8f366f3fb9b332d2d",
+      "productHandles": [
+        "dm-outer-hoodie"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-029.jpg",
+      "role": "product",
+      "bytes": 60251,
+      "sha256": "d65ec833140c18239d73f7a5c11e5207da1e53f41f7e3735251c42b8e117ab58",
+      "productHandles": [
+        "dm-outer-coach"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-product-030.jpg",
+      "role": "product",
+      "bytes": 101771,
+      "sha256": "199aa744c7c42172137ea9e0313586b4867ef929ffb547ca069998def9d107d2",
+      "productHandles": [
+        "dm-outer-vest"
+      ],
+      "verifiedMedusaHttpStatus": 200
+    },
+    {
+      "filename": "dm-editorial-001.jpg",
+      "role": "editorial",
+      "bytes": 107840,
+      "sha256": "2a0e40ad384fb5d255138ea136b74ea4e49a6b847e6f4a10c0ea9cfc79346cfb",
+      "productHandles": []
+    },
+    {
+      "filename": "dm-editorial-002.jpg",
+      "role": "editorial",
+      "bytes": 126567,
+      "sha256": "25e60c15b1316381475126a2e899f7488e79f1bcfff6cd3afa2edaea065ae2e2",
+      "productHandles": []
+    },
+    {
+      "filename": "dm-editorial-003.jpg",
+      "role": "editorial",
+      "bytes": 973022,
+      "sha256": "298d2863b7dacadfb3703aac719819f1455cff9ac1a59fc94f84b5e2a607252d",
+      "productHandles": []
+    },
+    {
+      "filename": "dm-editorial-004.jpg",
+      "role": "editorial",
+      "bytes": 54781,
+      "sha256": "f8062109ca3f71ba257447468aa1f1570a7130aac799d18c31bd03fb87c39b3d",
+      "productHandles": []
+    }
+  ]
+}

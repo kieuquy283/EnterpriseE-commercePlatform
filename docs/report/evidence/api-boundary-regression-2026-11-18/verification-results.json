@@ -1,0 +1,70 @@
+{
+  "verification_date": "2026-11-18",
+  "source_snapshot": {
+    "base_revision": "0960a0f",
+    "branch": "backend/w1",
+    "worktree": "implementation and test changes were uncommitted during verification",
+    "deployed": false
+  },
+  "environment": {
+    "os": "Windows",
+    "node": "v24.22.0",
+    "npm": "11.19.1",
+    "integration_runner": "medusaIntegrationTestRunner",
+    "auth_cart_suite_redis": "disabled via REDIS_URL"
+  },
+  "checks": [
+    {
+      "command": "npm run test:integration:http --workspace=@dtc/backend -- --runTestsByPath integration-tests/http/auth-catalog-search.spec.ts",
+      "status": "PASS",
+      "passed_suites": 1,
+      "passed_tests": 24,
+      "failed_tests": 0
+    },
+    {
+      "command": "npm run test:integration:http --workspace=@dtc/backend -- --runTestsByPath integration-tests/http/checkout-order.spec.ts",
+      "status": "PASS",
+      "passed_suites": 1,
+      "passed_tests": 2,
+      "failed_tests": 0
+    },
+    {
+      "command": "npm run lint --workspace=@dtc/backend",
+      "status": "PASS",
+      "result": "No lint issues."
+    },
+    {
+      "command": "npm run typecheck --workspace=@dtc/backend",
+      "status": "PASS"
+    },
+    {
+      "command": "npm run build --workspace=@dtc/backend",
+      "status": "PASS",
+      "result": "Backend and admin frontend compiled."
+    },
+    {
+      "command": "npm run docs:check",
+      "status": "PASS",
+      "result": "187 Markdown files, 628 local links, 9 core requirements and flows."
+    },
+    {
+      "command": "git diff --check",
+      "status": "PASS",
+      "result": "No whitespace errors."
+    }
+  ],
+  "runtime_deviation": {
+    "repository_node": "24.22.1",
+    "repository_npm": "11.12.1",
+    "observed_node": "24.22.0",
+    "observed_npm": "11.19.1",
+    "release_note": "Repeat validation with repository-pinned runtime versions before release."
+  },
+  "not_run": [
+    "Full backend HTTP integration suite",
+    "Browser or Playwright acceptance",
+    "Full Staff/Admin permission-matrix test",
+    "AWS deployment or production verification"
+  ],
+  "evidence_basis": "Sanitized command results and assertions in the referenced integration test files; raw request/response logs are not retained."
+}
