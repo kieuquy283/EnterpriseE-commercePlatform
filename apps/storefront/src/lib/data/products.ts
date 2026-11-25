@@ -13,6 +13,13 @@ type ProductListQueryParams = (HttpTypes.FindParams & HttpTypes.StoreProductList
   option_value_id?: string | string[]
 }
 
+const normalizeSearch = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[đĐ]/g, "d")
+    .toLocaleLowerCase("vi")
+
 export const listProducts = async ({
   pageParam = 1,
   queryParams,
@@ -68,7 +75,7 @@ export const listProducts = async ({
         offset,
         region_id: region?.id,
         fields:
-          "*images,*variants.calculated_price,+variants.inventory_quantity,*variants.images,*variants.options,+metadata,+tags,",
+          "*images,*categories,*variants.calculated_price,+variants.inventory_quantity,*variants.images,*variants.options,+metadata,+tags,",
         ...queryParams,
       },
       headers,
@@ -112,12 +119,16 @@ export const listProductsWithSort = async ({
 }> => {
   const limit = queryParams?.limit || 12
   const optionFilters = Array.from(new Set((optionValueIds || []).filter(Boolean)))
+  const searchTerm = queryParams?.q?.trim()
+  const normalizedSearch = searchTerm ? normalizeSearch(searchTerm) : ""
+  const paramsWithoutSearch = { ...queryParams }
+  delete paramsWithoutSearch.q
 
   const filters = {
-    ...queryParams,
+    ...(searchTerm ? paramsWithoutSearch : queryParams),
     ...(optionFilters.length ? { option_value_id: optionFilters } : {}),
   }
-  if (sortBy === "created_at") {
+  if (sortBy === "created_at" && !searchTerm) {
     return listProducts({
       pageParam: Math.max(1, page),
       countryCode,
@@ -135,11 +146,24 @@ export const listProductsWithSort = async ({
     if (!result.nextPage || !result.response.products.length) break
   }
 
-  const sortedProducts = sortProducts(products, sortBy)
+  const matchingProducts = normalizedSearch
+    ? products.filter((product) =>
+        normalizeSearch(
+          [
+            product.title,
+            product.description,
+            ...(product.categories ?? []).map((category) => category.name),
+          ]
+            .filter(Boolean)
+            .join(" "),
+        ).includes(normalizedSearch),
+      )
+    : products
+  const sortedProducts = sortProducts(matchingProducts, sortBy)
 
   const pageParam = (Math.max(1, page) - 1) * limit
 
-  const filteredCount = products.length
+  const filteredCount = matchingProducts.length
 
   const nextPage = filteredCount > pageParam + limit ? Math.max(1, page) + 1 : null
 

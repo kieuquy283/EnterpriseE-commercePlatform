@@ -286,6 +286,16 @@ export async function setAddresses(_currentState: unknown, formData: FormData) {
     }
 
     const field = (name: string) => String(formData.get(name) || "")
+    if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(field("email")) ||
+      !field("shipping_address.first_name").trim() ||
+      !field("shipping_address.last_name").trim() ||
+      !field("shipping_address.address_1").trim() ||
+      !field("shipping_address.city").trim() ||
+      !/^0\d{9}$/.test(field("shipping_address.phone"))
+    ) {
+      return "Vui lòng nhập đầy đủ email, tên, địa chỉ và số điện thoại hợp lệ."
+    }
     const data: HttpTypes.StoreUpdateCart = {
       shipping_address: {
         first_name: field("shipping_address.first_name"),

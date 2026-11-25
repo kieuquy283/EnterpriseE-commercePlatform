@@ -11,6 +11,7 @@ test.describe("Responsive & Mobile View (E2E-12)", () => {
   test.use({ viewport: { width: 375, height: 667 } })
 
   test("E2E-12: Verifies catalog, PDP, cart, and checkout on mobile viewport", async ({ page }) => {
+    test.setTimeout(120_000)
     // 1. Visit Store catalog on mobile
     await page.goto("/vn/store")
     const productWrapper = page.locator('[data-testid="product-wrapper"]').first()

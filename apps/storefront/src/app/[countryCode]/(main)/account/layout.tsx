@@ -2,6 +2,8 @@ import { retrieveCustomer } from "@lib/data/customer"
 // TODO: Re-add Toaster component when needed
 import AccountLayout from "@modules/account/templates/account-layout"
 
+export const dynamic = "force-dynamic"
+
 export default async function AccountPageLayout({
   dashboard,
   login,

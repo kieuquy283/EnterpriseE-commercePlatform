@@ -69,7 +69,7 @@ test("collection and search routes render the shared Vietnamese commerce control
   await expect(page.locator("h1")).toContainText("Workday")
   await expect(page.getByTestId("product-wrapper").first()).toBeVisible()
   await page.goto("/vn/store?q=no-matching-daymark-garment")
-  await expect(page.locator("main")).toContainText("Chưa tìm thấy sản phẩm phù hợp")
+  await expect(page.locator("main")).toContainText("Không tìm thấy sản phẩm phù hợp với từ khóa")
   await page.goto("/vn/store?sortBy=price_asc")
   await expect(page.getByTestId("product-wrapper").first()).toBeVisible()
   const prices = await page.getByTestId("product-wrapper").evaluateAll((items) =>
@@ -113,6 +113,20 @@ test("editorial content and catalog links remain visible without JavaScript", as
 test("customer page families retain readable layouts at narrow and wide widths", async ({
   page,
 }) => {
+  const hydrationErrors: string[] = []
+  page.on("pageerror", (error) => {
+    if (/hydration|cannot be a descendant|cannot contain a nested/i.test(error.message)) {
+      hydrationErrors.push(error.message)
+    }
+  })
+  page.on("console", (message) => {
+    if (
+      message.type() === "error" &&
+      /hydration|cannot be a descendant|cannot contain a nested/i.test(message.text())
+    ) {
+      hydrationErrors.push(message.text())
+    }
+  })
   for (const route of [
     "/vn/store",
     "/vn/categories/dm-tees",
@@ -123,15 +137,36 @@ test("customer page families retain readable layouts at narrow and wide widths",
     "/vn/missing-page",
   ]) {
     await page.goto(route)
-    for (const width of [375, 1440]) {
-      await page.setViewportSize({ width, height: 900 })
+    for (const [width, height] of [
+      [375, 667],
+      [768, 1024],
+      [1440, 900],
+    ]) {
+      await page.setViewportSize({ width, height })
       await expect(page.locator("h1").first()).toBeVisible()
       expect(
         await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
         `${route} at ${width}px`,
       ).toBe(true)
     }
+    expect(hydrationErrors, `${route} hydration errors`).toEqual([])
   }
+})
+
+test("skip link and side menu work with a keyboard", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 667 })
+  await page.goto("/vn")
+  await page.keyboard.press("Tab")
+  const skipLink = page.locator('a[href="#daymark-main"]')
+  await expect(skipLink).toBeFocused()
+  await page.keyboard.press("Enter")
+  await expect(page).toHaveURL(/#daymark-main$/)
+
+  await page.getByTestId("nav-menu-button").click()
+  await expect(page.getByTestId("nav-menu-popup")).toBeVisible()
+  await expect(page.getByRole("dialog", { name: "Danh mục" })).toHaveAttribute("data-open", "")
+  await page.keyboard.press("Escape")
+  await expect(page.getByRole("dialog", { name: "Danh mục" })).toHaveCount(0)
 })
 
 test("hero, catalog, account and purchase actions share one button geometry", async ({ page }) => {

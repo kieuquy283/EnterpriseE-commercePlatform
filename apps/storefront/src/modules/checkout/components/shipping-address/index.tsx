@@ -128,6 +128,9 @@ const ShippingAddress = ({
               autoComplete="tel"
               value={formData["shipping_address.phone"]}
               onChange={handleChange}
+              required
+              pattern="0[0-9]{9}"
+              title="Nhập 10 chữ số, bắt đầu bằng 0."
               hint="Chỉ dùng để cập nhật tình trạng giao hàng."
               data-testid="shipping-phone-input"
             />

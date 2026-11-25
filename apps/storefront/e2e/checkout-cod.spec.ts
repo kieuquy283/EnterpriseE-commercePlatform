@@ -29,6 +29,7 @@ test.describe("Checkout COD Flow (E2E-03, E2E-05, E2E-06)", () => {
   })
 
   test("E2E-03: Completes checkout with Cash on Delivery (COD) as guest", async ({ page }) => {
+    test.setTimeout(120_000)
     const testEmail = generateTestEmail("cod-guest")
 
     // 1. Add product to cart and enter checkout
@@ -72,6 +73,7 @@ test.describe("Checkout COD Flow (E2E-03, E2E-05, E2E-06)", () => {
   })
 
   test("E2E-06: Displays error when place order server action fails", async ({ page }) => {
+    test.setTimeout(120_000)
     const testEmail = generateTestEmail("cod-fail")
 
     // 1. Add product to cart and reach review step

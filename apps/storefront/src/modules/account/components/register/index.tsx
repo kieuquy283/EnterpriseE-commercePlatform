@@ -1,6 +1,7 @@
 "use client"
 
-import { useActionState } from "react"
+import { useActionState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { LOGIN_VIEW } from "@modules/account/templates/login-template"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import { SubmitButton } from "@modules/checkout/components/submit-button"
@@ -13,6 +14,11 @@ type Props = {
 
 const Register = ({ setCurrentView }: Props) => {
   const [message, formAction] = useActionState(signup, null)
+  const router = useRouter()
+
+  useEffect(() => {
+    if (message?.state === "success") router.refresh()
+  }, [message, router])
 
   return (
     <div className="flex w-full max-w-md flex-col gap-y-6" data-testid="register-page">
@@ -58,10 +64,13 @@ const Register = ({ setCurrentView }: Props) => {
           data-testid="email-input"
         />
         <Input
-          label="Số điện thoại (không bắt buộc)"
+          label="Số điện thoại"
           name="phone"
           type="tel"
           autoComplete="tel"
+          required
+          pattern="0[0-9]{9}"
+          title="Nhập 10 chữ số, bắt đầu bằng 0."
           data-testid="phone-input"
         />
         <Input
@@ -70,6 +79,9 @@ const Register = ({ setCurrentView }: Props) => {
           required
           type="password"
           autoComplete="new-password"
+          minLength={8}
+          pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}"
+          title="Ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số."
           data-testid="password-input"
         />
 

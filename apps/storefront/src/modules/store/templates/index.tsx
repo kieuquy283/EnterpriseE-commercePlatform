@@ -180,7 +180,7 @@ export default async function StoreTemplate({
             </div>
           ) : products.length ? (
             <ul
-              className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 small:grid-cols-4 small:gap-x-6"
+              className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 small:grid-cols-3 small:gap-x-6"
               data-testid="products-list"
             >
               {products.map((product) => (
@@ -192,7 +192,7 @@ export default async function StoreTemplate({
           ) : (
             <div className="mt-10 border-y border-line px-0 py-16">
               <p className="text-dm-title-sm font-medium text-ink">
-                {query ? "Chưa tìm thấy sản phẩm phù hợp" : "Chưa có sản phẩm"}
+                {query ? "Không tìm thấy sản phẩm phù hợp với từ khóa" : "Chưa có sản phẩm"}
               </p>
               <p className="mx-auto mt-2 max-w-md text-dm-small text-ink-muted">
                 {query

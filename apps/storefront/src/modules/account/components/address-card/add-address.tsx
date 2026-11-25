@@ -98,9 +98,10 @@ const AddAddress = ({
                 </div>
                 <div className="xsmall:col-span-2">
                   <Input
-                    label="Căn hộ, số tầng (không bắt buộc)"
+                    label="Phường / Xã"
                     name="address_2"
                     autoComplete="address-line2"
+                    required
                     data-testid="address-2-input"
                   />
                 </div>
@@ -109,19 +110,22 @@ const AddAddress = ({
                   name="postal_code"
                   autoComplete="postal-code"
                   required
+                  pattern="[0-9]{6}"
+                  title="Nhập đúng 6 chữ số."
                   data-testid="postal-code-input"
                 />
                 <Input
-                  label="Tỉnh / Thành phố"
+                  label="Quận / Huyện"
                   name="city"
                   autoComplete="address-level2"
                   required
                   data-testid="city-input"
                 />
                 <Input
-                  label="Quận / Huyện"
+                  label="Tỉnh / Thành phố"
                   name="province"
                   autoComplete="address-level1"
+                  required
                   data-testid="state-input"
                 />
                 <CountrySelect
@@ -137,6 +141,7 @@ const AddAddress = ({
                     name="phone"
                     type="tel"
                     autoComplete="tel"
+                    pattern="0[0-9]{9}"
                     data-testid="phone-input"
                   />
                 </div>

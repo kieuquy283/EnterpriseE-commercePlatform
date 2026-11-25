@@ -3,7 +3,8 @@ import { LOGIN_VIEW } from "@modules/account/templates/login-template"
 import ErrorMessage from "@modules/checkout/components/error-message"
 import { SubmitButton } from "@modules/checkout/components/submit-button"
 import { Alert, Input } from "@modules/common/components/ui"
-import { useActionState } from "react"
+import { useActionState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 
 type Props = {
   setCurrentView: (view: LOGIN_VIEW) => void
@@ -11,6 +12,11 @@ type Props = {
 
 const Login = ({ setCurrentView }: Props) => {
   const [message, formAction] = useActionState(login, null)
+  const router = useRouter()
+
+  useEffect(() => {
+    if (message?.state === "success") router.refresh()
+  }, [message, router])
 
   return (
     <div className="flex w-full max-w-md flex-col gap-y-6" data-testid="login-page">
