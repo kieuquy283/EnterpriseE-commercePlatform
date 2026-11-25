@@ -2,6 +2,8 @@ const { MetadataStorage } = require("@medusajs/framework/mikro-orm/core")
 
 if (process.env.TEST_TYPE === "integration:http") {
   process.env.REDIS_URL = ""
+  // Medusa's HTTP test runner resets the project database driver options for localhost.
+  process.env.DATABASE_POOL ??= JSON.stringify({ min: 0, max: 3 })
 }
 
 if (process.env.DATABASE_URL) {

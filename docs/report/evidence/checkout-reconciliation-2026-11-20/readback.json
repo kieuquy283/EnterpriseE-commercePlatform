@@ -1,0 +1,1250 @@
+{
+  "environment": {
+    "base": "896a1d59e8480fe4d77e5abefca731fc5cccc168",
+    "checkout_spec_sha256": "5edb302177932a46594d3157ed60b70a6144db1cd68d357ea485c75f644231a0",
+    "utc_started": "2026-11-20T11:54:25.4811389+00:00",
+    "node": "v24.22.1",
+    "npm": "11.12.1",
+    "docker": "28.4.0",
+    "postgres": "postgres (PostgreSQL) 17.10 (Debian 17.10-1.pgdg12+1)",
+    "postgres_binding": "loopback-random-port-with-container-tmpfs",
+    "redis": "disabled-by-http-suite-setup"
+  },
+  "medusa": "2.21.2",
+  "checkout_suite": [
+    {
+      "title": "completes checkout and exposes the order in customer history and details",
+      "status": "passed"
+    },
+    {
+      "title": "does not create an order or change inventory when simulated payment fails",
+      "status": "passed"
+    },
+    {
+      "title": "reconciles a same-cart retry to a single order, payment, and reservation",
+      "status": "passed"
+    },
+    {
+      "title": "reconciles 20 checkout attempts against five units of stock",
+      "status": "passed"
+    },
+    {
+      "title": "separates COD checkout authorization from technical capture",
+      "status": "passed"
+    }
+  ],
+  "readback": [
+    {
+      "scenario": "simulator_success",
+      "inventoryBefore": {
+        "levels": [
+          {
+            "id": "ilev_01M7WCYXC0PR5EFW90SWW06NNK",
+            "inventory_item_id": "iitem_01M7WCYX8JS8AFA9V9V989NRKD",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "stocked_quantity": 25,
+            "reserved_quantity": 0
+          }
+        ],
+        "reservations": []
+      },
+      "readback": {
+        "cartLinks": [
+          {
+            "cart_id": "cart_01M7WCYYH84STPZ9Y2TVSBQF2Y",
+            "order_id": "order_01M7WCZ1MTGEYD985F7GPC6JY7"
+          }
+        ],
+        "paymentLinks": [
+          {
+            "order_id": "order_01M7WCZ1MTGEYD985F7GPC6JY7",
+            "payment_collection_id": "pay_col_01M7WCZ16EJA5KZJM5DHH6GWBY"
+          }
+        ],
+        "orders": [
+          {
+            "id": "order_01M7WCZ1MTGEYD985F7GPC6JY7",
+            "status": "pending",
+            "currency_code": "vnd",
+            "items": [
+              {
+                "id": "ordli_01M7WCZ1MXWB20ZH8Q19KCGDRK",
+                "quantity": 1
+              }
+            ]
+          }
+        ],
+        "fulfillmentLinks": [],
+        "collections": [
+          {
+            "id": "pay_col_01M7WCZ16EJA5KZJM5DHH6GWBY",
+            "status": "authorized",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 279000,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WCZ1B0VWBM8247KW05WG70",
+                "status": "authorized",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": [
+              {
+                "id": "pay_01M7WCZ1X9PE6N6YYDRBTKEA5S",
+                "payment_session_id": "payses_01M7WCZ1B0VWBM8247KW05WG70",
+                "canceled": false,
+                "captures": [],
+                "refunds": []
+              }
+            ]
+          }
+        ],
+        "levels": [
+          {
+            "id": "ilev_01M7WCYXC0PR5EFW90SWW06NNK",
+            "inventory_item_id": "iitem_01M7WCYX8JS8AFA9V9V989NRKD",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "stocked_quantity": 25,
+            "reserved_quantity": 1
+          }
+        ],
+        "reservations": [
+          {
+            "id": "resitem_01M7WCZ1T8CS0VHSNXNV4KS9Z8",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "line_item_id": "ordli_01M7WCZ1MXWB20ZH8Q19KCGDRK",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "cancel_before_fulfillment",
+      "inventoryBefore": {
+        "levels": [
+          {
+            "id": "ilev_01M7WCYXC0PR5EFW90SWW06NNK",
+            "inventory_item_id": "iitem_01M7WCYX8JS8AFA9V9V989NRKD",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "stocked_quantity": 25,
+            "reserved_quantity": 0
+          }
+        ],
+        "reservations": []
+      },
+      "readback": {
+        "cartLinks": [
+          {
+            "cart_id": "cart_01M7WCYYH84STPZ9Y2TVSBQF2Y",
+            "order_id": "order_01M7WCZ1MTGEYD985F7GPC6JY7"
+          }
+        ],
+        "paymentLinks": [
+          {
+            "order_id": "order_01M7WCZ1MTGEYD985F7GPC6JY7",
+            "payment_collection_id": "pay_col_01M7WCZ16EJA5KZJM5DHH6GWBY"
+          }
+        ],
+        "orders": [
+          {
+            "id": "order_01M7WCZ1MTGEYD985F7GPC6JY7",
+            "status": "canceled",
+            "currency_code": "vnd",
+            "items": [
+              {
+                "id": "ordli_01M7WCZ1MXWB20ZH8Q19KCGDRK",
+                "quantity": 1
+              }
+            ]
+          }
+        ],
+        "fulfillmentLinks": [],
+        "collections": [
+          {
+            "id": "pay_col_01M7WCZ16EJA5KZJM5DHH6GWBY",
+            "status": "canceled",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 279000,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WCZ1B0VWBM8247KW05WG70",
+                "status": "authorized",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": [
+              {
+                "id": "pay_01M7WCZ1X9PE6N6YYDRBTKEA5S",
+                "payment_session_id": "payses_01M7WCZ1B0VWBM8247KW05WG70",
+                "canceled": true,
+                "captures": [],
+                "refunds": []
+              }
+            ]
+          }
+        ],
+        "levels": [
+          {
+            "id": "ilev_01M7WCYXC0PR5EFW90SWW06NNK",
+            "inventory_item_id": "iitem_01M7WCYX8JS8AFA9V9V989NRKD",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "stocked_quantity": 25,
+            "reserved_quantity": 0
+          }
+        ],
+        "reservations": []
+      }
+    },
+    {
+      "scenario": "simulator_decline",
+      "attempt": {
+        "cartId": "cart_01M7WCZ3NQ5XJSVJQNS8P6VEKT",
+        "status": 400,
+        "type": "not_allowed",
+        "insufficientStock": false
+      },
+      "inventoryBefore": {
+        "levels": [
+          {
+            "id": "ilev_01M7WCYXC0PR5EFW90SWW06NNK",
+            "inventory_item_id": "iitem_01M7WCYX8JS8AFA9V9V989NRKD",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "stocked_quantity": 25,
+            "reserved_quantity": 0
+          }
+        ],
+        "reservations": []
+      },
+      "readback": {
+        "cartLinks": [],
+        "paymentLinks": [],
+        "orders": [],
+        "fulfillmentLinks": [],
+        "collections": [
+          {
+            "id": "pay_col_01M7WCZ5ZTW8J3A8T089EH8ZXR",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WCZ63YD3E9HT1FBV6D6BFX",
+                "status": "error",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          }
+        ],
+        "levels": [
+          {
+            "id": "ilev_01M7WCYXC0PR5EFW90SWW06NNK",
+            "inventory_item_id": "iitem_01M7WCYX8JS8AFA9V9V989NRKD",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "stocked_quantity": 25,
+            "reserved_quantity": 0
+          }
+        ],
+        "reservations": []
+      }
+    },
+    {
+      "scenario": "same_cart_retry",
+      "inventoryBefore": {
+        "levels": [
+          {
+            "id": "ilev_01M7WCYXC0PR5EFW90SWW06NNK",
+            "inventory_item_id": "iitem_01M7WCYX8JS8AFA9V9V989NRKD",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "stocked_quantity": 25,
+            "reserved_quantity": 0
+          }
+        ],
+        "reservations": []
+      },
+      "concurrentAttempts": [
+        {
+          "cartId": "cart_01M7WCZ7EED809RW9FK296PZGR",
+          "status": 200,
+          "type": "order",
+          "orderId": "order_01M7WCZA7JDQ4C3PJH005JQ8K6"
+        },
+        {
+          "cartId": "cart_01M7WCZ7EED809RW9FK296PZGR",
+          "status": 200,
+          "type": "order",
+          "orderId": "order_01M7WCZA7JDQ4C3PJH005JQ8K6"
+        }
+      ],
+      "first": {
+        "cartLinks": [
+          {
+            "cart_id": "cart_01M7WCZ7EED809RW9FK296PZGR",
+            "order_id": "order_01M7WCZA7JDQ4C3PJH005JQ8K6"
+          }
+        ],
+        "paymentLinks": [
+          {
+            "order_id": "order_01M7WCZA7JDQ4C3PJH005JQ8K6",
+            "payment_collection_id": "pay_col_01M7WCZ9WMYW5JW9H3J3S0826J"
+          }
+        ],
+        "orders": [
+          {
+            "id": "order_01M7WCZA7JDQ4C3PJH005JQ8K6",
+            "status": "pending",
+            "currency_code": "vnd",
+            "items": [
+              {
+                "id": "ordli_01M7WCZA7JX6ZAA78Y39QM2TCJ",
+                "quantity": 1
+              }
+            ]
+          }
+        ],
+        "fulfillmentLinks": [],
+        "collections": [
+          {
+            "id": "pay_col_01M7WCZ9WMYW5JW9H3J3S0826J",
+            "status": "authorized",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 279000,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WCZ9ZHJXS0RDV1P9YG6ZJB",
+                "status": "authorized",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": [
+              {
+                "id": "pay_01M7WCZACCR9HMNY701NH1E7DZ",
+                "payment_session_id": "payses_01M7WCZ9ZHJXS0RDV1P9YG6ZJB",
+                "canceled": false,
+                "captures": [],
+                "refunds": []
+              }
+            ]
+          }
+        ],
+        "levels": [
+          {
+            "id": "ilev_01M7WCYXC0PR5EFW90SWW06NNK",
+            "inventory_item_id": "iitem_01M7WCYX8JS8AFA9V9V989NRKD",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "stocked_quantity": 25,
+            "reserved_quantity": 1
+          }
+        ],
+        "reservations": [
+          {
+            "id": "resitem_01M7WCZAAPY0X7X6RDQR3WP9YB",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "line_item_id": "ordli_01M7WCZA7JX6ZAA78Y39QM2TCJ",
+            "quantity": 1
+          }
+        ]
+      },
+      "retry": {
+        "cartId": "cart_01M7WCZ7EED809RW9FK296PZGR",
+        "status": 200,
+        "type": "order",
+        "orderId": "order_01M7WCZA7JDQ4C3PJH005JQ8K6"
+      },
+      "afterRetry": {
+        "cartLinks": [
+          {
+            "cart_id": "cart_01M7WCZ7EED809RW9FK296PZGR",
+            "order_id": "order_01M7WCZA7JDQ4C3PJH005JQ8K6"
+          }
+        ],
+        "paymentLinks": [
+          {
+            "order_id": "order_01M7WCZA7JDQ4C3PJH005JQ8K6",
+            "payment_collection_id": "pay_col_01M7WCZ9WMYW5JW9H3J3S0826J"
+          }
+        ],
+        "orders": [
+          {
+            "id": "order_01M7WCZA7JDQ4C3PJH005JQ8K6",
+            "status": "pending",
+            "currency_code": "vnd",
+            "items": [
+              {
+                "id": "ordli_01M7WCZA7JX6ZAA78Y39QM2TCJ",
+                "quantity": 1
+              }
+            ]
+          }
+        ],
+        "fulfillmentLinks": [],
+        "collections": [
+          {
+            "id": "pay_col_01M7WCZ9WMYW5JW9H3J3S0826J",
+            "status": "authorized",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 279000,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WCZ9ZHJXS0RDV1P9YG6ZJB",
+                "status": "authorized",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": [
+              {
+                "id": "pay_01M7WCZACCR9HMNY701NH1E7DZ",
+                "payment_session_id": "payses_01M7WCZ9ZHJXS0RDV1P9YG6ZJB",
+                "canceled": false,
+                "captures": [],
+                "refunds": []
+              }
+            ]
+          }
+        ],
+        "levels": [
+          {
+            "id": "ilev_01M7WCYXC0PR5EFW90SWW06NNK",
+            "inventory_item_id": "iitem_01M7WCYX8JS8AFA9V9V989NRKD",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "stocked_quantity": 25,
+            "reserved_quantity": 1
+          }
+        ],
+        "reservations": [
+          {
+            "id": "resitem_01M7WCZAAPY0X7X6RDQR3WP9YB",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "line_item_id": "ordli_01M7WCZA7JX6ZAA78Y39QM2TCJ",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "last_five_units",
+      "inventoryBefore": {
+        "levels": [
+          {
+            "id": "ilev_01M7WCYXC0PR5EFW90SWW06NNK",
+            "inventory_item_id": "iitem_01M7WCYX8JS8AFA9V9V989NRKD",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "stocked_quantity": 5,
+            "reserved_quantity": 0
+          }
+        ],
+        "reservations": []
+      },
+      "attempts": [
+        {
+          "cartId": "cart_01M7WCZC4TXX7A7CTWRY0150DA",
+          "status": 200,
+          "type": "order",
+          "orderId": "order_01M7WD0D3Q2R4VD6Z5PQSFHN29"
+        },
+        {
+          "cartId": "cart_01M7WCZC5ASJ943MY39HERD08N",
+          "status": 400,
+          "type": "not_allowed",
+          "insufficientStock": true
+        },
+        {
+          "cartId": "cart_01M7WCZC6QJHK426NH9PZDY05K",
+          "status": 400,
+          "type": "not_allowed",
+          "insufficientStock": true
+        },
+        {
+          "cartId": "cart_01M7WCZC6W357GNKR0JJX3B6VK",
+          "status": 200,
+          "type": "order",
+          "orderId": "order_01M7WD0CWM395WQC8FVRRAMVEC"
+        },
+        {
+          "cartId": "cart_01M7WCZC6YX6W3NZWJ93PASMPF",
+          "status": 200,
+          "type": "order",
+          "orderId": "order_01M7WD0CX144FVBFDF36VTMEYW"
+        },
+        {
+          "cartId": "cart_01M7WCZN0C55SJZNXHH6SATG6Y",
+          "status": 400,
+          "type": "not_allowed",
+          "insufficientStock": true
+        },
+        {
+          "cartId": "cart_01M7WCZN0FR846GN7XY716T92T",
+          "status": 400,
+          "type": "not_allowed",
+          "insufficientStock": true
+        },
+        {
+          "cartId": "cart_01M7WCZN0HDX9RBQFHDQ0H0YFA",
+          "status": 400,
+          "type": "not_allowed",
+          "insufficientStock": true
+        },
+        {
+          "cartId": "cart_01M7WCZN0KTHBZ7VBJ5M86PRRC",
+          "status": 400,
+          "type": "not_allowed",
+          "insufficientStock": true
+        },
+        {
+          "cartId": "cart_01M7WCZN0NVMXNMM8Q57F46PZC",
+          "status": 400,
+          "type": "not_allowed",
+          "insufficientStock": true
+        },
+        {
+          "cartId": "cart_01M7WCZWPQHFMH4A27MVKA43DV",
+          "status": 400,
+          "type": "not_allowed",
+          "insufficientStock": true
+        },
+        {
+          "cartId": "cart_01M7WCZWPSQR31CHW941W432XD",
+          "status": 200,
+          "type": "order",
+          "orderId": "order_01M7WD0D3GYGQ0RFXNVMNV0JE6"
+        },
+        {
+          "cartId": "cart_01M7WCZWPVV0STCSS4YRXRBSK7",
+          "status": 400,
+          "type": "not_allowed",
+          "insufficientStock": true
+        },
+        {
+          "cartId": "cart_01M7WCZWPX4P1EPKFEC43R7GRK",
+          "status": 400,
+          "type": "not_allowed",
+          "insufficientStock": true
+        },
+        {
+          "cartId": "cart_01M7WCZWPZ6GADNPEYYF975JQ2",
+          "status": 400,
+          "type": "not_allowed",
+          "insufficientStock": true
+        },
+        {
+          "cartId": "cart_01M7WD03X1G2Z8BQ7D30P2VKBH",
+          "status": 400,
+          "type": "not_allowed",
+          "insufficientStock": true
+        },
+        {
+          "cartId": "cart_01M7WD03X3B65TMMZX3W0RPQTV",
+          "status": 200,
+          "type": "order",
+          "orderId": "order_01M7WD0CWWH44X4TX6WHARMS7S"
+        },
+        {
+          "cartId": "cart_01M7WD03X5JQ777C5EJNWZCZ46",
+          "status": 400,
+          "type": "not_allowed",
+          "insufficientStock": true
+        },
+        {
+          "cartId": "cart_01M7WD03X6JXA7AA94J4KH1NM5",
+          "status": 400,
+          "type": "not_allowed",
+          "insufficientStock": true
+        },
+        {
+          "cartId": "cart_01M7WD03X87FPY642AFFGTN7J3",
+          "status": 400,
+          "type": "not_allowed",
+          "insufficientStock": true
+        }
+      ],
+      "readback": {
+        "cartLinks": [
+          {
+            "cart_id": "cart_01M7WCZC4TXX7A7CTWRY0150DA",
+            "order_id": "order_01M7WD0D3Q2R4VD6Z5PQSFHN29"
+          },
+          {
+            "cart_id": "cart_01M7WCZC6W357GNKR0JJX3B6VK",
+            "order_id": "order_01M7WD0CWM395WQC8FVRRAMVEC"
+          },
+          {
+            "cart_id": "cart_01M7WCZC6YX6W3NZWJ93PASMPF",
+            "order_id": "order_01M7WD0CX144FVBFDF36VTMEYW"
+          },
+          {
+            "cart_id": "cart_01M7WCZWPSQR31CHW941W432XD",
+            "order_id": "order_01M7WD0D3GYGQ0RFXNVMNV0JE6"
+          },
+          {
+            "cart_id": "cart_01M7WD03X3B65TMMZX3W0RPQTV",
+            "order_id": "order_01M7WD0CWWH44X4TX6WHARMS7S"
+          }
+        ],
+        "paymentLinks": [
+          {
+            "order_id": "order_01M7WD0D3Q2R4VD6Z5PQSFHN29",
+            "payment_collection_id": "pay_col_01M7WCZM1ZP6JPJRE8F44JMGQ7"
+          },
+          {
+            "order_id": "order_01M7WD0CWM395WQC8FVRRAMVEC",
+            "payment_collection_id": "pay_col_01M7WCZM2DGRWRR22W0AH2K1ZH"
+          },
+          {
+            "order_id": "order_01M7WD0CX144FVBFDF36VTMEYW",
+            "payment_collection_id": "pay_col_01M7WCZM2RVGZFFQPTWJRCYGJ2"
+          },
+          {
+            "order_id": "order_01M7WD0D3GYGQ0RFXNVMNV0JE6",
+            "payment_collection_id": "pay_col_01M7WD03376BV62TDBH8TST427"
+          },
+          {
+            "order_id": "order_01M7WD0CWWH44X4TX6WHARMS7S",
+            "payment_collection_id": "pay_col_01M7WD0AMVA1K6PVD8F6AXQRXS"
+          }
+        ],
+        "orders": [
+          {
+            "id": "order_01M7WD0CWM395WQC8FVRRAMVEC",
+            "status": "pending",
+            "currency_code": "vnd",
+            "items": [
+              {
+                "id": "ordli_01M7WD0CWN6JAK1XDEZCV7GEG5",
+                "quantity": 1
+              }
+            ]
+          },
+          {
+            "id": "order_01M7WD0CWWH44X4TX6WHARMS7S",
+            "status": "pending",
+            "currency_code": "vnd",
+            "items": [
+              {
+                "id": "ordli_01M7WD0CWX42ES8BD2XRAPEHM0",
+                "quantity": 1
+              }
+            ]
+          },
+          {
+            "id": "order_01M7WD0CX144FVBFDF36VTMEYW",
+            "status": "pending",
+            "currency_code": "vnd",
+            "items": [
+              {
+                "id": "ordli_01M7WD0CX2W4W4JPYYKSP0JM63",
+                "quantity": 1
+              }
+            ]
+          },
+          {
+            "id": "order_01M7WD0D3GYGQ0RFXNVMNV0JE6",
+            "status": "pending",
+            "currency_code": "vnd",
+            "items": [
+              {
+                "id": "ordli_01M7WD0D3HWZX5FTBJY5N8Z1TC",
+                "quantity": 1
+              }
+            ]
+          },
+          {
+            "id": "order_01M7WD0D3Q2R4VD6Z5PQSFHN29",
+            "status": "pending",
+            "currency_code": "vnd",
+            "items": [
+              {
+                "id": "ordli_01M7WD0D3QCF9044B8G5BPBZH6",
+                "quantity": 1
+              }
+            ]
+          }
+        ],
+        "fulfillmentLinks": [],
+        "collections": [
+          {
+            "id": "pay_col_01M7WCZM1ZP6JPJRE8F44JMGQ7",
+            "status": "authorized",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 279000,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WCZMACXJCEJ1K378Q8S8PP",
+                "status": "authorized",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": [
+              {
+                "id": "pay_01M7WD0F7B7W4DEKJA844EQSGB",
+                "payment_session_id": "payses_01M7WCZMACXJCEJ1K378Q8S8PP",
+                "canceled": false,
+                "captures": [],
+                "refunds": []
+              }
+            ]
+          },
+          {
+            "id": "pay_col_01M7WCZM21NA42CQ45JK9WWW5A",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WCZMAKV31PE23F2B33BHDK",
+                "status": "pending",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          },
+          {
+            "id": "pay_col_01M7WCZM2B33V8ZE12F3816XXJ",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WCZMB7FBBV78VNNG45BWTF",
+                "status": "pending",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          },
+          {
+            "id": "pay_col_01M7WCZM2DGRWRR22W0AH2K1ZH",
+            "status": "authorized",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 279000,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WCZMB9SY7MZSNYSQT92T26",
+                "status": "authorized",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": [
+              {
+                "id": "pay_01M7WD0ET2ZWW0VA907ARV8S80",
+                "payment_session_id": "payses_01M7WCZMB9SY7MZSNYSQT92T26",
+                "canceled": false,
+                "captures": [],
+                "refunds": []
+              }
+            ]
+          },
+          {
+            "id": "pay_col_01M7WCZM2RVGZFFQPTWJRCYGJ2",
+            "status": "authorized",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 279000,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WCZMBSTZ4X16D5R86B3AVS",
+                "status": "authorized",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": [
+              {
+                "id": "pay_01M7WD0EZ5BFBAE52QBD17SWAH",
+                "payment_session_id": "payses_01M7WCZMBSTZ4X16D5R86B3AVS",
+                "canceled": false,
+                "captures": [],
+                "refunds": []
+              }
+            ]
+          },
+          {
+            "id": "pay_col_01M7WCZVVZCA67R5ZD58HT16CS",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WCZW37NTX10JXDZ34Q1RX0",
+                "status": "pending",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          },
+          {
+            "id": "pay_col_01M7WCZVW59S4MHSS24N1CSHD7",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WCZW3QY0H5KG859X1DE8CP",
+                "status": "pending",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          },
+          {
+            "id": "pay_col_01M7WCZVW8QFGEMT7KABVSNV48",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WCZW3W7JNRFYSQ5YC8VXN0",
+                "status": "pending",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          },
+          {
+            "id": "pay_col_01M7WCZVWY15ZABWXSR79QTTSH",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WCZW4C6YW0A0JYAEQ76829",
+                "status": "pending",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          },
+          {
+            "id": "pay_col_01M7WCZVX07WXVVNT9JFR7Y1BJ",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WCZW4E43S00CZDQQ8562NA",
+                "status": "pending",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          },
+          {
+            "id": "pay_col_01M7WD033004MGK6533D9SHAW7",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WD03BD413PCHJ3RJA5NR9Y",
+                "status": "pending",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          },
+          {
+            "id": "pay_col_01M7WD0332KXKTZ43CBT49N9NZ",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WD03BGJVRC3FEP51J6HD79",
+                "status": "pending",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          },
+          {
+            "id": "pay_col_01M7WD03344PH3FARJEMBDBBXF",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WD03BJ2PCHWBH57HVBW2ZZ",
+                "status": "pending",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          },
+          {
+            "id": "pay_col_01M7WD0335HQFF3E11HG6H7H19",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WD03BMWKTV417EHVV4MQ72",
+                "status": "pending",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          },
+          {
+            "id": "pay_col_01M7WD03376BV62TDBH8TST427",
+            "status": "authorized",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 279000,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WD03BPATGRCZ9PXMZT03ZR",
+                "status": "authorized",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": [
+              {
+                "id": "pay_01M7WD0F2KY122FXVA2D28SDE7",
+                "payment_session_id": "payses_01M7WD03BPATGRCZ9PXMZT03ZR",
+                "canceled": false,
+                "captures": [],
+                "refunds": []
+              }
+            ]
+          },
+          {
+            "id": "pay_col_01M7WD0AMMCYJHR9JRK790NYVG",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WD0AWPTPYTF1ET9KKQG757",
+                "status": "pending",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          },
+          {
+            "id": "pay_col_01M7WD0AMPYSKJ2FJAEFGFHBV2",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WD0AWSX74N60ETVY4T1E1C",
+                "status": "pending",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          },
+          {
+            "id": "pay_col_01M7WD0AMTTTNPJ82DH97V488D",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WD0AWWG5PT98YXP45G9QCR",
+                "status": "pending",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          },
+          {
+            "id": "pay_col_01M7WD0AMVA1K6PVD8F6AXQRXS",
+            "status": "authorized",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 279000,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WD0AX1E1Q0M7H4JKEZ9AD3",
+                "status": "authorized",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": [
+              {
+                "id": "pay_01M7WD0F03W13HNJN5HTBHM7VW",
+                "payment_session_id": "payses_01M7WD0AX1E1Q0M7H4JKEZ9AD3",
+                "canceled": false,
+                "captures": [],
+                "refunds": []
+              }
+            ]
+          },
+          {
+            "id": "pay_col_01M7WD0AMYJC12M3MDXN4RPJMH",
+            "status": "not_paid",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 0,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WD0AX3SHN0SKVGX0Y0NEY6",
+                "status": "pending",
+                "provider_id": "pp_simulator_simulator"
+              }
+            ],
+            "payments": []
+          }
+        ],
+        "levels": [
+          {
+            "id": "ilev_01M7WCYXC0PR5EFW90SWW06NNK",
+            "inventory_item_id": "iitem_01M7WCYX8JS8AFA9V9V989NRKD",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "stocked_quantity": 5,
+            "reserved_quantity": 5
+          }
+        ],
+        "reservations": [
+          {
+            "id": "resitem_01M7WD0E7PSB3KCZVTG44TSPC5",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "line_item_id": "ordli_01M7WD0CWN6JAK1XDEZCV7GEG5",
+            "quantity": 1
+          },
+          {
+            "id": "resitem_01M7WD0ENHQE56HS43D6PQRYT9",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "line_item_id": "ordli_01M7WD0CX2W4W4JPYYKSP0JM63",
+            "quantity": 1
+          },
+          {
+            "id": "resitem_01M7WD0EW243VH792DVYZPJ6BQ",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "line_item_id": "ordli_01M7WD0CWX42ES8BD2XRAPEHM0",
+            "quantity": 1
+          },
+          {
+            "id": "resitem_01M7WD0EZN48Q18WGHB6Q9QPSG",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "line_item_id": "ordli_01M7WD0D3HWZX5FTBJY5N8Z1TC",
+            "quantity": 1
+          },
+          {
+            "id": "resitem_01M7WD0F1ZK1PXNYWN52BTYA8Y",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "line_item_id": "ordli_01M7WD0D3QCF9044B8G5BPBZH6",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "cod_checkout_authorization",
+      "inventoryBefore": {
+        "levels": [
+          {
+            "id": "ilev_01M7WCYXC0PR5EFW90SWW06NNK",
+            "inventory_item_id": "iitem_01M7WCYX8JS8AFA9V9V989NRKD",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "stocked_quantity": 25,
+            "reserved_quantity": 0
+          }
+        ],
+        "reservations": []
+      },
+      "completion": {
+        "cartId": "cart_01M7WD0JZ9HC9M51DHT9HPAC7A",
+        "status": 200,
+        "type": "order",
+        "orderId": "order_01M7WD0NWWT16YAXVKEZ6YEAV5"
+      },
+      "readback": {
+        "cartLinks": [
+          {
+            "cart_id": "cart_01M7WD0JZ9HC9M51DHT9HPAC7A",
+            "order_id": "order_01M7WD0NWWT16YAXVKEZ6YEAV5"
+          }
+        ],
+        "paymentLinks": [
+          {
+            "order_id": "order_01M7WD0NWWT16YAXVKEZ6YEAV5",
+            "payment_collection_id": "pay_col_01M7WD0NHRYR1BYSKRBD9GSMV8"
+          }
+        ],
+        "orders": [
+          {
+            "id": "order_01M7WD0NWWT16YAXVKEZ6YEAV5",
+            "status": "pending",
+            "currency_code": "vnd",
+            "items": [
+              {
+                "id": "ordli_01M7WD0NWWBGSVBX9PD3N8QG6T",
+                "quantity": 1
+              }
+            ]
+          }
+        ],
+        "fulfillmentLinks": [],
+        "collections": [
+          {
+            "id": "pay_col_01M7WD0NHRYR1BYSKRBD9GSMV8",
+            "status": "authorized",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 279000,
+            "captured_amount": 0,
+            "sessions": [
+              {
+                "id": "payses_01M7WD0NMQF53A9B3A7TY3532Y",
+                "status": "authorized",
+                "provider_id": "pp_system_default"
+              }
+            ],
+            "payments": [
+              {
+                "id": "pay_01M7WD0P1DMQB57QB44029K9HR",
+                "payment_session_id": "payses_01M7WD0NMQF53A9B3A7TY3532Y",
+                "canceled": false,
+                "captures": [],
+                "refunds": []
+              }
+            ]
+          }
+        ],
+        "levels": [
+          {
+            "id": "ilev_01M7WCYXC0PR5EFW90SWW06NNK",
+            "inventory_item_id": "iitem_01M7WCYX8JS8AFA9V9V989NRKD",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "stocked_quantity": 25,
+            "reserved_quantity": 1
+          }
+        ],
+        "reservations": [
+          {
+            "id": "resitem_01M7WD0NZSFDT0GJ86FGHCP0F4",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "line_item_id": "ordli_01M7WD0NWWBGSVBX9PD3N8QG6T",
+            "quantity": 1
+          }
+        ]
+      }
+    },
+    {
+      "scenario": "cod_technical_capture",
+      "readback": {
+        "cartLinks": [
+          {
+            "cart_id": "cart_01M7WD0JZ9HC9M51DHT9HPAC7A",
+            "order_id": "order_01M7WD0NWWT16YAXVKEZ6YEAV5"
+          }
+        ],
+        "paymentLinks": [
+          {
+            "order_id": "order_01M7WD0NWWT16YAXVKEZ6YEAV5",
+            "payment_collection_id": "pay_col_01M7WD0NHRYR1BYSKRBD9GSMV8"
+          }
+        ],
+        "orders": [
+          {
+            "id": "order_01M7WD0NWWT16YAXVKEZ6YEAV5",
+            "status": "pending",
+            "currency_code": "vnd",
+            "items": [
+              {
+                "id": "ordli_01M7WD0NWWBGSVBX9PD3N8QG6T",
+                "quantity": 1
+              }
+            ]
+          }
+        ],
+        "fulfillmentLinks": [],
+        "collections": [
+          {
+            "id": "pay_col_01M7WD0NHRYR1BYSKRBD9GSMV8",
+            "status": "completed",
+            "amount": 279000,
+            "currency_code": "vnd",
+            "authorized_amount": 279000,
+            "captured_amount": 279000,
+            "sessions": [
+              {
+                "id": "payses_01M7WD0NMQF53A9B3A7TY3532Y",
+                "status": "authorized",
+                "provider_id": "pp_system_default"
+              }
+            ],
+            "payments": [
+              {
+                "id": "pay_01M7WD0P1DMQB57QB44029K9HR",
+                "payment_session_id": "payses_01M7WD0NMQF53A9B3A7TY3532Y",
+                "canceled": false,
+                "captures": [
+                  {
+                    "id": "capt_01M7WD0P8A7GKSDX03KSMKDA8J",
+                    "amount": 279000
+                  }
+                ],
+                "refunds": []
+              }
+            ]
+          }
+        ],
+        "levels": [
+          {
+            "id": "ilev_01M7WCYXC0PR5EFW90SWW06NNK",
+            "inventory_item_id": "iitem_01M7WCYX8JS8AFA9V9V989NRKD",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "stocked_quantity": 25,
+            "reserved_quantity": 1
+          }
+        ],
+        "reservations": [
+          {
+            "id": "resitem_01M7WD0NZSFDT0GJ86FGHCP0F4",
+            "location_id": "sloc_01M7WCYWVSM4QWRX73FFDTRMXK",
+            "line_item_id": "ordli_01M7WD0NWWBGSVBX9PD3N8QG6T",
+            "quantity": 1
+          }
+        ]
+      }
+    }
+  ]
+}

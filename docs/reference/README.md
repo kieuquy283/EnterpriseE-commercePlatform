@@ -6,6 +6,7 @@ Các tài liệu này hỗ trợ [đặc tả hiện hành](../README.md), khôn
 <a id="historical-engineering-evidence"></a>
 ## Bằng chứng kỹ thuật lịch sử
 
+- [Đối soát checkout, thanh toán và tồn kho DATA-03 ngày 20 tháng 11](../report/checkout-reconciliation-2026-11-20.md): 5 ca kiểm thử HTTP và 7 snapshot readback (simulator, hủy trước fulfillment, gửi lặp, tranh tồn 20/5, COD authorize và capture kỹ thuật) trên PostgreSQL test dùng riêng.
 - [Kiểm chứng danh mục DATA-02 ngày 18 tháng 11](../report/daymark-catalog-validation-2026-11-18.md) ghi kết quả nhập lặp, đối soát SKU và tồn, kiểm tra ảnh và các ca từ chối trên database dùng riêng.
 - [Regression API boundary auth/cart ngày 18 tháng 11](../report/api-boundary-regression-2026-11-18.md): HTTP negative cases, checkout compatibility và giới hạn kiểm chứng; không phải nghiệm thu production.
 - [Phát hành AWS từ main ngày 9 tháng 11](../report/aws-redeployment-main389e855-2026-11-09.md): migration, digest ảnh và 18 kiểm tra công khai; không khẳng định đã nghiệm thu chiến dịch tải, khôi phục hay nhân viên vận hành.
