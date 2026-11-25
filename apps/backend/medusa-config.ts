@@ -73,6 +73,21 @@ module.exports = defineConfig({
   modules: [
     { resolve: "./src/modules/recommendation" },
     { resolve: "./src/modules/personalization" },
+    { resolve: "./src/modules/notification-outbox" },
+    {
+      resolve: "@medusajs/medusa/notification",
+      options: {
+        providers: [
+          {
+            resolve: "./src/modules/notification-sandbox",
+            id: "sandbox",
+            options: {
+              channels: ["email"],
+            },
+          },
+        ],
+      },
+    },
     ...(process.env.NODE_ENV === "production"
       ? []
       : [

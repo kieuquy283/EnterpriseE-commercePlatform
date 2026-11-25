@@ -1,0 +1,80 @@
+{
+  "stage": "T0",
+  "run_id": "ts-be05-20261122-c",
+  "captured_at": "2026-11-22T13:01:38.648Z",
+  "capture_finished_at": "2026-11-22T13:01:38.703Z",
+  "clock_source": "Node.js host UTC",
+  "read_source": "Medusa module services and query.graph",
+  "consistency": "Sequential reads across services; not an atomic database snapshot",
+  "fixture": {
+    "run_id": "ts-be05-20261122-c",
+    "product_id": "prod_01M81N482MT9KFRYP8QTKF0MYH",
+    "handle": "ao-thun-essential",
+    "variant_id": "variant_01M81N486SAKZDPZ3K5SPMRCAB",
+    "sku": "TEE-ESSENTIAL-BLK",
+    "manage_inventory": true,
+    "allow_backorder": false,
+    "required_quantity": 1,
+    "inventory_item_id": "iitem_01M81N487NMFE3AP4BR0GEA6MG",
+    "inventory_level_id": "ilev_01M81N48B3W5HD6GWSAYGA62JJ",
+    "location_id": "sloc_01M81N47TK9SXVRSK5Q39K9ZXF",
+    "region_id": "reg_01M81N47R98S8TQZDXXVJYRZRR",
+    "sales_channel_id": "sc_01M81N47M0A5VFV6ZXM0JDVQ3T",
+    "currency_code": "vnd",
+    "quantity": 2,
+    "calculated_unit_price": 249000,
+    "payment_provider_id": "pp_system_default"
+  },
+  "levels": [
+    {
+      "id": "ilev_01M81N48B3W5HD6GWSAYGA62JJ",
+      "inventory_item_id": "iitem_01M81N487NMFE3AP4BR0GEA6MG",
+      "location_id": "sloc_01M81N47TK9SXVRSK5Q39K9ZXF",
+      "stocked_quantity": 25,
+      "reserved_quantity": 0,
+      "incoming_quantity": 0,
+      "available_quantity": 25,
+      "updated_at": "2026-11-22T12:54:03.876Z"
+    },
+    {
+      "id": "ilev_01M81N48B3WQK181KKQN0259HB",
+      "inventory_item_id": "iitem_01M81N487NT481H7JB5J9V07BJ",
+      "location_id": "sloc_01M81N47TK9SXVRSK5Q39K9ZXF",
+      "stocked_quantity": 18,
+      "reserved_quantity": 0,
+      "incoming_quantity": 0,
+      "available_quantity": 18,
+      "updated_at": "2026-11-22T12:54:03.876Z"
+    },
+    {
+      "id": "ilev_01M81N48B3X1V47J5BW8EKRSGH",
+      "inventory_item_id": "iitem_01M81N487NAQPZQ93MFB6SR50N",
+      "location_id": "sloc_01M81N47TK9SXVRSK5Q39K9ZXF",
+      "stocked_quantity": 12,
+      "reserved_quantity": 0,
+      "incoming_quantity": 0,
+      "available_quantity": 12,
+      "updated_at": "2026-11-22T12:54:03.875Z"
+    }
+  ],
+  "reservations": [],
+  "active_counts": {
+    "carts": 0,
+    "cart_line_items": 0,
+    "orders": 0,
+    "payments": 0
+  },
+  "cart": null,
+  "cart_items": [],
+  "order": null,
+  "order_items": [],
+  "order_cart_links": [],
+  "cart_payment_links": [],
+  "order_payment_links": [],
+  "fulfillment_links": [],
+  "payment_collections": [],
+  "payment_sessions": [],
+  "payments": [],
+  "captures": [],
+  "refunds": []
+}

@@ -15,6 +15,12 @@
 | Kế hoạch kiểm thử hiệu năng, độ tin cậy, bảo mật và gợi ý | [Kiểm thử kỹ thuật](../spec/05-testing.md) |
 | Bảo mật AWS, phát hành, quay lui, khôi phục, giám sát và chi phí | [Vận hành](../spec/06-operations.md), [hướng dẫn triển khai](../../deploy/RUNBOOK.md) |
 | Khoảng trống triển khai và trình tự thực hiện | [Công việc còn lại](../spec/07-delivery.md) |
+| BE-05 — hợp đồng trạng thái fulfillment, tracking và COD | [Status contract](be-05-status-contract.md) |
+| BE-05 — kết quả walkthrough staff | [Báo cáo walkthrough](../report/be-05-staff-walkthrough.md) |
+| BE-05 — evidence record và audit trail | [Evidence record](../report/be-05-evidence-record.md) |
+| BE-07 — bằng chứng kiểm thử backend | [Test evidence](../report/be-07-backend-test-evidence.md) |
+| BE-07 — API/error/compatibility/rollback | [API và ADR handover](be-07-api-adr-handover.md) |
+| BE-07 — quyết định idempotency và notification | [ADR-012](../06-architecture/adr/ADR-012-backend-test-idempotency-notification.md) |
 | Ma trận quyền Staff/Admin | [Ma trận quyền](staff-admin-permission-matrix.md) |
 | License và tính khả thi Medusa Enterprise RBAC | [License/Feasibility Decision](staff-admin-rbac-license-feasibility.md) |
 | Môi trường phát triển | [Thiết lập](../setup.md), [quy ước đóng góp](../../CONTRIBUTING.md) |
