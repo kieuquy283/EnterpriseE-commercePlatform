@@ -56,6 +56,8 @@ Giữ BullMQ `5.13.0` theo Medusa, chỉ override UUID của BullMQ sang `11.1.1
 
 Rushstack vẫn ở `5.13.0`, override riêng AJV lên `8.20.0`; các consumer AJV 6 giữ nhánh `6.15.0`. Không ép chung hai major. Các dependency root của Rushstack, event-bus/workflow-engine và BullMQ là neo phân giải npm workspace để override có hiệu lực, không thêm service. Cùng lý do với Next ở trên: kiểm mọi bản lồng trong lock và dependency thực cài; xóa neo chỉ sau khi clean install chứng minh vẫn đúng.
 
+Dashboard Medusa `2.22.7` khai báo `i18next@23.7.11`, nằm trong phạm vi [GHSA-6jcc-5g8w-32mx](https://github.com/advisories/GHSA-6jcc-5g8w-32mx). Root ghim `i18next@26.3.4` và override đúng phiên bản này; neo thêm `@medusajs/dashboard@2.22.7` ở root để npm áp dụng override xuyên backend workspace. Lockfile sau khi npm sinh lại chỉ có `node_modules/i18next@26.3.4`, không còn bản lồng `23.7.11`. Đây là thay đổi major của thư viện dịch: cần clean install, kiểm Admin build, chuyển ngôn ngữ và kiểm toàn bộ audit trên CI trước khi coi cổng bảo mật đã thông. Không nâng riêng Dashboard lên `2.23.0` vì phải đồng bộ Medusa và kiểm migration Admin/React. TODO(test): Kiểm Admin build và luồng đổi ngôn ngữ với i18next 26 trên clean install — tương thích major chưa được nghiệm thu; OPS-05.
+
 AJV/ajv-formats/ajv-keywords và SWC helpers ở root giữ các peer tương thích, cho phép consumer cũ có bản lồng đúng major. Audit không thay kiểm tra peer hoặc smoke artifact. Docker khai báo cả backend-local và root `NODE_PATH` cho lệnh CLI trực tiếp, không chỉ npm scripts.
 
 Bằng chứng có ngày, giới hạn npm optional-package inventory và các lượt regression nằm ở [báo cáo tích hợp](../report/ops-dependency-integration-2026-11-20.md). Không dùng số audit cũ phía dưới làm kết luận của revision mới.
