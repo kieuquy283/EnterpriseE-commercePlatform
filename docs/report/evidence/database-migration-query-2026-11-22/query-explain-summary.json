@@ -1,0 +1,2638 @@
+{
+  "generatedAt": "2026-11-23T03:44:50+07:00",
+  "checkpointDate": "2026-11-22",
+  "gitBaseCommit": "9b52ba07cd68df2232185e3fa283793f0e7a84fb",
+  "branch": "data-05-06-migration-rights-guardrails",
+  "environment": {
+    "os": "Windows",
+    "nodeRuntime": "24.21.0",
+    "repoPinnedNode": "24.22.1",
+    "medusaVersion": "2.21.2",
+    "postgresVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+    "redisMode": "disabled (fake/in-memory Redis)",
+    "vacuumAnalyzeExecutedBeforeProbe": true
+  },
+  "fixture": {
+    "database": "daymark_data05_perf120",
+    "bootstrapProducts": 3,
+    "daymarkCatalogProducts": 30,
+    "syntheticMatchingProducts": 120,
+    "syntheticHandlePrefix": "dm-perf-001..dm-perf-120",
+    "totalPublishedProductsInOnlineStore": 153,
+    "totalVariants": 713,
+    "totalVndPrices": 714,
+    "totalInventoryLevels": 713,
+    "searchQueryEverydayMatchingProducts": 122,
+    "categoryFilterHandle": "dm-bags",
+    "categoryFilterMatchingProducts": 23,
+    "collectionFilterHandle": "dm-daily-essentials",
+    "collectionFilterMatchingProducts": 52,
+    "salesChannel": "Online Store",
+    "regionCurrency": "vnd"
+  },
+  "tableStatsPostVacuumAnalyze": [
+    {
+      "table_name": "inventory_item",
+      "est_rows": 713,
+      "pages_8kb": 12,
+      "table_size": "96 kB",
+      "indexes_size": "136 kB"
+    },
+    {
+      "table_name": "inventory_level",
+      "est_rows": 713,
+      "pages_8kb": 27,
+      "table_size": "216 kB",
+      "indexes_size": "224 kB"
+    },
+    {
+      "table_name": "price",
+      "est_rows": 714,
+      "pages_8kb": 17,
+      "table_size": "136 kB",
+      "indexes_size": "152 kB"
+    },
+    {
+      "table_name": "price_set",
+      "est_rows": 714,
+      "pages_8kb": 7,
+      "table_size": "56 kB",
+      "indexes_size": "64 kB"
+    },
+    {
+      "table_name": "product",
+      "est_rows": 153,
+      "pages_8kb": 8,
+      "table_size": "64 kB",
+      "indexes_size": "96 kB"
+    },
+    {
+      "table_name": "product_category",
+      "est_rows": 6,
+      "pages_8kb": 1,
+      "table_size": "8192 bytes",
+      "indexes_size": "64 kB"
+    },
+    {
+      "table_name": "product_category_product",
+      "est_rows": 150,
+      "pages_8kb": 2,
+      "table_size": "16 kB",
+      "indexes_size": "32 kB"
+    },
+    {
+      "table_name": "product_collection",
+      "est_rows": 3,
+      "pages_8kb": 1,
+      "table_size": "8192 bytes",
+      "indexes_size": "48 kB"
+    },
+    {
+      "table_name": "product_option",
+      "est_rows": 303,
+      "pages_8kb": 4,
+      "table_size": "32 kB",
+      "indexes_size": "56 kB"
+    },
+    {
+      "table_name": "product_option_value",
+      "est_rows": 656,
+      "pages_8kb": 10,
+      "table_size": "80 kB",
+      "indexes_size": "168 kB"
+    },
+    {
+      "table_name": "product_sales_channel",
+      "est_rows": 153,
+      "pages_8kb": 3,
+      "table_size": "24 kB",
+      "indexes_size": "96 kB"
+    },
+    {
+      "table_name": "product_tag",
+      "est_rows": 0,
+      "pages_8kb": 0,
+      "table_size": "0 bytes",
+      "indexes_size": "24 kB"
+    },
+    {
+      "table_name": "product_tags",
+      "est_rows": 0,
+      "pages_8kb": 0,
+      "table_size": "0 bytes",
+      "indexes_size": "8192 bytes"
+    },
+    {
+      "table_name": "product_variant",
+      "est_rows": 713,
+      "pages_8kb": 14,
+      "table_size": "112 kB",
+      "indexes_size": "312 kB"
+    },
+    {
+      "table_name": "product_variant_inventory_item",
+      "est_rows": 713,
+      "pages_8kb": 14,
+      "table_size": "112 kB",
+      "indexes_size": "272 kB"
+    },
+    {
+      "table_name": "product_variant_option",
+      "est_rows": 1423,
+      "pages_8kb": 18,
+      "table_size": "144 kB",
+      "indexes_size": "152 kB"
+    },
+    {
+      "table_name": "product_variant_price_set",
+      "est_rows": 713,
+      "pages_8kb": 13,
+      "table_size": "104 kB",
+      "indexes_size": "272 kB"
+    },
+    {
+      "table_name": "recommendation_active",
+      "est_rows": 0,
+      "pages_8kb": 0,
+      "table_size": "0 bytes",
+      "indexes_size": "16 kB"
+    },
+    {
+      "table_name": "recommendation_candidate",
+      "est_rows": 0,
+      "pages_8kb": 0,
+      "table_size": "0 bytes",
+      "indexes_size": "32 kB"
+    },
+    {
+      "table_name": "recommendation_consent",
+      "est_rows": 0,
+      "pages_8kb": 0,
+      "table_size": "0 bytes",
+      "indexes_size": "24 kB"
+    },
+    {
+      "table_name": "recommendation_event",
+      "est_rows": 0,
+      "pages_8kb": 0,
+      "table_size": "0 bytes",
+      "indexes_size": "32 kB"
+    },
+    {
+      "table_name": "recommendation_profile",
+      "est_rows": 0,
+      "pages_8kb": 0,
+      "table_size": "0 bytes",
+      "indexes_size": "24 kB"
+    },
+    {
+      "table_name": "recommendation_run",
+      "est_rows": 0,
+      "pages_8kb": 0,
+      "table_size": "0 bytes",
+      "indexes_size": "24 kB"
+    }
+  ],
+  "existingCatalogIndexesCount": 40,
+  "existingCatalogIndexes": [
+    {
+      "tablename": "inventory_level",
+      "indexname": "IDX_inventory_level_deleted_at",
+      "indexdef": "CREATE INDEX \"IDX_inventory_level_deleted_at\" ON public.inventory_level USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)"
+    },
+    {
+      "tablename": "inventory_level",
+      "indexname": "IDX_inventory_level_inventory_item_id",
+      "indexdef": "CREATE INDEX \"IDX_inventory_level_inventory_item_id\" ON public.inventory_level USING btree (inventory_item_id) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "inventory_level",
+      "indexname": "IDX_inventory_level_location_id",
+      "indexdef": "CREATE INDEX \"IDX_inventory_level_location_id\" ON public.inventory_level USING btree (location_id) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "inventory_level",
+      "indexname": "IDX_inventory_level_location_id_inventory_item_id",
+      "indexdef": "CREATE UNIQUE INDEX \"IDX_inventory_level_location_id_inventory_item_id\" ON public.inventory_level USING btree (inventory_item_id, location_id) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "inventory_level",
+      "indexname": "inventory_level_pkey",
+      "indexdef": "CREATE UNIQUE INDEX inventory_level_pkey ON public.inventory_level USING btree (id)"
+    },
+    {
+      "tablename": "price",
+      "indexname": "IDX_price_currency_code",
+      "indexdef": "CREATE INDEX \"IDX_price_currency_code\" ON public.price USING btree (currency_code) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "price",
+      "indexname": "IDX_price_deleted_at",
+      "indexdef": "CREATE INDEX \"IDX_price_deleted_at\" ON public.price USING btree (deleted_at) WHERE (deleted_at IS NOT NULL)"
+    },
+    {
+      "tablename": "price",
+      "indexname": "IDX_price_price_list_id",
+      "indexdef": "CREATE INDEX \"IDX_price_price_list_id\" ON public.price USING btree (price_list_id) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "price",
+      "indexname": "IDX_price_price_set_id",
+      "indexdef": "CREATE INDEX \"IDX_price_price_set_id\" ON public.price USING btree (price_set_id) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "price",
+      "indexname": "price_pkey",
+      "indexdef": "CREATE UNIQUE INDEX price_pkey ON public.price USING btree (id)"
+    },
+    {
+      "tablename": "product",
+      "indexname": "IDX_product_collection_id",
+      "indexdef": "CREATE INDEX \"IDX_product_collection_id\" ON public.product USING btree (collection_id) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product",
+      "indexname": "IDX_product_deleted_at",
+      "indexdef": "CREATE INDEX \"IDX_product_deleted_at\" ON public.product USING btree (deleted_at)"
+    },
+    {
+      "tablename": "product",
+      "indexname": "IDX_product_handle_unique",
+      "indexdef": "CREATE UNIQUE INDEX \"IDX_product_handle_unique\" ON public.product USING btree (handle) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product",
+      "indexname": "IDX_product_status",
+      "indexdef": "CREATE INDEX \"IDX_product_status\" ON public.product USING btree (status) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product",
+      "indexname": "IDX_product_type_id",
+      "indexdef": "CREATE INDEX \"IDX_product_type_id\" ON public.product USING btree (type_id) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product",
+      "indexname": "product_pkey",
+      "indexdef": "CREATE UNIQUE INDEX product_pkey ON public.product USING btree (id)"
+    },
+    {
+      "tablename": "product_category_product",
+      "indexname": "product_category_product_pkey",
+      "indexdef": "CREATE UNIQUE INDEX product_category_product_pkey ON public.product_category_product USING btree (product_id, product_category_id)"
+    },
+    {
+      "tablename": "product_sales_channel",
+      "indexname": "IDX_deleted_at_20b454295",
+      "indexdef": "CREATE INDEX \"IDX_deleted_at_20b454295\" ON public.product_sales_channel USING btree (deleted_at)"
+    },
+    {
+      "tablename": "product_sales_channel",
+      "indexname": "IDX_id_20b454295",
+      "indexdef": "CREATE INDEX \"IDX_id_20b454295\" ON public.product_sales_channel USING btree (id)"
+    },
+    {
+      "tablename": "product_sales_channel",
+      "indexname": "IDX_product_id_20b454295",
+      "indexdef": "CREATE INDEX \"IDX_product_id_20b454295\" ON public.product_sales_channel USING btree (product_id) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product_sales_channel",
+      "indexname": "IDX_sales_channel_id_20b454295",
+      "indexdef": "CREATE INDEX \"IDX_sales_channel_id_20b454295\" ON public.product_sales_channel USING btree (sales_channel_id) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product_sales_channel",
+      "indexname": "product_sales_channel_pkey",
+      "indexdef": "CREATE UNIQUE INDEX product_sales_channel_pkey ON public.product_sales_channel USING btree (product_id, sales_channel_id)"
+    },
+    {
+      "tablename": "product_variant",
+      "indexname": "IDX_product_variant_barcode_unique",
+      "indexdef": "CREATE UNIQUE INDEX \"IDX_product_variant_barcode_unique\" ON public.product_variant USING btree (barcode) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product_variant",
+      "indexname": "IDX_product_variant_deleted_at",
+      "indexdef": "CREATE INDEX \"IDX_product_variant_deleted_at\" ON public.product_variant USING btree (deleted_at)"
+    },
+    {
+      "tablename": "product_variant",
+      "indexname": "IDX_product_variant_ean_unique",
+      "indexdef": "CREATE UNIQUE INDEX \"IDX_product_variant_ean_unique\" ON public.product_variant USING btree (ean) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product_variant",
+      "indexname": "IDX_product_variant_id_product_id",
+      "indexdef": "CREATE INDEX \"IDX_product_variant_id_product_id\" ON public.product_variant USING btree (id, product_id) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product_variant",
+      "indexname": "IDX_product_variant_product_id",
+      "indexdef": "CREATE INDEX \"IDX_product_variant_product_id\" ON public.product_variant USING btree (product_id) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product_variant",
+      "indexname": "IDX_product_variant_sku_unique",
+      "indexdef": "CREATE UNIQUE INDEX \"IDX_product_variant_sku_unique\" ON public.product_variant USING btree (sku) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product_variant",
+      "indexname": "IDX_product_variant_upc_unique",
+      "indexdef": "CREATE UNIQUE INDEX \"IDX_product_variant_upc_unique\" ON public.product_variant USING btree (upc) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product_variant",
+      "indexname": "product_variant_pkey",
+      "indexdef": "CREATE UNIQUE INDEX product_variant_pkey ON public.product_variant USING btree (id)"
+    },
+    {
+      "tablename": "product_variant_inventory_item",
+      "indexname": "IDX_deleted_at_17b4c4e35",
+      "indexdef": "CREATE INDEX \"IDX_deleted_at_17b4c4e35\" ON public.product_variant_inventory_item USING btree (deleted_at)"
+    },
+    {
+      "tablename": "product_variant_inventory_item",
+      "indexname": "IDX_id_17b4c4e35",
+      "indexdef": "CREATE INDEX \"IDX_id_17b4c4e35\" ON public.product_variant_inventory_item USING btree (id)"
+    },
+    {
+      "tablename": "product_variant_inventory_item",
+      "indexname": "IDX_inventory_item_id_17b4c4e35",
+      "indexdef": "CREATE INDEX \"IDX_inventory_item_id_17b4c4e35\" ON public.product_variant_inventory_item USING btree (inventory_item_id) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product_variant_inventory_item",
+      "indexname": "IDX_variant_id_17b4c4e35",
+      "indexdef": "CREATE INDEX \"IDX_variant_id_17b4c4e35\" ON public.product_variant_inventory_item USING btree (variant_id) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product_variant_inventory_item",
+      "indexname": "product_variant_inventory_item_pkey",
+      "indexdef": "CREATE UNIQUE INDEX product_variant_inventory_item_pkey ON public.product_variant_inventory_item USING btree (variant_id, inventory_item_id)"
+    },
+    {
+      "tablename": "product_variant_price_set",
+      "indexname": "IDX_deleted_at_52b23597",
+      "indexdef": "CREATE INDEX \"IDX_deleted_at_52b23597\" ON public.product_variant_price_set USING btree (deleted_at)"
+    },
+    {
+      "tablename": "product_variant_price_set",
+      "indexname": "IDX_id_52b23597",
+      "indexdef": "CREATE INDEX \"IDX_id_52b23597\" ON public.product_variant_price_set USING btree (id)"
+    },
+    {
+      "tablename": "product_variant_price_set",
+      "indexname": "IDX_price_set_id_52b23597",
+      "indexdef": "CREATE INDEX \"IDX_price_set_id_52b23597\" ON public.product_variant_price_set USING btree (price_set_id) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product_variant_price_set",
+      "indexname": "IDX_variant_id_52b23597",
+      "indexdef": "CREATE INDEX \"IDX_variant_id_52b23597\" ON public.product_variant_price_set USING btree (variant_id) WHERE (deleted_at IS NULL)"
+    },
+    {
+      "tablename": "product_variant_price_set",
+      "indexname": "product_variant_price_set_pkey",
+      "indexdef": "CREATE UNIQUE INDEX product_variant_price_set_pkey ON public.product_variant_price_set USING btree (variant_id, price_set_id)"
+    }
+  ],
+  "indexRecommendationDecision": {
+    "addNewIndexNow": false,
+    "rationale": "At 153 published products / 713 variants, the explained SQL subset took 1.13-10.11 ms of PostgreSQL execution per case with zero shared buffer reads. The HTTP probe took 1,207.74 ms median to fetch two sequential price-sort batches totaling 1.85 MB, versus 226.32 ms for created_at page 1. The separate EXPLAIN and JS sort probes do not establish a per-component breakdown of HTTP latency.",
+    "reEvaluationThreshold": "Week 2 1,000-product benchmark (re-check ILIKE q search with pg_trgm, composite status+created_at, category join index if SQL execution exceeds ~50 ms)."
+  },
+  "cases": {
+    "storefront_created_at_page1": {
+      "httpProbe": {
+        "runs": [
+          {
+            "httpMs": 234.78,
+            "bytes": 127687,
+            "returned": 12,
+            "count": 153
+          },
+          {
+            "httpMs": 226.32,
+            "bytes": 127687,
+            "returned": 12,
+            "count": 153
+          },
+          {
+            "httpMs": 223.47,
+            "bytes": 127687,
+            "returned": 12,
+            "count": 153
+          }
+        ],
+        "medianHttpMs": 226.32
+      },
+      "postgresQuerySummary": {
+        "totalCapturedSqlQueries": 28,
+        "explainedQueriesCount": 26,
+        "parameterizedUnexplainedCount": 2,
+        "totalPgPlanningMsStandalonePsql": 94.981,
+        "totalPgExecutionMs": 2.732,
+        "totalSharedHitBlocks": 143,
+        "totalSharedReadBlocks": 0
+      },
+      "keyQueries": [
+        {
+          "seq": 4,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 1.498,
+          "executionTimeMs": 0.092,
+          "loggedDurationMs": 0.381,
+          "sharedHitBlocks": 1,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(*) as \"count\" from \"sales_channel\" as \"s0\" where \"s0\".\"deleted_at\" is null",
+          "planSummaryLines": [
+            " Aggregate  (cost=1.02..1.03 rows=1 width=8) (actual time=0.034..0.034 rows=1.00 loops=1)",
+            "   Buffers: shared hit=1",
+            "   ->  Seq Scan on sales_channel s0  (cost=0.00..1.02 rows=2 width=0) (actual time=0.026..0.026 rows=2.00 loops=1)",
+            "         Filter: (deleted_at IS NULL)",
+            "         Buffers: shared hit=1",
+            " Planning:",
+            "   Buffers: shared hit=81",
+            " Planning Time: 1.749 ms",
+            " Execution Time: 0.117 ms"
+          ]
+        },
+        {
+          "seq": 5,
+          "nodeType": "Seq Scan",
+          "actualRows": 153,
+          "planningTimeMs": 2.606,
+          "executionTimeMs": 0.096,
+          "loggedDurationMs": 0.493,
+          "sharedHitBlocks": 3,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"l0\".\"sales_channel_id\", \"l0\".\"product_id\" from \"product_sales_channel\" as \"l0\" where \"l0\".\"deleted_at\" is null and \"l0\".\"sales_channel_id\" in ('sc_01M82FEMQS9W8B4ME3EYRSJCTE')",
+          "planSummaryLines": [
+            " Seq Scan on product_sales_channel l0  (cost=0.00..4.91 rows=153 width=62) (actual time=0.019..0.036 rows=153.00 loops=1)",
+            "   Filter: ((deleted_at IS NULL) AND ((sales_channel_id)::text = 'sc_01M82FEMQS9W8B4ME3EYRSJCTE'::text))",
+            "   Buffers: shared hit=3",
+            " Planning:",
+            "   Buffers: shared hit=174",
+            " Planning Time: 3.641 ms",
+            " Execution Time: 0.094 ms"
+          ]
+        },
+        {
+          "seq": 8,
+          "nodeType": "Sort",
+          "actualRows": 12,
+          "planningTimeMs": 8.236,
+          "executionTimeMs": 0.556,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 28,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"id\", \"p0\".\"title\", \"p0\".\"subtitle\", \"p0\".\"description\", \"p0\".\"handle\", \"p0\".\"is_giftcard\", \"p0\".\"discountable\", \"p0\".\"thumbnail\", \"p0\".\"collection_id\", \"p0\".\"type_id\", \"p0\".\"weight\", \"p0\".\"length\", \"p0\".\"height\", \"p0\".\"width\", \"p0\".\"hs_code\", \"p0\".\"origin_country\", \"p0\".\"mid_code\", \"p0\".\"material\", \"p0\".\"c",
+          "planSummaryLines": [
+            " Sort  (cost=29.47..29.50 rows=12 width=871) (actual time=0.281..0.283 rows=12.00 loops=1)",
+            "   Sort Key: p0.created_at DESC, p3.rank",
+            "   Sort Method: quicksort  Memory: 30kB",
+            "   Buffers: shared hit=28",
+            "   ->  Hash Left Join  (cost=18.31..29.26 rows=12 width=871) (actual time=0.240..0.255 rows=12.00 loops=1)",
+            "         Hash Cond: (p0.id = p3.product_id)",
+            "         Buffers: shared hit=22",
+            "         ->  Nested Loop Left Join  (cost=18.29..29.19 rows=12 width=867) (actual time=0.229..0.242 rows=12.00 loops=1)",
+            "               Buffers: shared hit=22",
+            "               ->  Hash Left Join  (cost=18.15..28.13 rows=12 width=711) (actual time=0.216..0.222 rows=12.00 loops=1)",
+            "                     Hash Cond: (p0.type_id = t1.id)",
+            "                     Buffers: shared hit=16",
+            "                     ->  Hash Join  (cost=18.14..28.08 rows=12 width=559) (actual time=0.208..0.212 rows=12.00 loops=1)",
+            "                           Hash Cond: (p0.id = p0_1.id)",
+            "                           Buffers: shared hit=16",
+            "                           ->  Seq Scan on product p0  (cost=0.00..9.53 rows=153 width=559) (actual time=0.011..0.017 rows=153.00 loops=1)",
+            "                                 Buffers: shared hit=8",
+            "                           ->  Hash  (cost=17.99..17.99 rows=12 width=32) (actual time=0.140..0.140 rows=12.00 loops=1)"
+          ]
+        },
+        {
+          "seq": 9,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 8.364,
+          "executionTimeMs": 0.109,
+          "loggedDurationMs": 1.177,
+          "sharedHitBlocks": 8,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(*) as \"count\" from \"product\" as \"p0\" left join \"product_type\" as \"t1\" on \"p0\".\"type_id\" = \"t1\".\"id\" and \"t1\".\"deleted_at\" is null left join \"product_collection\" as \"c2\" on \"p0\".\"collection_id\" = \"c2\".\"id\" and \"c2\".\"deleted_at\" is null where \"p0\".\"deleted_at\" is null and \"p0\".\"status\" = 'published' and \"p0\"",
+          "planSummaryLines": [
+            " Aggregate  (cost=11.44..11.45 rows=1 width=8) (actual time=0.087..0.087 rows=1.00 loops=1)",
+            "   Buffers: shared hit=8",
+            "   ->  Seq Scan on product p0  (cost=0.38..11.06 rows=153 width=0) (actual time=0.030..0.078 rows=153.00 loops=1)",
+            "         Filter: ((deleted_at IS NULL) AND (status = 'published'::text) AND (id = ANY ('{<153 product IDs>}'::text[])))",
+            "         Buffers: shared hit=8",
+            " Planning:",
+            "   Buffers: shared hit=395",
+            " Planning Time: 5.556 ms",
+            " Execution Time: 0.131 ms"
+          ]
+        },
+        {
+          "seq": 10,
+          "nodeType": "Index Scan",
+          "actualRows": 48,
+          "planningTimeMs": 3.737,
+          "executionTimeMs": 0.061,
+          "loggedDurationMs": 0.911,
+          "sharedHitBlocks": 6,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".*, \"p0\".\"product_id\" as \"product_id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"product_id\" in (<12 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_product_variant_product_id\" on product_variant p0  (cost=0.28..13.46 rows=45 width=459) (actual time=0.025..0.037 rows=48.00 loops=1)",
+            "   Index Cond: (product_id = ANY ('{<12 product IDs>}'::text[]))",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=6",
+            " Planning:",
+            "   Buffers: shared hit=334",
+            " Planning Time: 3.865 ms",
+            " Execution Time: 0.067 ms"
+          ]
+        },
+        {
+          "seq": 18,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"ppo\".\"product_id\", \"ppov\".\"product_option_value_id\" from \"product_product_option_value\" as \"ppov\" inner join \"product_product_option\" as \"ppo\" on \"ppo\".\"id\" = \"ppov\".\"product_product_option_id\" and \"ppo\".\"deleted_at\" is null where \"ppo\".\"product_id\" in",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 21,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"price\".\"id\" as \"id\", \"price\".\"price_set_id\" as \"price_set_id\", \"price\".\"amount\" as \"amount\", \"price\".\"raw_amount\" as \"raw_amount\", \"price\".\"min_quantity\" as \"min_quantity\", \"price\".\"max_quantity\" as \"max_quantity\", \"price\".\"currency_code\" as \"currency_",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 25,
+          "nodeType": "Index Scan",
+          "actualRows": 48,
+          "planningTimeMs": 3.628,
+          "executionTimeMs": 0.064,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 4,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"manage_inventory\", \"p0\".\"allow_backorder\", \"p0\".\"id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"id\" in (<48 IDs>) order by \"p0\".\"id\" asc",
+          "planSummaryLines": [
+            " Index Scan using product_variant_pkey on product_variant p0  (cost=0.28..17.67 rows=48 width=37) (actual time=0.024..0.034 rows=48.00 loops=1)",
+            "   Index Cond: (id = ANY ('{<48 variant IDs>}'::text[]))",
+            "   Filter: (deleted_at IS NULL)",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=4",
+            " Planning:",
+            "   Buffers: shared hit=248",
+            " Planning Time: 3.598 ms",
+            " Execution Time: 0.052 ms"
+          ]
+        },
+        {
+          "seq": 27,
+          "nodeType": "Index Scan",
+          "actualRows": 48,
+          "planningTimeMs": 4.01,
+          "executionTimeMs": 0.083,
+          "loggedDurationMs": 1.059,
+          "sharedHitBlocks": 6,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"i0\".*, \"i0\".\"inventory_item_id\" as \"inventory_item_id\" from \"inventory_level\" as \"i0\" where \"i0\".\"deleted_at\" is null and \"i0\".\"inventory_item_id\" in (<48 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_inventory_level_inventory_item_id\" on inventory_level i0  (cost=0.28..18.67 rows=48 width=332) (actual time=0.024..0.038 rows=48.00 loops=1)",
+            "   Index Cond: (inventory_item_id = ANY ('{<48 inventory_item IDs>}'::text[]))",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=6",
+            " Planning:",
+            "   Buffers: shared hit=265",
+            " Planning Time: 2.845 ms",
+            " Execution Time: 0.061 ms"
+          ]
+        }
+      ]
+    },
+    "storefront_created_at_page10": {
+      "httpProbe": {
+        "runs": [
+          {
+            "httpMs": 327.94,
+            "bytes": 127689,
+            "returned": 12,
+            "count": 153
+          },
+          {
+            "httpMs": 202.87,
+            "bytes": 127689,
+            "returned": 12,
+            "count": 153
+          },
+          {
+            "httpMs": 194.74,
+            "bytes": 127689,
+            "returned": 12,
+            "count": 153
+          }
+        ],
+        "medianHttpMs": 202.87
+      },
+      "postgresQuerySummary": {
+        "totalCapturedSqlQueries": 28,
+        "explainedQueriesCount": 26,
+        "parameterizedUnexplainedCount": 2,
+        "totalPgPlanningMsStandalonePsql": 100.364,
+        "totalPgExecutionMs": 2.763,
+        "totalSharedHitBlocks": 142,
+        "totalSharedReadBlocks": 0
+      },
+      "keyQueries": [
+        {
+          "seq": 4,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 1.869,
+          "executionTimeMs": 0.188,
+          "loggedDurationMs": 0.593,
+          "sharedHitBlocks": 1,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(*) as \"count\" from \"sales_channel\" as \"s0\" where \"s0\".\"deleted_at\" is null",
+          "planSummaryLines": [
+            " Aggregate  (cost=1.02..1.03 rows=1 width=8) (actual time=0.032..0.033 rows=1.00 loops=1)",
+            "   Buffers: shared hit=1",
+            "   ->  Seq Scan on sales_channel s0  (cost=0.00..1.02 rows=2 width=0) (actual time=0.023..0.023 rows=2.00 loops=1)",
+            "         Filter: (deleted_at IS NULL)",
+            "         Buffers: shared hit=1",
+            " Planning:",
+            "   Buffers: shared hit=81",
+            " Planning Time: 2.668 ms",
+            " Execution Time: 0.124 ms"
+          ]
+        },
+        {
+          "seq": 5,
+          "nodeType": "Seq Scan",
+          "actualRows": 153,
+          "planningTimeMs": 2.461,
+          "executionTimeMs": 0.087,
+          "loggedDurationMs": 6.94,
+          "sharedHitBlocks": 3,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"l0\".\"sales_channel_id\", \"l0\".\"product_id\" from \"product_sales_channel\" as \"l0\" where \"l0\".\"deleted_at\" is null and \"l0\".\"sales_channel_id\" in ('sc_01M82FEMQS9W8B4ME3EYRSJCTE')",
+          "planSummaryLines": [
+            " Seq Scan on product_sales_channel l0  (cost=0.00..4.91 rows=153 width=62) (actual time=0.017..0.035 rows=153.00 loops=1)",
+            "   Filter: ((deleted_at IS NULL) AND ((sales_channel_id)::text = 'sc_01M82FEMQS9W8B4ME3EYRSJCTE'::text))",
+            "   Buffers: shared hit=3",
+            " Planning:",
+            "   Buffers: shared hit=174",
+            " Planning Time: 2.109 ms",
+            " Execution Time: 0.095 ms"
+          ]
+        },
+        {
+          "seq": 8,
+          "nodeType": "Sort",
+          "actualRows": 12,
+          "planningTimeMs": 9.288,
+          "executionTimeMs": 0.439,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 28,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"id\", \"p0\".\"title\", \"p0\".\"subtitle\", \"p0\".\"description\", \"p0\".\"handle\", \"p0\".\"is_giftcard\", \"p0\".\"discountable\", \"p0\".\"thumbnail\", \"p0\".\"collection_id\", \"p0\".\"type_id\", \"p0\".\"weight\", \"p0\".\"length\", \"p0\".\"height\", \"p0\".\"width\", \"p0\".\"hs_code\", \"p0\".\"origin_country\", \"p0\".\"mid_code\", \"p0\".\"material\", \"p0\".\"c",
+          "planSummaryLines": [
+            " Sort  (cost=31.79..31.82 rows=12 width=871) (actual time=0.314..0.317 rows=12.00 loops=1)",
+            "   Sort Key: p0.created_at DESC, p3.rank",
+            "   Sort Method: quicksort  Memory: 30kB",
+            "   Buffers: shared hit=28",
+            "   ->  Hash Left Join  (cost=20.62..31.57 rows=12 width=871) (actual time=0.264..0.289 rows=12.00 loops=1)",
+            "         Hash Cond: (p0.id = p3.product_id)",
+            "         Buffers: shared hit=22",
+            "         ->  Nested Loop Left Join  (cost=20.61..31.51 rows=12 width=867) (actual time=0.256..0.279 rows=12.00 loops=1)",
+            "               Buffers: shared hit=22",
+            "               ->  Hash Left Join  (cost=20.47..30.44 rows=12 width=711) (actual time=0.242..0.258 rows=12.00 loops=1)",
+            "                     Hash Cond: (p0.type_id = t1.id)",
+            "                     Buffers: shared hit=16",
+            "                     ->  Hash Join  (cost=20.46..30.40 rows=12 width=559) (actual time=0.222..0.236 rows=12.00 loops=1)",
+            "                           Hash Cond: (p0.id = p0_1.id)",
+            "                           Buffers: shared hit=16",
+            "                           ->  Seq Scan on product p0  (cost=0.00..9.53 rows=153 width=559) (actual time=0.012..0.017 rows=153.00 loops=1)",
+            "                                 Buffers: shared hit=8",
+            "                           ->  Hash  (cost=20.31..20.31 rows=12 width=32) (actual time=0.172..0.173 rows=12.00 loops=1)"
+          ]
+        },
+        {
+          "seq": 9,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 6.129,
+          "executionTimeMs": 0.125,
+          "loggedDurationMs": 1.263,
+          "sharedHitBlocks": 8,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(*) as \"count\" from \"product\" as \"p0\" left join \"product_type\" as \"t1\" on \"p0\".\"type_id\" = \"t1\".\"id\" and \"t1\".\"deleted_at\" is null left join \"product_collection\" as \"c2\" on \"p0\".\"collection_id\" = \"c2\".\"id\" and \"c2\".\"deleted_at\" is null where \"p0\".\"deleted_at\" is null and \"p0\".\"status\" = 'published' and \"p0\"",
+          "planSummaryLines": [
+            " Aggregate  (cost=11.44..11.45 rows=1 width=8) (actual time=0.073..0.073 rows=1.00 loops=1)",
+            "   Buffers: shared hit=8",
+            "   ->  Seq Scan on product p0  (cost=0.38..11.06 rows=153 width=0) (actual time=0.020..0.064 rows=153.00 loops=1)",
+            "         Filter: ((deleted_at IS NULL) AND (status = 'published'::text) AND (id = ANY ('{<153 product IDs>}'::text[])))",
+            "         Buffers: shared hit=8",
+            " Planning:",
+            "   Buffers: shared hit=395",
+            " Planning Time: 5.731 ms",
+            " Execution Time: 0.107 ms"
+          ]
+        },
+        {
+          "seq": 10,
+          "nodeType": "Index Scan",
+          "actualRows": 48,
+          "planningTimeMs": 4.394,
+          "executionTimeMs": 0.063,
+          "loggedDurationMs": 9.942,
+          "sharedHitBlocks": 4,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".*, \"p0\".\"product_id\" as \"product_id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"product_id\" in (<12 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_product_variant_product_id\" on product_variant p0  (cost=0.28..13.52 rows=48 width=459) (actual time=0.022..0.033 rows=48.00 loops=1)",
+            "   Index Cond: (product_id = ANY ('{<12 product IDs>}'::text[]))",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=4",
+            " Planning:",
+            "   Buffers: shared hit=334",
+            " Planning Time: 4.118 ms",
+            " Execution Time: 0.063 ms"
+          ]
+        },
+        {
+          "seq": 18,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"ppo\".\"product_id\", \"ppov\".\"product_option_value_id\" from \"product_product_option_value\" as \"ppov\" inner join \"product_product_option\" as \"ppo\" on \"ppo\".\"id\" = \"ppov\".\"product_product_option_id\" and \"ppo\".\"deleted_at\" is null where \"ppo\".\"product_id\" in",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 21,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"price\".\"id\" as \"id\", \"price\".\"price_set_id\" as \"price_set_id\", \"price\".\"amount\" as \"amount\", \"price\".\"raw_amount\" as \"raw_amount\", \"price\".\"min_quantity\" as \"min_quantity\", \"price\".\"max_quantity\" as \"max_quantity\", \"price\".\"currency_code\" as \"currency_",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 25,
+          "nodeType": "Index Scan",
+          "actualRows": 48,
+          "planningTimeMs": 4.186,
+          "executionTimeMs": 0.061,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 5,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"manage_inventory\", \"p0\".\"allow_backorder\", \"p0\".\"id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"id\" in (<48 IDs>) order by \"p0\".\"id\" asc",
+          "planSummaryLines": [
+            " Index Scan using product_variant_pkey on product_variant p0  (cost=0.28..17.67 rows=48 width=37) (actual time=0.024..0.039 rows=48.00 loops=1)",
+            "   Index Cond: (id = ANY ('{<48 variant IDs>}'::text[]))",
+            "   Filter: (deleted_at IS NULL)",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=5",
+            " Planning:",
+            "   Buffers: shared hit=248",
+            " Planning Time: 3.987 ms",
+            " Execution Time: 0.057 ms"
+          ]
+        },
+        {
+          "seq": 27,
+          "nodeType": "Index Scan",
+          "actualRows": 48,
+          "planningTimeMs": 2.837,
+          "executionTimeMs": 0.066,
+          "loggedDurationMs": 5.828,
+          "sharedHitBlocks": 6,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"i0\".*, \"i0\".\"inventory_item_id\" as \"inventory_item_id\" from \"inventory_level\" as \"i0\" where \"i0\".\"deleted_at\" is null and \"i0\".\"inventory_item_id\" in (<48 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_inventory_level_inventory_item_id\" on inventory_level i0  (cost=0.28..18.67 rows=48 width=332) (actual time=0.022..0.037 rows=48.00 loops=1)",
+            "   Index Cond: (inventory_item_id = ANY ('{<48 inventory_item IDs>}'::text[]))",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=6",
+            " Planning:",
+            "   Buffers: shared hit=265",
+            " Planning Time: 3.398 ms",
+            " Execution Time: 0.061 ms"
+          ]
+        }
+      ]
+    },
+    "storefront_price_asc_batches": {
+      "httpProbe": {
+        "runs": [
+          {
+            "httpMs": 1276.32,
+            "batchCount": 2,
+            "batches": [
+              {
+                "batch": 1,
+                "offset": 0,
+                "httpMs": 837.76,
+                "bytes": 1282273,
+                "returned": 100,
+                "count": 153
+              },
+              {
+                "batch": 2,
+                "offset": 100,
+                "httpMs": 421.82,
+                "bytes": 563896,
+                "returned": 53,
+                "count": 153
+              }
+            ],
+            "totalFetched": 153,
+            "totalBytes": 1846169,
+            "jsSortAscMs": 24.034,
+            "jsSortDescMs": 2.42,
+            "minPriceVnd": 189000,
+            "maxPriceVnd": 1389000,
+            "page1Count": 12
+          },
+          {
+            "httpMs": 1168.13,
+            "batchCount": 2,
+            "batches": [
+              {
+                "batch": 1,
+                "offset": 0,
+                "httpMs": 755.41,
+                "bytes": 1282273,
+                "returned": 100,
+                "count": 153
+              },
+              {
+                "batch": 2,
+                "offset": 100,
+                "httpMs": 396.68,
+                "bytes": 563896,
+                "returned": 53,
+                "count": 153
+              }
+            ],
+            "totalFetched": 153,
+            "totalBytes": 1846169,
+            "jsSortAscMs": 2.12,
+            "jsSortDescMs": 2.225,
+            "minPriceVnd": 189000,
+            "maxPriceVnd": 1389000,
+            "page1Count": 12
+          },
+          {
+            "httpMs": 1207.74,
+            "batchCount": 2,
+            "batches": [
+              {
+                "batch": 1,
+                "offset": 0,
+                "httpMs": 781.3,
+                "bytes": 1282273,
+                "returned": 100,
+                "count": 153
+              },
+              {
+                "batch": 2,
+                "offset": 100,
+                "httpMs": 408.8,
+                "bytes": 563896,
+                "returned": 53,
+                "count": 153
+              }
+            ],
+            "totalFetched": 153,
+            "totalBytes": 1846169,
+            "jsSortAscMs": 2.287,
+            "jsSortDescMs": 1.259,
+            "minPriceVnd": 189000,
+            "maxPriceVnd": 1389000,
+            "page1Count": 12
+          }
+        ],
+        "medianHttpMs": 1207.74
+      },
+      "postgresQuerySummary": {
+        "totalCapturedSqlQueries": 56,
+        "explainedQueriesCount": 52,
+        "parameterizedUnexplainedCount": 4,
+        "totalPgPlanningMsStandalonePsql": 203.916,
+        "totalPgExecutionMs": 7.993,
+        "totalSharedHitBlocks": 480,
+        "totalSharedReadBlocks": 0
+      },
+      "keyQueries": [
+        {
+          "seq": 4,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 2.084,
+          "executionTimeMs": 0.198,
+          "loggedDurationMs": 0.502,
+          "sharedHitBlocks": 1,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(*) as \"count\" from \"sales_channel\" as \"s0\" where \"s0\".\"deleted_at\" is null",
+          "planSummaryLines": [
+            " Aggregate  (cost=1.02..1.03 rows=1 width=8) (actual time=0.036..0.036 rows=1.00 loops=1)",
+            "   Buffers: shared hit=1",
+            "   ->  Seq Scan on sales_channel s0  (cost=0.00..1.02 rows=2 width=0) (actual time=0.028..0.029 rows=2.00 loops=1)",
+            "         Filter: (deleted_at IS NULL)",
+            "         Buffers: shared hit=1",
+            " Planning:",
+            "   Buffers: shared hit=81",
+            " Planning Time: 1.545 ms",
+            " Execution Time: 0.102 ms"
+          ]
+        },
+        {
+          "seq": 5,
+          "nodeType": "Seq Scan",
+          "actualRows": 153,
+          "planningTimeMs": 3.621,
+          "executionTimeMs": 0.112,
+          "loggedDurationMs": 0.784,
+          "sharedHitBlocks": 3,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"l0\".\"sales_channel_id\", \"l0\".\"product_id\" from \"product_sales_channel\" as \"l0\" where \"l0\".\"deleted_at\" is null and \"l0\".\"sales_channel_id\" in ('sc_01M82FEMQS9W8B4ME3EYRSJCTE')",
+          "planSummaryLines": [
+            " Seq Scan on product_sales_channel l0  (cost=0.00..4.91 rows=153 width=62) (actual time=0.021..0.041 rows=153.00 loops=1)",
+            "   Filter: ((deleted_at IS NULL) AND ((sales_channel_id)::text = 'sc_01M82FEMQS9W8B4ME3EYRSJCTE'::text))",
+            "   Buffers: shared hit=3",
+            " Planning:",
+            "   Buffers: shared hit=174",
+            " Planning Time: 4.097 ms",
+            " Execution Time: 0.106 ms"
+          ]
+        },
+        {
+          "seq": 8,
+          "nodeType": "Sort",
+          "actualRows": 100,
+          "planningTimeMs": 9.723,
+          "executionTimeMs": 0.625,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 23,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"id\", \"p0\".\"title\", \"p0\".\"subtitle\", \"p0\".\"description\", \"p0\".\"handle\", \"p0\".\"is_giftcard\", \"p0\".\"discountable\", \"p0\".\"thumbnail\", \"p0\".\"collection_id\", \"p0\".\"type_id\", \"p0\".\"weight\", \"p0\".\"length\", \"p0\".\"height\", \"p0\".\"width\", \"p0\".\"hs_code\", \"p0\".\"origin_country\", \"p0\".\"mid_code\", \"p0\".\"material\", \"p0\".\"c",
+          "planSummaryLines": [
+            " Sort  (cost=38.02..38.27 rows=100 width=871) (actual time=0.435..0.440 rows=100.00 loops=1)",
+            "   Sort Key: p0.id, p3.rank",
+            "   Sort Method: quicksort  Memory: 69kB",
+            "   Buffers: shared hit=23",
+            "   ->  Hash Left Join  (cost=23.48..34.70 rows=100 width=871) (actual time=0.277..0.356 rows=100.00 loops=1)",
+            "         Hash Cond: (p0.id = p3.product_id)",
+            "         Buffers: shared hit=17",
+            "         ->  Hash Left Join  (cost=23.47..34.30 rows=100 width=867) (actual time=0.271..0.336 rows=100.00 loops=1)",
+            "               Hash Cond: (p0.collection_id = c2.id)",
+            "               Buffers: shared hit=17",
+            "               ->  Hash Left Join  (cost=22.40..32.60 rows=100 width=711) (actual time=0.256..0.300 rows=100.00 loops=1)",
+            "                     Hash Cond: (p0.type_id = t1.id)",
+            "                     Buffers: shared hit=16",
+            "                     ->  Hash Join  (cost=22.39..32.33 rows=100 width=559) (actual time=0.247..0.279 rows=100.00 loops=1)",
+            "                           Hash Cond: (p0.id = p0_1.id)",
+            "                           Buffers: shared hit=16",
+            "                           ->  Seq Scan on product p0  (cost=0.00..9.53 rows=153 width=559) (actual time=0.013..0.019 rows=153.00 loops=1)",
+            "                                 Buffers: shared hit=8"
+          ]
+        },
+        {
+          "seq": 9,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 7.656,
+          "executionTimeMs": 0.177,
+          "loggedDurationMs": 1.332,
+          "sharedHitBlocks": 8,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(*) as \"count\" from \"product\" as \"p0\" left join \"product_type\" as \"t1\" on \"p0\".\"type_id\" = \"t1\".\"id\" and \"t1\".\"deleted_at\" is null left join \"product_collection\" as \"c2\" on \"p0\".\"collection_id\" = \"c2\".\"id\" and \"c2\".\"deleted_at\" is null where \"p0\".\"deleted_at\" is null and \"p0\".\"status\" = 'published' and \"p0\"",
+          "planSummaryLines": [
+            " Aggregate  (cost=11.44..11.45 rows=1 width=8) (actual time=0.139..0.139 rows=1.00 loops=1)",
+            "   Buffers: shared hit=8",
+            "   ->  Seq Scan on product p0  (cost=0.38..11.06 rows=153 width=0) (actual time=0.038..0.126 rows=153.00 loops=1)",
+            "         Filter: ((deleted_at IS NULL) AND (status = 'published'::text) AND (id = ANY ('{<153 product IDs>}'::text[])))",
+            "         Buffers: shared hit=8",
+            " Planning:",
+            "   Buffers: shared hit=395",
+            " Planning Time: 9.050 ms",
+            " Execution Time: 0.195 ms"
+          ]
+        },
+        {
+          "seq": 10,
+          "nodeType": "Seq Scan",
+          "actualRows": 501,
+          "planningTimeMs": 4.107,
+          "executionTimeMs": 0.198,
+          "loggedDurationMs": 3.447,
+          "sharedHitBlocks": 14,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".*, \"p0\".\"product_id\" as \"product_id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"product_id\" in (<100 IDs>)",
+          "planSummaryLines": [
+            " Seq Scan on product_variant p0  (cost=0.25..24.95 rows=514 width=459) (actual time=0.030..0.188 rows=501.00 loops=1)",
+            "   Filter: ((deleted_at IS NULL) AND (product_id = ANY ('{<100 product IDs>}'::text[])))",
+            "   Rows Removed by Filter: 212",
+            "   Buffers: shared hit=14",
+            " Planning:",
+            "   Buffers: shared hit=334",
+            " Planning Time: 4.464 ms",
+            " Execution Time: 0.222 ms"
+          ]
+        },
+        {
+          "seq": 18,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"ppo\".\"product_id\", \"ppov\".\"product_option_value_id\" from \"product_product_option_value\" as \"ppov\" inner join \"product_product_option\" as \"ppo\" on \"ppo\".\"id\" = \"ppov\".\"product_product_option_id\" and \"ppo\".\"deleted_at\" is null where \"ppo\".\"product_id\" in",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 21,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"price\".\"id\" as \"id\", \"price\".\"price_set_id\" as \"price_set_id\", \"price\".\"amount\" as \"amount\", \"price\".\"raw_amount\" as \"raw_amount\", \"price\".\"min_quantity\" as \"min_quantity\", \"price\".\"max_quantity\" as \"max_quantity\", \"price\".\"currency_code\" as \"currency_",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 25,
+          "nodeType": "Index Scan",
+          "actualRows": 501,
+          "planningTimeMs": 4.53,
+          "executionTimeMs": 0.274,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 22,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"manage_inventory\", \"p0\".\"allow_backorder\", \"p0\".\"id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"id\" in (<501 IDs>) order by \"p0\".\"id\" asc",
+          "planSummaryLines": [
+            " Index Scan using product_variant_pkey on product_variant p0  (cost=0.28..42.60 rows=501 width=37) (actual time=0.103..0.216 rows=501.00 loops=1)",
+            "   Index Cond: (id = ANY ('{<501 variant IDs>}'::text[]))",
+            "   Filter: (deleted_at IS NULL)",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=22",
+            " Planning:",
+            "   Buffers: shared hit=248",
+            " Planning Time: 4.615 ms",
+            " Execution Time: 0.246 ms"
+          ]
+        },
+        {
+          "seq": 27,
+          "nodeType": "Seq Scan",
+          "actualRows": 501,
+          "planningTimeMs": 3.188,
+          "executionTimeMs": 0.229,
+          "loggedDurationMs": 4.781,
+          "sharedHitBlocks": 27,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"i0\".*, \"i0\".\"inventory_item_id\" as \"inventory_item_id\" from \"inventory_level\" as \"i0\" where \"i0\".\"deleted_at\" is null and \"i0\".\"inventory_item_id\" in (<501 IDs>)",
+          "planSummaryLines": [
+            " Seq Scan on inventory_level i0  (cost=1.25..38.95 rows=501 width=332) (actual time=0.027..0.168 rows=501.00 loops=1)",
+            "   Filter: ((deleted_at IS NULL) AND (inventory_item_id = ANY ('{<501 inventory_item IDs>}'::text[])))",
+            "   Rows Removed by Filter: 212",
+            "   Buffers: shared hit=27",
+            " Planning:",
+            "   Buffers: shared hit=265",
+            " Planning Time: 3.163 ms",
+            " Execution Time: 0.198 ms"
+          ]
+        },
+        {
+          "seq": 32,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 1.727,
+          "executionTimeMs": 0.11,
+          "loggedDurationMs": 0.629,
+          "sharedHitBlocks": 1,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(*) as \"count\" from \"sales_channel\" as \"s0\" where \"s0\".\"deleted_at\" is null",
+          "planSummaryLines": [
+            " Aggregate  (cost=1.02..1.03 rows=1 width=8) (actual time=0.027..0.028 rows=1.00 loops=1)",
+            "   Buffers: shared hit=1",
+            "   ->  Seq Scan on sales_channel s0  (cost=0.00..1.02 rows=2 width=0) (actual time=0.019..0.020 rows=2.00 loops=1)",
+            "         Filter: (deleted_at IS NULL)",
+            "         Buffers: shared hit=1",
+            " Planning:",
+            "   Buffers: shared hit=81",
+            " Planning Time: 1.833 ms",
+            " Execution Time: 0.121 ms"
+          ]
+        },
+        {
+          "seq": 33,
+          "nodeType": "Seq Scan",
+          "actualRows": 153,
+          "planningTimeMs": 3.061,
+          "executionTimeMs": 0.107,
+          "loggedDurationMs": 0.406,
+          "sharedHitBlocks": 3,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"l0\".\"sales_channel_id\", \"l0\".\"product_id\" from \"product_sales_channel\" as \"l0\" where \"l0\".\"deleted_at\" is null and \"l0\".\"sales_channel_id\" in ('sc_01M82FEMQS9W8B4ME3EYRSJCTE')",
+          "planSummaryLines": [
+            " Seq Scan on product_sales_channel l0  (cost=0.00..4.91 rows=153 width=62) (actual time=0.017..0.034 rows=153.00 loops=1)",
+            "   Filter: ((deleted_at IS NULL) AND ((sales_channel_id)::text = 'sc_01M82FEMQS9W8B4ME3EYRSJCTE'::text))",
+            "   Buffers: shared hit=3",
+            " Planning:",
+            "   Buffers: shared hit=174",
+            " Planning Time: 2.463 ms",
+            " Execution Time: 0.092 ms"
+          ]
+        },
+        {
+          "seq": 36,
+          "nodeType": "Sort",
+          "actualRows": 53,
+          "planningTimeMs": 9.093,
+          "executionTimeMs": 0.626,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 23,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"id\", \"p0\".\"title\", \"p0\".\"subtitle\", \"p0\".\"description\", \"p0\".\"handle\", \"p0\".\"is_giftcard\", \"p0\".\"discountable\", \"p0\".\"thumbnail\", \"p0\".\"collection_id\", \"p0\".\"type_id\", \"p0\".\"weight\", \"p0\".\"length\", \"p0\".\"height\", \"p0\".\"width\", \"p0\".\"hs_code\", \"p0\".\"origin_country\", \"p0\".\"mid_code\", \"p0\".\"material\", \"p0\".\"c",
+          "planSummaryLines": [
+            " Sort  (cost=34.69..34.82 rows=53 width=871) (actual time=0.373..0.376 rows=53.00 loops=1)",
+            "   Sort Key: p0.id, p3.rank",
+            "   Sort Method: quicksort  Memory: 49kB",
+            "   Buffers: shared hit=23",
+            "   ->  Hash Left Join  (cost=22.55..33.17 rows=53 width=871) (actual time=0.278..0.318 rows=53.00 loops=1)",
+            "         Hash Cond: (p0.id = p3.product_id)",
+            "         Buffers: shared hit=17",
+            "         ->  Hash Left Join  (cost=22.54..32.95 rows=53 width=867) (actual time=0.269..0.301 rows=53.00 loops=1)",
+            "               Hash Cond: (p0.collection_id = c2.id)",
+            "               Buffers: shared hit=17",
+            "               ->  Hash Left Join  (cost=21.47..31.56 rows=53 width=711) (actual time=0.253..0.274 rows=53.00 loops=1)",
+            "                     Hash Cond: (p0.type_id = t1.id)",
+            "                     Buffers: shared hit=16",
+            "                     ->  Hash Join  (cost=21.46..31.40 rows=53 width=559) (actual time=0.232..0.247 rows=53.00 loops=1)",
+            "                           Hash Cond: (p0.id = p0_1.id)",
+            "                           Buffers: shared hit=16",
+            "                           ->  Seq Scan on product p0  (cost=0.00..9.53 rows=153 width=559) (actual time=0.012..0.017 rows=153.00 loops=1)",
+            "                                 Buffers: shared hit=8"
+          ]
+        },
+        {
+          "seq": 37,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 5.267,
+          "executionTimeMs": 0.108,
+          "loggedDurationMs": 1.504,
+          "sharedHitBlocks": 8,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(*) as \"count\" from \"product\" as \"p0\" left join \"product_type\" as \"t1\" on \"p0\".\"type_id\" = \"t1\".\"id\" and \"t1\".\"deleted_at\" is null left join \"product_collection\" as \"c2\" on \"p0\".\"collection_id\" = \"c2\".\"id\" and \"c2\".\"deleted_at\" is null where \"p0\".\"deleted_at\" is null and \"p0\".\"status\" = 'published' and \"p0\"",
+          "planSummaryLines": [
+            " Aggregate  (cost=11.44..11.45 rows=1 width=8) (actual time=0.090..0.090 rows=1.00 loops=1)",
+            "   Buffers: shared hit=8",
+            "   ->  Seq Scan on product p0  (cost=0.38..11.06 rows=153 width=0) (actual time=0.027..0.080 rows=153.00 loops=1)",
+            "         Filter: ((deleted_at IS NULL) AND (status = 'published'::text) AND (id = ANY ('{<153 product IDs>}'::text[])))",
+            "         Buffers: shared hit=8",
+            " Planning:",
+            "   Buffers: shared hit=395",
+            " Planning Time: 5.674 ms",
+            " Execution Time: 0.143 ms"
+          ]
+        },
+        {
+          "seq": 38,
+          "nodeType": "Index Scan",
+          "actualRows": 212,
+          "planningTimeMs": 4.112,
+          "executionTimeMs": 0.092,
+          "loggedDurationMs": 2.075,
+          "sharedHitBlocks": 23,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".*, \"p0\".\"product_id\" as \"product_id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"product_id\" in (<53 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_product_variant_product_id\" on product_variant p0  (cost=0.28..19.15 rows=199 width=459) (actual time=0.029..0.079 rows=212.00 loops=1)",
+            "   Index Cond: (product_id = ANY ('{<53 product IDs>}'::text[]))",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=23",
+            " Planning:",
+            "   Buffers: shared hit=334",
+            " Planning Time: 3.983 ms",
+            " Execution Time: 0.111 ms"
+          ]
+        },
+        {
+          "seq": 46,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"ppo\".\"product_id\", \"ppov\".\"product_option_value_id\" from \"product_product_option_value\" as \"ppov\" inner join \"product_product_option\" as \"ppo\" on \"ppo\".\"id\" = \"ppov\".\"product_product_option_id\" and \"ppo\".\"deleted_at\" is null where \"ppo\".\"product_id\" in",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 49,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"price\".\"id\" as \"id\", \"price\".\"price_set_id\" as \"price_set_id\", \"price\".\"amount\" as \"amount\", \"price\".\"raw_amount\" as \"raw_amount\", \"price\".\"min_quantity\" as \"min_quantity\", \"price\".\"max_quantity\" as \"max_quantity\", \"price\".\"currency_code\" as \"currency_",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 53,
+          "nodeType": "Index Scan",
+          "actualRows": 212,
+          "planningTimeMs": 3.514,
+          "executionTimeMs": 0.104,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 16,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"manage_inventory\", \"p0\".\"allow_backorder\", \"p0\".\"id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"id\" in (<212 IDs>) order by \"p0\".\"id\" asc",
+          "planSummaryLines": [
+            " Index Scan using product_variant_pkey on product_variant p0  (cost=0.28..24.55 rows=212 width=37) (actual time=0.031..0.083 rows=212.00 loops=1)",
+            "   Index Cond: (id = ANY ('{<212 variant IDs>}'::text[]))",
+            "   Filter: (deleted_at IS NULL)",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=16",
+            " Planning:",
+            "   Buffers: shared hit=248",
+            " Planning Time: 4.015 ms",
+            " Execution Time: 0.106 ms"
+          ]
+        },
+        {
+          "seq": 55,
+          "nodeType": "Index Scan",
+          "actualRows": 212,
+          "planningTimeMs": 3.656,
+          "executionTimeMs": 0.118,
+          "loggedDurationMs": 2.287,
+          "sharedHitBlocks": 12,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"i0\".*, \"i0\".\"inventory_item_id\" as \"inventory_item_id\" from \"inventory_level\" as \"i0\" where \"i0\".\"deleted_at\" is null and \"i0\".\"inventory_item_id\" in (<212 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_inventory_level_inventory_item_id\" on inventory_level i0  (cost=0.28..28.55 rows=212 width=332) (actual time=0.031..0.092 rows=212.00 loops=1)",
+            "   Index Cond: (inventory_item_id = ANY ('{<212 inventory_item IDs>}'::text[]))",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=12",
+            " Planning:",
+            "   Buffers: shared hit=265",
+            " Planning Time: 3.387 ms",
+            " Execution Time: 0.124 ms"
+          ]
+        }
+      ]
+    },
+    "storefront_search_q_everyday_created_at": {
+      "httpProbe": {
+        "runs": [
+          {
+            "httpMs": 204.57,
+            "bytes": 127734,
+            "returned": 12,
+            "count": 122
+          },
+          {
+            "httpMs": 205.39,
+            "bytes": 127734,
+            "returned": 12,
+            "count": 122
+          },
+          {
+            "httpMs": 190.61,
+            "bytes": 127734,
+            "returned": 12,
+            "count": 122
+          }
+        ],
+        "medianHttpMs": 204.57
+      },
+      "postgresQuerySummary": {
+        "totalCapturedSqlQueries": 28,
+        "explainedQueriesCount": 26,
+        "parameterizedUnexplainedCount": 2,
+        "totalPgPlanningMsStandalonePsql": 103.386,
+        "totalPgExecutionMs": 3.877,
+        "totalSharedHitBlocks": 206,
+        "totalSharedReadBlocks": 0
+      },
+      "keyQueries": [
+        {
+          "seq": 4,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 1.851,
+          "executionTimeMs": 0.101,
+          "loggedDurationMs": 0.499,
+          "sharedHitBlocks": 1,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(*) as \"count\" from \"sales_channel\" as \"s0\" where \"s0\".\"deleted_at\" is null",
+          "planSummaryLines": [
+            " Aggregate  (cost=1.02..1.03 rows=1 width=8) (actual time=0.023..0.023 rows=1.00 loops=1)",
+            "   Buffers: shared hit=1",
+            "   ->  Seq Scan on sales_channel s0  (cost=0.00..1.02 rows=2 width=0) (actual time=0.015..0.016 rows=2.00 loops=1)",
+            "         Filter: (deleted_at IS NULL)",
+            "         Buffers: shared hit=1",
+            " Planning:",
+            "   Buffers: shared hit=81",
+            " Planning Time: 1.376 ms",
+            " Execution Time: 0.095 ms"
+          ]
+        },
+        {
+          "seq": 5,
+          "nodeType": "Seq Scan",
+          "actualRows": 153,
+          "planningTimeMs": 3.199,
+          "executionTimeMs": 0.068,
+          "loggedDurationMs": 0.662,
+          "sharedHitBlocks": 3,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"l0\".\"sales_channel_id\", \"l0\".\"product_id\" from \"product_sales_channel\" as \"l0\" where \"l0\".\"deleted_at\" is null and \"l0\".\"sales_channel_id\" in ('sc_01M82FEMQS9W8B4ME3EYRSJCTE')",
+          "planSummaryLines": [
+            " Seq Scan on product_sales_channel l0  (cost=0.00..4.91 rows=153 width=62) (actual time=0.016..0.047 rows=153.00 loops=1)",
+            "   Filter: ((deleted_at IS NULL) AND ((sales_channel_id)::text = 'sc_01M82FEMQS9W8B4ME3EYRSJCTE'::text))",
+            "   Buffers: shared hit=3",
+            " Planning:",
+            "   Buffers: shared hit=174",
+            " Planning Time: 3.367 ms",
+            " Execution Time: 0.114 ms"
+          ]
+        },
+        {
+          "seq": 8,
+          "nodeType": "Sort",
+          "actualRows": 48,
+          "planningTimeMs": 11.678,
+          "executionTimeMs": 1.215,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 67,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"id\", \"p0\".\"title\", \"p0\".\"subtitle\", \"p0\".\"description\", \"p0\".\"handle\", \"p0\".\"is_giftcard\", \"p0\".\"discountable\", \"p0\".\"thumbnail\", \"p0\".\"collection_id\", \"p0\".\"type_id\", \"p0\".\"weight\", \"p0\".\"length\", \"p0\".\"height\", \"p0\".\"width\", \"p0\".\"hs_code\", \"p0\".\"origin_country\", \"p0\".\"mid_code\", \"p0\".\"material\", \"p0\".\"c",
+          "planSummaryLines": [
+            " Sort  (cost=68.17..68.31 rows=56 width=871) (actual time=0.870..0.875 rows=48.00 loops=1)",
+            "   Sort Key: p0.created_at DESC, p4.rank",
+            "   Sort Method: quicksort  Memory: 47kB",
+            "   Buffers: shared hit=67",
+            "   ->  Nested Loop Left Join  (cost=49.66..66.54 rows=56 width=871) (actual time=0.796..0.835 rows=48.00 loops=1)",
+            "         Buffers: shared hit=61",
+            "         ->  Hash Left Join  (cost=49.38..60.33 rows=12 width=871) (actual time=0.738..0.760 rows=12.00 loops=1)",
+            "               Hash Cond: (p0.id = p4.product_id)",
+            "               Buffers: shared hit=36",
+            "               ->  Nested Loop Left Join  (cost=49.37..60.27 rows=12 width=867) (actual time=0.703..0.722 rows=12.00 loops=1)",
+            "                     Buffers: shared hit=36",
+            "                     ->  Hash Left Join  (cost=49.23..59.20 rows=12 width=711) (actual time=0.689..0.699 rows=12.00 loops=1)",
+            "                           Hash Cond: (p0.type_id = t1.id)",
+            "                           Buffers: shared hit=30",
+            "                           ->  Hash Join  (cost=49.22..59.16 rows=12 width=559) (actual time=0.679..0.688 rows=12.00 loops=1)",
+            "                                 Hash Cond: (p0.id = p0_1.id)",
+            "                                 Buffers: shared hit=30",
+            "                                 ->  Seq Scan on product p0  (cost=0.00..9.53 rows=153 width=559) (actual time=0.012..0.018 rows=153.00 loops=1)"
+          ]
+        },
+        {
+          "seq": 9,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 9.213,
+          "executionTimeMs": 0.771,
+          "loggedDurationMs": 3.819,
+          "sharedHitBlocks": 25,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(distinct(\"p0\".\"id\")) as \"count\" from \"product\" as \"p0\" left join \"product_type\" as \"t1\" on \"p0\".\"type_id\" = \"t1\".\"id\" and \"t1\".\"deleted_at\" is null left join \"product_collection\" as \"c2\" on \"p0\".\"collection_id\" = \"c2\".\"id\" and \"c2\".\"deleted_at\" is null left join \"product_variant\" as \"p3\" on \"p0\".\"id\" = \"p3",
+          "planSummaryLines": [
+            " Aggregate  (cost=71.82..71.83 rows=1 width=8) (actual time=0.620..0.621 rows=1.00 loops=1)",
+            "   Buffers: shared hit=25",
+            "   ->  Sort  (cost=68.39..70.11 rows=685 width=32) (actual time=0.584..0.594 rows=490.00 loops=1)",
+            "         Sort Key: p0.id",
+            "         Sort Method: quicksort  Memory: 25kB",
+            "         Buffers: shared hit=25",
+            "         ->  Hash Right Join  (cost=12.97..36.13 rows=685 width=32) (actual time=0.135..0.485 rows=490.00 loops=1)",
+            "               Hash Cond: (p3.product_id = p0.id)",
+            "               Filter: ((p0.title ~~* '%Everyday%'::text) OR (p0.subtitle ~~* '%Everyday%'::text) OR (p0.description ~~* '%Everyday%'::text) OR (p3.title ~~* '%Everyday%'::text) OR (p3.sku ~~* '%Everyday%'::text) OR (p3.barcode ~~* '%Everyday%'::text) OR (p3.ean ~~* '%Everyday%'::text) OR (p3.upc ~~* '%Everyday%'::text))",
+            "               Rows Removed by Filter: 223",
+            "               Buffers: shared hit=22",
+            "               ->  Seq Scan on product_variant p3  (cost=0.00..21.13 rows=713 width=154) (actual time=0.007..0.086 rows=713.00 loops=1)",
+            "                     Filter: (deleted_at IS NULL)",
+            "                     Buffers: shared hit=14",
+            "               ->  Hash  (cost=11.06..11.06 rows=153 width=250) (actual time=0.088..0.088 rows=153.00 loops=1)",
+            "                     Buckets: 1024  Batches: 1  Memory Usage: 41kB",
+            "                     Buffers: shared hit=8",
+            "                     ->  Seq Scan on product p0  (cost=0.38..11.06 rows=153 width=250) (actual time=0.019..0.065 rows=153.00 loops=1)"
+          ]
+        },
+        {
+          "seq": 10,
+          "nodeType": "Index Scan",
+          "actualRows": 48,
+          "planningTimeMs": 4.855,
+          "executionTimeMs": 0.063,
+          "loggedDurationMs": 1.199,
+          "sharedHitBlocks": 8,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".*, \"p0\".\"product_id\" as \"product_id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"product_id\" in (<12 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_product_variant_product_id\" on product_variant p0  (cost=0.28..13.46 rows=45 width=459) (actual time=0.022..0.033 rows=48.00 loops=1)",
+            "   Index Cond: (product_id = ANY ('{<12 product IDs>}'::text[]))",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=8",
+            " Planning:",
+            "   Buffers: shared hit=334",
+            " Planning Time: 3.569 ms",
+            " Execution Time: 0.059 ms"
+          ]
+        },
+        {
+          "seq": 18,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"ppo\".\"product_id\", \"ppov\".\"product_option_value_id\" from \"product_product_option_value\" as \"ppov\" inner join \"product_product_option\" as \"ppo\" on \"ppo\".\"id\" = \"ppov\".\"product_product_option_id\" and \"ppo\".\"deleted_at\" is null where \"ppo\".\"product_id\" in",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 21,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"price\".\"id\" as \"id\", \"price\".\"price_set_id\" as \"price_set_id\", \"price\".\"amount\" as \"amount\", \"price\".\"raw_amount\" as \"raw_amount\", \"price\".\"min_quantity\" as \"min_quantity\", \"price\".\"max_quantity\" as \"max_quantity\", \"price\".\"currency_code\" as \"currency_",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 25,
+          "nodeType": "Index Scan",
+          "actualRows": 48,
+          "planningTimeMs": 4.208,
+          "executionTimeMs": 0.054,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 6,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"manage_inventory\", \"p0\".\"allow_backorder\", \"p0\".\"id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"id\" in (<48 IDs>) order by \"p0\".\"id\" asc",
+          "planSummaryLines": [
+            " Index Scan using product_variant_pkey on product_variant p0  (cost=0.28..17.67 rows=48 width=37) (actual time=0.036..0.052 rows=48.00 loops=1)",
+            "   Index Cond: (id = ANY ('{<48 variant IDs>}'::text[]))",
+            "   Filter: (deleted_at IS NULL)",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=6",
+            " Planning:",
+            "   Buffers: shared hit=248",
+            " Planning Time: 3.135 ms",
+            " Execution Time: 0.079 ms"
+          ]
+        },
+        {
+          "seq": 27,
+          "nodeType": "Index Scan",
+          "actualRows": 48,
+          "planningTimeMs": 3.685,
+          "executionTimeMs": 0.079,
+          "loggedDurationMs": 1.178,
+          "sharedHitBlocks": 6,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"i0\".*, \"i0\".\"inventory_item_id\" as \"inventory_item_id\" from \"inventory_level\" as \"i0\" where \"i0\".\"deleted_at\" is null and \"i0\".\"inventory_item_id\" in (<48 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_inventory_level_inventory_item_id\" on inventory_level i0  (cost=0.28..18.67 rows=48 width=332) (actual time=0.024..0.039 rows=48.00 loops=1)",
+            "   Index Cond: (inventory_item_id = ANY ('{<48 inventory_item IDs>}'::text[]))",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=6",
+            " Planning:",
+            "   Buffers: shared hit=265",
+            " Planning Time: 2.785 ms",
+            " Execution Time: 0.067 ms"
+          ]
+        }
+      ]
+    },
+    "storefront_search_q_everyday_price_asc": {
+      "httpProbe": {
+        "runs": [
+          {
+            "httpMs": 917.15,
+            "batchCount": 2,
+            "batches": [
+              {
+                "batch": 1,
+                "offset": 0,
+                "httpMs": 665.75,
+                "bytes": 1068291,
+                "returned": 100,
+                "count": 122
+              },
+              {
+                "batch": 2,
+                "offset": 100,
+                "httpMs": 239.94,
+                "bytes": 234150,
+                "returned": 22,
+                "count": 122
+              }
+            ],
+            "totalFetched": 122,
+            "totalBytes": 1302441,
+            "jsSortAscMs": 1.129,
+            "page1Count": 12
+          },
+          {
+            "httpMs": 922.17,
+            "batchCount": 2,
+            "batches": [
+              {
+                "batch": 1,
+                "offset": 0,
+                "httpMs": 664.53,
+                "bytes": 1068291,
+                "returned": 100,
+                "count": 122
+              },
+              {
+                "batch": 2,
+                "offset": 100,
+                "httpMs": 245.91,
+                "bytes": 234150,
+                "returned": 22,
+                "count": 122
+              }
+            ],
+            "totalFetched": 122,
+            "totalBytes": 1302441,
+            "jsSortAscMs": 1.617,
+            "page1Count": 12
+          },
+          {
+            "httpMs": 930.93,
+            "batchCount": 2,
+            "batches": [
+              {
+                "batch": 1,
+                "offset": 0,
+                "httpMs": 687.38,
+                "bytes": 1068291,
+                "returned": 100,
+                "count": 122
+              },
+              {
+                "batch": 2,
+                "offset": 100,
+                "httpMs": 231.72,
+                "bytes": 234150,
+                "returned": 22,
+                "count": 122
+              }
+            ],
+            "totalFetched": 122,
+            "totalBytes": 1302441,
+            "jsSortAscMs": 1.018,
+            "page1Count": 12
+          }
+        ],
+        "medianHttpMs": 922.17
+      },
+      "postgresQuerySummary": {
+        "totalCapturedSqlQueries": 56,
+        "explainedQueriesCount": 52,
+        "parameterizedUnexplainedCount": 4,
+        "totalPgPlanningMsStandalonePsql": 216.327,
+        "totalPgExecutionMs": 10.112,
+        "totalSharedHitBlocks": 526,
+        "totalSharedReadBlocks": 0
+      },
+      "keyQueries": [
+        {
+          "seq": 4,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 1.496,
+          "executionTimeMs": 0.116,
+          "loggedDurationMs": 0.306,
+          "sharedHitBlocks": 1,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(*) as \"count\" from \"sales_channel\" as \"s0\" where \"s0\".\"deleted_at\" is null",
+          "planSummaryLines": [
+            " Aggregate  (cost=1.02..1.03 rows=1 width=8) (actual time=0.022..0.022 rows=1.00 loops=1)",
+            "   Buffers: shared hit=1",
+            "   ->  Seq Scan on sales_channel s0  (cost=0.00..1.02 rows=2 width=0) (actual time=0.016..0.016 rows=2.00 loops=1)",
+            "         Filter: (deleted_at IS NULL)",
+            "         Buffers: shared hit=1",
+            " Planning:",
+            "   Buffers: shared hit=81",
+            " Planning Time: 1.291 ms",
+            " Execution Time: 0.088 ms"
+          ]
+        },
+        {
+          "seq": 5,
+          "nodeType": "Seq Scan",
+          "actualRows": 153,
+          "planningTimeMs": 2.975,
+          "executionTimeMs": 0.092,
+          "loggedDurationMs": 0.283,
+          "sharedHitBlocks": 3,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"l0\".\"sales_channel_id\", \"l0\".\"product_id\" from \"product_sales_channel\" as \"l0\" where \"l0\".\"deleted_at\" is null and \"l0\".\"sales_channel_id\" in ('sc_01M82FEMQS9W8B4ME3EYRSJCTE')",
+          "planSummaryLines": [
+            " Seq Scan on product_sales_channel l0  (cost=0.00..4.91 rows=153 width=62) (actual time=0.015..0.033 rows=153.00 loops=1)",
+            "   Filter: ((deleted_at IS NULL) AND ((sales_channel_id)::text = 'sc_01M82FEMQS9W8B4ME3EYRSJCTE'::text))",
+            "   Buffers: shared hit=3",
+            " Planning:",
+            "   Buffers: shared hit=174",
+            " Planning Time: 2.363 ms",
+            " Execution Time: 0.086 ms"
+          ]
+        },
+        {
+          "seq": 8,
+          "nodeType": "Incremental Sort",
+          "actualRows": 402,
+          "planningTimeMs": 12.003,
+          "executionTimeMs": 1.491,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 38,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"id\", \"p0\".\"title\", \"p0\".\"subtitle\", \"p0\".\"description\", \"p0\".\"handle\", \"p0\".\"is_giftcard\", \"p0\".\"discountable\", \"p0\".\"thumbnail\", \"p0\".\"collection_id\", \"p0\".\"type_id\", \"p0\".\"weight\", \"p0\".\"length\", \"p0\".\"height\", \"p0\".\"width\", \"p0\".\"hs_code\", \"p0\".\"origin_country\", \"p0\".\"mid_code\", \"p0\".\"material\", \"p0\".\"c",
+          "planSummaryLines": [
+            " Incremental Sort  (cost=69.23..115.52 rows=466 width=871) (actual time=1.034..1.278 rows=402.00 loops=1)",
+            "   Sort Key: p0.id, p4.rank",
+            "   Presorted Key: p0.id",
+            "   Full-sort Groups: 13  Sort Method: quicksort  Average Memory: 40kB  Peak Memory: 40kB",
+            "   Buffers: shared hit=38",
+            "   ->  Merge Left Join  (cost=68.98..102.89 rows=466 width=871) (actual time=0.976..1.122 rows=402.00 loops=1)",
+            "         Merge Cond: (p0.id = p3.product_id)",
+            "         Buffers: shared hit=35",
+            "         ->  Merge Left Join  (cost=68.71..69.22 rows=100 width=871) (actual time=0.889..0.926 rows=100.00 loops=1)",
+            "               Merge Cond: (p0.id = p4.product_id)",
+            "               Buffers: shared hit=31",
+            "               ->  Sort  (cost=68.70..68.95 rows=100 width=867) (actual time=0.877..0.884 rows=100.00 loops=1)",
+            "                     Sort Key: p0.id",
+            "                     Sort Method: quicksort  Memory: 70kB",
+            "                     Buffers: shared hit=31",
+            "                     ->  Hash Left Join  (cost=54.54..65.38 rows=100 width=867) (actual time=0.748..0.816 rows=100.00 loops=1)",
+            "                           Hash Cond: (p0.collection_id = c2.id)",
+            "                           Buffers: shared hit=31"
+          ]
+        },
+        {
+          "seq": 9,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 9.093,
+          "executionTimeMs": 0.741,
+          "loggedDurationMs": 2.169,
+          "sharedHitBlocks": 25,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(distinct(\"p0\".\"id\")) as \"count\" from \"product\" as \"p0\" left join \"product_type\" as \"t1\" on \"p0\".\"type_id\" = \"t1\".\"id\" and \"t1\".\"deleted_at\" is null left join \"product_collection\" as \"c2\" on \"p0\".\"collection_id\" = \"c2\".\"id\" and \"c2\".\"deleted_at\" is null left join \"product_variant\" as \"p3\" on \"p0\".\"id\" = \"p3",
+          "planSummaryLines": [
+            " Aggregate  (cost=71.82..71.83 rows=1 width=8) (actual time=0.622..0.622 rows=1.00 loops=1)",
+            "   Buffers: shared hit=25",
+            "   ->  Sort  (cost=68.39..70.11 rows=685 width=32) (actual time=0.587..0.598 rows=490.00 loops=1)",
+            "         Sort Key: p0.id",
+            "         Sort Method: quicksort  Memory: 25kB",
+            "         Buffers: shared hit=25",
+            "         ->  Hash Right Join  (cost=12.97..36.13 rows=685 width=32) (actual time=0.136..0.486 rows=490.00 loops=1)",
+            "               Hash Cond: (p3.product_id = p0.id)",
+            "               Filter: ((p0.title ~~* '%Everyday%'::text) OR (p0.subtitle ~~* '%Everyday%'::text) OR (p0.description ~~* '%Everyday%'::text) OR (p3.title ~~* '%Everyday%'::text) OR (p3.sku ~~* '%Everyday%'::text) OR (p3.barcode ~~* '%Everyday%'::text) OR (p3.ean ~~* '%Everyday%'::text) OR (p3.upc ~~* '%Everyday%'::text))",
+            "               Rows Removed by Filter: 223",
+            "               Buffers: shared hit=22",
+            "               ->  Seq Scan on product_variant p3  (cost=0.00..21.13 rows=713 width=154) (actual time=0.006..0.083 rows=713.00 loops=1)",
+            "                     Filter: (deleted_at IS NULL)",
+            "                     Buffers: shared hit=14",
+            "               ->  Hash  (cost=11.06..11.06 rows=153 width=250) (actual time=0.088..0.088 rows=153.00 loops=1)",
+            "                     Buckets: 1024  Batches: 1  Memory Usage: 41kB",
+            "                     Buffers: shared hit=8",
+            "                     ->  Seq Scan on product p0  (cost=0.38..11.06 rows=153 width=250) (actual time=0.019..0.065 rows=153.00 loops=1)"
+          ]
+        },
+        {
+          "seq": 10,
+          "nodeType": "Seq Scan",
+          "actualRows": 402,
+          "planningTimeMs": 4.036,
+          "executionTimeMs": 0.169,
+          "loggedDurationMs": 2.848,
+          "sharedHitBlocks": 14,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".*, \"p0\".\"product_id\" as \"product_id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"product_id\" in (<100 IDs>)",
+          "planSummaryLines": [
+            " Seq Scan on product_variant p0  (cost=0.25..24.95 rows=397 width=459) (actual time=0.027..0.146 rows=402.00 loops=1)",
+            "   Filter: ((deleted_at IS NULL) AND (product_id = ANY ('{<100 product IDs>}'::text[])))",
+            "   Rows Removed by Filter: 311",
+            "   Buffers: shared hit=14",
+            " Planning:",
+            "   Buffers: shared hit=334",
+            " Planning Time: 6.079 ms",
+            " Execution Time: 0.179 ms"
+          ]
+        },
+        {
+          "seq": 18,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"ppo\".\"product_id\", \"ppov\".\"product_option_value_id\" from \"product_product_option_value\" as \"ppov\" inner join \"product_product_option\" as \"ppo\" on \"ppo\".\"id\" = \"ppov\".\"product_product_option_id\" and \"ppo\".\"deleted_at\" is null where \"ppo\".\"product_id\" in",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 21,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"price\".\"id\" as \"id\", \"price\".\"price_set_id\" as \"price_set_id\", \"price\".\"amount\" as \"amount\", \"price\".\"raw_amount\" as \"raw_amount\", \"price\".\"min_quantity\" as \"min_quantity\", \"price\".\"max_quantity\" as \"max_quantity\", \"price\".\"currency_code\" as \"currency_",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 25,
+          "nodeType": "Index Scan",
+          "actualRows": 402,
+          "planningTimeMs": 3.863,
+          "executionTimeMs": 0.248,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 22,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"manage_inventory\", \"p0\".\"allow_backorder\", \"p0\".\"id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"id\" in (<402 IDs>) order by \"p0\".\"id\" asc",
+          "planSummaryLines": [
+            " Index Scan using product_variant_pkey on product_variant p0  (cost=0.28..38.86 rows=402 width=37) (actual time=0.079..0.190 rows=402.00 loops=1)",
+            "   Index Cond: (id = ANY ('{<402 variant IDs>}'::text[]))",
+            "   Filter: (deleted_at IS NULL)",
+            "   Index Searches: 2",
+            "   Buffers: shared hit=22",
+            " Planning:",
+            "   Buffers: shared hit=248",
+            " Planning Time: 4.836 ms",
+            " Execution Time: 0.216 ms"
+          ]
+        },
+        {
+          "seq": 27,
+          "nodeType": "Seq Scan",
+          "actualRows": 402,
+          "planningTimeMs": 2.929,
+          "executionTimeMs": 0.205,
+          "loggedDurationMs": 3.348,
+          "sharedHitBlocks": 27,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"i0\".*, \"i0\".\"inventory_item_id\" as \"inventory_item_id\" from \"inventory_level\" as \"i0\" where \"i0\".\"deleted_at\" is null and \"i0\".\"inventory_item_id\" in (<402 IDs>)",
+          "planSummaryLines": [
+            " Seq Scan on inventory_level i0  (cost=1.01..38.70 rows=402 width=332) (actual time=0.038..0.188 rows=402.00 loops=1)",
+            "   Filter: ((deleted_at IS NULL) AND (inventory_item_id = ANY ('{<402 inventory_item IDs>}'::text[])))",
+            "   Rows Removed by Filter: 311",
+            "   Buffers: shared hit=27",
+            " Planning:",
+            "   Buffers: shared hit=265",
+            " Planning Time: 3.672 ms",
+            " Execution Time: 0.225 ms"
+          ]
+        },
+        {
+          "seq": 32,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 1.676,
+          "executionTimeMs": 0.108,
+          "loggedDurationMs": 0.343,
+          "sharedHitBlocks": 1,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(*) as \"count\" from \"sales_channel\" as \"s0\" where \"s0\".\"deleted_at\" is null",
+          "planSummaryLines": [
+            " Aggregate  (cost=1.02..1.03 rows=1 width=8) (actual time=0.024..0.024 rows=1.00 loops=1)",
+            "   Buffers: shared hit=1",
+            "   ->  Seq Scan on sales_channel s0  (cost=0.00..1.02 rows=2 width=0) (actual time=0.017..0.018 rows=2.00 loops=1)",
+            "         Filter: (deleted_at IS NULL)",
+            "         Buffers: shared hit=1",
+            " Planning:",
+            "   Buffers: shared hit=81",
+            " Planning Time: 1.476 ms",
+            " Execution Time: 0.089 ms"
+          ]
+        },
+        {
+          "seq": 33,
+          "nodeType": "Seq Scan",
+          "actualRows": 153,
+          "planningTimeMs": 3.169,
+          "executionTimeMs": 0.09,
+          "loggedDurationMs": 0.586,
+          "sharedHitBlocks": 3,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"l0\".\"sales_channel_id\", \"l0\".\"product_id\" from \"product_sales_channel\" as \"l0\" where \"l0\".\"deleted_at\" is null and \"l0\".\"sales_channel_id\" in ('sc_01M82FEMQS9W8B4ME3EYRSJCTE')",
+          "planSummaryLines": [
+            " Seq Scan on product_sales_channel l0  (cost=0.00..4.91 rows=153 width=62) (actual time=0.017..0.034 rows=153.00 loops=1)",
+            "   Filter: ((deleted_at IS NULL) AND ((sales_channel_id)::text = 'sc_01M82FEMQS9W8B4ME3EYRSJCTE'::text))",
+            "   Buffers: shared hit=3",
+            " Planning:",
+            "   Buffers: shared hit=174",
+            " Planning Time: 3.452 ms",
+            " Execution Time: 0.091 ms"
+          ]
+        },
+        {
+          "seq": 36,
+          "nodeType": "Incremental Sort",
+          "actualRows": 88,
+          "planningTimeMs": 13.166,
+          "executionTimeMs": 1.171,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 84,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"id\", \"p0\".\"title\", \"p0\".\"subtitle\", \"p0\".\"description\", \"p0\".\"handle\", \"p0\".\"is_giftcard\", \"p0\".\"discountable\", \"p0\".\"thumbnail\", \"p0\".\"collection_id\", \"p0\".\"type_id\", \"p0\".\"weight\", \"p0\".\"length\", \"p0\".\"height\", \"p0\".\"width\", \"p0\".\"hs_code\", \"p0\".\"origin_country\", \"p0\".\"mid_code\", \"p0\".\"material\", \"p0\".\"c",
+          "planSummaryLines": [
+            " Incremental Sort  (cost=64.77..101.71 rows=247 width=871) (actual time=0.965..1.016 rows=88.00 loops=1)",
+            "   Sort Key: p0.id, p4.rank",
+            "   Presorted Key: p0.id",
+            "   Full-sort Groups: 3  Sort Method: quicksort  Average Memory: 39kB  Peak Memory: 39kB",
+            "   Buffers: shared hit=84",
+            "   ->  Nested Loop Left Join  (cost=64.57..93.88 rows=247 width=871) (actual time=0.913..0.968 rows=88.00 loops=1)",
+            "         Buffers: shared hit=81",
+            "         ->  Nested Loop Left Join  (cost=64.30..66.48 rows=53 width=871) (actual time=0.847..0.869 rows=22.00 loops=1)",
+            "               Buffers: shared hit=36",
+            "               ->  Merge Left Join  (cost=64.16..64.44 rows=53 width=715) (actual time=0.834..0.843 rows=22.00 loops=1)",
+            "                     Merge Cond: (p0.id = p4.product_id)",
+            "                     Buffers: shared hit=30",
+            "                     ->  Sort  (cost=64.15..64.28 rows=53 width=711) (actual time=0.822..0.826 rows=22.00 loops=1)",
+            "                           Sort Key: p0.id",
+            "                           Sort Method: quicksort  Memory: 32kB",
+            "                           Buffers: shared hit=30",
+            "                           ->  Hash Left Join  (cost=52.55..62.63 rows=53 width=711) (actual time=0.800..0.811 rows=22.00 loops=1)",
+            "                                 Hash Cond: (p0.type_id = t1.id)"
+          ]
+        },
+        {
+          "seq": 37,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 8.997,
+          "executionTimeMs": 0.776,
+          "loggedDurationMs": 3.898,
+          "sharedHitBlocks": 25,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(distinct(\"p0\".\"id\")) as \"count\" from \"product\" as \"p0\" left join \"product_type\" as \"t1\" on \"p0\".\"type_id\" = \"t1\".\"id\" and \"t1\".\"deleted_at\" is null left join \"product_collection\" as \"c2\" on \"p0\".\"collection_id\" = \"c2\".\"id\" and \"c2\".\"deleted_at\" is null left join \"product_variant\" as \"p3\" on \"p0\".\"id\" = \"p3",
+          "planSummaryLines": [
+            " Aggregate  (cost=71.82..71.83 rows=1 width=8) (actual time=0.689..0.690 rows=1.00 loops=1)",
+            "   Buffers: shared hit=25",
+            "   ->  Sort  (cost=68.39..70.11 rows=685 width=32) (actual time=0.647..0.660 rows=490.00 loops=1)",
+            "         Sort Key: p0.id",
+            "         Sort Method: quicksort  Memory: 25kB",
+            "         Buffers: shared hit=25",
+            "         ->  Hash Right Join  (cost=12.97..36.13 rows=685 width=32) (actual time=0.143..0.531 rows=490.00 loops=1)",
+            "               Hash Cond: (p3.product_id = p0.id)",
+            "               Filter: ((p0.title ~~* '%Everyday%'::text) OR (p0.subtitle ~~* '%Everyday%'::text) OR (p0.description ~~* '%Everyday%'::text) OR (p3.title ~~* '%Everyday%'::text) OR (p3.sku ~~* '%Everyday%'::text) OR (p3.barcode ~~* '%Everyday%'::text) OR (p3.ean ~~* '%Everyday%'::text) OR (p3.upc ~~* '%Everyday%'::text))",
+            "               Rows Removed by Filter: 223",
+            "               Buffers: shared hit=22",
+            "               ->  Seq Scan on product_variant p3  (cost=0.00..21.13 rows=713 width=154) (actual time=0.006..0.100 rows=713.00 loops=1)",
+            "                     Filter: (deleted_at IS NULL)",
+            "                     Buffers: shared hit=14",
+            "               ->  Hash  (cost=11.06..11.06 rows=153 width=250) (actual time=0.090..0.091 rows=153.00 loops=1)",
+            "                     Buckets: 1024  Batches: 1  Memory Usage: 41kB",
+            "                     Buffers: shared hit=8",
+            "                     ->  Seq Scan on product p0  (cost=0.38..11.06 rows=153 width=250) (actual time=0.019..0.064 rows=153.00 loops=1)"
+          ]
+        },
+        {
+          "seq": 38,
+          "nodeType": "Index Scan",
+          "actualRows": 88,
+          "planningTimeMs": 3.777,
+          "executionTimeMs": 0.067,
+          "loggedDurationMs": 1.341,
+          "sharedHitBlocks": 12,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".*, \"p0\".\"product_id\" as \"product_id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"product_id\" in (<22 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_product_variant_product_id\" on product_variant p0  (cost=0.28..15.11 rows=82 width=459) (actual time=0.022..0.041 rows=88.00 loops=1)",
+            "   Index Cond: (product_id = ANY ('{<22 product IDs>}'::text[]))",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=12",
+            " Planning:",
+            "   Buffers: shared hit=334",
+            " Planning Time: 3.647 ms",
+            " Execution Time: 0.068 ms"
+          ]
+        },
+        {
+          "seq": 46,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"ppo\".\"product_id\", \"ppov\".\"product_option_value_id\" from \"product_product_option_value\" as \"ppov\" inner join \"product_product_option\" as \"ppo\" on \"ppo\".\"id\" = \"ppov\".\"product_product_option_id\" and \"ppo\".\"deleted_at\" is null where \"ppo\".\"product_id\" in",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 49,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"price\".\"id\" as \"id\", \"price\".\"price_set_id\" as \"price_set_id\", \"price\".\"amount\" as \"amount\", \"price\".\"raw_amount\" as \"raw_amount\", \"price\".\"min_quantity\" as \"min_quantity\", \"price\".\"max_quantity\" as \"max_quantity\", \"price\".\"currency_code\" as \"currency_",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 53,
+          "nodeType": "Index Scan",
+          "actualRows": 88,
+          "planningTimeMs": 3.571,
+          "executionTimeMs": 0.067,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 9,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"manage_inventory\", \"p0\".\"allow_backorder\", \"p0\".\"id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"id\" in (<88 IDs>) order by \"p0\".\"id\" asc",
+          "planSummaryLines": [
+            " Index Scan using product_variant_pkey on product_variant p0  (cost=0.28..19.36 rows=88 width=37) (actual time=0.029..0.045 rows=88.00 loops=1)",
+            "   Index Cond: (id = ANY ('{<88 variant IDs>}'::text[]))",
+            "   Filter: (deleted_at IS NULL)",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=9",
+            " Planning:",
+            "   Buffers: shared hit=248",
+            " Planning Time: 3.678 ms",
+            " Execution Time: 0.063 ms"
+          ]
+        },
+        {
+          "seq": 55,
+          "nodeType": "Index Scan",
+          "actualRows": 88,
+          "planningTimeMs": 3.117,
+          "executionTimeMs": 0.074,
+          "loggedDurationMs": 1.282,
+          "sharedHitBlocks": 7,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"i0\".*, \"i0\".\"inventory_item_id\" as \"inventory_item_id\" from \"inventory_level\" as \"i0\" where \"i0\".\"deleted_at\" is null and \"i0\".\"inventory_item_id\" in (<88 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_inventory_level_inventory_item_id\" on inventory_level i0  (cost=0.28..21.36 rows=88 width=332) (actual time=0.034..0.065 rows=88.00 loops=1)",
+            "   Index Cond: (inventory_item_id = ANY ('{<88 inventory_item IDs>}'::text[]))",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=7",
+            " Planning:",
+            "   Buffers: shared hit=265",
+            " Planning Time: 2.911 ms",
+            " Execution Time: 0.099 ms"
+          ]
+        }
+      ]
+    },
+    "storefront_category_filter": {
+      "httpProbe": {
+        "runs": [
+          {
+            "httpMs": 195.35,
+            "bytes": 127826,
+            "returned": 12,
+            "count": 23,
+            "categoryHandle": "dm-bags"
+          },
+          {
+            "httpMs": 168.18,
+            "bytes": 127826,
+            "returned": 12,
+            "count": 23,
+            "categoryHandle": "dm-bags"
+          },
+          {
+            "httpMs": 209.68,
+            "bytes": 127826,
+            "returned": 12,
+            "count": 23,
+            "categoryHandle": "dm-bags"
+          }
+        ],
+        "medianHttpMs": 195.35
+      },
+      "postgresQuerySummary": {
+        "totalCapturedSqlQueries": 28,
+        "explainedQueriesCount": 26,
+        "parameterizedUnexplainedCount": 2,
+        "totalPgPlanningMsStandalonePsql": 102.811,
+        "totalPgExecutionMs": 2.84,
+        "totalSharedHitBlocks": 211,
+        "totalSharedReadBlocks": 0
+      },
+      "keyQueries": [
+        {
+          "seq": 4,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 1.652,
+          "executionTimeMs": 0.096,
+          "loggedDurationMs": 0.393,
+          "sharedHitBlocks": 1,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(*) as \"count\" from \"sales_channel\" as \"s0\" where \"s0\".\"deleted_at\" is null",
+          "planSummaryLines": [
+            " Aggregate  (cost=1.02..1.03 rows=1 width=8) (actual time=0.024..0.025 rows=1.00 loops=1)",
+            "   Buffers: shared hit=1",
+            "   ->  Seq Scan on sales_channel s0  (cost=0.00..1.02 rows=2 width=0) (actual time=0.017..0.018 rows=2.00 loops=1)",
+            "         Filter: (deleted_at IS NULL)",
+            "         Buffers: shared hit=1",
+            " Planning:",
+            "   Buffers: shared hit=81",
+            " Planning Time: 1.496 ms",
+            " Execution Time: 0.098 ms"
+          ]
+        },
+        {
+          "seq": 5,
+          "nodeType": "Seq Scan",
+          "actualRows": 153,
+          "planningTimeMs": 3.265,
+          "executionTimeMs": 0.103,
+          "loggedDurationMs": 0.541,
+          "sharedHitBlocks": 3,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"l0\".\"sales_channel_id\", \"l0\".\"product_id\" from \"product_sales_channel\" as \"l0\" where \"l0\".\"deleted_at\" is null and \"l0\".\"sales_channel_id\" in ('sc_01M82FEMQS9W8B4ME3EYRSJCTE')",
+          "planSummaryLines": [
+            " Seq Scan on product_sales_channel l0  (cost=0.00..4.91 rows=153 width=62) (actual time=0.018..0.037 rows=153.00 loops=1)",
+            "   Filter: ((deleted_at IS NULL) AND ((sales_channel_id)::text = 'sc_01M82FEMQS9W8B4ME3EYRSJCTE'::text))",
+            "   Buffers: shared hit=3",
+            " Planning:",
+            "   Buffers: shared hit=174",
+            " Planning Time: 3.542 ms",
+            " Execution Time: 0.098 ms"
+          ]
+        },
+        {
+          "seq": 8,
+          "nodeType": "Sort",
+          "actualRows": 12,
+          "planningTimeMs": 12.011,
+          "executionTimeMs": 0.455,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 28,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"id\", \"p0\".\"title\", \"p0\".\"subtitle\", \"p0\".\"description\", \"p0\".\"handle\", \"p0\".\"is_giftcard\", \"p0\".\"discountable\", \"p0\".\"thumbnail\", \"p0\".\"collection_id\", \"p0\".\"type_id\", \"p0\".\"weight\", \"p0\".\"length\", \"p0\".\"height\", \"p0\".\"width\", \"p0\".\"hs_code\", \"p0\".\"origin_country\", \"p0\".\"mid_code\", \"p0\".\"material\", \"p0\".\"c",
+          "planSummaryLines": [
+            " Sort  (cost=32.63..32.66 rows=12 width=871) (actual time=0.285..0.287 rows=12.00 loops=1)",
+            "   Sort Key: p0.created_at DESC, p4.rank",
+            "   Sort Method: quicksort  Memory: 30kB",
+            "   Buffers: shared hit=28",
+            "   ->  Hash Left Join  (cost=27.22..32.42 rows=12 width=871) (actual time=0.219..0.237 rows=12.00 loops=1)",
+            "         Hash Cond: (p0.id = p4.product_id)",
+            "         Buffers: shared hit=22",
+            "         ->  Nested Loop Left Join  (cost=27.21..32.35 rows=12 width=867) (actual time=0.208..0.225 rows=12.00 loops=1)",
+            "               Buffers: shared hit=22",
+            "               ->  Hash Left Join  (cost=27.07..31.29 rows=12 width=711) (actual time=0.192..0.203 rows=12.00 loops=1)",
+            "                     Hash Cond: (p0.type_id = t1.id)",
+            "                     Buffers: shared hit=20",
+            "                     ->  Hash Right Join  (cost=27.06..31.24 rows=12 width=559) (actual time=0.171..0.181 rows=12.00 loops=1)",
+            "                           Hash Cond: (p3.product_id = p0.id)",
+            "                           Buffers: shared hit=20",
+            "                           ->  Seq Scan on product_category_product p3  (cost=0.00..3.50 rows=150 width=32) (actual time=0.003..0.007 rows=150.00 loops=1)",
+            "                                 Buffers: shared hit=2",
+            "                           ->  Hash  (cost=26.91..26.91 rows=12 width=559) (actual time=0.160..0.161 rows=12.00 loops=1)"
+          ]
+        },
+        {
+          "seq": 9,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 8.554,
+          "executionTimeMs": 0.193,
+          "loggedDurationMs": 5.901,
+          "sharedHitBlocks": 13,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(distinct(\"p0\".\"id\")) as \"count\" from \"product\" as \"p0\" left join \"product_type\" as \"t1\" on \"p0\".\"type_id\" = \"t1\".\"id\" and \"t1\".\"deleted_at\" is null left join \"product_collection\" as \"c2\" on \"p0\".\"collection_id\" = \"c2\".\"id\" and \"c2\".\"deleted_at\" is null left join \"product_category_product\" as \"p3\" on \"p0\".\"",
+          "planSummaryLines": [
+            " Aggregate  (cost=16.27..16.28 rows=1 width=8) (actual time=0.142..0.143 rows=1.00 loops=1)",
+            "   Buffers: shared hit=13",
+            "   ->  Sort  (cost=16.16..16.21 rows=23 width=32) (actual time=0.135..0.136 rows=23.00 loops=1)",
+            "         Sort Key: p0.id",
+            "         Sort Method: quicksort  Memory: 25kB",
+            "         Buffers: shared hit=13",
+            "         ->  Hash Join  (cost=4.54..15.64 rows=23 width=32) (actual time=0.058..0.108 rows=23.00 loops=1)",
+            "               Hash Cond: (p0.id = p3.product_id)",
+            "               Buffers: shared hit=10",
+            "               ->  Seq Scan on product p0  (cost=0.38..11.06 rows=153 width=96) (actual time=0.023..0.066 rows=153.00 loops=1)",
+            "                     Filter: ((deleted_at IS NULL) AND (status = 'published'::text) AND (id = ANY ('{<153 product IDs>}'::text[])))",
+            "                     Buffers: shared hit=8",
+            "               ->  Hash  (cost=3.88..3.88 rows=23 width=32) (actual time=0.023..0.023 rows=23.00 loops=1)",
+            "                     Buckets: 1024  Batches: 1  Memory Usage: 10kB",
+            "                     Buffers: shared hit=2",
+            "                     ->  Seq Scan on product_category_product p3  (cost=0.00..3.88 rows=23 width=32) (actual time=0.008..0.018 rows=23.00 loops=1)",
+            "                           Filter: (product_category_id = 'pcat_01M82FF7HCZZKBZ1R7NQ1H4QWR'::text)",
+            "                           Rows Removed by Filter: 127"
+          ]
+        },
+        {
+          "seq": 10,
+          "nodeType": "Index Scan",
+          "actualRows": 48,
+          "planningTimeMs": 4.079,
+          "executionTimeMs": 0.09,
+          "loggedDurationMs": 1.328,
+          "sharedHitBlocks": 12,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".*, \"p0\".\"product_id\" as \"product_id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"product_id\" in (<12 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_product_variant_product_id\" on product_variant p0  (cost=0.28..13.49 rows=46 width=459) (actual time=0.032..0.072 rows=48.00 loops=1)",
+            "   Index Cond: (product_id = ANY ('{<12 product IDs>}'::text[]))",
+            "   Index Searches: 2",
+            "   Buffers: shared hit=12",
+            " Planning:",
+            "   Buffers: shared hit=334",
+            " Planning Time: 7.082 ms",
+            " Execution Time: 0.109 ms"
+          ]
+        },
+        {
+          "seq": 18,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"ppo\".\"product_id\", \"ppov\".\"product_option_value_id\" from \"product_product_option_value\" as \"ppov\" inner join \"product_product_option\" as \"ppo\" on \"ppo\".\"id\" = \"ppov\".\"product_product_option_id\" and \"ppo\".\"deleted_at\" is null where \"ppo\".\"product_id\" in",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 21,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"price\".\"id\" as \"id\", \"price\".\"price_set_id\" as \"price_set_id\", \"price\".\"amount\" as \"amount\", \"price\".\"raw_amount\" as \"raw_amount\", \"price\".\"min_quantity\" as \"min_quantity\", \"price\".\"max_quantity\" as \"max_quantity\", \"price\".\"currency_code\" as \"currency_",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 25,
+          "nodeType": "Index Scan",
+          "actualRows": 48,
+          "planningTimeMs": 4.487,
+          "executionTimeMs": 0.076,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 12,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"manage_inventory\", \"p0\".\"allow_backorder\", \"p0\".\"id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"id\" in (<48 IDs>) order by \"p0\".\"id\" asc",
+          "planSummaryLines": [
+            " Index Scan using product_variant_pkey on product_variant p0  (cost=0.28..17.67 rows=48 width=37) (actual time=0.025..0.054 rows=48.00 loops=1)",
+            "   Index Cond: (id = ANY ('{<48 variant IDs>}'::text[]))",
+            "   Filter: (deleted_at IS NULL)",
+            "   Index Searches: 2",
+            "   Buffers: shared hit=12",
+            " Planning:",
+            "   Buffers: shared hit=248",
+            " Planning Time: 3.862 ms",
+            " Execution Time: 0.072 ms"
+          ]
+        },
+        {
+          "seq": 27,
+          "nodeType": "Index Scan",
+          "actualRows": 48,
+          "planningTimeMs": 2.713,
+          "executionTimeMs": 0.082,
+          "loggedDurationMs": 1.111,
+          "sharedHitBlocks": 15,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"i0\".*, \"i0\".\"inventory_item_id\" as \"inventory_item_id\" from \"inventory_level\" as \"i0\" where \"i0\".\"deleted_at\" is null and \"i0\".\"inventory_item_id\" in (<48 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_inventory_level_inventory_item_id\" on inventory_level i0  (cost=0.28..18.67 rows=48 width=332) (actual time=0.023..0.061 rows=48.00 loops=1)",
+            "   Index Cond: (inventory_item_id = ANY ('{<48 inventory_item IDs>}'::text[]))",
+            "   Index Searches: 2",
+            "   Buffers: shared hit=15",
+            " Planning:",
+            "   Buffers: shared hit=265",
+            " Planning Time: 3.031 ms",
+            " Execution Time: 0.083 ms"
+          ]
+        }
+      ]
+    },
+    "storefront_collection_filter": {
+      "httpProbe": {
+        "runs": [
+          {
+            "httpMs": 186.03,
+            "bytes": 127850,
+            "returned": 12,
+            "count": 52,
+            "collectionHandle": "dm-daily-essentials"
+          },
+          {
+            "httpMs": 167.76,
+            "bytes": 127850,
+            "returned": 12,
+            "count": 52,
+            "collectionHandle": "dm-daily-essentials"
+          },
+          {
+            "httpMs": 166.4,
+            "bytes": 127850,
+            "returned": 12,
+            "count": 52,
+            "collectionHandle": "dm-daily-essentials"
+          }
+        ],
+        "medianHttpMs": 167.76
+      },
+      "postgresQuerySummary": {
+        "totalCapturedSqlQueries": 28,
+        "explainedQueriesCount": 26,
+        "parameterizedUnexplainedCount": 2,
+        "totalPgPlanningMsStandalonePsql": 96.611,
+        "totalPgExecutionMs": 2.604,
+        "totalSharedHitBlocks": 157,
+        "totalSharedReadBlocks": 0
+      },
+      "keyQueries": [
+        {
+          "seq": 4,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 1.618,
+          "executionTimeMs": 0.118,
+          "loggedDurationMs": 0.458,
+          "sharedHitBlocks": 1,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(*) as \"count\" from \"sales_channel\" as \"s0\" where \"s0\".\"deleted_at\" is null",
+          "planSummaryLines": [
+            " Aggregate  (cost=1.02..1.03 rows=1 width=8) (actual time=0.028..0.028 rows=1.00 loops=1)",
+            "   Buffers: shared hit=1",
+            "   ->  Seq Scan on sales_channel s0  (cost=0.00..1.02 rows=2 width=0) (actual time=0.020..0.020 rows=2.00 loops=1)",
+            "         Filter: (deleted_at IS NULL)",
+            "         Buffers: shared hit=1",
+            " Planning:",
+            "   Buffers: shared hit=81",
+            " Planning Time: 1.891 ms",
+            " Execution Time: 0.101 ms"
+          ]
+        },
+        {
+          "seq": 5,
+          "nodeType": "Seq Scan",
+          "actualRows": 153,
+          "planningTimeMs": 2.908,
+          "executionTimeMs": 0.102,
+          "loggedDurationMs": 0.88,
+          "sharedHitBlocks": 3,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"l0\".\"sales_channel_id\", \"l0\".\"product_id\" from \"product_sales_channel\" as \"l0\" where \"l0\".\"deleted_at\" is null and \"l0\".\"sales_channel_id\" in ('sc_01M82FEMQS9W8B4ME3EYRSJCTE')",
+          "planSummaryLines": [
+            " Seq Scan on product_sales_channel l0  (cost=0.00..4.91 rows=153 width=62) (actual time=0.019..0.039 rows=153.00 loops=1)",
+            "   Filter: ((deleted_at IS NULL) AND ((sales_channel_id)::text = 'sc_01M82FEMQS9W8B4ME3EYRSJCTE'::text))",
+            "   Buffers: shared hit=3",
+            " Planning:",
+            "   Buffers: shared hit=174",
+            " Planning Time: 2.790 ms",
+            " Execution Time: 0.106 ms"
+          ]
+        },
+        {
+          "seq": 8,
+          "nodeType": "Sort",
+          "actualRows": 12,
+          "planningTimeMs": 9.517,
+          "executionTimeMs": 0.379,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 24,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"id\", \"p0\".\"title\", \"p0\".\"subtitle\", \"p0\".\"description\", \"p0\".\"handle\", \"p0\".\"is_giftcard\", \"p0\".\"discountable\", \"p0\".\"thumbnail\", \"p0\".\"collection_id\", \"p0\".\"type_id\", \"p0\".\"weight\", \"p0\".\"length\", \"p0\".\"height\", \"p0\".\"width\", \"p0\".\"hs_code\", \"p0\".\"origin_country\", \"p0\".\"mid_code\", \"p0\".\"material\", \"p0\".\"c",
+          "planSummaryLines": [
+            " Sort  (cost=25.40..25.43 rows=12 width=871) (actual time=0.277..0.279 rows=12.00 loops=1)",
+            "   Sort Key: p0.created_at DESC, p3.rank",
+            "   Sort Method: quicksort  Memory: 30kB",
+            "   Buffers: shared hit=24",
+            "   ->  Hash Left Join  (cost=14.23..25.18 rows=12 width=871) (actual time=0.236..0.252 rows=12.00 loops=1)",
+            "         Hash Cond: (p0.id = p3.product_id)",
+            "         Buffers: shared hit=18",
+            "         ->  Nested Loop Left Join  (cost=14.21..25.11 rows=12 width=867) (actual time=0.225..0.239 rows=12.00 loops=1)",
+            "               Buffers: shared hit=18",
+            "               ->  Hash Left Join  (cost=14.07..24.05 rows=12 width=711) (actual time=0.213..0.221 rows=12.00 loops=1)",
+            "                     Hash Cond: (p0.type_id = t1.id)",
+            "                     Buffers: shared hit=16",
+            "                     ->  Hash Join  (cost=14.06..24.00 rows=12 width=559) (actual time=0.202..0.209 rows=12.00 loops=1)",
+            "                           Hash Cond: (p0.id = p0_1.id)",
+            "                           Buffers: shared hit=16",
+            "                           ->  Seq Scan on product p0  (cost=0.00..9.53 rows=153 width=559) (actual time=0.018..0.023 rows=153.00 loops=1)",
+            "                                 Buffers: shared hit=8",
+            "                           ->  Hash  (cost=13.91..13.91 rows=12 width=32) (actual time=0.110..0.111 rows=12.00 loops=1)"
+          ]
+        },
+        {
+          "seq": 9,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 6.173,
+          "executionTimeMs": 0.104,
+          "loggedDurationMs": 1.538,
+          "sharedHitBlocks": 8,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(*) as \"count\" from \"product\" as \"p0\" left join \"product_type\" as \"t1\" on \"p0\".\"type_id\" = \"t1\".\"id\" and \"t1\".\"deleted_at\" is null left join \"product_collection\" as \"c2\" on \"p0\".\"collection_id\" = \"c2\".\"id\" and \"c2\".\"deleted_at\" is null where \"p0\".\"deleted_at\" is null and \"p0\".\"collection_id\" in ('pcol_01M82",
+          "planSummaryLines": [
+            " Aggregate  (cost=11.57..11.58 rows=1 width=8) (actual time=0.076..0.076 rows=1.00 loops=1)",
+            "   Buffers: shared hit=8",
+            "   ->  Seq Scan on product p0  (cost=0.38..11.44 rows=52 width=0) (actual time=0.027..0.069 rows=52.00 loops=1)",
+            "         Filter: ((deleted_at IS NULL) AND (collection_id = 'pcol_01M82FF7G4XPBJJRD5NV9WSDS6'::text) AND (status = 'published'::text) AND (id = ANY ('{<153 product IDs>}'::text[])))",
+            "         Rows Removed by Filter: 101",
+            "         Buffers: shared hit=8",
+            " Planning:",
+            "   Buffers: shared hit=398",
+            " Planning Time: 6.269 ms",
+            " Execution Time: 0.121 ms"
+          ]
+        },
+        {
+          "seq": 10,
+          "nodeType": "Index Scan",
+          "actualRows": 48,
+          "planningTimeMs": 5.049,
+          "executionTimeMs": 0.082,
+          "loggedDurationMs": 1.19,
+          "sharedHitBlocks": 9,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".*, \"p0\".\"product_id\" as \"product_id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"product_id\" in (<12 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_product_variant_product_id\" on product_variant p0  (cost=0.28..13.46 rows=45 width=459) (actual time=0.023..0.036 rows=48.00 loops=1)",
+            "   Index Cond: (product_id = ANY ('{<12 product IDs>}'::text[]))",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=9",
+            " Planning:",
+            "   Buffers: shared hit=334",
+            " Planning Time: 3.467 ms",
+            " Execution Time: 0.061 ms"
+          ]
+        },
+        {
+          "seq": 18,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"ppo\".\"product_id\", \"ppov\".\"product_option_value_id\" from \"product_product_option_value\" as \"ppov\" inner join \"product_product_option\" as \"ppo\" on \"ppo\".\"id\" = \"ppov\".\"product_product_option_id\" and \"ppo\".\"deleted_at\" is null where \"ppo\".\"product_id\" in",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 21,
+          "status": "parameterized_not_reexplained",
+          "sqlTemplate": "select \"price\".\"id\" as \"id\", \"price\".\"price_set_id\" as \"price_set_id\", \"price\".\"amount\" as \"amount\", \"price\".\"raw_amount\" as \"raw_amount\", \"price\".\"min_quantity\" as \"min_quantity\", \"price\".\"max_quantity\" as \"max_quantity\", \"price\".\"currency_code\" as \"currency_",
+          "note": "Extended-protocol query using positional $1 parameters; not re-explained inline by standalone psql script."
+        },
+        {
+          "seq": 25,
+          "nodeType": "Index Scan",
+          "actualRows": 48,
+          "planningTimeMs": 4.213,
+          "executionTimeMs": 0.063,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 7,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".\"manage_inventory\", \"p0\".\"allow_backorder\", \"p0\".\"id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"id\" in (<48 IDs>) order by \"p0\".\"id\" asc",
+          "planSummaryLines": [
+            " Index Scan using product_variant_pkey on product_variant p0  (cost=0.28..17.67 rows=48 width=37) (actual time=0.030..0.043 rows=48.00 loops=1)",
+            "   Index Cond: (id = ANY ('{<48 variant IDs>}'::text[]))",
+            "   Filter: (deleted_at IS NULL)",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=7",
+            " Planning:",
+            "   Buffers: shared hit=248",
+            " Planning Time: 4.665 ms",
+            " Execution Time: 0.061 ms"
+          ]
+        },
+        {
+          "seq": 27,
+          "nodeType": "Index Scan",
+          "actualRows": 48,
+          "planningTimeMs": 2.866,
+          "executionTimeMs": 0.081,
+          "loggedDurationMs": 1.032,
+          "sharedHitBlocks": 8,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"i0\".*, \"i0\".\"inventory_item_id\" as \"inventory_item_id\" from \"inventory_level\" as \"i0\" where \"i0\".\"deleted_at\" is null and \"i0\".\"inventory_item_id\" in (<48 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_inventory_level_inventory_item_id\" on inventory_level i0  (cost=0.28..18.67 rows=48 width=332) (actual time=0.028..0.047 rows=48.00 loops=1)",
+            "   Index Cond: (inventory_item_id = ANY ('{<48 inventory_item IDs>}'::text[]))",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=8",
+            " Planning:",
+            "   Buffers: shared hit=265",
+            " Planning Time: 2.673 ms",
+            " Execution Time: 0.069 ms"
+          ]
+        }
+      ]
+    },
+    "legacy_store_catalog_default": {
+      "httpProbe": {
+        "runs": [
+          {
+            "httpMs": 67.74,
+            "bytes": 63500,
+            "returned": 20,
+            "count": 153
+          },
+          {
+            "httpMs": 64.09,
+            "bytes": 63500,
+            "returned": 20,
+            "count": 153
+          },
+          {
+            "httpMs": 69.87,
+            "bytes": 63500,
+            "returned": 20,
+            "count": 153
+          }
+        ],
+        "medianHttpMs": 67.74
+      },
+      "postgresQuerySummary": {
+        "totalCapturedSqlQueries": 9,
+        "explainedQueriesCount": 9,
+        "parameterizedUnexplainedCount": 0,
+        "totalPgPlanningMsStandalonePsql": 35.11,
+        "totalPgExecutionMs": 1.126,
+        "totalSharedHitBlocks": 64,
+        "totalSharedReadBlocks": 0
+      },
+      "keyQueries": [
+        {
+          "seq": 3,
+          "nodeType": "Seq Scan",
+          "actualRows": 153,
+          "planningTimeMs": 2.874,
+          "executionTimeMs": 0.112,
+          "loggedDurationMs": 0.385,
+          "sharedHitBlocks": 3,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"l0\".\"sales_channel_id\", \"l0\".\"product_id\" from \"product_sales_channel\" as \"l0\" where \"l0\".\"deleted_at\" is null and \"l0\".\"sales_channel_id\" in ('sc_01M82FEMQS9W8B4ME3EYRSJCTE')",
+          "planSummaryLines": [
+            " Seq Scan on product_sales_channel l0  (cost=0.00..4.91 rows=153 width=62) (actual time=0.019..0.039 rows=153.00 loops=1)",
+            "   Filter: ((deleted_at IS NULL) AND ((sales_channel_id)::text = 'sc_01M82FEMQS9W8B4ME3EYRSJCTE'::text))",
+            "   Buffers: shared hit=3",
+            " Planning:",
+            "   Buffers: shared hit=174",
+            " Planning Time: 3.763 ms",
+            " Execution Time: 0.105 ms"
+          ]
+        },
+        {
+          "seq": 4,
+          "nodeType": "Sort",
+          "actualRows": 20,
+          "planningTimeMs": 7.152,
+          "executionTimeMs": 0.381,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 22,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".*, \"p0\".\"type_id\" as \"type_id\", \"p0\".\"collection_id\" as \"collection_id\" from \"product\" as \"p0\" left join \"image\" as \"p1\" on \"p0\".\"id\" = \"p1\".\"product_id\" where \"p0\".\"id\" in (<153 IDs>) group by \"p0\".\"id\" order by min(\"p0\".\"created_at\") desc, min(\"p1\".\"rank\") asc limit 20) as \"p0\") order by \"p0\".\"created_at\"",
+          "planSummaryLines": [
+            " Sort  (cost=29.38..29.43 rows=20 width=677) (actual time=0.257..0.259 rows=20.00 loops=1)",
+            "   Sort Key: p0.created_at DESC, p1.rank",
+            "   Sort Method: quicksort  Memory: 32kB",
+            "   Buffers: shared hit=22",
+            "   ->  Hash Left Join  (cost=18.92..28.95 rows=20 width=677) (actual time=0.225..0.233 rows=20.00 loops=1)",
+            "         Hash Cond: (p0.id = p1.product_id)",
+            "         Buffers: shared hit=16",
+            "         ->  Hash Join  (cost=18.91..28.85 rows=20 width=609) (actual time=0.216..0.222 rows=20.00 loops=1)",
+            "               Hash Cond: (p0.id = p0_1.id)",
+            "               Buffers: shared hit=16",
+            "               ->  Seq Scan on product p0  (cost=0.00..9.53 rows=153 width=609) (actual time=0.012..0.017 rows=153.00 loops=1)",
+            "                     Buffers: shared hit=8",
+            "               ->  Hash  (cost=18.66..18.66 rows=20 width=32) (actual time=0.148..0.149 rows=20.00 loops=1)",
+            "                     Buckets: 1024  Batches: 1  Memory Usage: 10kB",
+            "                     Buffers: shared hit=8",
+            "                     ->  Subquery Scan on p0_1  (cost=18.41..18.66 rows=20 width=32) (actual time=0.139..0.142 rows=20.00 loops=1)",
+            "                           Buffers: shared hit=8",
+            "                           ->  Limit  (cost=18.41..18.46 rows=20 width=44) (actual time=0.138..0.140 rows=20.00 loops=1)"
+          ]
+        },
+        {
+          "seq": 5,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 3.123,
+          "executionTimeMs": 0.112,
+          "loggedDurationMs": 1.035,
+          "sharedHitBlocks": 8,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(*) as \"count\" from \"product\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"status\" = 'published' and \"p0\".\"id\" in (<153 IDs>)",
+          "planSummaryLines": [
+            " Aggregate  (cost=11.44..11.45 rows=1 width=8) (actual time=0.073..0.073 rows=1.00 loops=1)",
+            "   Buffers: shared hit=8",
+            "   ->  Seq Scan on product p0  (cost=0.38..11.06 rows=153 width=0) (actual time=0.021..0.066 rows=153.00 loops=1)",
+            "         Filter: ((deleted_at IS NULL) AND (status = 'published'::text) AND (id = ANY ('{<153 product IDs>}'::text[])))",
+            "         Buffers: shared hit=8",
+            " Planning:",
+            "   Buffers: shared hit=253",
+            " Planning Time: 3.264 ms",
+            " Execution Time: 0.105 ms"
+          ]
+        },
+        {
+          "seq": 6,
+          "nodeType": "Index Scan",
+          "actualRows": 80,
+          "planningTimeMs": 4.059,
+          "executionTimeMs": 0.068,
+          "loggedDurationMs": 1.455,
+          "sharedHitBlocks": 10,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".*, \"p0\".\"product_id\" as \"product_id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"product_id\" in (<20 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_product_variant_product_id\" on product_variant p0  (cost=0.28..14.97 rows=74 width=459) (actual time=0.025..0.042 rows=80.00 loops=1)",
+            "   Index Cond: (product_id = ANY ('{<20 product IDs>}'::text[]))",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=10",
+            " Planning:",
+            "   Buffers: shared hit=334",
+            " Planning Time: 3.999 ms",
+            " Execution Time: 0.072 ms"
+          ]
+        }
+      ]
+    },
+    "legacy_store_catalog_search_everyday": {
+      "httpProbe": {
+        "runs": [
+          {
+            "httpMs": 76.4,
+            "bytes": 63500,
+            "returned": 20,
+            "count": 122
+          },
+          {
+            "httpMs": 78.3,
+            "bytes": 63500,
+            "returned": 20,
+            "count": 122
+          },
+          {
+            "httpMs": 77.62,
+            "bytes": 63500,
+            "returned": 20,
+            "count": 122
+          }
+        ],
+        "medianHttpMs": 77.62
+      },
+      "postgresQuerySummary": {
+        "totalCapturedSqlQueries": 9,
+        "explainedQueriesCount": 9,
+        "parameterizedUnexplainedCount": 0,
+        "totalPgPlanningMsStandalonePsql": 40.025,
+        "totalPgExecutionMs": 2.306,
+        "totalSharedHitBlocks": 136,
+        "totalSharedReadBlocks": 0
+      },
+      "keyQueries": [
+        {
+          "seq": 3,
+          "nodeType": "Seq Scan",
+          "actualRows": 153,
+          "planningTimeMs": 2.867,
+          "executionTimeMs": 0.086,
+          "loggedDurationMs": 0.615,
+          "sharedHitBlocks": 3,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"l0\".\"sales_channel_id\", \"l0\".\"product_id\" from \"product_sales_channel\" as \"l0\" where \"l0\".\"deleted_at\" is null and \"l0\".\"sales_channel_id\" in ('sc_01M82FEMQS9W8B4ME3EYRSJCTE')",
+          "planSummaryLines": [
+            " Seq Scan on product_sales_channel l0  (cost=0.00..4.91 rows=153 width=62) (actual time=0.016..0.034 rows=153.00 loops=1)",
+            "   Filter: ((deleted_at IS NULL) AND ((sales_channel_id)::text = 'sc_01M82FEMQS9W8B4ME3EYRSJCTE'::text))",
+            "   Buffers: shared hit=3",
+            " Planning:",
+            "   Buffers: shared hit=174",
+            " Planning Time: 2.779 ms",
+            " Execution Time: 0.089 ms"
+          ]
+        },
+        {
+          "seq": 4,
+          "nodeType": "Sort",
+          "actualRows": 80,
+          "planningTimeMs": 9.828,
+          "executionTimeMs": 1.003,
+          "loggedDurationMs": null,
+          "sharedHitBlocks": 77,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".*, \"p0\".\"type_id\" as \"type_id\", \"p0\".\"collection_id\" as \"collection_id\" from \"product\" as \"p0\" left join \"product_variant\" as \"p1\" on \"p0\".\"id\" = \"p1\".\"product_id\" and \"p1\".\"deleted_at\" is null left join \"image\" as \"p2\" on \"p0\".\"id\" = \"p2\".\"product_id\" where \"p0\".\"id\" in (<1 IDs>))) and \"p0\".\"deleted_at\" is",
+          "planSummaryLines": [
+            " Sort  (cost=73.40..73.63 rows=93 width=677) (actual time=1.080..1.085 rows=80.00 loops=1)",
+            "   Sort Key: p0.created_at DESC, p2.rank",
+            "   Sort Method: quicksort  Memory: 56kB",
+            "   Buffers: shared hit=77",
+            "   ->  Nested Loop Left Join  (cost=50.27..70.36 rows=93 width=677) (actual time=0.994..1.037 rows=80.00 loops=1)",
+            "         Buffers: shared hit=71",
+            "         ->  Hash Left Join  (cost=49.99..60.02 rows=20 width=613) (actual time=0.923..0.936 rows=20.00 loops=1)",
+            "               Hash Cond: (p0.id = p2.product_id)",
+            "               Buffers: shared hit=30",
+            "               ->  Hash Join  (cost=49.98..59.92 rows=20 width=609) (actual time=0.914..0.923 rows=20.00 loops=1)",
+            "                     Hash Cond: (p0.id = p0_1.id)",
+            "                     Buffers: shared hit=30",
+            "                     ->  Seq Scan on product p0  (cost=0.00..9.53 rows=153 width=609) (actual time=0.014..0.020 rows=153.00 loops=1)",
+            "                           Buffers: shared hit=8",
+            "                     ->  Hash  (cost=49.73..49.73 rows=20 width=32) (actual time=0.841..0.843 rows=20.00 loops=1)",
+            "                           Buckets: 1024  Batches: 1  Memory Usage: 10kB",
+            "                           Buffers: shared hit=22",
+            "                           ->  Subquery Scan on p0_1  (cost=49.48..49.73 rows=20 width=32) (actual time=0.833..0.838 rows=20.00 loops=1)"
+          ]
+        },
+        {
+          "seq": 5,
+          "nodeType": "Aggregate",
+          "actualRows": 1,
+          "planningTimeMs": 6.904,
+          "executionTimeMs": 0.734,
+          "loggedDurationMs": 3.523,
+          "sharedHitBlocks": 25,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select count(distinct(\"p0\".\"id\")) as \"count\" from \"product\" as \"p0\" left join \"product_variant\" as \"p1\" on \"p0\".\"id\" = \"p1\".\"product_id\" and \"p1\".\"deleted_at\" is null where (\"p0\".\"title\" ilike '%Everyday%' or \"p0\".\"subtitle\" ilike '%Everyday%' or \"p0\".\"description\" ilike '%Everyday%' or ((\"p1\".\"title\" ilike '%Everyday%",
+          "planSummaryLines": [
+            " Aggregate  (cost=71.82..71.83 rows=1 width=8) (actual time=0.627..0.627 rows=1.00 loops=1)",
+            "   Buffers: shared hit=25",
+            "   ->  Sort  (cost=68.39..70.11 rows=685 width=32) (actual time=0.592..0.602 rows=490.00 loops=1)",
+            "         Sort Key: p0.id",
+            "         Sort Method: quicksort  Memory: 25kB",
+            "         Buffers: shared hit=25",
+            "         ->  Hash Right Join  (cost=12.97..36.13 rows=685 width=32) (actual time=0.139..0.491 rows=490.00 loops=1)",
+            "               Hash Cond: (p1.product_id = p0.id)",
+            "               Filter: ((p0.title ~~* '%Everyday%'::text) OR (p0.subtitle ~~* '%Everyday%'::text) OR (p0.description ~~* '%Everyday%'::text) OR (p1.title ~~* '%Everyday%'::text) OR (p1.sku ~~* '%Everyday%'::text) OR (p1.barcode ~~* '%Everyday%'::text) OR (p1.ean ~~* '%Everyday%'::text) OR (p1.upc ~~* '%Everyday%'::text))",
+            "               Rows Removed by Filter: 223",
+            "               Buffers: shared hit=22",
+            "               ->  Seq Scan on product_variant p1  (cost=0.00..21.13 rows=713 width=154) (actual time=0.006..0.085 rows=713.00 loops=1)",
+            "                     Filter: (deleted_at IS NULL)",
+            "                     Buffers: shared hit=14",
+            "               ->  Hash  (cost=11.06..11.06 rows=153 width=186) (actual time=0.091..0.091 rows=153.00 loops=1)",
+            "                     Buckets: 1024  Batches: 1  Memory Usage: 36kB",
+            "                     Buffers: shared hit=8",
+            "                     ->  Seq Scan on product p0  (cost=0.38..11.06 rows=153 width=186) (actual time=0.021..0.069 rows=153.00 loops=1)"
+          ]
+        },
+        {
+          "seq": 6,
+          "nodeType": "Index Scan",
+          "actualRows": 80,
+          "planningTimeMs": 4.772,
+          "executionTimeMs": 0.071,
+          "loggedDurationMs": 1.268,
+          "sharedHitBlocks": 10,
+          "sharedReadBlocks": 0,
+          "sqlSummary": "select \"p0\".*, \"p0\".\"product_id\" as \"product_id\" from \"product_variant\" as \"p0\" where \"p0\".\"deleted_at\" is null and \"p0\".\"product_id\" in (<20 IDs>)",
+          "planSummaryLines": [
+            " Index Scan using \"IDX_product_variant_product_id\" on product_variant p0  (cost=0.28..14.97 rows=74 width=459) (actual time=0.023..0.038 rows=80.00 loops=1)",
+            "   Index Cond: (product_id = ANY ('{<20 product IDs>}'::text[]))",
+            "   Index Searches: 1",
+            "   Buffers: shared hit=10",
+            " Planning:",
+            "   Buffers: shared hit=334",
+            " Planning Time: 3.804 ms",
+            " Execution Time: 0.065 ms"
+          ]
+        }
+      ]
+    }
+  }
+}

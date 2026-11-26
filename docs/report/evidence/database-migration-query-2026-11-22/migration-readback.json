@@ -1,0 +1,471 @@
+{
+  "generatedAt": "2026-11-23T03:36:30+07:00",
+  "checkpointDate": "2026-11-22",
+  "gitBaseCommit": "9b52ba07cd68df2232185e3fa283793f0e7a84fb",
+  "branch": "data-05-06-migration-rights-guardrails",
+  "environment": {
+    "os": "Windows",
+    "nodeRuntime": "24.21.0",
+    "repoPinnedNode": "24.22.1",
+    "npmVersion": "11.12.1",
+    "medusaVersion": "2.21.2",
+    "postgresVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+    "redisMode": "disabled (REDIS_URL empty; @medusajs/workflow-engine-inmemory)",
+    "isolation": "ephemeral PostgreSQL 18.4 cluster bound to localhost loopback only; destroyed after verification"
+  },
+  "migrationCountNuance": {
+    "withoutRedisUrl": 186,
+    "withRedisUrlObserved": 187,
+    "differenceCause": "@medusajs/workflow-engine-redis registers 8 migrations vs 7 migrations for @medusajs/workflow-engine-inmemory in Medusa 2.21.2",
+    "linkModuleMigrations": 20,
+    "customDaymarkMigrations": [
+      "Migration20261103195231",
+      "Migration20261107144837",
+      "Migration20261107150232",
+      "Migration20261107151743"
+    ]
+  },
+  "freshInstall": {
+    "database": "daymark_data05_fresh",
+    "preMigrationsTable": "ABSENT",
+    "postMikroOrmMigrationsTotal": 186,
+    "postLinkModuleMigrationsTotal": 20,
+    "postPublicTablesTotal": 153,
+    "postPublicIndexesTotal": 617,
+    "customMigrationsApplied": [
+      {
+        "name": "Migration20261103195231",
+        "executed_at": "2026-11-23T03:32:45.772517+07:00"
+      },
+      {
+        "name": "Migration20261107144837",
+        "executed_at": "2026-11-23T03:32:45.925784+07:00"
+      },
+      {
+        "name": "Migration20261107150232",
+        "executed_at": "2026-11-23T03:32:45.925784+07:00"
+      },
+      {
+        "name": "Migration20261107151743",
+        "executed_at": "2026-11-23T03:32:45.925784+07:00"
+      }
+    ],
+    "customTables": [
+      "recommendation_active",
+      "recommendation_candidate",
+      "recommendation_consent",
+      "recommendation_event",
+      "recommendation_profile",
+      "recommendation_run"
+    ],
+    "customIndexes": [
+      {
+        "table": "recommendation_active",
+        "index": "IDX_recommendation_active_deleted_at",
+        "def": "CREATE INDEX \"IDX_recommendation_active_deleted_at\" ON public.recommendation_active USING btree (deleted_at) WHERE (deleted_at IS NULL)"
+      },
+      {
+        "table": "recommendation_active",
+        "index": "recommendation_active_pkey",
+        "def": "CREATE UNIQUE INDEX recommendation_active_pkey ON public.recommendation_active USING btree (id)"
+      },
+      {
+        "table": "recommendation_candidate",
+        "index": "IDX_recommendation_candidate_deleted_at",
+        "def": "CREATE INDEX \"IDX_recommendation_candidate_deleted_at\" ON public.recommendation_candidate USING btree (deleted_at) WHERE (deleted_at IS NULL)"
+      },
+      {
+        "table": "recommendation_candidate",
+        "index": "IDX_recommendation_candidate_run_id_placement_context_key_rank_",
+        "def": "CREATE UNIQUE INDEX \"IDX_recommendation_candidate_run_id_placement_context_key_rank_\" ON public.recommendation_candidate USING btree (run_id, placement, context_key, rank) WHERE (deleted_at IS NULL)"
+      },
+      {
+        "table": "recommendation_candidate",
+        "index": "IDX_recommendation_candidate_run_id_placement_context_key_targe",
+        "def": "CREATE UNIQUE INDEX \"IDX_recommendation_candidate_run_id_placement_context_key_targe\" ON public.recommendation_candidate USING btree (run_id, placement, context_key, target_product_id) WHERE (deleted_at IS NULL)"
+      },
+      {
+        "table": "recommendation_candidate",
+        "index": "recommendation_candidate_pkey",
+        "def": "CREATE UNIQUE INDEX recommendation_candidate_pkey ON public.recommendation_candidate USING btree (id)"
+      },
+      {
+        "table": "recommendation_consent",
+        "index": "IDX_recommendation_consent_customer_id_unique",
+        "def": "CREATE UNIQUE INDEX \"IDX_recommendation_consent_customer_id_unique\" ON public.recommendation_consent USING btree (customer_id) WHERE (deleted_at IS NULL)"
+      },
+      {
+        "table": "recommendation_consent",
+        "index": "IDX_recommendation_consent_deleted_at",
+        "def": "CREATE INDEX \"IDX_recommendation_consent_deleted_at\" ON public.recommendation_consent USING btree (deleted_at) WHERE (deleted_at IS NULL)"
+      },
+      {
+        "table": "recommendation_consent",
+        "index": "recommendation_consent_pkey",
+        "def": "CREATE UNIQUE INDEX recommendation_consent_pkey ON public.recommendation_consent USING btree (id)"
+      },
+      {
+        "table": "recommendation_event",
+        "index": "IDX_recommendation_event_customer_id_created_at",
+        "def": "CREATE INDEX \"IDX_recommendation_event_customer_id_created_at\" ON public.recommendation_event USING btree (customer_id, created_at) WHERE (deleted_at IS NULL)"
+      },
+      {
+        "table": "recommendation_event",
+        "index": "IDX_recommendation_event_deleted_at",
+        "def": "CREATE INDEX \"IDX_recommendation_event_deleted_at\" ON public.recommendation_event USING btree (deleted_at) WHERE (deleted_at IS NULL)"
+      },
+      {
+        "table": "recommendation_event",
+        "index": "IDX_recommendation_event_event_key_unique",
+        "def": "CREATE UNIQUE INDEX \"IDX_recommendation_event_event_key_unique\" ON public.recommendation_event USING btree (event_key) WHERE (deleted_at IS NULL)"
+      },
+      {
+        "table": "recommendation_event",
+        "index": "recommendation_event_pkey",
+        "def": "CREATE UNIQUE INDEX recommendation_event_pkey ON public.recommendation_event USING btree (id)"
+      },
+      {
+        "table": "recommendation_profile",
+        "index": "IDX_recommendation_profile_customer_id_unique",
+        "def": "CREATE UNIQUE INDEX \"IDX_recommendation_profile_customer_id_unique\" ON public.recommendation_profile USING btree (customer_id) WHERE (deleted_at IS NULL)"
+      },
+      {
+        "table": "recommendation_profile",
+        "index": "IDX_recommendation_profile_deleted_at",
+        "def": "CREATE INDEX \"IDX_recommendation_profile_deleted_at\" ON public.recommendation_profile USING btree (deleted_at) WHERE (deleted_at IS NULL)"
+      },
+      {
+        "table": "recommendation_profile",
+        "index": "recommendation_profile_pkey",
+        "def": "CREATE UNIQUE INDEX recommendation_profile_pkey ON public.recommendation_profile USING btree (id)"
+      },
+      {
+        "table": "recommendation_run",
+        "index": "IDX_recommendation_run_deleted_at",
+        "def": "CREATE INDEX \"IDX_recommendation_run_deleted_at\" ON public.recommendation_run USING btree (deleted_at) WHERE (deleted_at IS NULL)"
+      },
+      {
+        "table": "recommendation_run",
+        "index": "IDX_recommendation_run_version_unique",
+        "def": "CREATE UNIQUE INDEX \"IDX_recommendation_run_version_unique\" ON public.recommendation_run USING btree (version) WHERE (deleted_at IS NULL)"
+      },
+      {
+        "table": "recommendation_run",
+        "index": "recommendation_run_pkey",
+        "def": "CREATE UNIQUE INDEX recommendation_run_pkey ON public.recommendation_run USING btree (id)"
+      }
+    ],
+    "notificationIntentExists": false,
+    "idempotentRerunPending": 0,
+    "idempotentRerunTotal": 186
+  },
+  "upgradeDrillA_CoreToCustom": {
+    "database": "daymark_data05_upgrade",
+    "description": "Pre-custom commerce baseline (182 core migrations, 0 custom tables, 33 published products / 233 variants / 234 VND prices / 2,609 stock) upgraded via medusa db:migrate to 186 migrations",
+    "pendingBeforeUpgrade": 4,
+    "appliedDuringUpgrade": [
+      "Migration20261103195231",
+      "Migration20261107144837",
+      "Migration20261107150232",
+      "Migration20261107151743"
+    ],
+    "before": {
+      "mikro_orm_migrations_total": 182,
+      "custom_migrations": [],
+      "custom_tables": [],
+      "products_total": 33,
+      "products_published": 33,
+      "variants_total": 233,
+      "prices_vnd_total": 234,
+      "inventory_levels_total": 233,
+      "stocked_quantity_sum": 2609,
+      "sales_channels": 2,
+      "regions": 1,
+      "sample_products": [
+        {
+          "handle": "ao-thun-essential",
+          "status": "published"
+        },
+        {
+          "handle": "binh-giu-nhiet-500ml",
+          "status": "published"
+        },
+        {
+          "handle": "dm-bag-canvas",
+          "status": "published"
+        },
+        {
+          "handle": "dm-bag-crossbody",
+          "status": "published"
+        },
+        {
+          "handle": "dm-bag-weekend",
+          "status": "published"
+        }
+      ]
+    },
+    "after": {
+      "mikro_orm_migrations_total": 186,
+      "custom_migrations": [
+        "Migration20261103195231",
+        "Migration20261107144837",
+        "Migration20261107150232",
+        "Migration20261107151743"
+      ],
+      "custom_tables": [
+        "recommendation_active",
+        "recommendation_candidate",
+        "recommendation_consent",
+        "recommendation_event",
+        "recommendation_profile",
+        "recommendation_run"
+      ],
+      "products_total": 33,
+      "products_published": 33,
+      "variants_total": 233,
+      "prices_vnd_total": 234,
+      "inventory_levels_total": 233,
+      "stocked_quantity_sum": 2609,
+      "sales_channels": 2,
+      "regions": 1,
+      "sample_products": [
+        {
+          "handle": "ao-thun-essential",
+          "status": "published"
+        },
+        {
+          "handle": "binh-giu-nhiet-500ml",
+          "status": "published"
+        },
+        {
+          "handle": "dm-bag-canvas",
+          "status": "published"
+        },
+        {
+          "handle": "dm-bag-crossbody",
+          "status": "published"
+        },
+        {
+          "handle": "dm-bag-weekend",
+          "status": "published"
+        }
+      ]
+    },
+    "dataPreservedExactMatch": true
+  },
+  "upgradeDrillB_InPlaceEventEvolution": {
+    "database": "daymark_data05_upgrade",
+    "description": "In-place upgrade of recommendation_event from Migration20261107150232 (10 cols, 2 event types) to Migration20261107151743 (12 cols, occurred_at backfill, order_line_key, 4 event types) with synthetic records",
+    "pendingBeforeUpgrade": 1,
+    "appliedDuringUpgrade": [
+      "Migration20261107151743"
+    ],
+    "preUpgradePgDumpCustomFormatBytes": 531928,
+    "before": {
+      "applied_custom_migrations": [
+        "Migration20261103195231",
+        "Migration20261107144837",
+        "Migration20261107150232"
+      ],
+      "event_columns": [
+        {
+          "col": "id",
+          "nullable": "NO",
+          "type": "text"
+        },
+        {
+          "col": "event_key",
+          "nullable": "NO",
+          "type": "text"
+        },
+        {
+          "col": "customer_id",
+          "nullable": "NO",
+          "type": "text"
+        },
+        {
+          "col": "consent_epoch",
+          "nullable": "NO",
+          "type": "integer"
+        },
+        {
+          "col": "event_type",
+          "nullable": "NO",
+          "type": "text"
+        },
+        {
+          "col": "product_id",
+          "nullable": "NO",
+          "type": "text"
+        },
+        {
+          "col": "placement",
+          "nullable": "YES",
+          "type": "text"
+        },
+        {
+          "col": "created_at",
+          "nullable": "NO",
+          "type": "timestamp with time zone"
+        },
+        {
+          "col": "updated_at",
+          "nullable": "NO",
+          "type": "timestamp with time zone"
+        },
+        {
+          "col": "deleted_at",
+          "nullable": "YES",
+          "type": "timestamp with time zone"
+        }
+      ],
+      "event_check_def": "CHECK ((event_type = ANY (ARRAY['product_view'::text, 'recommendation_click'::text])))",
+      "consent_count": 2,
+      "event_count": 3,
+      "profile_count": 1,
+      "events": [
+        {
+          "id": "persevt_synth_1",
+          "event_type": "product_view",
+          "created_at": "2026-11-20T15:05:00+07:00"
+        },
+        {
+          "id": "persevt_synth_2",
+          "event_type": "recommendation_click",
+          "created_at": "2026-11-20T15:10:00+07:00"
+        },
+        {
+          "id": "persevt_synth_3",
+          "event_type": "product_view",
+          "created_at": "2026-11-20T15:15:00+07:00"
+        }
+      ]
+    },
+    "after": {
+      "applied_custom_migrations": [
+        "Migration20261103195231",
+        "Migration20261107144837",
+        "Migration20261107150232",
+        "Migration20261107151743"
+      ],
+      "event_columns": [
+        {
+          "col": "id",
+          "nullable": "NO",
+          "type": "text"
+        },
+        {
+          "col": "event_key",
+          "nullable": "NO",
+          "type": "text"
+        },
+        {
+          "col": "customer_id",
+          "nullable": "NO",
+          "type": "text"
+        },
+        {
+          "col": "consent_epoch",
+          "nullable": "NO",
+          "type": "integer"
+        },
+        {
+          "col": "event_type",
+          "nullable": "NO",
+          "type": "text"
+        },
+        {
+          "col": "product_id",
+          "nullable": "NO",
+          "type": "text"
+        },
+        {
+          "col": "placement",
+          "nullable": "YES",
+          "type": "text"
+        },
+        {
+          "col": "created_at",
+          "nullable": "NO",
+          "type": "timestamp with time zone"
+        },
+        {
+          "col": "updated_at",
+          "nullable": "NO",
+          "type": "timestamp with time zone"
+        },
+        {
+          "col": "deleted_at",
+          "nullable": "YES",
+          "type": "timestamp with time zone"
+        },
+        {
+          "col": "occurred_at",
+          "nullable": "NO",
+          "type": "timestamp with time zone"
+        },
+        {
+          "col": "order_line_key",
+          "nullable": "YES",
+          "type": "text"
+        }
+      ],
+      "event_check_def": "CHECK ((event_type = ANY (ARRAY['product_view'::text, 'recommendation_click'::text, 'order_placed'::text, 'order_canceled'::text])))",
+      "consent_count": 2,
+      "event_count": 3,
+      "profile_count": 1,
+      "backfill_exact_match_count": 3,
+      "events": [
+        {
+          "id": "persevt_synth_1",
+          "event_type": "product_view",
+          "created_at": "2026-11-20T15:05:00+07:00",
+          "occurred_at": "2026-11-20T15:05:00+07:00",
+          "order_line_key": null
+        },
+        {
+          "id": "persevt_synth_2",
+          "event_type": "recommendation_click",
+          "created_at": "2026-11-20T15:10:00+07:00",
+          "occurred_at": "2026-11-20T15:10:00+07:00",
+          "order_line_key": null
+        },
+        {
+          "id": "persevt_synth_3",
+          "event_type": "product_view",
+          "created_at": "2026-11-20T15:15:00+07:00",
+          "occurred_at": "2026-11-20T15:15:00+07:00",
+          "order_line_key": null
+        }
+      ],
+      "products_published": 33,
+      "stocked_quantity_sum": 2609
+    },
+    "postUpgradeOrderPlacedInsertCount": 1,
+    "backfillExactMatch": true
+  },
+  "separateDbRestoreDrill": {
+    "database": "daymark_data05_restore_check",
+    "sourceDumpBytes": 531928,
+    "restoredReadback": {
+      "mikro_orm_migrations_total": 185,
+      "applied_custom_migrations": [
+        "Migration20261103195231",
+        "Migration20261107144837",
+        "Migration20261107150232"
+      ],
+      "products_published": 33,
+      "variants_total": 233,
+      "stocked_quantity_sum": 2609,
+      "recommendation_event_count": 3,
+      "recommendation_consent_count": 2,
+      "recommendation_profile_count": 1
+    },
+    "exactPreUpgradeMatch": true
+  },
+  "awsCloudState": {
+    "status": "UNKNOWN / NOT RUN (Week 2 scope)",
+    "historicalReference": "docs/report/aws-redeployment-main389e855-2026-11-09.md (RDS PostgreSQL 16.15 on 2026-11-09)",
+    "operationsExecutedAgainstAws": 0
+  }
+}
