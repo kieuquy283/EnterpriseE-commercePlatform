@@ -13,6 +13,8 @@
 | Baseline schema Medusa, ERD v3, từ điển và khoảng trống dữ liệu | [DATA-01](database-baseline.md) |
 | Đối soát checkout, thanh toán và tồn kho | [Báo cáo DATA-03](../report/checkout-reconciliation-2026-11-20.md) |
 | Định nghĩa chỉ số đơn hàng, tồn thấp và COD, kèm dữ liệu mẫu | [DATA-04](reporting-data-definitions.md) |
+| DB readiness, kế hoạch migration an toàn, quay lui/phục hồi và truy vấn local | [DATA-05](database-migration-readiness.md), [Báo cáo DATA-05](../report/database-migration-query-2026-11-22.md) |
+| Quyền dữ liệu gợi ý, ma trận feature flag và điều kiện bật cá nhân hóa | [DATA-06](recommendation-rights-guardrails.md), [Báo cáo DATA-06](../report/recommendation-guardrails-2026-11-22.md) |
 | Regression auth/API boundary của cart, kèm bằng chứng ngày 18/11/2026 | [Báo cáo BE-01](../report/api-boundary-regression-2026-11-18.md) |
 | Kế hoạch kiểm thử hiệu năng, độ tin cậy, bảo mật và gợi ý | [Kiểm thử kỹ thuật](../spec/05-testing.md) |
 | Bảo mật AWS, phát hành, quay lui, khôi phục, giám sát và chi phí | [Vận hành](../spec/06-operations.md), [hướng dẫn triển khai](../../deploy/RUNBOOK.md) |
