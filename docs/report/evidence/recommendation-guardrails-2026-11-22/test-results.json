@@ -1,0 +1,95 @@
+{
+  "generatedAt": "2026-11-23T03:46:49+07:00",
+  "checkpointDate": "2026-11-22",
+  "gitBaseCommit": "9b52ba07cd68df2232185e3fa283793f0e7a84fb",
+  "branch": "data-05-06-migration-rights-guardrails",
+  "environment": {
+    "os": "Windows",
+    "nodeRuntime": "24.21.0",
+    "repoPinnedNode": "24.22.1",
+    "npmVersion": "11.12.1",
+    "medusaVersion": "2.21.2",
+    "postgresVersion": "PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit",
+    "redisMode": "REDIS_URL empty; no external Redis exercised",
+    "isolation": "ephemeral PostgreSQL 18.4 cluster bound to localhost loopback; separate DB created per suite"
+  },
+  "suiteFileChecksumsSha256": {
+    "apps/backend/integration-tests/http/personalization-consent.spec.ts": "2bbb9c0d47ee45627532301e4dc598dfdcb4c9c4b15733de11996cc4285be0c9",
+    "apps/backend/integration-tests/http/recommendations.spec.ts": "a44a96745a1c2a4fd36441957fe62bb44d220eb59a61609c93d922b7147ea92d"
+  },
+  "checks": [
+    {
+      "id": "BE-LINT",
+      "command": "npm run lint --workspace=@dtc/backend",
+      "status": "PASS",
+      "summary": "0 lint errors/warnings after DATA-06 test updates"
+    },
+    {
+      "id": "BE-TYPECHECK",
+      "command": "npm run typecheck --workspace=@dtc/backend",
+      "status": "PASS",
+      "summary": "tsc --noEmit exited 0"
+    },
+    {
+      "id": "BE-UNIT",
+      "command": "npm run test:unit --workspace=@dtc/backend",
+      "status": "PASS",
+      "suitesPassed": 13,
+      "suitesTotal": 13,
+      "testsPassed": 121,
+      "testsTotal": 121,
+      "notes": "Includes recommendation + personalization policy/rank/consent/order-event unit suites"
+    },
+    {
+      "id": "BE-BUILD",
+      "command": "npm run build --workspace=@dtc/backend",
+      "status": "PASS",
+      "summary": "Backend compiled in 10.32s; Admin frontend built in 30.64s"
+    },
+    {
+      "id": "DATA06-HTTP-PERSONALIZATION",
+      "command": "npm run test:integration:http --workspace=@dtc/backend -- --runTestsByPath integration-tests/http/personalization-consent.spec.ts",
+      "status": "PASS",
+      "suitesPassed": 1,
+      "suitesTotal": 1,
+      "testsPassed": 1,
+      "testsTotal": 1,
+      "durationSec": 27.276,
+      "verifiedScenarios": [
+        "ENABLE_PERSONALIZED_RECOMMENDATIONS=false and ENABLE_PERSONALIZATION_EVENTS=false -> 404 on consent GET/POST, events POST, and for-you GET",
+        "ENABLE_PERSONALIZATION_EVENTS=false with personalization ON -> 404 on events POST while consent GET returns granted=false",
+        "Guest (unauthenticated) -> 401 on consent GET/POST, events POST, and for-you GET",
+        "Authenticated customer without consent -> consent.granted=false, event POST returns 403, for-you returns personalized=false strategy=catalog_fallback reason=no_consent with Cache-Control: private, no-store",
+        "Opt-in Customer A & Customer B -> separate consent state and different top-ranked for-you products for the two view histories; consent POST and for-you GET reject client-supplied customer_id",
+        "Revoke Customer A (epoch 2) -> physical 0 rows in recommendation_event and 0 rows in recommendation_profile for A, while Customer B retains 1 event and 1 profile; for-you for A falls back with reason=no_consent",
+        "Re-opt-in Customer A (epoch 3) -> cold_start_or_profile_pending fallback before new activity; attempt with consentEpoch=1 via recordPersonalizationEventWorkflow returns accepted=false and leaves zero event rows for A; a new view creates the epoch-3 event and profile and restores personalized=true",
+        "Direct call to rebuildPersonalizationProfiles with Customer A's profile removed -> zero profiles when ENABLE_PERSONALIZATION_PROFILE_JOB=false and one epoch-3 profile when true",
+        "Active pointer references a nonexistent run -> for-you returns 200 with personalized=false, strategy=catalog_fallback, reason=candidate_store_unavailable and at least one product"
+      ]
+    },
+    {
+      "id": "DATA06-HTTP-RECOMMENDATIONS",
+      "command": "npm run test:integration:http --workspace=@dtc/backend -- --runTestsByPath integration-tests/http/recommendations.spec.ts",
+      "status": "PASS",
+      "suitesPassed": 1,
+      "suitesTotal": 1,
+      "testsPassed": 1,
+      "testsTotal": 1,
+      "durationSec": 49.341,
+      "verifiedScenarios": [
+        "ENABLE_RECOMMENDATIONS=false -> 404 on /store/recommendations",
+        "Idempotent publish of staged recommendation run, rollback to prior run, region-priced VND output, sales-channel filtering, stock availability and backorder checks, input validation"
+      ]
+    },
+    {
+      "id": "DATA06-BROWSER-E2E-ON",
+      "status": "NOT RUN",
+      "reason": "Playwright browser E2E with personalization flags ON was not executed in this backend/DB checkpoint; storefront flags remain OFF by default"
+    },
+    {
+      "id": "DATA06-RIGHTS-PUBLIC-SIGNOFF",
+      "status": "BLOCKED",
+      "reason": "OPEN-ASSET-001 (H&M Kaggle dataset/image rights + DAYMARK representative demo image licensing) and OPEN-DATA-003 (approved privacy/retention policy) remain OPEN; public release and personalization remain OFF/NO-GO"
+    }
+  ]
+}

@@ -111,6 +111,15 @@ medusaIntegrationTestRunner({
       const { result: [unpricedRegion] } = await createRegionsWorkflow(container).run({ input: { regions: [{ name: "Unpriced", currency_code: "usd", countries: ["us"] }] } })
       const unpriced = await api.get(`/store/recommendations?placement=home&region_id=${unpricedRegion.id}`, { headers })
       expect(unpriced.data.products).toEqual([])
+      const prevRecFlag = process.env.ENABLE_RECOMMENDATIONS
+      try {
+        process.env.ENABLE_RECOMMENDATIONS = "false"
+        await expect(api.get(`/store/recommendations?placement=home&region_id=${region}`, { headers }))
+          .rejects.toMatchObject({ response: { status: 404 } })
+      } finally {
+        if (prevRecFlag === undefined) delete process.env.ENABLE_RECOMMENDATIONS
+        else process.env.ENABLE_RECOMMENDATIONS = prevRecFlag
+      }
       // Only the runner-owned, disposable database may exercise migration down.
       const config = container.resolve(ContainerRegistrationKeys.CONFIG_MODULE)
       expect(new URL(config.projectConfig.databaseUrl!).pathname).toMatch(/^\/medusa-.+-integration-\d+$/)

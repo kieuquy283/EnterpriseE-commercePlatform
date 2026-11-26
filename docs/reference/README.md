@@ -6,6 +6,8 @@ Các tài liệu này hỗ trợ [đặc tả hiện hành](../README.md), khôn
 <a id="historical-engineering-evidence"></a>
 ## Bằng chứng kỹ thuật lịch sử
 
+- [Kiểm chứng migration, readback và truy vấn local DATA-05 tại checkpoint 22/11](../report/database-migration-query-2026-11-22.md) ghi kết quả cài mới, nâng cấp schema, phục hồi sang DB riêng và `EXPLAIN (ANALYZE, BUFFERS)` trên 153 sản phẩm gồm 120 sản phẩm tổng hợp. Thắng chủ trì xác minh AWS live ở Tuần 2, Trung phối hợp đối soát dữ liệu.
+- [Kiểm chứng guardrail gợi ý và đồng ý cá nhân hóa DATA-06 tại checkpoint 22/11](../report/recommendation-guardrails-2026-11-22.md) ghi kết quả HTTP trên PostgreSQL cô lập cho cờ OFF, guest, cô lập hai khách, thu hồi consent, cấp lại consent với epoch mới và fallback. Quyết định bàn giao giữ personalization OFF.
 - [Đối soát checkout, thanh toán và tồn kho DATA-03 ngày 20 tháng 11](../report/checkout-reconciliation-2026-11-20.md): 5 ca kiểm thử HTTP và 7 snapshot readback (simulator, hủy trước fulfillment, gửi lặp, tranh tồn 20/5, COD authorize và capture kỹ thuật) trên PostgreSQL test dùng riêng.
 - [Kiểm chứng danh mục DATA-02 ngày 18 tháng 11](../report/daymark-catalog-validation-2026-11-18.md) ghi kết quả nhập lặp, đối soát SKU và tồn, kiểm tra ảnh và các ca từ chối trên database dùng riêng.
 - [Regression API boundary auth/cart ngày 18 tháng 11](../report/api-boundary-regression-2026-11-18.md): HTTP negative cases, checkout compatibility và giới hạn kiểm chứng; không phải nghiệm thu production.
