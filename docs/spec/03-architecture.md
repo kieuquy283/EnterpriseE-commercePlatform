@@ -11,7 +11,6 @@ DAYMARK là MVP thương mại quần áo hướng đến vận hành thực t�
 ```mermaid
 flowchart LR
   Customer[Customer browser] -->|HTTPS| ALB[ALB and ACM]
-  Staff[Staff browser] -->|HTTPS Staff interface| ALB
   Administrator[Admin browser] -->|HTTPS Admin| ALB
   ALB -->|Store hostname| Web[Next.js storefront]
   ALB -->|API hostname| API[Medusa API and Admin]
@@ -94,7 +93,7 @@ Template cấu hình API từ **một đến hai task**, mục tiêu **CPU trung
 
 | ADR-11 | Image Node 24 trên Alpine 3.24, cập nhật bản vá distro và quét image trước phát hành | Debian Bookworm slim với các finding OS chưa vá; đổi framework hoặc cloud | Loại nhóm package Debian gây chặn triển khai nhưng đổi glibc sang musl; phải kiểm build, Sharp/SWC, API/worker/Admin, media và browser trên image thật. Giữ image cũ làm bằng chứng, không dùng rollback có finding HIGH/CRITICAL chưa xử lý. |
 
-Quyết định bổ sung: [ADR-013 — Staff tra cứu được giao và SMTP](../06-architecture/adr/ADR-013-staff-read-and-smtp-verification.md) giới hạn surface Staff chỉ đọc và định nghĩa ngữ nghĩa notification/khóa; không phê duyệt các quyền mutation còn mở.
+Quyết định bổ sung: [ADR-013 — Kiểm chứng SMTP](../06-architecture/adr/ADR-013-smtp-verification.md) định nghĩa ngữ nghĩa gửi thông báo và cơ chế khóa.
 
 Các quyết định xác định hướng chọn; migration/tái cấu trúc còn ở [công việc](07-delivery.md). [Quyết định AWS lịch sử](../architecture/adr/0001-aws-cloud-stack.md) ghi bối cảnh triển khai, không chứng minh uptime hiện tại.
 

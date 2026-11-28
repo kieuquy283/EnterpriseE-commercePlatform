@@ -16,10 +16,6 @@ export default defineMiddlewares({
       middlewares: [requestObservability],
     },
     {
-      matcher: "/staff/*",
-      middlewares: [authenticate("user", ["session", "bearer"])],
-    },
-    {
       matcher: "/admin*",
       middlewares: [
         authenticate("user", ["session", "bearer", "api-key"], {

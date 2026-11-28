@@ -4,7 +4,6 @@ import { execFile } from "node:child_process"
 import { promisify } from "node:util"
 import { readFileSync, writeFileSync } from "node:fs"
 import { randomUUID } from "node:crypto"
-import { chromium, expect } from "@playwright/test"
 
 assert.equal(process.env.GITHUB_ACTIONS, "true")
 assert.equal(process.env.RUNNER_ENVIRONMENT, "github-hosted")
@@ -13,7 +12,6 @@ assert.match(prefix || "", /^daymark-ci-[0-9]+-[0-9]+$/)
 const directory = process.env.CI_OPERATIONS_FIXTURE_DIR
 assert.ok(directory && directory.startsWith(process.env.RUNNER_TEMP + "/daymark-ci."))
 const admin = JSON.parse(readFileSync(directory + "/admin.json"))
-const staff = JSON.parse(readFileSync(directory + "/staff.json"))
 const key = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 assert.ok(key)
 const execute = promisify(execFile)
@@ -45,7 +43,7 @@ async function success(path, data, token) {
   assert.ok(result.status >= 200 && result.status < 300, `HTTP failure at ${path.split("?")[0]}`)
   return result.body
 }
-async function fixture(action, orderId, staffId) {
+async function fixture(action, orderId) {
   await execute(
     "docker",
     [
@@ -64,7 +62,6 @@ async function fixture(action, orderId, staffId) {
       "-e",
       `DAYMARK_TEST_ORDER_ID=${orderId}`,
       "-e",
-      `DAYMARK_TEST_STAFF_ID=${staffId || ""}`,
       `daymark-backend:${process.env.GITHUB_SHA}`,
       "node",
       "../../../../node_modules/@medusajs/cli/cli.js",
@@ -101,18 +98,11 @@ async function until(probe, label, timeout = 90000) {
 let phase = "setup"
 let failure = null
 let adminToken
-let browser
 let stockBefore
 let inventoryPath
 let inventoryVariantId
 try {
   adminToken = (await success("/auth/user/emailpass", admin)).token
-  const tokens = await Promise.all(
-    staff.map(
-      async ({ email, password }) =>
-        (await success("/auth/user/emailpass", { email, password })).token,
-    ),
-  )
   const region = (await success("/store/regions")).regions.find(
     (item) => item.currency_code === "vnd",
   )
@@ -159,67 +149,6 @@ try {
     return result.order.id
   }
   const first = await checkout()
-  await success(
-    `/admin/users/${staff[0].id}`,
-    { metadata: { daymark_admin_access: "blocked_staff", daymark_assigned_order_ids: [first] } },
-    adminToken,
-  )
-  const assigned = await success(`/staff/orders/${first}`, undefined, tokens[0])
-  assert.deepEqual(Object.keys(assigned.order).sort(), ["display_id", "id", "items", "status"])
-  assert.equal((await request(`/staff/orders/${first}`, undefined, tokens[1])).status, 404)
-  assert.equal((await request("/admin/orders", undefined, tokens[0])).status, 403)
-  assert.equal((await request(`/staff/orders/${first}`)).status, 401)
-  assert.equal((await request(`/staff/orders/${first}`, {}, tokens[0])).status, 404)
-  passed("Staff assigned read DTO; unassigned, anonymous, mutation and full Admin denied")
-  phase = "staff_browser_launch"
-  browser = await chromium.launch({
-    ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH
-      ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH }
-      : {}),
-  })
-  const context = await browser.newContext()
-  const page = await context.newPage()
-  phase = "staff_browser_page"
-  await page.goto("http://localhost:8000/vn/staff")
-  phase = "staff_browser_email"
-  await page.getByLabel("Email nhân viên").fill(staff[0].email)
-  phase = "staff_browser_password"
-  await page.getByLabel("Mật khẩu", { exact: true }).fill(staff[0].password)
-  phase = "staff_browser_login"
-  await page.getByRole("button", { name: "Đăng nhập nhân viên", exact: true }).click()
-  await expect(page.getByLabel("Mã đơn hàng")).toBeVisible()
-  phase = "staff_cookie"
-  const cookie = (await context.cookies()).find((item) => item.name === "_daymark_staff_jwt")
-  assert.ok(cookie?.httpOnly, "Staff cookie must be HTTP-only")
-  assert.ok(cookie.secure, "Staff cookie must be Secure")
-  assert.equal(cookie.sameSite, "Lax", "Staff cookie SameSite")
-  phase = "staff_lookup"
-  await page.getByLabel("Mã đơn hàng").fill(first)
-  await page.getByRole("button", { name: "Tra cứu đơn được giao" }).click()
-  await expect(page.getByTestId("staff-order")).toContainText("Core Cotton Tee")
-  await success(
-    `/admin/users/${staff[0].id}`,
-    { metadata: { daymark_admin_access: "blocked_staff", daymark_assigned_order_ids: [] } },
-    adminToken,
-  )
-  await success(
-    `/admin/users/${staff[1].id}`,
-    { metadata: { daymark_admin_access: "blocked_staff", daymark_assigned_order_ids: [first] } },
-    adminToken,
-  )
-  await page.reload()
-  await expect(page.getByTestId("staff-order")).toHaveCount(0)
-  await expect(page.getByTestId("staff-page").getByRole("alert")).toContainText("Không tìm thấy")
-  assert.equal((await request(`/staff/orders/${first}`, undefined, tokens[0])).status, 404)
-  assert.equal((await request(`/staff/orders/${first}`, undefined, tokens[1])).status, 200)
-  phase = "staff_revoke"
-  await fixture("revoke", first, staff[0].id)
-  assert.equal((await request("/staff/me", undefined, tokens[0])).status, 403)
-  assert.equal((await request("/admin/orders", undefined, tokens[0])).status, 403)
-  await page.reload()
-  await expect(page.getByRole("button", { name: "Đăng nhập nhân viên", exact: true })).toBeVisible()
-  await context.close()
-  passed("Staff browser login, secure cookie, assignment change and persisted revocation")
   phase = "notification_first_receipt"
   await until(async () => (await inbox(first)).length === 1, "SMTP receipt missing")
   await fixture("replay", first)
@@ -313,7 +242,6 @@ try {
       process.exitCode = 1
     }
   }
-  if (browser) await browser.close()
   writeFileSync(
     "ci-evidence/operations-e2e.json",
     JSON.stringify(

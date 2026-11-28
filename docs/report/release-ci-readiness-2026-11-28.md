@@ -1,4 +1,6 @@
-# R-OPS01/02 — kiểm chứng Staff và thông báo xuyên tiến trình
+# R-OPS01/02 — kiểm chứng thông báo xuyên tiến trình
+
+Số liệu dưới đây ghi nhận lần chạy lịch sử trên phiên bản trước khi tách Staff khỏi PR #29. Kết quả CI của bản cập nhật được ghi trên PR.
 
 Ngày 28/11/2026; nhánh `feat/release-ci-readiness`. Base mới nhất: `46c44bbcd46618cb35f6f0d95dcc76e8f433cb2f` (PR #28 đã merge trong lúc thực hiện). Phạm vi bổ sung theo yêu cầu: bỏ qua owner branch protection; hoàn thiện Staff-positive, notification worker/inbox và CI. Không merge PR #24/#27, không triển khai AWS hoặc gửi email ra ngoài.
 
@@ -9,7 +11,7 @@ Ngày 28/11/2026; nhánh `feat/release-ci-readiness`. Base mới nhất: `46c44b
 - Redis lock bọc read/claim/send/persist; job mỗi 10 giây với batch giới hạn, reclaim processing hết lease. Lỗi lưu audit sau khi đã lưu sent không mở lại record để gửi lần nữa. SMTP và database không cùng transaction; vẫn at-least-once nếu chết giữa SMTP acceptance và persist.
 - CI dùng network/container/volume riêng theo run label. PostgreSQL/Redis không publish cổng; API/storefront/inbox chỉ bind loopback. Importer giữ guard localhost bằng namespace PostgreSQL. Public URL frontend tách internal backend URL trong build/runtime. Credential ngẫu nhiên trong file `0600`, không command arguments, trace hoặc artifact.
 
-Thiết kế và giới hạn: [ADR-013](../06-architecture/adr/ADR-013-staff-read-and-smtp-verification.md); [hợp đồng CI](../technical/ci-verification.md).
+Thiết kế và giới hạn: [ADR-013](../06-architecture/adr/ADR-013-smtp-verification.md); [hợp đồng CI](../technical/ci-verification.md).
 
 ## Bằng chứng thực thi
 

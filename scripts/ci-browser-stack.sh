@@ -101,17 +101,9 @@ run_cli exec ./src/scripts/seed-daymark-catalog.js -- --apply --images demo
 docker run --rm --name "$CI_CONTAINER_PREFIX-cli" "${label[@]}" --network "container:$CI_CONTAINER_PREFIX-postgres" \
   --env-file "$fixture_dir/admin-runtime" "$backend_image" \
   node ../../../../node_modules/@medusajs/cli/cli.js exec ./src/scripts/bootstrap-preview-admin.js
-# No defaults: Staff identities and passwords are generated only in this private fixture.
 # Precreate outputs as the runner: container root must not own 0600 files read by the host.
 # writeFileSync truncates these existing files without changing their owner or mode.
-install -m 600 /dev/null "$fixture_dir/staff.json"
 install -m 600 /dev/null "$fixture_dir/notification.json"
-DAYMARK_TEST_ACTION=staff
-export DAYMARK_TEST_ACTION
-# Pass the action explicitly; run_cli otherwise has only allowlisted fixture configuration.
-docker run --rm "${label[@]}" --network "container:$CI_CONTAINER_PREFIX-postgres" \
-  --env-file "$fixture_dir/runtime" -e DAYMARK_TEST_ACTION=staff -v "$fixture_dir:/ci-private" "$backend_image" \
-  node ../../../../node_modules/@medusajs/cli/cli.js exec ./src/scripts/operations-test-fixture.js
 for role in backend worker; do
   mode=server
   [[ "$role" == worker ]] && mode=worker

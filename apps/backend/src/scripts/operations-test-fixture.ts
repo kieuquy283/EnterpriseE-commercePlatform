@@ -1,11 +1,8 @@
 // Trusted disposable CI fixture only. Never expose this runner through HTTP.
 import assert from "node:assert/strict"
-import { randomBytes } from "node:crypto"
 import { writeFileSync } from "node:fs"
 import type { ExecArgs } from "@medusajs/framework/types"
-import { updateUsersWorkflow } from "@medusajs/medusa/core-flows"
 import { Modules } from "@medusajs/framework/utils"
-import { createBlockedStaffWorkflow } from "../workflows/create-blocked-staff"
 import { enqueueNotificationWorkflow } from "../workflows/notification/enqueue-notification"
 import { processNotificationWorkflow } from "../workflows/notification/process-notification"
 import type NotificationOutboxModuleService from "../modules/notification-outbox/service"
@@ -17,41 +14,11 @@ export default async function operationsFixture({ container }: ExecArgs) {
   assert.equal(target.pathname, "/recommendation_test")
   assert.equal(process.env.DAYMARK_OPERATIONS_TEST, "true")
   const action = process.env.DAYMARK_TEST_ACTION
-  if (action === "staff") {
-    const staff: { id: string; email: string; password: string }[] = []
-    for (const name of ["a", "b"]) {
-      const email = `ci-staff-${name}@example.invalid`
-      const password = randomBytes(32).toString("hex")
-      const registration = await container
-        .resolve(Modules.AUTH)
-        .register("emailpass", { body: { email, password } })
-      assert.ok(registration.success && registration.authIdentity)
-      const {
-        result: [user],
-      } = await createBlockedStaffWorkflow(container).run({
-        input: { email, auth_identity_id: registration.authIdentity.id },
-      })
-      staff.push({ id: user.id, email, password })
-    }
-    writeFileSync("/ci-private/staff.json", JSON.stringify(staff), { mode: 0o600 })
-    return
-  }
   const orderId = process.env.DAYMARK_TEST_ORDER_ID || ""
   const order = await container.resolve(Modules.ORDER).retrieveOrder(orderId)
   assert.ok(order.email?.endsWith("@example.invalid"))
   const outbox: NotificationOutboxModuleService = container.resolve("notificationOutbox")
-  if (action === "revoke") {
-    const userId = process.env.DAYMARK_TEST_STAFF_ID || ""
-    const user = await container.resolve(Modules.USER).retrieveUser(userId)
-    assert.equal(user.metadata?.daymark_admin_access, "blocked_staff")
-    await updateUsersWorkflow(container).run({
-      input: {
-        updates: [
-          { id: userId, metadata: { ...user.metadata, daymark_admin_access: "revoked_staff" } },
-        ],
-      },
-    })
-  } else if (action === "expire") {
+  if (action === "expire") {
     const { result } = await enqueueNotificationWorkflow(container).run({
       input: {
         orderId,
