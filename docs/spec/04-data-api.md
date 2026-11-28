@@ -21,7 +21,7 @@ Tài liệu hỗ trợ [nghiệp vụ](01-business.md), [luồng xuyên suốt](
 | Nghiên cứu thô và artifact sinh ra | Pipeline ngoại tuyến | `data/hm/`, `data/hm/processed/` cục bộ bị ignore | Không là tài sản Git, đơn production hoặc nội dung thương hiệu tự động được duyệt công khai. |
 | Cache/sự kiện/workflow/khóa | Provider hạ tầng Medusa | Redis; một số map gợi ý cục bộ tiến trình | Redis không là nguồn thương mại có thẩm quyền. Mất Redis cần hành vi suy giảm/khôi phục được thử. |
 | Tham chiếu phiên trình duyệt | Server action storefront | Cookie HTTP-only, secure trong production | Tham chiếu/token, không cơ sở dữ liệu đơn thứ hai; backend phân quyền mọi yêu cầu riêng. |
-| Bản ghi gửi/thử lại thông báo | Tích hợp thông báo dự kiến | Bản ghi bền vững do ứng dụng sở hữu, schema chờ triển khai | Chống trùng và đối soát sau lỗi provider/worker. Không khẳng định bảng đã tồn tại. |
+| Bản ghi gửi/thử lại thông báo | Module notificationOutbox tùy chỉnh | PostgreSQL; model record/attempt và migration trong source | Redis lock, retry/lease và SMTP adapter theo ADR-013; `sent` không phải customer delivery receipt. Migration local không chứng minh đã áp dụng AWS. |
 
 Migration AWS ngày 9 tháng 11 và trạng thái chưa kích hoạt dữ liệu gợi ý là thông tin lịch sử. Seed cũ có ba sản phẩm chung không ảnh. Bộ mẫu học tập DAYMARK 30 sản phẩm có ảnh đại diện xem thử cục bộ; ảnh hàng sản xuất chính xác và từng biến thể là khoảng trống riêng.
 

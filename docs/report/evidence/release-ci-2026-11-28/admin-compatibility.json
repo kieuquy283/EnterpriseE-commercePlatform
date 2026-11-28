@@ -1,0 +1,22 @@
+{
+  "checks": [
+    {
+      "name": "Admin browser login",
+      "passed": true
+    },
+    {
+      "name": "Admin language Français, navigation and reload",
+      "passed": true
+    },
+    {
+      "name": "Admin language English, navigation and reload",
+      "passed": true
+    },
+    {
+      "name": "No uncaught Admin JavaScript errors",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "pageErrors": 0
+}

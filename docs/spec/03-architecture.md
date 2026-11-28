@@ -11,7 +11,7 @@ DAYMARK là MVP thương mại quần áo hướng đến vận hành thực t�
 ```mermaid
 flowchart LR
   Customer[Customer browser] -->|HTTPS| ALB[ALB and ACM]
-  Staff[Staff browser] -->|HTTPS Admin| ALB
+  Administrator[Admin browser] -->|HTTPS Admin| ALB
   ALB -->|Store hostname| Web[Next.js storefront]
   ALB -->|API hostname| API[Medusa API and Admin]
   Web -->|Store API over HTTPS| ALB
@@ -21,7 +21,7 @@ flowchart LR
   Worker --> Redis
   API -->|IAM file provider| S3[(Private S3)]
   Worker --> S3
-  Worker -.->|Planned transactional notification channel; TBD| Provider[Communication provider]
+  Worker -.->|SMTP adapter; provider configuration required| Provider[Communication provider]
 ```
 
 Cloudflare chỉ làm DNS trong ánh xạ triển khai hiện có. TLS kết thúc ở ALB; lưu lượng ứng dụng trong ranh giới security group dùng HTTP. Tài nguyên vùng thuộc `ap-southeast-2`. Demo tắt theo lease nên không phải storefront sẵn sàng liên tục.
@@ -92,6 +92,8 @@ Template cấu hình API từ **một đến hai task**, mục tiêu **CPU trung
 | [ADR-11 — Staff/Admin RBAC](../06-architecture/adr/ADR-011-staff-admin-rbac.md) | Đề xuất chưa bật RBAC hoặc cấp quyền Staff khi policy/license chưa được xác minh; giữ Staff **BLOCKED** | Bật Admin API mặc định rồi chỉ ẩn menu; tự suy quyền từ actor `user` | **Proposed / BLOCKED**, chưa được duyệt. Cần policy owner, xác minh license hoặc duyệt bề mặt Staff giới hạn, và kiểm thử trên DB disposable. Xem [Permission Matrix](../technical/staff-admin-permission-matrix.md) và [license decision](../technical/staff-admin-rbac-license-feasibility.md). |
 
 | ADR-11 | Image Node 24 trên Alpine 3.24, cập nhật bản vá distro và quét image trước phát hành | Debian Bookworm slim với các finding OS chưa vá; đổi framework hoặc cloud | Loại nhóm package Debian gây chặn triển khai nhưng đổi glibc sang musl; phải kiểm build, Sharp/SWC, API/worker/Admin, media và browser trên image thật. Giữ image cũ làm bằng chứng, không dùng rollback có finding HIGH/CRITICAL chưa xử lý. |
+
+Quyết định bổ sung: [ADR-013 — Kiểm chứng SMTP](../06-architecture/adr/ADR-013-smtp-verification.md) định nghĩa ngữ nghĩa gửi thông báo và cơ chế khóa.
 
 Các quyết định xác định hướng chọn; migration/tái cấu trúc còn ở [công việc](07-delivery.md). [Quyết định AWS lịch sử](../architecture/adr/0001-aws-cloud-stack.md) ghi bối cảnh triển khai, không chứng minh uptime hiện tại.
 

@@ -1,0 +1,82 @@
+{
+  "base_sha": "46c44bbcd46618cb35f6f0d95dcc76e8f433cb2f",
+  "scope": "Local verification; GitHub rebuild with explicit image npm pin still required",
+  "recorded_at": "2026-11-28T14:21:07.925261+00:00",
+  "clean_install": {
+    "node": "24.22.1",
+    "npm": "11.12.1",
+    "passed": true
+  },
+  "audit": {
+    "lockSha256": "9f877dd83bb0193309c0468fbf392a2cc51cc23c28747fefb62c0f88406ae046",
+    "started": "2026-11-28T14:15:36.353Z",
+    "finished": "2026-11-28T14:15:37.652Z",
+    "counts": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0,
+      "total": 0
+    },
+    "collection": "PASS",
+    "releaseVerdict": "AUDIT_CLEAR"
+  },
+  "tests": {
+    "unit": 161,
+    "http_passed": 43,
+    "http_skipped_opt_in_k6": 3,
+    "focused_staff_outbox": 8,
+    "focused_overlaps_full_http": true,
+    "storefront_browser_passed": 23,
+    "storefront_browser_skipped_hm": 6,
+    "operations_scenarios": 8,
+    "admin_checks": 4,
+    "audit_policy": 19,
+    "iac": 39,
+    "presentation": 10
+  },
+  "trivy": {
+    "version": "0.72.0",
+    "images": {
+      "backend": {
+        "image_id": "sha256:afd15a81d2c4168508f9c503b4b8f9aabbe2250deff704b2583bd919e5913654",
+        "created_at": "2026-11-28T21:15:23.483535889+07:00",
+        "high": 0,
+        "critical": 0,
+        "ignore_unfixed": false,
+        "os": {
+          "Family": "alpine",
+          "Name": "3.24.3"
+        }
+      },
+      "storefront": {
+        "image_id": "sha256:3f357d1b69e99cda8b91a27e94f9958c79615ef638d7ce0a79c82727505795ee",
+        "created_at": "2026-11-28T21:15:49.86646935+07:00",
+        "high": 0,
+        "critical": 0,
+        "ignore_unfixed": false,
+        "os": {
+          "Family": "alpine",
+          "Name": "3.24.3"
+        }
+      }
+    }
+  },
+  "image_build_tooling": {
+    "local_images_used_bundled_npm": "11.19.1",
+    "final_dockerfiles_require_npm": "11.12.1",
+    "explicit_pin_rebuild_validation": "PENDING GitHub CI"
+  },
+  "owner_branch_protection": "SKIPPED by explicit instruction",
+  "aws": "NOT RUN; no cloud changes",
+  "external_email": "NOT SENT; isolated SMTP inbox only",
+  "dependency_inventory": "Two known optional extraneous packages; not declared clean",
+  "cleanup": "All owned test services, network, inbox volume and private credentials removed; unrelated containers preserved",
+  "source_sha256": {
+    "apps/backend/src/workflows/read-staff-order.ts": "7c58b70d08b57e3de625d0bc066cdf56522ad26b4bb15708013a7bde5492ae61",
+    "apps/backend/src/workflows/notification/process-notification.ts": "2f0ee9e6e2d05e800c559d79812372079350d17902fecdb0909ca582f47f6645",
+    "apps/backend/src/modules/notification-smtp/provider.ts": "a02433d463b8016b17b6c96d156783cc7ebb662d920f0d81cb674620b28b238b",
+    "scripts/ci-operations-e2e.mjs": "817e525d73eaaf06c2cba4eba2691c01e3539475bac4f345ff204abad6e2ec3b"
+  }
+}

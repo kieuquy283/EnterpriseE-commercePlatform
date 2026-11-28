@@ -35,7 +35,7 @@ assert.equal(
   }).trim(),
   "true",
 )
-// Medusa 2.21 start retains /health in worker mode, but skips API/Admin entrypoints.
+// Medusa start retains /health in worker mode, but skips API/Admin entrypoints.
 execFileSync(
   "docker",
   [
