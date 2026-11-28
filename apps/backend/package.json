@@ -33,6 +33,7 @@
     "@medusajs/caching": "2.22.7",
     "@medusajs/caching-redis": "2.22.7",
     "@medusajs/cli": "2.22.7",
+    "@medusajs/cloud": "2.22.7",
     "@medusajs/dashboard": "2.22.7",
     "@medusajs/draft-order": "2.22.7",
     "@medusajs/framework": "2.22.7",
@@ -40,10 +41,10 @@
     "@medusajs/medusa": "2.22.7",
     "@medusajs/ui": "4.2.14",
     "@tanstack/react-query": "5.64.2",
+    "nodemailer": "10.6.1",
     "react-i18next": "13.5.0",
     "react-router-dom": "7.18.2",
-    "zod": "4.6.7",
-    "@medusajs/cloud": "2.22.7"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@medusajs/test-utils": "2.22.7",
@@ -51,6 +52,7 @@
     "@swc/jest": "^0.2.36",
     "@types/jest": "^29.5.13",
     "@types/node": "^24.0.0",
+    "@types/nodemailer": "8.0.2",
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.2.25",
     "cross-env": "^10.1.0",

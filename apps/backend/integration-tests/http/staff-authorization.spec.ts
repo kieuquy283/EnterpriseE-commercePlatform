@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto"
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils"
 import {
+  createOrderWorkflow,
+  createRegionsWorkflow,
   createApiKeysWorkflow,
   createUsersWorkflow,
   setAuthAppMetadataStep,
@@ -125,6 +127,86 @@ medusaIntegrationTestRunner({
       })
       await expect(api.get("/admin/orders", adminConfig)).rejects.toMatchObject(denied)
       await expect(api.get("/admin/orders", adminSessionConfig)).rejects.toMatchObject(denied)
+    })
+
+    it("allows only an assigned read projection and revokes existing Staff sessions", async () => {
+      const container = getContainer()
+      const account = await registerUser()
+      const {
+        result: [user],
+      } = await createBlockedStaffWorkflow(container).run({
+        input: { email: account.email, auth_identity_id: account.authIdentityId },
+      })
+      const login = await api.post("/auth/user/emailpass", {
+        email: account.email,
+        password: account.password,
+      })
+      const config = { headers: headers(login.data.token) }
+      const session = await api.post("/auth/session", {}, config)
+      const cookie = session.headers["set-cookie"]
+        .map((value: string) => value.split(";")[0])
+        .join("; ")
+      const {
+        result: [region],
+      } = await createRegionsWorkflow(container).run({
+        input: { regions: [{ name: "Staff fixture", currency_code: "vnd", countries: ["vn"] }] },
+      })
+      const { result: order } = await createOrderWorkflow(container).run({
+        input: {
+          region_id: region.id,
+          currency_code: "vnd",
+          email: "private-customer@example.invalid",
+          items: [{ title: "Assigned fixture", quantity: 1, unit_price: 100 }],
+        },
+      })
+      const { result: otherOrder } = await createOrderWorkflow(container).run({
+        input: {
+          region_id: region.id,
+          currency_code: "vnd",
+          items: [],
+          metadata: { daymark_assigned_staff_id: user.id },
+        },
+      })
+      await updateUsersWorkflow(container).run({
+        input: {
+          updates: [
+            {
+              id: user.id,
+              metadata: {
+                daymark_admin_access: "blocked_staff",
+                daymark_assigned_order_ids: [order.id],
+              },
+            },
+          ],
+        },
+      })
+      const response = await api.get(`/staff/orders/${order.id}`, { headers: { Cookie: cookie } })
+      expect(Object.keys(response.data.order).sort()).toEqual([
+        "display_id",
+        "id",
+        "items",
+        "status",
+      ])
+      expect(JSON.stringify(response.data)).not.toContain("private-customer@example.invalid")
+      expect(response.data.order.items[0].title).toBe("Assigned fixture")
+      await expect(api.get(`/staff/orders/${otherOrder.id}`, config)).rejects.toMatchObject({
+        response: { status: 404 },
+      })
+      await expect(api.get("/admin/orders", config)).rejects.toMatchObject({
+        response: { status: 403 },
+      })
+      await expect(api.post(`/staff/orders/${order.id}`, {}, config)).rejects.toMatchObject({
+        response: { status: 404 },
+      })
+      await updateUsersWorkflow(container).run({
+        input: { updates: [{ id: user.id, metadata: { daymark_admin_access: "revoked_staff" } }] },
+      })
+      await expect(
+        api.get(`/staff/orders/${order.id}`, { headers: { Cookie: cookie } }),
+      ).rejects.toMatchObject({ response: { status: 403 } })
+      await expect(api.get("/admin/orders", config)).rejects.toMatchObject({
+        response: { status: 403 },
+      })
     })
 
     it("rejects customer, unregistered user and tampered JWT escalation", async () => {

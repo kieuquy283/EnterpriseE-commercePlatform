@@ -1,3 +1,5 @@
+import { asValue } from "@medusajs/framework/awilix"
+import processNotificationsJob from "../../src/jobs/process-notifications"
 import type { MedusaContainer } from "@medusajs/framework/types"
 import { medusaIntegrationTestRunner } from "@medusajs/test-utils"
 import type NotificationOutboxModuleService from "../../src/modules/notification-outbox/service"
@@ -37,8 +39,7 @@ medusaIntegrationTestRunner({
       await enqueueNotificationWorkflow(container).run({ input })
 
       const records = await outbox.listNotificationRecords({
-        dedupe_key:
-          "order_notification_dedupe:order_placed:email:v1:state-1",
+        dedupe_key: "order_notification_dedupe:order_placed:email:v1:state-1",
       })
       expect(records).toHaveLength(1)
 
@@ -101,10 +102,80 @@ medusaIntegrationTestRunner({
         notification_id: record.id,
       })
       expect(attempts).toHaveLength(2)
-      expect(attempts.map((attempt) => attempt.outcome)).toEqual([
-        "failure",
-        "success",
-      ])
+      expect(attempts.map((attempt) => attempt.outcome)).toEqual(["failure", "success"])
+    })
+
+    it("reclaims an expired processing lease and serializes concurrent send attempts", async () => {
+      const container = getContainer()
+      const outbox = await getOutbox(container)
+      const { result } = await enqueueNotificationWorkflow(container).run({
+        input: {
+          orderId: "order_expired_processing",
+          sourceEventId: "fixture-expired-processing",
+          sourceStateVersion: 1,
+          notificationType: "order_placed",
+          recipient: "lease@example.test",
+        },
+      })
+      await outbox.updateNotificationRecords({
+        id: result.notification.id,
+        state: "processing",
+        lease_expires_at: new Date(Date.now() - 1000),
+      })
+      await processNotificationsJob(container)
+      await Promise.all(
+        [1, 2, 3].map(() =>
+          processNotificationWorkflow(container).run({
+            input: { notificationId: result.notification.id },
+          }),
+        ),
+      )
+      const record = await outbox.retrieveNotificationRecord(result.notification.id)
+      expect(record.state).toBe("sent")
+      expect(record.attempt_count).toBe(1)
+      expect(await outbox.listNotificationAttempts({ notification_id: record.id })).toHaveLength(1)
+    })
+
+    it("does not re-open a sent record when attempt-audit persistence fails", async () => {
+      const container = getContainer()
+      const outbox = await getOutbox(container)
+      const { result } = await enqueueNotificationWorkflow(container).run({
+        input: {
+          orderId: "order_audit_failure",
+          sourceEventId: "audit-fault",
+          sourceStateVersion: 1,
+          notificationType: "order_placed",
+          recipient: "audit@example.test",
+        },
+      })
+      const registration = container.registrations.notificationOutbox
+      let auditCalls = 0
+      const failingOutbox = new Proxy(outbox, {
+        get(target, property) {
+          if (property === "createNotificationAttempts")
+            return async () => {
+              auditCalls++
+              throw new Error("synthetic_audit_failure")
+            }
+          return Reflect.get(target, property)
+        },
+      })
+      container.register({ notificationOutbox: asValue(failingOutbox) })
+      try {
+        await processNotificationWorkflow(container).run({
+          container,
+          input: { notificationId: result.notification.id },
+          throwOnError: false,
+        })
+        expect(auditCalls).toBe(1)
+      } finally {
+        container.register({ notificationOutbox: registration })
+      }
+      const record = await outbox.retrieveNotificationRecord(result.notification.id)
+      expect(record.state).toBe("sent")
+      expect(record.last_error_code).toBeNull()
+      await processNotificationWorkflow(container).run({ input: { notificationId: record.id } })
+      expect((await outbox.retrieveNotificationRecord(record.id)).attempt_count).toBe(1)
     })
 
     it("caps provider failures at four attempts and exposes the final error", async () => {
