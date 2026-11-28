@@ -7,6 +7,7 @@ import {
 } from "@medusajs/framework/utils"
 
 let sandboxDown = false
+// TODO(impl): replace the sandbox with an approved transactional email provider and durable provider-side idempotency — BE-04/OPEN-USR-009.
 
 export function setNotificationSandboxDown(down: boolean) {
   sandboxDown = down
@@ -18,7 +19,6 @@ export function isNotificationSandboxDown() {
 
 class NotificationSandboxProviderService extends AbstractNotificationProviderService {
   static identifier = "sandbox"
-  private deliveredKeys = new Set<string>()
 
   async send(
     notification: NotificationTypes.ProviderSendNotificationDTO,
@@ -46,11 +46,9 @@ class NotificationSandboxProviderService extends AbstractNotificationProviderSer
       )
     }
 
-    if (this.deliveredKeys.has(idempotencyKey)) {
-      return { id: `sandbox:${idempotencyKey}` }
-    }
-
-    this.deliveredKeys.add(idempotencyKey)
+    // The provider contract is deterministic for the sandbox: the same
+    // idempotency key always resolves to the same provider reference.
+    // This models provider-side dedupe and survives a worker restart.
     return { id: `sandbox:${idempotencyKey}` }
   }
 }

@@ -13,7 +13,10 @@ async function getOutbox(container: MedusaContainer) {
 
 medusaIntegrationTestRunner({
   env: {
-    REDIS_URL: "",
+    ...(process.env.DATABASE_URL
+      ? { DATABASE_URL: process.env.DATABASE_URL }
+      : {}),
+    ...(process.env.REDIS_URL ? { REDIS_URL: process.env.REDIS_URL } : {}),
     NOTIFICATION_SANDBOX_DOWN: "false",
   },
   testSuite: ({ getContainer }) => {
@@ -147,6 +150,50 @@ medusaIntegrationTestRunner({
       })
       expect(attempts).toHaveLength(4)
       expect(attempts.every((attempt) => attempt.outcome === "failure")).toBe(true)
+    })
+
+    it("reclaims an expired processing lease and sends once under concurrent runs", async () => {
+      const container = getContainer()
+      const outbox = await getOutbox(container)
+      const orderId = "order_notification_concurrent"
+
+      await enqueueNotificationWorkflow(container).run({
+        input: {
+          orderId,
+          sourceEventId: `order.placed:${orderId}`,
+          sourceStateVersion: 1,
+          notificationType: "order_placed",
+          recipient: "concurrent@example.test",
+        },
+      })
+      const [record] = await outbox.listNotificationRecords({
+        order_id: orderId,
+      })
+
+      await outbox.updateNotificationRecords({
+        id: record.id,
+        state: "processing",
+        lease_expires_at: new Date(Date.now() - 1000),
+      })
+
+      await Promise.all([
+        processNotificationWorkflow(container).run({
+          input: { notificationId: record.id },
+        }),
+        processNotificationWorkflow(container).run({
+          input: { notificationId: record.id },
+        }),
+      ])
+
+      const sent = await outbox.retrieveNotificationRecord(record.id)
+      expect(sent.state).toBe("sent")
+      expect(sent.attempt_count).toBe(1)
+
+      const attempts = await outbox.listNotificationAttempts({
+        notification_id: record.id,
+      })
+      expect(attempts).toHaveLength(1)
+      expect(attempts[0].outcome).toBe("success")
     })
   },
 })

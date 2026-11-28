@@ -11,8 +11,11 @@ export default async function processNotificationsJob(
   const retryWait = await service.listNotificationRecords({
     state: "retry_wait",
   })
+  const processing = await service.listNotificationRecords({
+    state: "processing",
+  })
 
-  for (const notification of [...pending, ...retryWait]) {
+  for (const notification of [...pending, ...retryWait, ...processing]) {
     if (
       notification.next_attempt_at &&
       notification.next_attempt_at > new Date()
