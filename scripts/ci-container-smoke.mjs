@@ -35,7 +35,7 @@ assert.equal(
   }).trim(),
   "true",
 )
-// Medusa 2.21 start retains /health in worker mode, but skips API/Admin entrypoints.
+// Medusa start retains /health in worker mode, but skips API/Admin entrypoints.
 execFileSync(
   "docker",
   [
@@ -47,7 +47,7 @@ execFileSync(
 (async () => {
   const health = await fetch('http://127.0.0.1:9000/health', { signal: AbortSignal.timeout(5000) })
   if (health.status !== 200) process.exit(1)
-  for (const path of ['/store/products', '/admin/users', '/app']) {
+  for (const path of ['/store/products', '/admin/users', '/staff/me', '/app']) {
     const response = await fetch('http://127.0.0.1:9000' + path, { signal: AbortSignal.timeout(5000) })
     if (response.status !== 404) process.exit(1)
   }

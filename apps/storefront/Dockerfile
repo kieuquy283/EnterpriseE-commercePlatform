@@ -2,6 +2,8 @@ FROM node:24.22.1-alpine3.24@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c
 # Apply distribution security fixes; keep Node pinned to the project runtime.
 RUN apk upgrade --no-cache
 WORKDIR /app
+RUN --mount=type=cache,id=daymark-npm-alpine,target=/root/.npm,sharing=locked npm install --global npm@11.12.1 --no-audit --no-fund \
+    && test "$(npm --version)" = "11.12.1"
 COPY package*.json ./
 COPY apps/backend/package.json apps/backend/package.json
 COPY apps/storefront/package.json apps/storefront/package.json
@@ -10,6 +12,8 @@ RUN --mount=type=cache,id=daymark-npm-alpine,target=/root/.npm,sharing=locked np
 COPY . .
 ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
+ARG MEDUSA_BACKEND_URL
+ENV MEDUSA_BACKEND_URL=$MEDUSA_BACKEND_URL
 ARG NEXT_PUBLIC_ENABLE_RECOMMENDATIONS=false
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
