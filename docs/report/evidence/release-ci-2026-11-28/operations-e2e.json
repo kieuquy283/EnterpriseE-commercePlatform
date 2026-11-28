@@ -1,0 +1,40 @@
+{
+  "checks": [
+    {
+      "name": "Staff assigned read DTO; unassigned, anonymous, mutation and full Admin denied",
+      "passed": true
+    },
+    {
+      "name": "Staff browser login, secure cookie, assignment change and persisted revocation",
+      "passed": true
+    },
+    {
+      "name": "API checkout -> Redis -> worker -> SMTP inbox; duplicate event has one outbox effect",
+      "passed": true
+    },
+    {
+      "name": "SMTP outage preserves order, records retry, then delivers after provider recovery",
+      "passed": true
+    },
+    {
+      "name": "Worker stop/restart, queued Redis event and expired processing lease recover",
+      "passed": true
+    },
+    {
+      "name": "Concurrent independent processes use Redis lock: one send and one successful attempt",
+      "passed": true
+    },
+    {
+      "name": "Canceled-order notification reaches the SMTP inbox",
+      "passed": true
+    },
+    {
+      "name": "All synthetic orders canceled and stock restored",
+      "passed": true
+    }
+  ],
+  "failure": null,
+  "passed": true,
+  "syntheticOrders": 4,
+  "semantics": "SMTP acceptance and test inbox receipt; at-least-once across send/persist crashes, not exactly-once email delivery"
+}

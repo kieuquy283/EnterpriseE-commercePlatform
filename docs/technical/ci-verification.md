@@ -27,16 +27,22 @@ Job chỉ dùng GitHub-hosted Linux runner mới với PostgreSQL/Redis services
 
 Trình tự bắt buộc:
 
-1. Build image backend từ SHA checkout; migration thành công trước khi chạy API/worker.
+1. Tạo Docker network riêng theo run/attempt; PostgreSQL/Redis không publish cổng, Mailpit inbox và API/storefront chỉ bind loopback. Container có label ownership cho cleanup. Build image backend từ SHA checkout; migration thành công trước API/worker.
 2. Chạy `seed-recommendation-test` hiện hữu trên DB `recommendation_test`: tạo shipping profile, bootstrap commerce và khóa publishable thử. Gợi ý trên storefront vẫn OFF. Context khóa nằm tạm, không xuất artifact.
 3. Apply catalog DAYMARK hiện hữu với guard `local-disposable`, `NODE_ENV=test`, ảnh demo local có kiểm checksum. Không nhập H&M hoặc dữ liệu thật. Ghi nhận fixture bằng mã nguồn/checksum tại SHA; không reset DB/tồn dùng chung.
 4. API chạy mode `server`, worker chạy mode `worker` với Admin disabled, cùng image content ID. Runtime test được chỉ định trực tiếp qua CLI để script start production không ghi đè chế độ fixture.
-5. Chờ `/health` HTTP 200; build storefront bằng khóa publishable thật của fixture và URL backend localhost. Build dùng host network của runner để đọc backend khi prerender.
+5. Chờ `/health`; kiểm Admin login/language. Build storefront với khóa publishable của fixture, public URL localhost và `MEDUSA_BACKEND_URL` nội bộ riêng cho prerender. Runtime server dùng network alias backend; trình duyệt dùng public URL.
 6. Chờ `/vn`; smoke đọc sản phẩm `dm-tee-core`, thumbnail cùng origin và byte ảnh, trang chủ/PDP HTTP 200. Worker phải còn chạy và trả `/health` 200 nhưng `/store/products`, `/admin/users`, `/app` đều 404 trong namespace riêng của nó.
-7. Chạy suite Chromium, một worker theo cấu hình hiện hữu. Không đổi nội dung/expected của tests; ca thiếu fixture chuyên biệt có thể SKIP và phải được QA phân loại, không tính là nghiệm thu đạt. Lưu content ID hai image và report/log theo SHA.
-8. EXIT trap lấy log giới hạn rồi xóa đúng container có tên thuộc run/attempt và thư mục tạm do script tạo. GitHub hủy runner khi kết thúc job kể cả khi hủy cứng khiến trap không chạy. Services không được dùng lại giữa các job.
+7. Chạy `ci-operations-e2e.mjs` cho Staff allow/deny/reassignment/revoke và API → Redis → worker → SMTP inbox, outage/retry, restart/expired lease và competing processors. Sau đó chạy suite Chromium storefront, một browser worker theo cấu hình hiện hữu. Không đổi nội dung/expected của tests; ca thiếu fixture chuyên biệt có thể SKIP và phải được QA phân loại, không tính là nghiệm thu đạt. Lưu content ID hai image và report/log theo SHA.
+8. EXIT trap lấy log giới hạn rồi xóa đúng container theo label run/attempt, network, inbox volume và thư mục tạm do script tạo. GitHub hủy runner khi kết thúc job kể cả khi hủy cứng khiến trap không chạy. Services không được dùng lại giữa các job.
 
-Smoke worker chỉ chứng minh tiến trình và ranh giới route API/Admin, không chứng minh subscriber nhận event, retry/dedupe hoặc thông báo đến hộp thư. Smoke trang không thay thế assertions nghiệp vụ Playwright. Runtime fixture test không chứng minh cấu hình production đã được nghiệm thu. Khi được phép phát hành riêng, dùng registry digest bất biến của image đã kiểm và migration trước traffic; CI này không push image hoặc triển khai.
+Smoke worker cơ bản chỉ chứng minh tiến trình và ranh giới route; proof gửi/retry/restart nằm riêng trong `operations-e2e.json`, có verdict của từng kịch bản. Receipt Mailpit là inbox test thật, không phải delivery receipt bên ngoài; SMTP không bảo đảm exactly-once khi chết giữa send/persist. Smoke trang không thay thế assertions nghiệp vụ Playwright. Runtime fixture test không chứng minh cấu hình production đã được nghiệm thu. Khi được phép phát hành riêng, dùng registry digest bất biến của image đã kiểm và migration trước traffic; CI này không push image hoặc triển khai.
+
+### Tương thích Medusa Admin
+
+Job container tạo một Admin riêng trong PostgreSQL disposable bằng workflow bootstrap hiện hữu. Password ngẫu nhiên chỉ nằm trong file tạm quyền `0600`, không truyền qua command arguments hoặc artifact; EXIT trap xóa cùng fixture. Không dùng account hay credential của AWS/development.
+
+`scripts/ci-admin-smoke.mjs` đăng nhập Admin, đổi ngôn ngữ English → Français → English qua trang profile, kiểm heading Orders/Commandes sau navigation và reload, rồi kiểm không có JavaScript exception. Check này chạy trên bundle trong image backend, trước storefront build; lỗi phải chặn job. `admin-compatibility.json` chỉ lưu tên check, verdict và số lỗi, không lưu auth response, cookie, password, screenshot hoặc trace của phiên Admin. Đây là regression cho i18next override, không phải nghiệm thu Staff assignment hay toàn bộ nghiệp vụ Admin.
 
 ## Phụ thuộc nghiệm thu
 
@@ -60,3 +66,9 @@ gh api --method PUT repos/kieuquy283/EnterpriseE-commercePlatform/branches/main/
 Đọc lại protection và kiểm thử PR cố tình làm một gate đỏ trên branch dùng thử trước khi đánh dấu phần enforcement của OPS-02 hoàn tất. Không tạo bypass token, hạ quyền kiểm tra hoặc suy protection đã bật từ việc JSON tồn tại.
 
 Job `load-failure-smoke` bật fixture workload riêng bằng `RUN_LOCAL_K6=true`; HTTP suite thông thường không tự chạy fault injection. PostgreSQL mang tên theo run/attempt, chỉ bind loopback, không volume giữ lại và được unpause/remove trong bước `always()`. k6 chạy container transient được ghim trong test, không thêm dependency dự án. Lượt smoke ngắn xác minh check/threshold và khả năng hồi, không đo NFR tải dài hay cloud capacity.
+
+### Staff và SMTP qua nhiều tiến trình
+
+Fixture tạo hai Staff ngẫu nhiên qua workflow tin cậy; Admin phân công bằng User API chuẩn. Driver kiểm DTO tối thiểu, Staff ngoài assignment, anonymous, mutation và Admin API bị chặn; browser kiểm cookie riêng, đổi assignment và persisted revocation. Không lưu credential, cookie hoặc browser trace của Staff vào artifact. Chi tiết phạm vi chỉ đọc ở [ADR-013](../06-architecture/adr/ADR-013-staff-read-and-smtp-verification.md).
+
+SMTP dùng Mailpit được pin digest, trên network riêng không relay ra ngoài. Driver tạo đơn synthetic, đợi inbox receipt, phát event trùng, dừng/khởi động inbox, dừng/khởi động worker, thiết lập expired lease bằng fixture tin cậy và cho hai CLI process tranh cùng record với Redis locking. Fixture chỉ cho `NODE_ENV=test`, database `recommendation_test` qua localhost trong namespace PostgreSQL và order có email synthetic. Không expose fixture runner qua HTTP. Cuối driver hủy đúng đơn đã tạo và đối chiếu stock; EXIT trap xóa tài nguyên của run. Full CI phải xanh trên commit thực trước khi gọi đây là release acceptance.

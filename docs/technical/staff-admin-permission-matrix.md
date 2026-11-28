@@ -91,7 +91,7 @@ Cho tới khi các quyết định trên được ghi với ngày, người/vai 
 
 ## 6. Ánh xạ ranh giới triển khai không dùng license
 
-Theo [ranh giới không dùng license](staff-admin-rbac-license-feasibility.md#6-ranh-giới-không-dùng-license), Staff được tạo qua workflow backend tin cậy bị từ chối toàn bộ Admin API. Các quyền Staff A* trong ma trận vẫn là mục tiêu của surface giới hạn chưa triển khai; không được diễn giải thành ALLOW trên Admin API chuẩn. User Admin thông thường không tự trở thành Staff vì tên hiển thị hoặc email có chữ “staff”. Bằng chứng kiểm thử phải phân biệt actor Admin không có marker với Staff có trạng thái lưu ở server. Trạng thái phê duyệt ma trận và entitlement không đổi bởi kiểm thử kỹ thuật.
+Theo [ranh giới không dùng license](staff-admin-rbac-license-feasibility.md#6-ranh-giới-không-dùng-license), Staff được tạo qua workflow backend tin cậy bị từ chối toàn bộ Admin API. Phạm vi đọc đơn A* có surface giới hạn theo ADR-013 ở mục 7; không được diễn giải thành ALLOW trên Admin API chuẩn. Các mutation/quyền H vẫn chưa cấp. User Admin thông thường không tự trở thành Staff vì tên hiển thị hoặc email có chữ “staff”. Bằng chứng kiểm thử phải phân biệt actor Admin không có marker với Staff có trạng thái lưu ở server. Trạng thái phê duyệt ma trận và entitlement không đổi bởi kiểm thử kỹ thuật.
 
 ## 7. Surface tra cứu tối thiểu
 

@@ -21,6 +21,7 @@
 | BE-07 — bằng chứng kiểm thử backend | [Test evidence](../report/be-07-backend-test-evidence.md) |
 | BE-07 — API/error/compatibility/rollback | [API và ADR handover](be-07-api-adr-handover.md) |
 | BE-07 — quyết định idempotency và notification | [ADR-012](../06-architecture/adr/ADR-012-backend-test-idempotency-notification.md) |
+| Staff tra cứu được giao, SMTP và kiểm chứng nhiều tiến trình | [ADR-013](../06-architecture/adr/ADR-013-staff-read-and-smtp-verification.md), [bằng chứng 28/11](../report/release-ci-readiness-2026-11-28.md) |
 | Ma trận quyền Staff/Admin | [Ma trận quyền](staff-admin-permission-matrix.md) |
 | License và tính khả thi Medusa Enterprise RBAC | [License/Feasibility Decision](staff-admin-rbac-license-feasibility.md) |
 | Môi trường phát triển | [Thiết lập](../setup.md), [quy ước đóng góp](../../CONTRIBUTING.md) |
