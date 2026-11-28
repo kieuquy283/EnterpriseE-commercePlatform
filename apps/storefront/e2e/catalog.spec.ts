@@ -68,4 +68,26 @@ test.describe("E2E-01: Catalog and Product Detail Page", () => {
     expect(navigations).toEqual([])
     await expect(addProductButton).toContainText("Thêm vào giỏ")
   })
+
+  test("sorts catalog prices in both directions using backend prices", async ({ page }) => {
+    const visiblePrices = async () => {
+      const labels = await page.getByTestId("products-list").getByTestId("price").allTextContents()
+      expect(labels.length).toBeGreaterThan(1)
+      return labels.map((label) => Number(label.replace(/[^0-9]/g, "")))
+    }
+
+    await page.goto("/vn/store?sortBy=price_asc")
+    await expect(page.getByTestId("products-list").getByTestId("price").first()).toBeVisible()
+    const ascending = await visiblePrices()
+    expect(ascending.every((price, index) => index === 0 || ascending[index - 1] <= price)).toBe(
+      true,
+    )
+
+    await page.getByLabel("Giá: cao đến thấp").click()
+    await expect(page).toHaveURL(/sortBy=price_desc/)
+    const descending = await visiblePrices()
+    expect(descending.every((price, index) => index === 0 || descending[index - 1] >= price)).toBe(
+      true,
+    )
+  })
 })
